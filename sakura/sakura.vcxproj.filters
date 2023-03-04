@@ -1,0 +1,969 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{59b91d44-d903-4a56-abc5-bc2cc0d94676}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="source\gui">
+      <UniqueIdentifier>{451dfda7-6dac-4a23-bd69-913aeb284122}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\config">
+      <UniqueIdentifier>{5f13df87-c11a-44d1-8b37-b88e6962a78f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features">
+      <UniqueIdentifier>{ff3f0b87-18fc-47d8-a946-04929f44e1b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\hns">
+      <UniqueIdentifier>{5d3b8576-db0b-4f33-9619-ddad5b34ff62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\rage">
+      <UniqueIdentifier>{c719b55c-9689-4fbe-994a-5d121a7d2de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\sound">
+      <UniqueIdentifier>{fc285a6e-b523-44d2-b10b-88768caf6ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\misc">
+      <UniqueIdentifier>{c724aefd-3be8-43d0-beda-c335da84bf2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals">
+      <UniqueIdentifier>{1eb19910-e734-41e7-a878-2fb94505b1c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\local">
+      <UniqueIdentifier>{6651d16e-ad00-4019-b871-6c97e3c664ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\local\skins">
+      <UniqueIdentifier>{f1112ec1-70c3-4c02-912e-87fe5b47b1bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\esp">
+      <UniqueIdentifier>{3f26da59-473e-4785-9f82-b4d96772dd78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\menu">
+      <UniqueIdentifier>{836a9e4c-f202-43aa-af73-0696fa301436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\light">
+      <UniqueIdentifier>{d5cdbcea-ea5c-40e7-abac-58e0cc644540}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\chams / glow">
+      <UniqueIdentifier>{ff2fb015-13e2-4425-b8a9-b47d645dc4f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\notifications">
+      <UniqueIdentifier>{bb3fed72-a6d9-4c63-b007-6b2b50c04bdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\local\world">
+      <UniqueIdentifier>{1bfc653d-9643-4e93-8633-642076bbf5f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\local\removals">
+      <UniqueIdentifier>{78590fe8-83a6-426d-90d2-98fb055d80fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\visuals\menu\tabs">
+      <UniqueIdentifier>{17dc54f7-24cd-4ec3-b8a4-5f30da8287e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\features\lua">
+      <UniqueIdentifier>{52f55ef1-1de6-44ac-a819-bb605bc1f9eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\helpers">
+      <UniqueIdentifier>{f875d7c2-fd95-4e06-9710-dc4372cbe68f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\offsets">
+      <UniqueIdentifier>{8e88f90f-2682-4fdb-b63a-698d9177bfa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{71d54813-b9f1-4357-866d-0d69fd68bbff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\lua">
+      <UniqueIdentifier>{621a3b89-4713-4d1c-825e-80b826e4186f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\luabridge">
+      <UniqueIdentifier>{9a8ce299-1be4-4f66-b278-81786a736149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\luabridge\detail">
+      <UniqueIdentifier>{d1e838f0-0354-49af-addb-3175fca11827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\xor">
+      <UniqueIdentifier>{e2109d56-1b95-48ff-9c4d-eab4c5ab5821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\vm">
+      <UniqueIdentifier>{72452583-dd2a-41a5-a1db-6489ab8ff8f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\detours">
+      <UniqueIdentifier>{cae723b5-87e4-4886-97d3-2404eff271bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\reflective">
+      <UniqueIdentifier>{73900207-3981-4890-81db-cb796aa150c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\vectors">
+      <UniqueIdentifier>{0516198c-5d36-4ad4-a6af-b5c94c8b8c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\imgui">
+      <UniqueIdentifier>{c57d378f-9b65-4f8f-ae87-6190aea4f350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\bass">
+      <UniqueIdentifier>{37b13a13-4192-44fa-8145-34c162e5b063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\other">
+      <UniqueIdentifier>{1c7030e2-18ef-47e3-815a-affc2ace44cd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\config\cvar.cpp">
+      <Filter>source\config</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\fastrun.cpp">
+      <Filter>source\features\hns</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\groundstrafe.cpp">
+      <Filter>source\features\hns</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\jumpbug.cpp">
+      <Filter>source\features\hns</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\strafe.cpp">
+      <Filter>source\features\hns</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\bhop.cpp">
+      <Filter>source\features\hns</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\namestealer.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\skipframes.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\snapshot.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\steamid.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\afk.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\chatspammer.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\fakelatency.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\idhook.cpp">
+      <Filter>source\features\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\antiaim.cpp">
+      <Filter>source\features\rage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\autoroute.cpp">
+      <Filter>source\features\rage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\fakelag.cpp">
+      <Filter>source\features\rage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\norecoil.cpp">
+      <Filter>source\features\rage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\nospread.cpp">
+      <Filter>source\features\rage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\sound\killsound.cpp">
+      <Filter>source\features\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\sound\sound.cpp">
+      <Filter>source\features\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\sound\soundesp.cpp">
+      <Filter>source\features\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\chams\chams.cpp">
+      <Filter>source\features\visuals\chams / glow</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\chams\studiomodelrender.cpp">
+      <Filter>source\features\visuals\chams / glow</Filter>
+    </ClCompile>
+    <ClCompile Include="source\client.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_visuals_tab.cpp">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_colors_tab.cpp">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_legit_tab.cpp">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_misc_tab.cpp">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_rage_tab.cpp">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\menu_widgets.cpp">
+      <Filter>source\features\visuals\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\menu.cpp">
+      <Filter>source\features\visuals\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\toasts\toasts.cpp">
+      <Filter>source\features\visuals\notifications</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\removals\fade.cpp">
+      <Filter>source\features\visuals\local\removals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\removals\scope.cpp">
+      <Filter>source\features\visuals\local\removals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\skins\skins.cpp">
+      <Filter>source\features\visuals\local\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\skins\viewmodel.cpp">
+      <Filter>source\features\visuals\local\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\deathmark.cpp">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\fog.cpp">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\lightmap.cpp">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\sky.cpp">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\bullettrace.cpp">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\crosshair.cpp">
+      <Filter>source\features\visuals\local</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\fov.cpp">
+      <Filter>source\features\visuals\local</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\thirdperson.cpp">
+      <Filter>source\features\visuals\local</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\tracegrenade.cpp">
+      <Filter>source\features\visuals\local</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\light\light.cpp">
+      <Filter>source\features\visuals\light</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\light\studio.cpp">
+      <Filter>source\features\visuals\light</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\hitboxes.cpp">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\radar.cpp">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\snaplines.cpp">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\esp.cpp">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\aimbot.cpp">
+      <Filter>source\features</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\gui.cpp">
+      <Filter>source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\guiwindow.cpp">
+      <Filter>source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\guiwindowpop.cpp">
+      <Filter>source\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\lua\luabind.cpp">
+      <Filter>source\features\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\weapons.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\color.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\strings.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vectors\Vector.cpp">
+      <Filter>source\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vectors\QAngle.cpp">
+      <Filter>source\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="source\offsets\offset.cpp">
+      <Filter>source\offsets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\modelhitbox.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\trace.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\stringfinder.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\textures.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\player.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\sakura_precompiled.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\usermsg.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\opengl.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\other\smth\interface.cpp">
+      <Filter>libs\other</Filter>
+    </ClCompile>
+    <ClCompile Include="source\other\smth\gl3winit.cpp">
+      <Filter>libs\other</Filter>
+    </ClCompile>
+    <ClCompile Include="source\helpers\parsemsg.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\reflective\ReflectiveLoader.c">
+      <Filter>libs\reflective</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lundump.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lutf8lib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lvm.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lzio.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lapi.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lauxlib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lbaselib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lcode.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lcorolib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lctype.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldblib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldebug.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldo.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldump.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lfunc.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lgc.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\linit.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\liolib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\llex.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lmathlib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lmem.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\loadlib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lobject.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lopcodes.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\loslib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lparser.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lstate.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lstring.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lstrlib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ltable.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ltablib.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ltm.c">
+      <Filter>libs\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\bass\dll.cpp">
+      <Filter>libs\bass</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\bass\dll_image.cpp">
+      <Filter>libs\bass</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\image_DXT.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\image_helper.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_demo.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_draw.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_dx9.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_opengl2.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_opengl3.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_win32.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_widgets.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\soil.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\stb_image_aug.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\gl3w.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\removals\hands.cpp">
+      <Filter>source\features\visuals\local\removals</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_tables.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\config\cvar.h">
+      <Filter>source\config</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\hns\bhop.h">
+      <Filter>source\features\hns</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\hns\fastrun.h">
+      <Filter>source\features\hns</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\hns\groundstrafe.h">
+      <Filter>source\features\hns</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\hns\jumpbug.h">
+      <Filter>source\features\hns</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\hns\strafe.h">
+      <Filter>source\features\hns</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\idhook.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\namestealer.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\skipframes.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\snapshot.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\steamid.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\afk.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\chatspammer.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\misc\fakelatency.h">
+      <Filter>source\features\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\rage\nospread.h">
+      <Filter>source\features\rage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\rage\antiaim.h">
+      <Filter>source\features\rage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\rage\autoroute.h">
+      <Filter>source\features\rage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\rage\fakelag.h">
+      <Filter>source\features\rage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\rage\norecoil.h">
+      <Filter>source\features\rage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\sound\soundesp.h">
+      <Filter>source\features\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\sound\killsound.h">
+      <Filter>source\features\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\sound\sound.h">
+      <Filter>source\features\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\chams\chams.h">
+      <Filter>source\features\visuals\chams / glow</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\chams\studiomodelrender.h">
+      <Filter>source\features\visuals\chams / glow</Filter>
+    </ClInclude>
+    <ClInclude Include="source\client.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_visuals_tab.h">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_colors_tab.h">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_legit_tab.h">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_misc_tab.h">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_rage_tab.h">
+      <Filter>source\features\visuals\menu\tabs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\menu.h">
+      <Filter>source\features\visuals\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\menu\menu_widgets.h">
+      <Filter>source\features\visuals\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\toasts\toasts.h">
+      <Filter>source\features\visuals\notifications</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\removals\scope.h">
+      <Filter>source\features\visuals\local\removals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\removals\fade.h">
+      <Filter>source\features\visuals\local\removals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\skins\skins.h">
+      <Filter>source\features\visuals\local\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\skins\viewmodel.h">
+      <Filter>source\features\visuals\local\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\world\deathmark.h">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\world\fog.h">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\world\lightmap.h">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\world\sky.h">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\world\bullettrace.h">
+      <Filter>source\features\visuals\local\world</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\crosshair.h">
+      <Filter>source\features\visuals\local</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\fov.h">
+      <Filter>source\features\visuals\local</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\thirdperson.h">
+      <Filter>source\features\visuals\local</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\tracegrenade.h">
+      <Filter>source\features\visuals\local</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\light\studio.h">
+      <Filter>source\features\visuals\light</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\light\light.h">
+      <Filter>source\features\visuals\light</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\esp\hitboxes.h">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\esp\radar.h">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\esp\snaplines.h">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\esp\esp.h">
+      <Filter>source\features\visuals\esp</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\aimbot.h">
+      <Filter>source\features</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui\guiwindowpop.h">
+      <Filter>source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui\gui.h">
+      <Filter>source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui\guiwindow.h">
+      <Filter>source\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\lua\luabind.h">
+      <Filter>source\features\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\weapons.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\color.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\strings.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vectors\QAngle.h">
+      <Filter>source\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vectors\Vector.h">
+      <Filter>source\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="source\offsets\offset.h">
+      <Filter>source\offsets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\modelhitbox.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\parsemsg.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\textures.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\trace.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\stringfinder.h">
+      <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\Map.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\RefCountedObject.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\RefCountedPtr.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\UnorderedMap.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\Vector.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\List.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\LuaBridge.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\dump.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\FuncTraits.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Iterator.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\LuaException.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\LuaHelpers.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\LuaRef.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Namespace.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Security.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Stack.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\TypeList.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\TypeTraits.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Userdata.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\CFunctions.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\ClassInfo.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Config.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\luabridge\detail\Constructor.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\xor\xorstr.h">
+      <Filter>libs\xor</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\vm\VMProtectSDK.h">
+      <Filter>libs\vm</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\detours\detours.h">
+      <Filter>libs\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\reflective\ReflectiveDLLInjection.h">
+      <Filter>libs\reflective</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\reflective\ReflectiveLoader.h">
+      <Filter>libs\reflective</Filter>
+    </ClInclude>
+    <ClInclude Include="source\player.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\usermsg.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\opengl.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\other\smth\interface.h">
+      <Filter>libs\other</Filter>
+    </ClInclude>
+    <ClInclude Include="source\other\smth\keydefs.h">
+      <Filter>libs\other</Filter>
+    </ClInclude>
+    <ClInclude Include="source\other\smth\defs.h">
+      <Filter>libs\other</Filter>
+    </ClInclude>
+    <ClInclude Include="source\other\smth\gl3winit.h">
+      <Filter>libs\other</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\ltm.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lua.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lua.hpp">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\luaconf.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lualib.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lundump.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lvm.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lzio.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lapi.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lauxlib.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lcode.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lctype.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\ldebug.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\ldo.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lfunc.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lgc.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\ljumptab.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\llex.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\llimits.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lmem.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lobject.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lopcodes.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lopnames.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lparser.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lprefix.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lstate.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\lstring.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\lua\ltable.h">
+      <Filter>libs\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\bass\dll.h">
+      <Filter>libs\bass</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\bass\bass.h">
+      <Filter>libs\bass</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\image_DXT.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\image_helper.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imconfig.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_impl_dx9.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_impl_opengl2.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_impl_opengl3.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_impl_win32.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_internal.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imstb_rectpack.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imstb_textedit.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imstb_truetype.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\khrplatform.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\soil.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\stb_image_aug.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\stb_rect_pack.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\stb_textedit.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\stb_truetype.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\stbi_DDS_aug.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\stbi_DDS_aug_c.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\gl.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\gl3w.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\glcorearb.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\glu.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\visuals\local\removals\hands.h">
+      <Filter>source\features\visuals\local\removals</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\lua\lua54.lib">
+      <Filter>libs\lua</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

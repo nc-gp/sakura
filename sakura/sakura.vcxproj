@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName />
+    <SccLocalPath />
+    <ProjectGuid>{24F343A3-4BE5-4300-A129-3CBD7B511F65}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>sakura</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <LLVMToolsVersion>14.0.6</LLVMToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\sakura\</OutDir>
+    <IntDir>.\release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
+    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.obj.enc;*.ilk;*.ipdb;*.iobj;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
+    <TargetName>sakura</TargetName>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\sakura\</OutDir>
+    <IntDir>.\release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
+    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.obj.enc;*.ilk;*.ipdb;*.iobj;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
+    <ExecutablePath>$(VC_ExecutablePath_x86);$(CommonExecutablePath);$(DXSDK_DIR)Utilities\bin\x86</ExecutablePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include;$(SolutionDir)sakura/lua</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)Lib\x86</LibraryPath>
+    <TargetName>sakura</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HACK_EXPORTS;REFLECTIVEDLLINJECTION_VIA_LOADREMOTELIBRARYR;REFLECTIVEDLLINJECTION_CUSTOM_DLLMAIN;WIN_X86;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\release\</AssemblerListingLocation>
+      <ObjectFileName>.\release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\release\</ProgramDataBaseFileName>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)libs\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>28159;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Release\hack.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\release\hack.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LinkDLL>true</LinkDLL>
+      <SubSystem>Console</SubSystem>
+      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>winmm.lib;odbc32.lib;odbccp32.lib;opengl32.lib;$(ProjectDir)libs\detours\detours.lib;$(ProjectDir)libs\lua\lua54.lib;$(ProjectDir)libs\vm\VMProtectSDK32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateMapFile>false</GenerateMapFile>
+      <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HACK_EXPORTS;REFLECTIVEDLLINJECTION_VIA_LOADREMOTELIBRARYR;REFLECTIVEDLLINJECTION_CUSTOM_DLLMAIN;WIN_X86;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\release\</AssemblerListingLocation>
+      <ObjectFileName>.\release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\release\</ProgramDataBaseFileName>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>client.h</PrecompiledHeaderFile>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Release\hack.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\release\hack.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <LinkDLL>true</LinkDLL>
+      <SubSystem>Console</SubSystem>
+      <IgnoreSpecificDefaultLibraries>libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <OutputFile>sakura\sakura.dll</OutputFile>
+      <AdditionalDependencies>winmm.lib;odbc32.lib;odbccp32.lib;opengl32.lib;$(ProjectDir)resources\lua54.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <ProgramDatabaseFile>hack/sakura.pdb</ProgramDatabaseFile>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="libs\bass\dll.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\bass\dll_image.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\gl3w.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\image_DXT.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\image_helper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_dx9.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_opengl2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_opengl3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\soil.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\imgui\stb_image_aug.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lapi.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lauxlib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lbaselib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lcode.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lcorolib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lctype.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldblib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldebug.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldo.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ldump.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lfunc.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lgc.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\linit.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\liolib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\llex.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lmathlib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lmem.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\loadlib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lobject.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lopcodes.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\loslib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lparser.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lstate.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lstring.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lstrlib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ltable.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ltablib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\ltm.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lundump.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lutf8lib.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lvm.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\lua\lzio.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libs\reflective\ReflectiveLoader.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\client.cpp" />
+    <ClCompile Include="source\config\cvar.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\aimbot.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\bhop.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\fastrun.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\groundstrafe.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\jumpbug.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\hns\strafe.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\lua\luabind.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\afk.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\chatspammer.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\fakelatency.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\idhook.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\namestealer.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\skipframes.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\snapshot.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\misc\steamid.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\antiaim.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\autoroute.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\fakelag.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\norecoil.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\nospread.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\sound\killsound.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\sound\sound.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\sound\soundesp.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\chams\chams.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\chams\studiomodelrender.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\esp.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\hitboxes.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\radar.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\esp\snaplines.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\light\light.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\light\studio.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\crosshair.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\fov.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\removals\fade.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\removals\hands.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\removals\scope.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\skins\skins.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\skins\viewmodel.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\thirdperson.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\tracegrenade.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\bullettrace.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\deathmark.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\fog.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\lightmap.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\local\world\sky.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\menu.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\menu_widgets.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_colors_tab.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_legit_tab.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_misc_tab.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_rage_tab.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\menu\tabs\menu_visuals_tab.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\visuals\toasts\toasts.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\gui\gui.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\gui\guiwindow.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\gui\guiwindowpop.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\color.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\modelhitbox.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\parsemsg.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\helpers\stringfinder.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\strings.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\textures.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\trace.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\helpers\weapons.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\offsets\offset.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\opengl.cpp" />
+    <ClCompile Include="source\other\smth\gl3winit.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\other\smth\interface.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\player.cpp" />
+    <ClCompile Include="source\sakura_precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\usermsg.cpp" />
+    <ClCompile Include="source\vectors\QAngle.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\vectors\Vector.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="libs\bass\bass.h" />
+    <ClInclude Include="libs\bass\dll.h" />
+    <ClInclude Include="libs\detours\detours.h" />
+    <ClInclude Include="libs\imgui\gl.h" />
+    <ClInclude Include="libs\imgui\gl3w.h" />
+    <ClInclude Include="libs\imgui\glcorearb.h" />
+    <ClInclude Include="libs\imgui\glu.h" />
+    <ClInclude Include="libs\imgui\image_DXT.h" />
+    <ClInclude Include="libs\imgui\image_helper.h" />
+    <ClInclude Include="libs\imgui\imconfig.h" />
+    <ClInclude Include="libs\imgui\imgui.h" />
+    <ClInclude Include="libs\imgui\imgui_impl_dx9.h" />
+    <ClInclude Include="libs\imgui\imgui_impl_opengl2.h" />
+    <ClInclude Include="libs\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="libs\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="libs\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="libs\imgui\imgui_internal.h" />
+    <ClInclude Include="libs\imgui\imstb_rectpack.h" />
+    <ClInclude Include="libs\imgui\imstb_textedit.h" />
+    <ClInclude Include="libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="libs\imgui\khrplatform.h" />
+    <ClInclude Include="libs\imgui\soil.h" />
+    <ClInclude Include="libs\imgui\stbi_DDS_aug.h" />
+    <ClInclude Include="libs\imgui\stbi_DDS_aug_c.h" />
+    <ClInclude Include="libs\imgui\stb_image_aug.h" />
+    <ClInclude Include="libs\imgui\stb_rect_pack.h" />
+    <ClInclude Include="libs\imgui\stb_textedit.h" />
+    <ClInclude Include="libs\imgui\stb_truetype.h" />
+    <ClInclude Include="libs\luabridge\detail\CFunctions.h" />
+    <ClInclude Include="libs\luabridge\detail\ClassInfo.h" />
+    <ClInclude Include="libs\luabridge\detail\Config.h" />
+    <ClInclude Include="libs\luabridge\detail\Constructor.h" />
+    <ClInclude Include="libs\luabridge\detail\dump.h" />
+    <ClInclude Include="libs\luabridge\detail\FuncTraits.h" />
+    <ClInclude Include="libs\luabridge\detail\Iterator.h" />
+    <ClInclude Include="libs\luabridge\detail\LuaException.h" />
+    <ClInclude Include="libs\luabridge\detail\LuaHelpers.h" />
+    <ClInclude Include="libs\luabridge\detail\LuaRef.h" />
+    <ClInclude Include="libs\luabridge\detail\Namespace.h" />
+    <ClInclude Include="libs\luabridge\detail\Security.h" />
+    <ClInclude Include="libs\luabridge\detail\Stack.h" />
+    <ClInclude Include="libs\luabridge\detail\TypeList.h" />
+    <ClInclude Include="libs\luabridge\detail\TypeTraits.h" />
+    <ClInclude Include="libs\luabridge\detail\Userdata.h" />
+    <ClInclude Include="libs\luabridge\List.h" />
+    <ClInclude Include="libs\luabridge\LuaBridge.h" />
+    <ClInclude Include="libs\luabridge\Map.h" />
+    <ClInclude Include="libs\luabridge\RefCountedObject.h" />
+    <ClInclude Include="libs\luabridge\RefCountedPtr.h" />
+    <ClInclude Include="libs\luabridge\UnorderedMap.h" />
+    <ClInclude Include="libs\luabridge\Vector.h" />
+    <ClInclude Include="libs\lua\lapi.h" />
+    <ClInclude Include="libs\lua\lauxlib.h" />
+    <ClInclude Include="libs\lua\lcode.h" />
+    <ClInclude Include="libs\lua\lctype.h" />
+    <ClInclude Include="libs\lua\ldebug.h" />
+    <ClInclude Include="libs\lua\ldo.h" />
+    <ClInclude Include="libs\lua\lfunc.h" />
+    <ClInclude Include="libs\lua\lgc.h" />
+    <ClInclude Include="libs\lua\ljumptab.h" />
+    <ClInclude Include="libs\lua\llex.h" />
+    <ClInclude Include="libs\lua\llimits.h" />
+    <ClInclude Include="libs\lua\lmem.h" />
+    <ClInclude Include="libs\lua\lobject.h" />
+    <ClInclude Include="libs\lua\lopcodes.h" />
+    <ClInclude Include="libs\lua\lopnames.h" />
+    <ClInclude Include="libs\lua\lparser.h" />
+    <ClInclude Include="libs\lua\lprefix.h" />
+    <ClInclude Include="libs\lua\lstate.h" />
+    <ClInclude Include="libs\lua\lstring.h" />
+    <ClInclude Include="libs\lua\ltable.h" />
+    <ClInclude Include="libs\lua\ltm.h" />
+    <ClInclude Include="libs\lua\lua.h" />
+    <ClInclude Include="libs\lua\lua.hpp" />
+    <ClInclude Include="libs\lua\luaconf.h" />
+    <ClInclude Include="libs\lua\lualib.h" />
+    <ClInclude Include="libs\lua\lundump.h" />
+    <ClInclude Include="libs\lua\lvm.h" />
+    <ClInclude Include="libs\lua\lzio.h" />
+    <ClInclude Include="libs\reflective\ReflectiveDLLInjection.h" />
+    <ClInclude Include="libs\reflective\ReflectiveLoader.h" />
+    <ClInclude Include="libs\vm\VMProtectSDK.h" />
+    <ClInclude Include="libs\xor\xorstr.h" />
+    <ClInclude Include="source\client.h" />
+    <ClInclude Include="source\config\cvar.h" />
+    <ClInclude Include="source\features\aimbot.h" />
+    <ClInclude Include="source\features\hns\bhop.h" />
+    <ClInclude Include="source\features\hns\fastrun.h" />
+    <ClInclude Include="source\features\hns\groundstrafe.h" />
+    <ClInclude Include="source\features\hns\jumpbug.h" />
+    <ClInclude Include="source\features\hns\strafe.h" />
+    <ClInclude Include="source\features\lua\luabind.h" />
+    <ClInclude Include="source\features\misc\afk.h" />
+    <ClInclude Include="source\features\misc\chatspammer.h" />
+    <ClInclude Include="source\features\misc\fakelatency.h" />
+    <ClInclude Include="source\features\misc\idhook.h" />
+    <ClInclude Include="source\features\misc\namestealer.h" />
+    <ClInclude Include="source\features\misc\skipframes.h" />
+    <ClInclude Include="source\features\misc\snapshot.h" />
+    <ClInclude Include="source\features\misc\steamid.h" />
+    <ClInclude Include="source\features\rage\antiaim.h" />
+    <ClInclude Include="source\features\rage\autoroute.h" />
+    <ClInclude Include="source\features\rage\fakelag.h" />
+    <ClInclude Include="source\features\rage\norecoil.h" />
+    <ClInclude Include="source\features\rage\nospread.h" />
+    <ClInclude Include="source\features\sound\killsound.h" />
+    <ClInclude Include="source\features\sound\sound.h" />
+    <ClInclude Include="source\features\sound\soundesp.h" />
+    <ClInclude Include="source\features\visuals\chams\chams.h" />
+    <ClInclude Include="source\features\visuals\chams\studiomodelrender.h" />
+    <ClInclude Include="source\features\visuals\esp\esp.h" />
+    <ClInclude Include="source\features\visuals\esp\hitboxes.h" />
+    <ClInclude Include="source\features\visuals\esp\radar.h" />
+    <ClInclude Include="source\features\visuals\esp\snaplines.h" />
+    <ClInclude Include="source\features\visuals\light\light.h" />
+    <ClInclude Include="source\features\visuals\light\studio.h" />
+    <ClInclude Include="source\features\visuals\local\crosshair.h" />
+    <ClInclude Include="source\features\visuals\local\fov.h" />
+    <ClInclude Include="source\features\visuals\local\removals\fade.h" />
+    <ClInclude Include="source\features\visuals\local\removals\hands.h" />
+    <ClInclude Include="source\features\visuals\local\removals\scope.h" />
+    <ClInclude Include="source\features\visuals\local\skins\skins.h" />
+    <ClInclude Include="source\features\visuals\local\skins\viewmodel.h" />
+    <ClInclude Include="source\features\visuals\local\thirdperson.h" />
+    <ClInclude Include="source\features\visuals\local\tracegrenade.h" />
+    <ClInclude Include="source\features\visuals\local\world\bullettrace.h" />
+    <ClInclude Include="source\features\visuals\local\world\deathmark.h" />
+    <ClInclude Include="source\features\visuals\local\world\fog.h" />
+    <ClInclude Include="source\features\visuals\local\world\lightmap.h" />
+    <ClInclude Include="source\features\visuals\local\world\sky.h" />
+    <ClInclude Include="source\features\visuals\menu\menu.h" />
+    <ClInclude Include="source\features\visuals\menu\menu_widgets.h" />
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_colors_tab.h" />
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_legit_tab.h" />
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_misc_tab.h" />
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_rage_tab.h" />
+    <ClInclude Include="source\features\visuals\menu\tabs\menu_visuals_tab.h" />
+    <ClInclude Include="source\features\visuals\toasts\toasts.h" />
+    <ClInclude Include="source\gui\gui.h" />
+    <ClInclude Include="source\gui\guiwindow.h" />
+    <ClInclude Include="source\gui\guiwindowpop.h" />
+    <ClInclude Include="source\helpers\color.h" />
+    <ClInclude Include="source\helpers\modelhitbox.h" />
+    <ClInclude Include="source\helpers\parsemsg.h" />
+    <ClInclude Include="source\helpers\stringfinder.h" />
+    <ClInclude Include="source\helpers\strings.h" />
+    <ClInclude Include="source\helpers\textures.h" />
+    <ClInclude Include="source\helpers\trace.h" />
+    <ClInclude Include="source\helpers\weapons.h" />
+    <ClInclude Include="source\offsets\offset.h" />
+    <ClInclude Include="source\opengl.h" />
+    <ClInclude Include="source\other\smth\defs.h" />
+    <ClInclude Include="source\other\smth\gl3winit.h" />
+    <ClInclude Include="source\other\smth\interface.h" />
+    <ClInclude Include="source\other\smth\keydefs.h" />
+    <ClInclude Include="source\player.h" />
+    <ClInclude Include="source\usermsg.h" />
+    <ClInclude Include="source\vectors\QAngle.h" />
+    <ClInclude Include="source\vectors\Vector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\lua\lua54.lib" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
