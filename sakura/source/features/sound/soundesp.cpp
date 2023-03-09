@@ -53,6 +53,32 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 			}
 		}
 	}
+
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
+	{
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND);
+		for (const auto& callback : callbacks)
+		{
+			try
+			{
+				callback(entid, szSoundFile, fOrigin, fVolume);
+			}
+			catch (luabridge::LuaException const& error)
+			{
+				if (script.GetState())
+				{
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
+				}
+			}
+		}
+	}
+
 	PreS_DynamicSound_s(entid, entchannel, szSoundFile, fOrigin, fVolume, fAttenuation, iTimeOff, iPitch);
 }
 
@@ -75,8 +101,8 @@ void DrawPlayerSoundIndexEsp()
 
 		if (cvar.visual_sound_steps)
 		{
-			float step = M_PI * 2.0f / 15;
-			float radius = 13.0f * (1200 - (GetTickCount() - sound_index.timestamp)) / 1200;
+			float step = M_PI * 2.0f / cvar.visual_sound_steps_segments;
+			float radius = cvar.visual_sound_steps_radius * (1200 - (GetTickCount() - sound_index.timestamp)) / 1200;
 			Vector position = Vector(sound_index.origin.x, sound_index.origin.y, sound_index.origin.z - 36);
 			for (float i = 0; i < (IM_PI * 2.0f); i += step)
 			{
@@ -85,7 +111,9 @@ void DrawPlayerSoundIndexEsp()
 				float vStart[2], vEnd[2];
 
 				if (WorldToScreen(vPointStart, vStart) && WorldToScreen(vPointEnd, vEnd))
-					ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(vStart[0]), IM_ROUND(vStart[1]) }, { IM_ROUND(vEnd[0]), IM_ROUND(vEnd[1]) }, ImColor(soundEspColor.r, soundEspColor.g, soundEspColor.b, soundEspColor.a));
+				{
+					ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(vStart[0]), IM_ROUND(vStart[1]) }, { IM_ROUND(vEnd[0]), IM_ROUND(vEnd[1]) }, ImColor(soundEspColor.r, soundEspColor.g, soundEspColor.b, soundEspColor.a), cvar.visual_sound_steps_segment_thickness);
+				}
 			}
 		}
 
@@ -118,8 +146,8 @@ void DrawPlayerSoundNoIndexEsp()
 	{
 		if (cvar.visual_sound_steps)
 		{
-			float step = IM_PI * 2.0f / 15;
-			float radius = 13.0f * (1200 - (GetTickCount() - sound_no_index.timestamp)) / 1200;
+			float step = IM_PI * 2.0f / cvar.visual_sound_steps_segments;
+			float radius = cvar.visual_sound_steps_radius * (1200 - (GetTickCount() - sound_no_index.timestamp)) / 1200;
 			Vector position = Vector(sound_no_index.origin.x, sound_no_index.origin.y, sound_no_index.origin.z - 36);
 			for (float i = 0; i < (IM_PI * 2.0f); i += step)
 			{
@@ -127,7 +155,7 @@ void DrawPlayerSoundNoIndexEsp()
 				Vector vPointEnd(radius * cosf(i + step) + position.x, radius * sinf(i + step) + position.y, position.z);
 				float vStart[2], vEnd[2];
 				if (WorldToScreen(vPointStart, vStart) && WorldToScreen(vPointEnd, vEnd))
-					ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(vStart[0]), IM_ROUND(vStart[1]) }, { IM_ROUND(vEnd[0]), IM_ROUND(vEnd[1]) }, ImColor(soundStepsColor.r, soundStepsColor.g, soundStepsColor.b, soundStepsColor.a));
+					ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(vStart[0]), IM_ROUND(vStart[1]) }, { IM_ROUND(vEnd[0]), IM_ROUND(vEnd[1]) }, ImColor(soundStepsColor.r, soundStepsColor.g, soundStepsColor.b, soundStepsColor.a), cvar.visual_sound_steps_segment_thickness);
 			}
 		}
 		if (GetTickCount() - sound_no_index.timestamp > 300)

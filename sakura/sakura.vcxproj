@@ -684,6 +684,9 @@
     <ClInclude Include="source\features\visuals\menu\tabs\menu_rage_tab.h" />
     <ClInclude Include="source\features\visuals\menu\tabs\menu_visuals_tab.h" />
     <ClInclude Include="source\features\visuals\toasts\toasts.h" />
+    <ClInclude Include="source\fonts\font.h" />
+    <ClInclude Include="source\fonts\icons.h" />
+    <ClInclude Include="source\fonts\weapons.h" />
     <ClInclude Include="source\gui\gui.h" />
     <ClInclude Include="source\gui\guiwindow.h" />
     <ClInclude Include="source\gui\guiwindowpop.h" />

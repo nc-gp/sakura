@@ -15,6 +15,7 @@ namespace Sakura
 				void World();
 				void Backtrack();
 				void Local();
+				void Menu();
 			};
 		};
 	};

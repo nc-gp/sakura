@@ -15,6 +15,7 @@ ImFont* Sakura::Menu::Fonts::defaultFont = nullptr;
 ImFont* Sakura::Menu::Fonts::icons = nullptr;
 ImFont* Sakura::Menu::Fonts::titleTabFont = nullptr;
 ImFont* Sakura::Menu::Fonts::titleCheatFont = nullptr;
+ImFont* Sakura::Menu::Fonts::weaponsFont = nullptr;
 
 char nickname[32];
 char chatspam[128];
@@ -593,6 +594,11 @@ void DrawCategoryButtons()
 
 		if (Sakura::Menu::Widgets::SubTab(/*Local*/XorStr<0x5D, 6, 0x466B0D2F>("\x11\x31\x3C\x01\x0D" + 0x466B0D2F).s, ImVec2(150, 25), colorstab == 6 ? true : false))
 			colorstab = 6;
+
+		ImGui::Spacing();
+
+		if (Sakura::Menu::Widgets::SubTab(/*Menu*/XorStr<0x28, 5, 0x065EA3AD>("\x65\x4C\x44\x5E" + 0x065EA3AD).s, ImVec2(150, 25), colorstab == 7 ? true : false))
+			colorstab = 7;
 		break;
 	}
 }
@@ -645,30 +651,130 @@ void DrawTab()
 		break;
 	case 1:
 
-		if (legitbottab == 0 || legitbottab == 1 || legitbottab == 2)
+		if (legitbottab == 0 || legitbottab == 1 || legitbottab == 2 || legitbottab == 3)
 		{
 			CheckSubSection(cvar.menu_legit_global_section, cvar.menu_legit_sub_section);
 
-			ImGui::BeginChild(/*##lweapon1*/XorStr<0xBC, 11, 0xB95E8E0E>("\x9F\x9E\xD2\xC8\xA5\xA0\xB2\xAC\xAA\xF4" + 0xB95E8E0E).s, ImVec2(250, 40));
-			{
-				ImGui::PushItemWidth(Sakura::Menu::itemWidth + 5);
-				Sakura::Menu::Widgets::Combo(/*Weapon category*/XorStr<0x37, 16, 0x572D301F>("\x60\x5D\x58\x4A\x54\x52\x1D\x5D\x5E\x34\x24\x25\x2C\x36\x3C" + 0x572D301F).s, &cvar.menu_legit_global_section, /*Pistols\0Snipers\0Rifles\0Shotguns\0Machine guns\0Submachine guns\0*/XorStr<0xC4, 62, 0xD4C50B6A>("\x94\xAC\xB5\xB3\xA7\xA5\xB9\xCB\x9F\xA3\xA7\xBF\xB5\xA3\xA1\xD3\x86\xBC\xB0\xBB\xBD\xAA\xDA\x88\xB4\xB2\xAA\xB8\x95\x8F\x91\xE3\xA9\x84\x85\x8F\x81\x87\x8F\xCB\x8B\x98\x80\x9C\xF0\xA2\x87\x91\x99\x94\x95\x9F\x91\x97\x9F\xDB\x9B\x88\x90\x8C\x00" + 0xD4C50B6A).s);
-				ImGui::PopItemWidth();
-			}
-			ImGui::EndChild();
+			if (Sakura::Menu::Widgets::SubSubTab(/*J*/XorStr<0x07, 2, 0x1193F7AB>("\x4D" + 0x1193F7AB).s, /*Pistols*/XorStr<0xD1, 8, 0x2478CA3A>("\x81\xBB\xA0\xA0\xBA\xBA\xA4" + 0x2478CA3A).s, ImVec2(70, 30), cvar.menu_legit_global_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+				cvar.menu_legit_global_section = 0;
 			ImGui::SameLine();
-			ImGui::BeginChild(/*##lweapon2*/XorStr<0x2E, 11, 0xAE3DD1A8>("\x0D\x0C\x5C\x46\x57\x52\x44\x5A\x58\x05" + 0xAE3DD1A8).s, ImVec2(250, 40));
+			if (Sakura::Menu::Widgets::SubSubTab(/*S*/XorStr<0x44, 2, 0x53B8FCBC>("\x17" + 0x53B8FCBC).s, /*Snipers*/XorStr<0x9D, 8, 0x88A36CA2>("\xCE\xF0\xF6\xD0\xC4\xD0\xD0" + 0x88A36CA2).s, ImVec2(80, 30), cvar.menu_legit_global_section == 1 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+				cvar.menu_legit_global_section = 1;
+			ImGui::SameLine();
+			if (Sakura::Menu::Widgets::SubSubTab(/*A*/XorStr<0xA6, 2, 0x78CCF0CB>("\xE7" + 0x78CCF0CB).s, /*Rifles*/XorStr<0x82, 7, 0x1BD311A6>("\xD0\xEA\xE2\xE9\xE3\xF4" + 0x1BD311A6).s, ImVec2(80, 30), cvar.menu_legit_global_section == 2 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+				cvar.menu_legit_global_section = 2;
+			ImGui::SameLine();
+			if (Sakura::Menu::Widgets::SubSubTab(/*P*/XorStr<0xE9, 2, 0xD848AC79>("\xB9" + 0xD848AC79).s, /*Shotguns*/XorStr<0xE5, 9, 0x98726950>("\xB6\x8E\x88\x9C\x8E\x9F\x85\x9F" + 0x98726950).s, ImVec2(80, 30), cvar.menu_legit_global_section == 3 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+				cvar.menu_legit_global_section = 3;
+			ImGui::SameLine();
+			if (Sakura::Menu::Widgets::SubSubTab(/*L*/XorStr<0x84, 2, 0x6BCA3C62>("\xC8" + 0x6BCA3C62).s, /*Machine guns*/XorStr<0x28, 13, 0xEBD54C47>("\x65\x48\x49\x43\x45\x43\x4B\x0F\x57\x44\x5C\x40" + 0xEBD54C47).s, ImVec2(80, 30), cvar.menu_legit_global_section == 4 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+				cvar.menu_legit_global_section = 4;
+			ImGui::SameLine();
+			if (Sakura::Menu::Widgets::SubSubTab(/*N*/XorStr<0x77, 2, 0xA2A289CA>("\x39" + 0xA2A289CA).s, /*Submachine guns*/XorStr<0x10, 16, 0xBEB79C29>("\x43\x64\x70\x7E\x75\x76\x7E\x7E\x76\x7C\x3A\x7C\x69\x73\x6D" + 0xBEB79C29).s, ImVec2(85, 30), cvar.menu_legit_global_section == 5 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+				cvar.menu_legit_global_section = 5;
+
+			switch (static_cast<int>(cvar.menu_legit_global_section))
 			{
-				ImGui::PushItemWidth(Sakura::Menu::itemWidth + 5);
-				if (cvar.menu_legit_global_section == 0) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x8C, 7, 0x59A0CCCD>("\xDB\xE8\xEF\xFF\xFF\xFF" + 0x59A0CCCD).s, &cvar.menu_legit_sub_section, /*Glock-18\0P228\0Deagle\0Dual Elites\0Five-seven\0Usp\0*/XorStr<0x02, 49, 0x42BA9433>("\x45\x6F\x6B\x66\x6D\x2A\x39\x31\x0A\x5B\x3E\x3F\x36\x0F\x54\x74\x73\x74\x78\x70\x16\x53\x6D\x78\x76\x3B\x59\x71\x77\x6B\x45\x52\x22\x65\x4D\x53\x43\x0A\x5B\x4C\x5C\x4E\x42\x2D\x7B\x5C\x40\x31" + 0x42BA9433).s);
-				if (cvar.menu_legit_global_section == 1) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xA3, 7, 0x4BC745F0>("\xF4\xC1\xC4\xD6\xC8\xC6" + 0x4BC745F0).s, &cvar.menu_legit_sub_section, /*Awp\0Scout\0G3SG1\0SG550\0*/XorStr<0x3B, 23, 0x5B25F9E0>("\x7A\x4B\x4D\x3E\x6C\x23\x2E\x37\x37\x44\x02\x75\x14\x0F\x78\x4A\x18\x0B\x78\x7B\x7F\x50" + 0x5B25F9E0).s);
-				if (cvar.menu_legit_global_section == 2) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xFE, 7, 0xB574A82A>("\xA9\x9A\x61\x71\x6D\x6D" + 0xB574A82A).s, &cvar.menu_legit_sub_section, /*M4A1\0Galil\0Famas\0Aug\0AK-47\0SG552\0*/XorStr<0xA1, 34, 0xBD2E952D>("\xEC\x96\xE2\x95\xA5\xE1\xC6\xC4\xC0\xC6\xAB\xEA\xCC\xC3\xCE\xC3\xB1\xF3\xC6\xD3\xB5\xF7\xFC\x95\x8D\x8D\xBB\xEF\xFA\x8B\x8A\xF2\xC1" + 0xBD2E952D).s);
-				if (cvar.menu_legit_global_section == 3) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xBF, 7, 0x4D7E9BAF>("\xE8\xA5\xA0\xB2\xAC\xAA" + 0x4D7E9BAF).s, &cvar.menu_legit_sub_section, /*XM1014\0M3\0*/XorStr<0x29, 11, 0x20725BEB>("\x71\x67\x1A\x1C\x1C\x1A\x2F\x7D\x02\x32" + 0x20725BEB).s);
-				if (cvar.menu_legit_global_section == 4) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x73, 7, 0x98922951>("\x24\x11\x14\x06\x18\x16" + 0x98922951).s, &cvar.menu_legit_sub_section, /*M249\0*/XorStr<0xEA, 6, 0x0F7F0EC4>("\xA7\xD9\xD8\xD4\xEE" + 0x0F7F0EC4).s);
-				if (cvar.menu_legit_global_section == 5) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x52, 7, 0x6116DB37>("\x05\x36\x35\x25\x39\x39" + 0x6116DB37).s, &cvar.menu_legit_sub_section, /*Tmp\0P90\0Mp5\0Mac10\0Ump45\0*/XorStr<0xC3, 25, 0x7F14DE9D>("\x97\xA9\xB5\xC6\x97\xF1\xF9\xCA\x86\xBC\xF8\xCE\x82\xB1\xB2\xE3\xE3\xD4\x80\xBB\xA7\xEC\xEC\xDA" + 0x7F14DE9D).s);
-				ImGui::PopItemWidth();
+			case 0: // pistols
+				if (Sakura::Menu::Widgets::SubSubTab(/*J*/XorStr<0x1B, 2, 0x366E25FB>("\x51" + 0x366E25FB).s, /*Glock-18*/XorStr<0x17, 9, 0x3E402049>("\x50\x74\x76\x79\x70\x31\x2C\x26" + 0x3E402049).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 0;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*O*/XorStr<0x34, 2, 0x9579515B>("\x7B" + 0x9579515B).s, /*P-228*/XorStr<0x9C, 6, 0x3D582574>("\xCC\xB0\xAC\xAD\x98" + 0x3D582574).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 1 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 1;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*D*/XorStr<0xBF, 2, 0x0DE185A2>("\xFB" + 0x0DE185A2).s, /*Desert deagle*/XorStr<0x1B, 14, 0xD5566809>("\x5F\x79\x6E\x7B\x6D\x54\x01\x46\x46\x45\x42\x4A\x42" + 0xD5566809).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 2 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 2;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*E*/XorStr<0x46, 2, 0x710B50B5>("\x03" + 0x710B50B5).s, /*Dual berettas*/XorStr<0x59, 14, 0x50365BA0>("\x1D\x2F\x3A\x30\x7D\x3C\x3A\x12\x04\x16\x17\x05\x16" + 0x50365BA0).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 3 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 3;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*G*/XorStr<0xF5, 2, 0xEBD96B5F>("\xB2" + 0xEBD96B5F).s, /*Five-seven*/XorStr<0xDB, 11, 0xF64421C8>("\x9D\xB5\xAB\xBB\xF2\x93\x84\x94\x86\x8A" + 0xF64421C8).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 4 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 4;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*U*/XorStr<0x1D, 2, 0x3124DF01>("\x48" + 0x3124DF01).s, /*Usp*/XorStr<0x16, 4, 0xEBCFCC42>("\x43\x64\x68" + 0xEBCFCC42).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 5 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 5;
+				break;
+			case 1: // snipers
+				if (Sakura::Menu::Widgets::SubSubTab(/*C*/XorStr<0x75, 2, 0xB0A8FE51>("\x36" + 0xB0A8FE51).s, /*AWP*/XorStr<0xB4, 4, 0xB1983D22>("\xF5\xE2\xE6" + 0xB1983D22).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 0;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*S*/XorStr<0xDD, 2, 0x6A4B0757>("\x8E" + 0x6A4B0757).s, /*Scout*/XorStr<0xCC, 6, 0xBAECF2E6>("\x9F\xAE\xA1\xBA\xA4" + 0xBAECF2E6).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 1 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 1;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*H*/XorStr<0xCE, 2, 0xDF442BCC>("\x86" + 0xDF442BCC).s, /*G3SG1*/XorStr<0x34, 6, 0xA2E62F6B>("\x73\x06\x65\x70\x09" + 0xA2E62F6B).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 2 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 2;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*Q*/XorStr<0x56, 2, 0xFC8F7933>("\x07" + 0xFC8F7933).s, /*SG550*/XorStr<0x7B, 6, 0xA20BE07A>("\x28\x3B\x48\x4B\x4F" + 0xA20BE07A).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 3 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 3;
+				break;
+			case 2: // rifles
+				if (Sakura::Menu::Widgets::SubSubTab(/*K*/XorStr<0xB3, 2, 0xC1C21D22>("\xF8" + 0xC1C21D22).s, /*M4A1*/XorStr<0xCF, 5, 0x62ADDEC7>("\x82\xE4\x90\xE3" + 0x62ADDEC7).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 0;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*I*/XorStr<0xE6, 2, 0x8C2AAD4A>("\xAF" + 0x8C2AAD4A).s, /*Galil*/XorStr<0xBE, 6, 0x84F98779>("\xF9\xDE\xAC\xA8\xAE" + 0x84F98779).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 1 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 1;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*F*/XorStr<0xDD, 2, 0x463E1080>("\x9B" + 0x463E1080).s, /*Famas*/XorStr<0xB0, 6, 0x0B810601>("\xF6\xD0\xDF\xD2\xC7" + 0x0B810601).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 2 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 2;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*B*/XorStr<0x3D, 2, 0x42616576>("\x7F" + 0x42616576).s, /*Aug*/XorStr<0xEE, 4, 0x17695421>("\xAF\x9A\x97" + 0x17695421).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 3 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 3;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*A*/XorStr<0x6B, 2, 0x982B48B2>("\x2A" + 0x982B48B2).s, /*AK-47*/XorStr<0xBE, 6, 0x083D2F4B>("\xFF\xF4\xED\xF5\xF5" + 0x083D2F4B).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 4 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 4;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*R*/XorStr<0xD0, 2, 0x912A7965>("\x82" + 0x912A7965).s, /*SG552*/XorStr<0xD6, 6, 0x6B217C62>("\x85\x90\xED\xEC\xE8" + 0x6B217C62).s, ImVec2(80, 30), cvar.menu_legit_sub_section == 5 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 5;
+				break;
+			case 3: // shotguns
+				if (Sakura::Menu::Widgets::SubSubTab(/*V*/XorStr<0x18,2,0xC145890E>("\x4E"+0xC145890E).s, /*XM1014*/XorStr<0xA9, 7, 0x9AA15A7B>("\xF1\xE7\x9A\x9C\x9C\x9A" + 0x9AA15A7B).s, ImVec2(265, 30), cvar.menu_legit_sub_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 0;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*P*/XorStr<0x76, 2, 0x10C93ABC>("\x26" + 0x10C93ABC).s, /*M3*/XorStr<0x6D, 3, 0xFCD02E83>("\x20\x5D" + 0xFCD02E83).s, ImVec2(265, 30), cvar.menu_legit_sub_section == 1 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 1;
+				break;
+			case 4: // machine guns
+				if (Sakura::Menu::Widgets::SubSubTab(/*L*/XorStr<0x3B, 2, 0xFE306131>("\x77" + 0xFE306131).s, /*M249*/XorStr<0x4A, 5, 0xB2C14093>("\x07\x79\x78\x74" + 0xB2C14093).s, ImVec2(530, 30), cvar.menu_legit_sub_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 0;
+				break;
+			case 5: // submachine guns
+				if (Sakura::Menu::Widgets::SubSubTab(/*a*/XorStr<0x8D, 2, 0x1EB76F2E>("\xEC" + 0x1EB76F2E).s, /*Tmp*/XorStr<0xFB, 4, 0xF29825C0>("\xAF\x91\x8D" + 0xF29825C0).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 0 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 0;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*N*/XorStr<0xB3, 2, 0xC1A727BC>("\xFD" + 0xC1A727BC).s, /*P90*/XorStr<0x50, 4, 0xCFBC0891>("\x00\x68\x62" + 0xCFBC0891).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 1 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 1;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*b*/XorStr<0xEC, 2, 0x5027F728>("\x8E" + 0x5027F728).s, /*Mp5*/XorStr<0xEC, 4, 0xB8B980A2>("\xA1\x9D\xDB" + 0xB8B980A2).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 2 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 2;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*M*/XorStr<0x6A, 2, 0x81E72E7A>("\x27" + 0x81E72E7A).s, /*Mac10*/XorStr<0xF1, 6, 0xA84884ED>("\xBC\x93\x90\xC5\xC5" + 0xA84884ED).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 3 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 3;
+				ImGui::SameLine();
+				if (Sakura::Menu::Widgets::SubSubTab(/*T*/XorStr<0x42, 2, 0xE48746C6>("\x16" + 0xE48746C6).s, /*Ump45*/XorStr<0x60, 6, 0xC92D2960>("\x35\x0C\x12\x57\x51" + 0xC92D2960).s, ImVec2(120, 30), cvar.menu_legit_sub_section == 4 ? true : false, Sakura::Menu::Fonts::weaponsFont))
+					cvar.menu_legit_sub_section = 4;
+				break;
 			}
-			ImGui::EndChild();
+
+			//ImGui::BeginChild(/*##lweapon1*/XorStr<0xBC, 11, 0xB95E8E0E>("\x9F\x9E\xD2\xC8\xA5\xA0\xB2\xAC\xAA\xF4" + 0xB95E8E0E).s, ImVec2(250, 40));
+			//{
+			//	//ImGui::PushItemWidth(Sakura::Menu::itemWidth + 5);
+			//	//Sakura::Menu::Widgets::Combo(/*Weapon category*/XorStr<0x37, 16, 0x572D301F>("\x60\x5D\x58\x4A\x54\x52\x1D\x5D\x5E\x34\x24\x25\x2C\x36\x3C" + 0x572D301F).s, &cvar.menu_legit_global_section, /*Pistols\0Snipers\0Rifles\0Shotguns\0Machine guns\0Submachine guns\0*/XorStr<0xC4, 62, 0xD4C50B6A>("\x94\xAC\xB5\xB3\xA7\xA5\xB9\xCB\x9F\xA3\xA7\xBF\xB5\xA3\xA1\xD3\x86\xBC\xB0\xBB\xBD\xAA\xDA\x88\xB4\xB2\xAA\xB8\x95\x8F\x91\xE3\xA9\x84\x85\x8F\x81\x87\x8F\xCB\x8B\x98\x80\x9C\xF0\xA2\x87\x91\x99\x94\x95\x9F\x91\x97\x9F\xDB\x9B\x88\x90\x8C\x00" + 0xD4C50B6A).s);
+			//	//ImGui::PopItemWidth();
+			//}
+			//ImGui::EndChild();
+			//ImGui::SameLine();
+			//ImGui::BeginChild(/*##lweapon2*/XorStr<0x2E, 11, 0xAE3DD1A8>("\x0D\x0C\x5C\x46\x57\x52\x44\x5A\x58\x05" + 0xAE3DD1A8).s, ImVec2(250, 40));
+			//{
+			//	ImGui::PushItemWidth(Sakura::Menu::itemWidth + 5);
+			//	if (cvar.menu_legit_global_section == 0) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x8C, 7, 0x59A0CCCD>("\xDB\xE8\xEF\xFF\xFF\xFF" + 0x59A0CCCD).s, &cvar.menu_legit_sub_section, /*Glock-18\0P228\0Deagle\0Dual Elites\0Five-seven\0Usp\0*/XorStr<0x02, 49, 0x42BA9433>("\x45\x6F\x6B\x66\x6D\x2A\x39\x31\x0A\x5B\x3E\x3F\x36\x0F\x54\x74\x73\x74\x78\x70\x16\x53\x6D\x78\x76\x3B\x59\x71\x77\x6B\x45\x52\x22\x65\x4D\x53\x43\x0A\x5B\x4C\x5C\x4E\x42\x2D\x7B\x5C\x40\x31" + 0x42BA9433).s);
+			//	if (cvar.menu_legit_global_section == 1) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xA3, 7, 0x4BC745F0>("\xF4\xC1\xC4\xD6\xC8\xC6" + 0x4BC745F0).s, &cvar.menu_legit_sub_section, /*Awp\0Scout\0G3SG1\0SG550\0*/XorStr<0x3B, 23, 0x5B25F9E0>("\x7A\x4B\x4D\x3E\x6C\x23\x2E\x37\x37\x44\x02\x75\x14\x0F\x78\x4A\x18\x0B\x78\x7B\x7F\x50" + 0x5B25F9E0).s);
+			//	if (cvar.menu_legit_global_section == 2) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xFE, 7, 0xB574A82A>("\xA9\x9A\x61\x71\x6D\x6D" + 0xB574A82A).s, &cvar.menu_legit_sub_section, /*M4A1\0Galil\0Famas\0Aug\0AK-47\0SG552\0*/XorStr<0xA1, 34, 0xBD2E952D>("\xEC\x96\xE2\x95\xA5\xE1\xC6\xC4\xC0\xC6\xAB\xEA\xCC\xC3\xCE\xC3\xB1\xF3\xC6\xD3\xB5\xF7\xFC\x95\x8D\x8D\xBB\xEF\xFA\x8B\x8A\xF2\xC1" + 0xBD2E952D).s);
+			//	if (cvar.menu_legit_global_section == 3) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xBF, 7, 0x4D7E9BAF>("\xE8\xA5\xA0\xB2\xAC\xAA" + 0x4D7E9BAF).s, &cvar.menu_legit_sub_section, /*XM1014\0M3\0*/XorStr<0x29, 11, 0x20725BEB>("\x71\x67\x1A\x1C\x1C\x1A\x2F\x7D\x02\x32" + 0x20725BEB).s);
+			//	if (cvar.menu_legit_global_section == 4) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x73, 7, 0x98922951>("\x24\x11\x14\x06\x18\x16" + 0x98922951).s, &cvar.menu_legit_sub_section, /*M249\0*/XorStr<0xEA, 6, 0x0F7F0EC4>("\xA7\xD9\xD8\xD4\xEE" + 0x0F7F0EC4).s);
+			//	if (cvar.menu_legit_global_section == 5) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x52, 7, 0x6116DB37>("\x05\x36\x35\x25\x39\x39" + 0x6116DB37).s, &cvar.menu_legit_sub_section, /*Tmp\0P90\0Mp5\0Mac10\0Ump45\0*/XorStr<0xC3, 25, 0x7F14DE9D>("\x97\xA9\xB5\xC6\x97\xF1\xF9\xCA\x86\xBC\xF8\xCE\x82\xB1\xB2\xE3\xE3\xD4\x80\xBB\xA7\xEC\xEC\xDA" + 0x7F14DE9D).s);
+			//	ImGui::PopItemWidth();
+			//}
+			//ImGui::EndChild();
 		}
 		
 		switch (legitbottab)
@@ -787,6 +893,9 @@ void DrawTab()
 		case 6:
 			Sakura::Menu::Tabs::Colors::Local();
 			break;
+		case 7:
+			Sakura::Menu::Tabs::Colors::Menu();
+			break;
 		}
 		break;
 	}
@@ -819,7 +928,7 @@ void DrawMenuWindow()
 	// raining effect
 	ImGui::SetNextWindowSize({ ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y });
 	ImGui::SetNextWindowPos({ 0, 0 });
-	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha - 0.77f);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, cvar.visual_menu_bg_opacity + alpha - 0.77f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::Begin(/*##bgmenu*/XorStr<0xBF, 9, 0x59E6729E>("\x9C\xE3\xA3\xA5\xAE\xA1\xAB\xB3" + 0x59E6729E).s, nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoInputs);
 	{
@@ -940,27 +1049,33 @@ void DrawMenuWindow()
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(2);
-
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU))
+	
+	if (Sakura::Lua::scripts.size() > 0)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
 		ImGui::Begin(/*Sakura - Lua Scripts*/XorStr<0xBB, 21, 0x73438C7B>("\xE8\xDD\xD6\xCB\xCD\xA1\xE1\xEF\xE3\x88\xB0\xA7\xE7\x9B\xAA\xB8\xA2\xBC\xB9\xBD" + 0x73438C7B).s, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-		ImGui::BeginTabBar(/*##slua*/XorStr<0x0D, 7, 0x6D7465C1>("\x2E\x2D\x7C\x7C\x64\x73" + 0x6D7465C1).s, ImGuiTabBarFlags_FittingPolicyScroll | ImGuiTabBarFlags_NoTooltip);
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
-		for (unsigned int i = 0; i < v.size(); i++)
+		ImGui::BeginTabBar(/*luascripts*/XorStr<0xCE, 11, 0x0006A541>("\xA2\xBA\xB1\xA2\xB1\xA1\xBD\xA5\xA2\xA4" + 0x0006A541).s, ImGuiTabBarFlags_NoTooltip);
+		for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 		{
-			try
+			auto& script = Sakura::Lua::scripts[i];
+
+			if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU))
+				continue;
+
+			auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
+			for (const auto& callback : callbacks)
 			{
-				v[i]();
-			}
-			catch (luabridge::LuaException const& e)
-			{
-				if (Sakura::Lua::pLuaState)
+				try
 				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
+					callback();
+				}
+				catch (luabridge::LuaException const& error)
+				{
+					if (script.GetState())
+					{
+						LogToFile("Error has occured in the lua: %s", error.what());
+						script.RemoveAllCallbacks();
+					}
 				}
 			}
 		}
@@ -980,15 +1095,27 @@ void DrawMenuWindow()
 		ImDrawList* draw = ImGui::GetWindowDrawList();
 		ImVec2 pos = ImGui::GetWindowPos();
 
-		draw->AddRectFilled({ pos.x, pos.y }, { pos.x + 720, pos.y + 50 }, ImColor(19, 22, 26, Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Top);
-		draw->AddRectFilled({ pos.x, pos.y + 50 }, { pos.x + 720, pos.y + 490 }, ImColor(25, 30, 35, Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_All);
-		draw->AddRectFilled({ pos.x, pos.y + 470 }, { pos.x + 720, pos.y + 490 }, ImColor(45, 50, 55, Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Bot);
+		// 19, 22, 26
+		// 25, 30, 35
+		// 45, 50, 55
+		draw->AddRectFilled({ pos.x, pos.y }, { pos.x + 720, pos.y + 50 }, ImColor((int)(cvar.visual_menu_color_header[0] * 255), (int)(cvar.visual_menu_color_header[1] * 255), (int)(cvar.visual_menu_color_header[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Top);
+		draw->AddRectFilled({ pos.x, pos.y + 50 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_items[0] * 255), (int)(cvar.visual_menu_color_items[1] * 255), (int)(cvar.visual_menu_color_items[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_All);
+		draw->AddRectFilled({ pos.x, pos.y + 470 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_footer[0] * 255), (int)(cvar.visual_menu_color_footer[1] * 255), (int)(cvar.visual_menu_color_footer[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Bot);
 
 		draw->AddText({ pos.x + 10, pos.y + 470 + 10 - ImGui::CalcTextSize(text).y / 2 }, ImColor(250, 250, 250, Sakura::Menu::currentAlphaFade), text);
 		draw->AddText({ pos.x + 710 - ImGui::CalcTextSize(SAKURA_VERSION).x, pos.y + 470 + 10 - ImGui::CalcTextSize(SAKURA_VERSION).y / 2 }, ImColor(250, 250, 250, Sakura::Menu::currentAlphaFade), SAKURA_VERSION);
 
+		ImGui::PushFont(Sakura::Menu::Fonts::icons);
+		ImGui::SetCursorPos({ 20,25 - ImGui::CalcTextSize(/*P*/XorStr<0x6A, 2, 0x100FA605>("\x3A" + 0x100FA605).s).y / 2 });
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(cvar.visual_menu_color_logo[0], cvar.visual_menu_color_logo[1], cvar.visual_menu_color_logo[2], 1.f));
+		ImGui::Text(/*P*/XorStr<0x6A, 2, 0x100FA605>("\x3A" + 0x100FA605).s);
+		ImGui::PopStyleColor();
+		ImGui::PopFont();
+
+		ImGui::SameLine();
+
 		ImGui::PushFont(Sakura::Menu::Fonts::titleCheatFont);
-		ImGui::SetCursorPos({ 20,25 - ImGui::CalcTextSize(/*Sakura*/XorStr<0xA4,7,0x0D9D1D33>("\xF7\xC4\xCD\xD2\xDA\xC8" + 0x0D9D1D33).s).y / 2 });
+		ImGui::SetCursorPos({ 50,25 - ImGui::CalcTextSize(/*Sakura*/XorStr<0xA4,7,0x0D9D1D33>("\xF7\xC4\xCD\xD2\xDA\xC8" + 0x0D9D1D33).s).y / 2 });
 		ImGui::Text(/*Sakura*/XorStr<0xA4, 7, 0x0D9D1D33>("\xF7\xC4\xCD\xD2\xDA\xC8" + 0x0D9D1D33).s);
 		ImGui::PopFont();
 
@@ -1016,7 +1143,8 @@ void DrawMenuWindow()
 		{
 			ImGui::BeginChild(/*##items*/XorStr<0x05, 8, 0x42ADB240>("\x26\x25\x6E\x7C\x6C\x67\x78" + 0x42ADB240).s, { 530, 400 });
 			{
-				draw->AddRectFilled(ImGui::GetWindowPos(), { ImGui::GetWindowPos().x + 530,ImGui::GetWindowPos().y + 400 }, ImColor(30, 35, 40, Sakura::Menu::currentAlphaFade - 55), 8.f);
+				// 30, 35, 40
+				draw->AddRectFilled(ImGui::GetWindowPos(), { ImGui::GetWindowPos().x + 530,ImGui::GetWindowPos().y + 400 }, ImColor((int)(cvar.visual_menu_color_widgets[0] * 255), (int)(cvar.visual_menu_color_widgets[1] * 255), (int)(cvar.visual_menu_color_widgets[2] * 255), Sakura::Menu::currentAlphaFade - 55), 8.f);
 
 				ImGui::PushFont(Sakura::Menu::Fonts::titleTabFont);
 				ImGui::SetCursorPos({ 10,10 });

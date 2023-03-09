@@ -6,14 +6,32 @@ float worldSplit = 0;
 
 void Sakura::Menu::Tabs::Visuals::Player()
 {
-	ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
-	
-	Sakura::Menu::Widgets::Combo(
-		/*Type*/XorStr<0xC4, 5, 0x39BD1E07>("\x90\xBC\xB6\xA2" + 0x39BD1E07).s,
-		&playerSplit,
-		/*Esp\0Sound Esp\0Chams\0Glow\0Light\0Deathmark\0*/XorStr<0xFD, 42, 0xA19CE4D8>("\xB8\x8D\x8F\x00\x52\x6D\x76\x6A\x61\x26\x42\x7B\x79\x0A\x48\x64\x6C\x63\x7C\x10\x56\x7E\x7C\x63\x15\x5A\x7E\x7F\x71\x6E\x1B\x58\x78\x7F\x6B\x48\x4C\x43\x51\x4F\x25" + 0xA19CE4D8).s);
-	
-	ImGui::PopItemWidth();
+	if (Sakura::Menu::Widgets::SubSubTab(/*C*/XorStr<0x9D, 2, 0x8DF2BA10>("\xDE" + 0x8DF2BA10).s, /*Esp*/XorStr<0x20, 4, 0xE1D06C51>("\x65\x52\x52" + 0xE1D06C51).s, ImVec2(80, 40), playerSplit == 0 ? true : false))
+		playerSplit = 0;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*K*/XorStr<0x13, 2, 0xD90A84A2>("\x58" + 0xD90A84A2).s, /*Sound esp*/XorStr<0x60, 10, 0xFD00C6EC>("\x33\x0E\x17\x0D\x00\x45\x03\x14\x18" + 0xFD00C6EC).s, ImVec2(80, 40), playerSplit == 1 ? true : false))
+		playerSplit = 1;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*B*/XorStr<0xB4, 2, 0x0FABC5D3>("\xF6" + 0x0FABC5D3).s, /*Chams*/XorStr<0x39, 6, 0x82488EAF>("\x7A\x52\x5A\x51\x4E" + 0x82488EAF).s, ImVec2(80, 40), playerSplit == 2 ? true : false))
+		playerSplit = 2;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*A*/XorStr<0xEE, 2, 0x5B7CBE0B>("\xAF" + 0x5B7CBE0B).s, /*Glow*/XorStr<0x11, 5, 0x06588C88>("\x56\x7E\x7C\x63" + 0x06588C88).s, ImVec2(80, 40), playerSplit == 3 ? true : false))
+		playerSplit = 3;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*H*/XorStr<0x44, 2, 0x8FF4FCBA>("\x0C" + 0x8FF4FCBA).s, /*Light*/XorStr<0x72, 6, 0xC06F61A6>("\x3E\x1A\x13\x1D\x02" + 0xC06F61A6).s, ImVec2(80, 40), playerSplit == 4 ? true : false))
+		playerSplit = 4;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*J*/XorStr<0x35, 2, 0xC48D0C62>("\x7F" + 0xC48D0C62).s, /*Deathmark*/XorStr<0x2B, 10, 0x0C7E5E0E>("\x6F\x49\x4C\x5A\x47\x5D\x50\x40\x58" + 0x0C7E5E0E).s, ImVec2(80, 40), playerSplit == 5 ? true : false))
+		playerSplit = 5;
+
+	//ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
+	//
+	//Sakura::Menu::Widgets::Combo(
+	//	/*Type*/XorStr<0xC4, 5, 0x39BD1E07>("\x90\xBC\xB6\xA2" + 0x39BD1E07).s,
+	//	&playerSplit,
+	//	/*Esp\0Sound Esp\0Chams\0Glow\0Light\0Deathmark\0*/XorStr<0xFD, 42, 0xA19CE4D8>("\xB8\x8D\x8F\x00\x52\x6D\x76\x6A\x61\x26\x42\x7B\x79\x0A\x48\x64\x6C\x63\x7C\x10\x56\x7E\x7C\x63\x15\x5A\x7E\x7F\x71\x6E\x1B\x58\x78\x7F\x6B\x48\x4C\x43\x51\x4F\x25" + 0xA19CE4D8).s);
+	//
+	//ImGui::PopItemWidth();
 
 	ImGui::Spacing();
 
@@ -64,11 +82,7 @@ void Sakura::Menu::Tabs::Visuals::PlayerEsp()
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Snaplines Thickness*/XorStr<0x98, 20, 0xDB2F859B>("\xCB\xF7\xFB\xEB\xF0\xF4\xF0\xFA\xD3\x81\xF6\xCB\xCD\xC6\xCD\xC9\xCD\xDA\xD9" + 0xDB2F859B).s, &cvar.visual_lines_thickness, 1.f, 10.f, "%.0f");
 		Sakura::Menu::Widgets::SliderFloat(/*Line of Sight Distance*/XorStr<0x95, 23, 0x0F58B06C>("\xD9\xFF\xF9\xFD\xB9\xF5\xFD\xBC\xCE\xF7\xF8\xC8\xD5\x82\xE7\xCD\xD6\xD2\xC6\xC6\xCA\xCF" + 0x0F58B06C).s, &cvar.visual_line_of_sight_distance, 20.f, 1000.f, "%.0f");
-		
-		Sakura::Menu::Widgets::Combo(
-			/*Box Fill*/XorStr<0x7A, 9, 0x8BA5A1CC>("\x38\x14\x04\x5D\x38\x16\xEC\xED" + 0x8BA5A1CC).s,
-			&cvar.visual_box_fill,
-			/*Empty\0Fill\0*/XorStr<0xF2, 12, 0x2BB50E7F>("\xB7\x9E\x84\x81\x8F\xF7\xBE\x90\x96\x97\xFC" + 0x2BB50E7F).s);
+		Sakura::Menu::Widgets::SliderFloat(/*Box fill opacity*/XorStr<0xBF, 17, 0xF223D5BC>("\xFD\xAF\xB9\xE2\xA5\xAD\xA9\xAA\xE7\xA7\xB9\xAB\xA8\xA5\xB9\xB7" + 0xF223D5BC).s, &cvar.visual_box_fill, 0.f, 100.f, "%.0f%%");
 		
 		Sakura::Menu::Widgets::Combo(
 			/*Box Type*/XorStr<0xD8, 9, 0x2E8DE171>("\x9A\xB6\xA2\xFB\x88\xA4\xAE\xBA" + 0x2E8DE171).s,
@@ -112,14 +126,14 @@ void Sakura::Menu::Tabs::Visuals::PlayerGlow()
 {
 	ImGui::BeginChild(/*##vpc1*/XorStr<0x61, 7, 0x58CC7DB9>("\x42\x41\x15\x14\x06\x57" + 0x58CC7DB9).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0xAF, 7, 0xE86F4B0A>("\xEA\xDE\xD0\xD0\xDF\xD1" + 0xE86F4B0A).s, &cvar.visual_player_glow);
+		Sakura::Menu::Widgets::Checkbox(/*Enable glow*/XorStr<0x65, 12, 0xEB151CFE>("\x20\x08\x06\x0A\x05\x0F\x4B\x0B\x01\x01\x18" + 0xEB151CFE).s, &cvar.visual_player_glow);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##vpc2*/XorStr<0xCD, 7, 0x4D94D3F7>("\xEE\xED\xB9\xA0\xB2\xE0" + 0x4D94D3F7).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Glow Thickness*/XorStr<0x14, 15, 0xD1853320>("\x53\x79\x79\x60\x38\x4D\x72\x72\x7F\x76\x70\x7A\x53\x52" + 0xD1853320).s, &cvar.visual_player_glow_thickness, 12.f, 64.f, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Glow thickness*/XorStr<0xB5, 15, 0x6967DC09>("\xF2\xDA\xD8\xCF\x99\xCE\xD3\xD5\xDE\xD5\xD1\xA5\xB2\xB1" + 0x6967DC09).s, &cvar.visual_player_glow_thickness, 12.f, 64.f, "%.0f");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
@@ -129,8 +143,8 @@ void Sakura::Menu::Tabs::Visuals::PlayerDynamicLight()
 {
 	ImGui::BeginChild(/*##vpc1*/XorStr<0xE5, 7, 0x4E9B1CFC>("\xC6\xC5\x91\x98\x8A\xDB" + 0x4E9B1CFC).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Light*/XorStr<0x3F, 6, 0x2666EDE6>("\x73\x29\x26\x2A\x37" + 0x2666EDE6).s, &cvar.visual_lambert);
-		Sakura::Menu::Widgets::Checkbox(/*DLight*/XorStr<0xAD, 7, 0x395B49B8>("\xE9\xE2\xC6\xD7\xD9\xC6" + 0x395B49B8).s, &cvar.visual_player_dynamiclight);
+		Sakura::Menu::Widgets::Checkbox(/*Enable light*/XorStr<0x65, 13, 0x8B0DD7AB>("\x20\x08\x06\x0A\x05\x0F\x4B\x00\x04\x09\x07\x04" + 0x8B0DD7AB).s, &cvar.visual_lambert);
+		Sakura::Menu::Widgets::Checkbox(/*Enable dlight*/XorStr<0xCD, 14, 0x09747F29>("\x88\xA0\xAE\xB2\xBD\xB7\xF3\xB0\xB9\xBF\xB0\xB0\xAD" + 0x09747F29).s, &cvar.visual_player_dynamiclight);
 		Sakura::Menu::Widgets::Checkbox(/*DLight Impulse*/XorStr<0xAE, 15, 0x900D53C2>("\xEA\xE3\xD9\xD6\xDA\xC7\x94\xFC\xDB\xC7\xCD\xD5\xC9\xDE" + 0x900D53C2).s, &cvar.visual_player_dynamiclight_fading);
 	}
 	ImGui::EndChild();
@@ -150,27 +164,51 @@ void Sakura::Menu::Tabs::Visuals::PlayerSoundEsp()
 {
 	ImGui::BeginChild(/*##vpc1*/XorStr<0x34, 7, 0xEB0A4183>("\x17\x16\x40\x47\x5B\x08" + 0xEB0A4183).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Sound Steps*/XorStr<0x73, 12, 0x6EB49526>("\x20\x1B\x00\x18\x13\x58\x2A\x0E\x1E\x0C\x0E" + 0x6EB49526).s, &cvar.visual_sound_steps);
+		Sakura::Menu::Widgets::Checkbox(/*Enable sound esp*/XorStr<0xE9, 17, 0xD3A569D5>("\xAC\x84\x8A\x8E\x81\x8B\xCF\x83\x9E\x87\x9D\x90\xD5\x93\x84\x88" + 0xD3A569D5).s, &cvar.visual_sound_steps);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##vpc2*/XorStr<0x17, 7, 0xE6908698>("\x34\x3B\x6F\x6A\x78\x2E" + 0xE6908698).s, ImVec2(250, -1));
 	{
-
+		ImGui::PushItemWidth(itemWidth);
+		Sakura::Menu::Widgets::SliderFloat(/*Segments*/XorStr<0xF5, 9, 0xC6E6097C>("\xA6\x93\x90\x95\x9C\x94\x8F\x8F" + 0xC6E6097C).s, &cvar.visual_sound_steps_segments, 4.f, 100.f, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Segment thickness*/XorStr<0xAC, 18, 0x29686B60>("\xFF\xC8\xC9\xC2\xD5\xDF\xC6\x93\xC0\xDD\xDF\xD4\xD3\xD7\xDF\xC8\xCF" + 0x29686B60).s, &cvar.visual_sound_steps_segment_thickness, 0.1f, 5.0f, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Radius*/XorStr<0xC6, 7, 0x957832F1>("\x94\xA6\xAC\xA0\xBF\xB8" + 0x957832F1).s, &cvar.visual_sound_steps_radius, 5.f, 45.f, "%.0f");
+		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
 }
 
 void Sakura::Menu::Tabs::Visuals::Local()
 {
+	if (Sakura::Menu::Widgets::SubSubTab(/*B*/XorStr<0x9D, 2, 0xF479ECA5>("\xDF" + 0xF479ECA5).s, /*Character*/XorStr<0x4E, 10, 0x73B93AE3>("\x0D\x27\x31\x23\x33\x30\x20\x30\x24" + 0x73B93AE3).s, ImVec2(65, 40), localPlayerSplit == 0 ? true : false))
+		localPlayerSplit = 0;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*D*/XorStr<0x27, 2, 0x0437AE1F>("\x63" + 0x0437AE1F).s, /*Real position*/XorStr<0xCC, 14, 0x387B8359>("\x9E\xA8\xAF\xA3\xF0\xA1\xBD\xA0\xBD\xA1\xBF\xB8\xB6" + 0x387B8359).s, ImVec2(65, 40), localPlayerSplit == 1 ? true : false))
+		localPlayerSplit = 1;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*E*/XorStr<0x60, 2, 0xEF712333>("\x25" + 0xEF712333).s, /*Weapon*/XorStr<0x91, 7, 0xCF875AB7>("\xC6\xF7\xF2\xE4\xFA\xF8" + 0xCF875AB7).s, ImVec2(65, 40), localPlayerSplit == 2 ? true : false))
+		localPlayerSplit = 2;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*M*/XorStr<0x45, 2, 0x3B801CBB>("\x08" + 0x3B801CBB).s, /*Bullet trace*/XorStr<0xA0, 13, 0x43B5029A>("\xE2\xD4\xCE\xCF\xC1\xD1\x86\xD3\xDA\xC8\xC9\xCE" + 0x43B5029A).s, ImVec2(65, 40), localPlayerSplit == 3 ? true : false))
+		localPlayerSplit = 3;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*O*/XorStr<0xA2, 2, 0x294CA546>("\xED" + 0x294CA546).s, /*Grenade trajectory*/XorStr<0x98, 19, 0xC455DF48>("\xDF\xEB\xFF\xF5\xFD\xF9\xFB\xBF\xD4\xD3\xC3\xC9\xC1\xC6\xD2\xC8\xDA\xD0" + 0xC455DF48).s, ImVec2(65, 40), localPlayerSplit == 4 ? true : false))
+		localPlayerSplit = 4;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*N*/XorStr<0x17, 2, 0x965EB70A>("\x59" + 0x965EB70A).s, /*Anti screenshot*/XorStr<0x0B, 16, 0x476270C1>("\x4A\x62\x79\x67\x2F\x63\x72\x60\x76\x71\x7B\x65\x7F\x77\x6D" + 0x476270C1).s, ImVec2(65, 40), localPlayerSplit == 5 ? true : false))
+		localPlayerSplit = 5;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*L*/XorStr<0x82, 2, 0xE9BBA131>("\xCE" + 0xE9BBA131).s, /*Additions*/XorStr<0x7A, 10, 0xFC236000>("\x3B\x1F\x18\x14\x0A\x16\xEF\xEF\xF1" + 0xFC236000).s, ImVec2(65, 40), localPlayerSplit == 6 ? true : false))
+		localPlayerSplit = 6;
 	
-	ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
-	Sakura::Menu::Widgets::Combo(
-		/*Type*/XorStr<0xBC, 5, 0xBFF1563E>("\xE8\xC4\xCE\xDA" + 0xBFF1563E).s,
-		&localPlayerSplit,
-		/*Character\0Real position\0Local weapon\0Additions\0*/XorStr<0x92, 48, 0xD8E8C674>("\xD1\xFB\xF5\xE7\xF7\xF4\xEC\xFC\xE8\x9B\xCE\xF8\xFF\xF3\x80\xD1\xCD\xD0\xCD\xD1\xCF\xC8\xC6\xA9\xE6\xC4\xCF\xCC\xC2\x8F\xC7\xD4\xD3\xC3\xDB\xDB\xB6\xF6\xDC\xDD\xD3\xCF\xD5\xD2\xD0\xCC\xC0" + 0xD8E8C674).s);
-	
-	ImGui::PopItemWidth();
+	//ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
+	//Sakura::Menu::Widgets::Combo(
+	//	/*Type*/XorStr<0xBC, 5, 0xBFF1563E>("\xE8\xC4\xCE\xDA" + 0xBFF1563E).s,
+	//	&localPlayerSplit,
+	//	/*Character\0Real position\0Local weapon\0Additions\0*/XorStr<0x92, 48, 0xD8E8C674>("\xD1\xFB\xF5\xE7\xF7\xF4\xEC\xFC\xE8\x9B\xCE\xF8\xFF\xF3\x80\xD1\xCD\xD0\xCD\xD1\xCF\xC8\xC6\xA9\xE6\xC4\xCF\xCC\xC2\x8F\xC7\xD4\xD3\xC3\xDB\xDB\xB6\xF6\xDC\xDD\xD3\xCF\xD5\xD2\xD0\xCC\xC0" + 0xD8E8C674).s);
+	//
+	//ImGui::PopItemWidth();
 
 	ImGui::Spacing();
 
@@ -186,6 +224,15 @@ void Sakura::Menu::Tabs::Visuals::Local()
 		Sakura::Menu::Tabs::Visuals::LocalWeapon();
 		break;
 	case 3:
+		Sakura::Menu::Tabs::Visuals::LocalBulletTrace();
+		break;
+	case 4:
+		Sakura::Menu::Tabs::Visuals::LocalGrenadeTrajectory();
+		break;
+	case 5:
+		Sakura::Menu::Tabs::Visuals::LocalAntiScreenshot();
+		break;
+	case 6:
 		Sakura::Menu::Tabs::Visuals::LocalAdditions();
 		break;
 	}
@@ -306,30 +353,76 @@ void Sakura::Menu::Tabs::Visuals::LocalWeapon()
 	ImGui::EndChild();
 }
 
+void Sakura::Menu::Tabs::Visuals::LocalBulletTrace()
+{
+	ImGui::BeginChild(/*##vo1*/XorStr<0x28, 6, 0x6C8DDCCA>("\x0B\x0A\x5C\x44\x1D" + 0x6C8DDCCA).s, ImVec2(250, -1));
+	{
+		Sakura::Menu::Widgets::Checkbox(/*Enable bullet trace*/XorStr<0xF5, 20, 0x091EEF63>("\xB0\x98\x96\x9A\x95\x9F\xDB\x9E\x88\x92\x93\x65\x75\x22\x77\x76\x64\x65\x62" + 0x091EEF63).s, &cvar.visual_bullet_trace_local);
+	}
+	ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::BeginChild(/*##vo2*/XorStr<0xB0, 6, 0x9E278B18>("\x93\x92\xC4\xDC\x86" + 0x9E278B18).s, ImVec2(250, -1));
+	{
+		ImGui::PushItemWidth(itemWidth);
+		Sakura::Menu::Widgets::SliderFloat(/*Bullet Trace Thickness*/XorStr<0x53, 23, 0x651FF107>("\x11\x21\x39\x3A\x32\x2C\x79\x0E\x29\x3D\x3E\x3B\x7F\x34\x09\x0B\x00\x0F\x0B\x03\x14\x1B" + 0x651FF107).s, &cvar.visual_bullet_trace_local_thickness, 0.1, 3.f, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Bullet Trace Life*/XorStr<0x34, 18, 0xD66B70B5>("\x76\x40\x5A\x5B\x5D\x4D\x1A\x6F\x4E\x5C\x5D\x5A\x60\x0D\x2B\x25\x21" + 0xD66B70B5).s, &cvar.visual_bullet_trace_local_liveness, 0.1f, 3.f, "%.1fs");
+		ImGui::PopItemWidth();
+	}
+	ImGui::EndChild();
+}
+
+void Sakura::Menu::Tabs::Visuals::LocalGrenadeTrajectory()
+{
+	ImGui::BeginChild(/*##vo1*/XorStr<0x28, 6, 0x6C8DDCCA>("\x0B\x0A\x5C\x44\x1D" + 0x6C8DDCCA).s, ImVec2(250, -1));
+	{
+		Sakura::Menu::Widgets::Checkbox(/*Enable grenade trajectory*/XorStr<0x6D, 26, 0xBC1355B0>("\x28\x00\x0E\x12\x1D\x17\x53\x13\x07\x13\x19\x19\x1D\x1F\x5B\x08\x0F\x1F\x15\xE5\xE2\xF6\xEC\xF6\xFC" + 0xBC1355B0).s, &cvar.visual_grenade_trajectory);
+	}
+	ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::BeginChild(/*##vo2*/XorStr<0xB0, 6, 0x9E278B18>("\x93\x92\xC4\xDC\x86" + 0x9E278B18).s, ImVec2(250, -1));
+	{
+		ImGui::PushItemWidth(itemWidth);
+
+		Sakura::Menu::Widgets::Combo(
+			/*Trace type*/XorStr<0x9F, 11, 0xDEEF641D>("\xCB\xD2\xC0\xC1\xC6\x84\xD1\xDF\xD7\xCD" + 0xDEEF641D).s,
+			&cvar.visual_tg_type,
+			/*Line\0Line & points\0*/XorStr<0x2C, 20, 0x85D06906>("\x60\x44\x40\x4A\x30\x7D\x5B\x5D\x51\x15\x10\x17\x48\x56\x53\x55\x48\x4E\x3E" + 0x85D06906).s);
+
+		ImGui::PopItemWidth();
+	}
+	ImGui::EndChild();
+}
+
+void Sakura::Menu::Tabs::Visuals::LocalAntiScreenshot()
+{
+	ImGui::BeginChild(/*##vo1*/XorStr<0x28, 6, 0x6C8DDCCA>("\x0B\x0A\x5C\x44\x1D" + 0x6C8DDCCA).s, ImVec2(250, -1));
+	{
+		Sakura::Menu::Widgets::Checkbox(/*Enable anti screenshot*/XorStr<0xAF, 23, 0x1DC967D3>("\xEA\xDE\xD0\xD0\xDF\xD1\x95\xD7\xD9\xCC\xD0\x9A\xC8\xDF\xCF\xDB\xDA\xAE\xB2\xAA\xAC\xB0" + 0x1DC967D3).s, &cvar.snapshot_memory);
+	}
+	ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::BeginChild(/*##vo2*/XorStr<0xB0, 6, 0x9E278B18>("\x93\x92\xC4\xDC\x86" + 0x9E278B18).s, ImVec2(250, -1));
+	{
+		ImGui::PushItemWidth(itemWidth);
+		Sakura::Menu::Widgets::SliderFloat(/*Anti screenshot time*/XorStr<0x08, 21, 0xE4B43384>("\x49\x67\x7E\x62\x2C\x7E\x6D\x7D\x75\x74\x7C\x60\x7C\x7A\x62\x37\x6C\x70\x77\x7E" + 0xE4B43384).s, &cvar.snapshot_time, 350, 2000, "%.0fms");
+		ImGui::PopItemWidth();
+	}
+	ImGui::EndChild();
+}
+
 void Sakura::Menu::Tabs::Visuals::LocalAdditions()
 {
 	ImGui::BeginChild(/*##lrp1*/XorStr<0x86, 7, 0xF333F16A>("\xA5\xA4\xE4\xFB\xFA\xBA" + 0xF333F16A).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Bullet Trace*/XorStr<0xA7, 13, 0x75A7619B>("\xE5\xDD\xC5\xC6\xCE\xD8\x8D\xFA\xDD\xD1\xD2\xD7" + 0x75A7619B).s, &cvar.visual_bullet_trace_local);
-		Sakura::Menu::Widgets::Checkbox(/*Grenade Trajectory*/XorStr<0xC7, 19, 0xCA34FD7E>("\x80\xBA\xAC\xA4\xAA\xA8\xA8\xEE\x9B\xA2\xB0\xB8\xB6\xB7\xA1\xB9\xA5\xA1" + 0xCA34FD7E).s, &cvar.visual_grenade_trajectory);
 		Sakura::Menu::Widgets::Checkbox(/*Draw FOV*/XorStr<0x2F, 9, 0x8667E736>("\x6B\x42\x50\x45\x13\x72\x7A\x60" + 0x8667E736).s, &cvar.visual_draw_fov);
 		Sakura::Menu::Widgets::Checkbox(/*Crosshair*/XorStr<0x77, 10, 0x8F5AD958>("\x34\x0A\x16\x09\x08\x14\x1C\x17\x0D" + 0x8F5AD958).s, &cvar.visual_crosshair);
-		Sakura::Menu::Widgets::Checkbox(/*Anti Screenshot*/XorStr<0x8C, 16, 0x5289DD9C>("\xCD\xE3\xFA\xE6\xB0\xC2\xF1\xE1\xF1\xF0\xF8\xE4\xF0\xF6\xEE" + 0x5289DD9C).s, &cvar.snapshot_memory);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##lrp2*/XorStr<0x62, 7, 0xA6E82DC4>("\x41\x40\x08\x17\x16\x55" + 0xA6E82DC4).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Bullet Trace Thickness*/XorStr<0x53, 23, 0x651FF107>("\x11\x21\x39\x3A\x32\x2C\x79\x0E\x29\x3D\x3E\x3B\x7F\x34\x09\x0B\x00\x0F\x0B\x03\x14\x1B" + 0x651FF107).s, &cvar.visual_bullet_trace_local_thickness, 0.1, 3.f, "%.1fs");
-		Sakura::Menu::Widgets::SliderFloat(/*Bullet Trace Life*/XorStr<0x34, 18, 0xD66B70B5>("\x76\x40\x5A\x5B\x5D\x4D\x1A\x6F\x4E\x5C\x5D\x5A\x60\x0D\x2B\x25\x21" + 0xD66B70B5).s, &cvar.visual_bullet_trace_local_liveness, 0.1f, 3.f, "%.1fs");
-		Sakura::Menu::Widgets::SliderFloat(/*Anti SS Time*/XorStr<0x44, 13, 0xF62DB2F5>("\x05\x2B\x32\x2E\x68\x1A\x19\x6B\x18\x24\x23\x2A" + 0xF62DB2F5).s, &cvar.snapshot_time, 350, 2000, "%.0fms");
-		
-		Sakura::Menu::Widgets::Combo(
-			/*Trace grenade*/XorStr<0x5B, 14, 0x20575225>("\x0F\x2E\x3C\x3D\x3A\x40\x06\x10\x06\x0A\x04\x02\x02" + 0x20575225).s,
-			&cvar.visual_tg_type,
-			/*Line\0Line & points\0*/XorStr<0x2C, 20, 0x85D06906>("\x60\x44\x40\x4A\x30\x7D\x5B\x5D\x51\x15\x10\x17\x48\x56\x53\x55\x48\x4E\x3E" + 0x85D06906).s);
-		
+
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
@@ -359,15 +452,16 @@ void Sakura::Menu::Tabs::Visuals::Radar()
 {
 	ImGui::BeginChild(/*##vr1*/XorStr<0x79, 6, 0xA94B69ED>("\x5A\x59\x0D\x0E\x4C" + 0xA94B69ED).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x97, 7, 0x8FE70FCA>("\xD2\xF6\xF8\xF8\xF7\xF9" + 0x8FE70FCA).s, &cvar.radar);
+		Sakura::Menu::Widgets::Checkbox(/*Enable radar*/XorStr<0x18, 13, 0x248493B1>("\x5D\x77\x7B\x79\x70\x78\x3E\x6D\x41\x45\x43\x51" + 0x248493B1).s, &cvar.radar);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##vr2*/XorStr<0xB8, 6, 0xD80C97D0>("\x9B\x9A\xCC\xC9\x8E" + 0xD80C97D0).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Radar Zoom*/XorStr<0x31, 11, 0x30B26F44>("\x63\x53\x57\x55\x47\x16\x6D\x57\x56\x57" + 0x30B26F44).s, &cvar.radar_zoom, 1, 10, "%.1f");
-		Sakura::Menu::Widgets::SliderFloat(/*Radar Point Size*/XorStr<0x96, 17, 0x4750D7BE>("\xC4\xF6\xFC\xF8\xE8\xBB\xCC\xF2\xF7\xF1\xD4\x81\xF1\xCA\xDE\xC0" + 0x4750D7BE).s, &cvar.radar_point_size, 5, 25, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Radar zoom*/XorStr<0x41, 11, 0x1B203E28>("\x13\x23\x27\x25\x37\x66\x3D\x27\x26\x27" + 0x1B203E28).s, &cvar.radar_zoom, 1, 10, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Radar point size*/XorStr<0x5C, 17, 0x0A9E8068>("\x0E\x3C\x3A\x3E\x12\x41\x12\x0C\x0D\x0B\x12\x47\x1B\x00\x10\x0E" + 0x0A9E8068).s, &cvar.radar_point_size, 5, 25, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Radar background opacity*/XorStr<0xF2, 25, 0x606CEFB3>("\xA0\x92\x90\x94\x84\xD7\x9A\x98\x99\x90\x9B\x8F\x91\x8A\x6E\x65\x22\x6C\x74\x64\x65\x6E\x7C\x70" + 0x606CEFB3).s, &cvar.radar_background_opacity, 0.f, 100.f, "%.1f%%");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
@@ -375,14 +469,25 @@ void Sakura::Menu::Tabs::Visuals::Radar()
 
 void Sakura::Menu::Tabs::Visuals::World()
 {
-	
-	ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
-	Sakura::Menu::Widgets::Combo(
-		/*Type*/XorStr<0x25, 5, 0x0C336CB4>("\x71\x5F\x57\x4D" + 0x0C336CB4).s,
-		&worldSplit,
-		/*Esp\0Light\0Chams\0Map\0*/XorStr<0x9A, 21, 0x767B0213>("\xDF\xE8\xEC\x9D\xD2\xF6\xC7\xC9\xD6\xA3\xE7\xCD\xC7\xCA\xDB\xA9\xE7\xCA\xDC\xAD" + 0x767B0213).s);
-	
-	ImGui::PopItemWidth();
+	if (Sakura::Menu::Widgets::SubSubTab(/*F*/XorStr<0x22, 2, 0xDFF871FD>("\x64" + 0xDFF871FD).s, /*Esp*/XorStr<0x47, 4, 0x0066CF65>("\x02\x3B\x39" + 0x0066CF65).s, ImVec2(120, 40), worldSplit == 0 ? true : false))
+		worldSplit = 0;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*H*/XorStr<0xCB, 2, 0x2D002853>("\x83" + 0x2D002853).s, /*Light*/XorStr<0x0D, 6, 0x6B189047>("\x41\x67\x68\x78\x65" + 0x6B189047).s, ImVec2(120, 40), worldSplit == 1 ? true : false))
+		worldSplit = 1;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*I*/XorStr<0xB5, 2, 0xFD24B45D>("\xFC" + 0xFD24B45D).s, /*Chams*/XorStr<0xA4, 6, 0xE5D538EF>("\xE7\xCD\xC7\xCA\xDB" + 0xE5D538EF).s, ImVec2(120, 40), worldSplit == 2 ? true : false))
+		worldSplit = 2;
+	ImGui::SameLine();
+	if (Sakura::Menu::Widgets::SubSubTab(/*G*/XorStr<0x2D, 2, 0xFBD0C83D>("\x6A" + 0xFBD0C83D).s, /*Map*/XorStr<0xE2, 4, 0x2CF9E085>("\xAF\x82\x94" + 0x2CF9E085).s, ImVec2(120, 40), worldSplit == 3 ? true : false))
+		worldSplit = 3;
+
+	//ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
+	//Sakura::Menu::Widgets::Combo(
+	//	/*Type*/XorStr<0x25, 5, 0x0C336CB4>("\x71\x5F\x57\x4D" + 0x0C336CB4).s,
+	//	&worldSplit,
+	//	/*Esp\0Light\0Chams\0Map\0*/XorStr<0x9A, 21, 0x767B0213>("\xDF\xE8\xEC\x9D\xD2\xF6\xC7\xC9\xD6\xA3\xE7\xCD\xC7\xCA\xDB\xA9\xE7\xCA\xDC\xAD" + 0x767B0213).s);
+	//
+	//ImGui::PopItemWidth();
 
 	ImGui::Spacing();
 
@@ -418,16 +523,13 @@ void Sakura::Menu::Tabs::Visuals::WorldEsp()
 	ImGui::BeginChild(/*##we2*/XorStr<0x6F, 6, 0x5FD03FBB>("\x4C\x53\x06\x17\x41" + 0x5FD03FBB).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		
+
+		Sakura::Menu::Widgets::SliderFloat(/*Box fill opacity*/XorStr<0xCC, 17, 0x409BC2C3>("\x8E\xA2\xB6\xEF\xB6\xB8\xBE\xBF\xF4\xBA\xA6\xB6\xBB\xB0\xAE\xA2" + 0x409BC2C3).s, &cvar.visual_box_world_fill, 0.f, 100.f, "%.0f%%");
+
 		Sakura::Menu::Widgets::Combo(
 			/*Box Type*/XorStr<0x1E, 9, 0x85C72A5B>("\x5C\x70\x58\x01\x76\x5A\x54\x40" + 0x85C72A5B).s,
 			&cvar.visual_box_world_type,
 			/*Box\0Corners\0Coal\0*/XorStr<0x27, 18, 0x50D035EF>("\x65\x47\x51\x2A\x68\x43\x5F\x40\x4A\x42\x42\x32\x70\x5B\x54\x5A\x37" + 0x50D035EF).s);
-		
-		Sakura::Menu::Widgets::Combo(
-			/*Box Fill*/XorStr<0x4F, 9, 0x1CB82CB2>("\x0D\x3F\x29\x72\x15\x3D\x39\x3A" + 0x1CB82CB2).s,
-			&cvar.visual_box_world_fill,
-			/*Empty\0Fill\0*/XorStr<0x41, 12, 0x73E747FC>("\x04\x2F\x33\x30\x3C\x46\x01\x21\x25\x26\x4B" + 0x73E747FC).s);
 		
 		ImGui::PopItemWidth();
 	}
@@ -588,6 +690,7 @@ void Sakura::Menu::Tabs::Visuals::Other()
 		
 		Sakura::Menu::Widgets::SliderFloat(/*Raining count*/XorStr<0xD6, 14, 0xD5088BAB>("\x84\xB6\xB1\xB7\xB3\xB5\xBB\xFD\xBD\xB0\x95\x8F\x96" + 0xD5088BAB).s, &cvar.visual_menu_raining_count, 25.f, 500.f, "%.0f");
 		Sakura::Menu::Widgets::SliderFloat(/*Raining speed multipler*/XorStr<0x70,24,0x43E1E724>("\x22\x10\x1B\x1D\x1D\x1B\x11\x57\x0B\x09\x1F\x1E\x18\x5D\x13\x0A\xEC\xF5\xEB\xF3\xE8\xE0\xF4"+0x43E1E724).s, &cvar.visual_menu_raining_speed_multipler, 0.3f, 3.0f, "%.1f*");
+		Sakura::Menu::Widgets::SliderFloat(/*Menu background opacity*/XorStr<0x47, 24, 0x8458E315>("\x0A\x2D\x27\x3F\x6B\x2E\x2C\x2D\x24\x37\x23\x3D\x26\x3A\x31\x76\x38\x28\x38\x39\x32\x28\x24" + 0x8458E315).s, &cvar.visual_menu_bg_opacity, 0.1, 0.5, "%.1f");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();

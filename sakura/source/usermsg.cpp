@@ -86,23 +86,26 @@ int ResetHUD(const char *pszName, int iSize, void *pbuf)
 		DM_Once[i] = false;
 	}
 
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RESETHUD_MESSAGE))
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RESETHUD_MESSAGE);
-		for (unsigned int i = 0; i < v.size(); i++)
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RESETHUD_MESSAGE))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RESETHUD_MESSAGE);
+		for (const auto& callback : callbacks)
 		{
 			try
 			{
-				v[i]();
+				callback();
 			}
-			catch (luabridge::LuaException const& e)
+			catch (luabridge::LuaException const& error)
 			{
-				if (Sakura::Lua::pLuaState)
+				if (script.GetState())
 				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
 				}
 			}
 		}
@@ -126,23 +129,26 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 	if (victim != pmove->player_index + 1 && killer == pmove->player_index + 1 && victim > 0 && victim <= g_Engine.GetMaxClients())
 		g_Player[victim].deathMark = true;
 
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DEATH_MESSAGE))
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DEATH_MESSAGE);
-		for (unsigned int i = 0; i < v.size(); i++)
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DEATH_MESSAGE))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DEATH_MESSAGE);
+		for (const auto& callback : callbacks)
 		{
 			try
 			{
-				v[i](killer, victim, headshot);
+				callback(killer, victim, headshot);
 			}
-			catch (luabridge::LuaException const& e)
+			catch (luabridge::LuaException const& error)
 			{
-				if (Sakura::Lua::pLuaState)
+				if (script.GetState())
 				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
 				}
 			}
 		}
@@ -185,24 +191,27 @@ int Damage(const char* pszName, int iSize, void* pbuf)
 	BEGIN_READ(pbuf, iSize);
 
 	int damage = READ_BYTE();
-	
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DAMAGE_MESSAGE))
+
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DAMAGE_MESSAGE);
-		for (unsigned int i = 0; i < v.size(); i++)
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DAMAGE_MESSAGE))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DAMAGE_MESSAGE);
+		for (const auto& callback : callbacks)
 		{
 			try
 			{
-				v[i](damage);
+				callback(damage);
 			}
-			catch (luabridge::LuaException const& e)
+			catch (luabridge::LuaException const& error)
 			{
-				if (Sakura::Lua::pLuaState)
+				if (script.GetState())
 				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
 				}
 			}
 		}

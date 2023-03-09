@@ -20,23 +20,26 @@ void InitBass()
 			sprintf(filename, "%s%s", hackdir, "assets/sounds/monsterkill.wav");
 			BASS::stream_sounds.monsterkill = BASS_StreamCreateFile(FALSE, filename, 0, 0, 0);
 
-			if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_INIT_BASS))
+			for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 			{
-				auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_INIT_BASS);
-				for (unsigned int i = 0; i < v.size(); i++)
+				auto& script = Sakura::Lua::scripts[i];
+
+				if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_INIT_BASS))
+					continue;
+
+				auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_INIT_BASS);
+				for (const auto& callback : callbacks)
 				{
 					try
 					{
-						v[i]();
+						callback();
 					}
-					catch (luabridge::LuaException const& e)
+					catch (luabridge::LuaException const& error)
 					{
-						if (Sakura::Lua::pLuaState)
+						if (script.GetState())
 						{
-							std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-							MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-							LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-							Sakura::Lua::Hooks::RemoveAllCallbacks();
+							LogToFile("Error has occured in the lua: %s", error.what());
+							script.RemoveAllCallbacks();
 						}
 					}
 				}

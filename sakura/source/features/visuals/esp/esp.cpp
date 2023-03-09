@@ -40,7 +40,7 @@ void Box(float x, float y, float w, float h, ImRGBA color)
 	if (!cvar.visual_box) 
 		return;
 
-	if (cvar.visual_box_fill == 1) ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ x, y }, { x + w, y + h }, ImColor(color.r, color.g, color.b, color.a - 0.7f));
+	if (cvar.visual_box_fill > 0) ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ x, y }, { x + w, y + h }, ImColor(color.r, color.g, color.b, cvar.visual_box_fill / 100.f));
 
 	switch ((int)cvar.visual_box_type)
 	{
@@ -220,10 +220,7 @@ void BoxWorld(float x, float y, float w, float h)
 
 	ImRGBA color = Sakura::Colors::GetCustomizedColor(cvar.visual_box_world_color, cvar.rainbow_world_box);
 
-	if (cvar.visual_box_world_fill == 1)
-	{
-		ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ x, y }, { x + w, y + h }, ImColor(color.r, color.g, color.b, color.a - 0.7));
-	}
+	if (cvar.visual_box_world_fill > 0) ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ x, y }, { x + w, y + h }, ImColor(color.r, color.g, color.b, cvar.visual_box_world_fill / 100.f));
 
 	switch ((int)cvar.visual_box_world_type)
 	{

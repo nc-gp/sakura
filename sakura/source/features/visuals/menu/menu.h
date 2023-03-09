@@ -11,6 +11,7 @@ namespace Sakura
 			extern ImFont* icons;
 			extern ImFont* titleTabFont;
 			extern ImFont* titleCheatFont;
+			extern ImFont* weaponsFont;
 		};
 
 		extern int itemWidth;

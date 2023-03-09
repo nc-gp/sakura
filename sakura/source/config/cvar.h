@@ -218,6 +218,9 @@ public:
 	float visual_visual_team;
 
 	float visual_sound_steps;
+	float visual_sound_steps_segments;
+	float visual_sound_steps_segment_thickness;
+	float visual_sound_steps_radius;
 	float visual_sound_steps_color[4];
 
 	float visual_idhook_only;
@@ -299,10 +302,19 @@ public:
 	float visual_line_of_sight_distance;
 
 	float visual_menu_color[4];
+
+	float visual_menu_color_header[4];
+	float visual_menu_color_items[4];
+	float visual_menu_color_footer[4];
+	float visual_menu_color_widgets[4];
+	float visual_menu_color_tab_selected[4];
+	float visual_menu_color_subtab_selected[4];
+	float visual_menu_color_logo[4];
 	float visual_menu_raining;
 	float visual_menu_raining_count;
 	float visual_menu_raining_type;
 	float visual_menu_raining_speed_multipler;
+	float visual_menu_bg_opacity;
 
 	float visual_fog;
 	float visual_fog_density;
@@ -373,6 +385,7 @@ public:
 	float radar;
 	float radar_zoom;
 	float radar_point_size;
+	float radar_background_opacity;
 	float radar_pos_x;
 	float radar_pos_y;
 	float radar_size_x;

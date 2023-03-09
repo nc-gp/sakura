@@ -255,14 +255,29 @@ void Sakura::Menu::Tabs::Colors::Local()
 		Sakura::Menu::Widgets::Checkbox(/*##rlr2*/XorStr<0xA0, 7, 0xDCB9A6C5>("\x83\x82\xD0\xCF\xD6\x97" + 0xDCB9A6C5).s, &cvar.rainbow_route_point);
 		ImGui::SameLine();
 		Sakura::Menu::Widgets::ColorEdit(/*Route - Point*/XorStr<0x53, 14, 0x5623F4A5>("\x01\x3B\x20\x22\x32\x78\x74\x7A\x0B\x33\x34\x30\x2B" + 0x5623F4A5).s, (float*)cvar.route_point_color, pickerFlags);
+	}
+	ImGui::EndChild();
+}
 
-		ImGui::Spacing();
-		ImGui::Spacing();
-
+void Sakura::Menu::Tabs::Colors::Menu()
+{
+	ImGui::BeginChild(/*##vlc1*/XorStr<0x6F, 7, 0xEBBB8C24>("\x4C\x53\x07\x1E\x10\x45" + 0xEBBB8C24).s, ImVec2(250, -1));
+	{
 		Sakura::Menu::Widgets::Checkbox(/*##mcr1*/XorStr<0x44, 7, 0x17184293>("\x67\x66\x2B\x24\x3A\x78" + 0x17184293).s, &cvar.rainbow_menu);
 		ImGui::SameLine();
-		Sakura::Menu::Widgets::ColorEdit(/*Menu Color*/XorStr<0x98, 11, 0x63BDB687>("\xD5\xFC\xF4\xEE\xBC\xDE\xF1\xF3\xCF\xD3" + 0x63BDB687).s, (float*)cvar.visual_menu_color, pickerFlags);
-
+		Sakura::Menu::Widgets::ColorEdit(/*Main color*/XorStr<0xA5, 11, 0x2CFC34DB>("\xE8\xC7\xCE\xC6\x89\xC9\xC4\xC0\xC2\xDC" + 0x2CFC34DB).s, (float*)cvar.visual_menu_color, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Logo*/XorStr<0x0F, 5, 0x8FDB2C7C>("\x43\x7F\x76\x7D" + 0x8FDB2C7C).s, (float*)cvar.visual_menu_color_logo, pickerFlags);
+	}
+	ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::BeginChild(/*##vlc2*/XorStr<0xED, 7, 0x379E7315>("\xCE\xCD\x99\x9C\x92\xC0" + 0x379E7315).s, ImVec2(250, -1));
+	{
+		Sakura::Menu::Widgets::ColorEdit(/*Header background*/XorStr<0xD2, 18, 0xF8BBAC10>("\x9A\xB6\xB5\xB1\xB3\xA5\xF8\xBB\xBB\xB8\xB7\xBA\xAC\xB0\x95\x8F\x86" + 0xF8BBAC10).s, (float*)cvar.visual_menu_color_header, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Items background*/XorStr<0xF3, 17, 0x48853CA1>("\xBA\x80\x90\x9B\x84\xD8\x9B\x9B\x98\x97\x9A\x8C\x90\x75\x6F\x66" + 0x48853CA1).s, (float*)cvar.visual_menu_color_items, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Footer background*/XorStr<0x6F, 18, 0x1CB3DEC0>("\x29\x1F\x1E\x06\x16\x06\x55\x14\x16\x1B\x12\x1D\x09\x13\x08\x10\x1B" + 0x1CB3DEC0).s, (float*)cvar.visual_menu_color_footer, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Widgets background*/XorStr<0x27, 19, 0xA13329FE>("\x70\x41\x4D\x4D\x4E\x58\x5E\x0E\x4D\x51\x52\x59\x54\x46\x5A\x43\x59\x5C" + 0xA13329FE).s, (float*)cvar.visual_menu_color_widgets, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Selected tab background*/XorStr<0x96, 24, 0xC177A2DE>("\xC5\xF2\xF4\xFC\xF9\xEF\xF9\xF9\xBE\xEB\xC1\xC3\x82\xC1\xC5\xC6\xCD\xC0\xDA\xC6\xDF\xC5\xC8" + 0xC177A2DE).s, (float*)cvar.visual_menu_color_tab_selected, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Selected subtab background*/XorStr<0x0A, 27, 0x348EA17B>("\x59\x6E\x60\x68\x6D\x7B\x75\x75\x32\x60\x61\x77\x62\x76\x7A\x39\x78\x7A\x7F\x76\x79\x6D\x4F\x54\x4C\x47" + 0x348EA17B).s, (float*)cvar.visual_menu_color_subtab_selected, pickerFlags);
 	}
 	ImGui::EndChild();
 }

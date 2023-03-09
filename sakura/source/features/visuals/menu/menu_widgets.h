@@ -25,6 +25,7 @@ namespace Sakura
 
 			bool Tab(const char* icon, const char* label, const ImVec2& size_arg, const bool selected);
 			bool SubTab(const char* label, const ImVec2& size_arg, const bool selected);
+			bool SubSubTab(const char* icon, const char* label, const ImVec2& size_arg, const bool selected, ImFont* customFont = nullptr);
 			bool Checkbox(const char* label, float* v);
 			bool SliderScalar(const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format);
 			bool SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format);

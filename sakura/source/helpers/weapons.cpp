@@ -46,36 +46,10 @@ void ResetAccuracy()
     }
 }
 
-/*CBasePlayerWeapon* GetCSWeaponData()
-{
-    //if (iWeaponID == WEAPON_NONE)
-    //    iWeaponID = pBaseInfo->m_iWeaponID;
-
-    if (g_Local.weapon.m_iWeaponID)
-    {
-        using GetCSWeapon_t = int* (__cdecl*)(int);
-
-        const auto GetCSWeaponFn = (GetCSWeapon_t)(m_dwInitPoint);
-
-        if (GetCSWeaponFn)
-        {
-            const auto CSPlayerWeapon = (CBasePlayerWeapon*)GetCSWeaponFn(g_Local.weapon.m_iWeaponID);
-
-            if (CSPlayerWeapon)
-                return CSPlayerWeapon;
-        }
-    }
-
-    return nullptr;
-}*/
-
 void UpdateWeaponData()
 {
 	if (Sakura::Player::Local::IsAlive())
 	{
-        //CBasePlayerWeapon* pWeapon = GetCSWeaponData();
-        //g_Local.weapon.m_flAccuracy = pWeapon->m_flAccuracy;
-
 		switch (g_Local.weapon.m_iWeaponID)
 		{
 		case WEAPON_P228:

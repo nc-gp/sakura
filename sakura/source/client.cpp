@@ -68,23 +68,26 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 	if (bShowMenu && GetTickCount() - HudRedraw <= 100)
 		return false;
 
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_BIND))
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_BIND);
-		for (unsigned int i = 0; i < v.size(); i++)
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_BIND))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_BIND);
+		for (const auto& callback : callbacks)
 		{
 			try
 			{
-				v[i](down, keynum);
+				callback(down, keynum);
 			}
-			catch (luabridge::LuaException const& e)
+			catch (luabridge::LuaException const& error)
 			{
-				if (Sakura::Lua::pLuaState)
+				if (script.GetState())
 				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
 				}
 			}
 		}
@@ -188,23 +191,26 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 		Backtrack::FakeLatency();
 	}
 
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_MOVE))
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_MOVE);
-		for (unsigned int i = 0; i < v.size(); i++)
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_MOVE))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_MOVE);
+		for (const auto& callback : callbacks)
 		{
 			try
 			{
-				v[i](cmd);
+				callback(frametime, cmd, active);
 			}
-			catch (luabridge::LuaException const& e)
+			catch (luabridge::LuaException const& error)
 			{
-				if (Sakura::Lua::pLuaState)
+				if (script.GetState())
 				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
 				}
 			}
 		}
@@ -409,7 +415,7 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	if (ent && ent->player && cvar.visual_deathmark_enable && g_Player[ent->index].deathMark)
 		DeathMark::Create(ent);
 
-	if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_ADDENTITY))
+	/*if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_ADDENTITY))
 	{
 		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_ADDENTITY);
 		for (unsigned int i = 0; i < v.size(); i++)
@@ -429,7 +435,7 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 				}
 			}
 		}
-	}
+	}*/
 
 	return g_Client.HUD_AddEntity(type, ent, modelname);
 }

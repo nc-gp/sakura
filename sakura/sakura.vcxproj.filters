@@ -104,6 +104,9 @@
     <Filter Include="libs\other">
       <UniqueIdentifier>{1c7030e2-18ef-47e3-815a-affc2ace44cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\fonts">
+      <UniqueIdentifier>{d8638223-d52c-4bd1-944b-7d3c1d00f40e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\config\cvar.cpp">
@@ -959,6 +962,15 @@
     </ClInclude>
     <ClInclude Include="libs\imgui\imgui_impl_opengl3_loader.h">
       <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\fonts\icons.h">
+      <Filter>source\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="source\fonts\weapons.h">
+      <Filter>source\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="source\fonts\font.h">
+      <Filter>source\fonts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

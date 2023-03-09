@@ -98,14 +98,14 @@ bool Sakura::Menu::Widgets::Tab(const char* icon, const char* label, const ImVec
 
 	float t = selected ? 1.0f : 0.0f;
 
-	float ANIM_SPEED = (ImGui::GetIO().Framerate / 12.f) * (1.f / ImGui::GetIO().Framerate);
+	float ANIM_SPEED = (ImGui::GetIO().Framerate / 4.f) * (1.f / ImGui::GetIO().Framerate);
 	if (g.LastActiveId == g.CurrentWindow->GetID(label))// && g.LastActiveIdTimer < ANIM_SPEED)
 	{
 		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
 		t = selected ? (t_anim) : (1.0f - t_anim);
 	}
 
-	ImU32 bg_col = ImGui::GetColorU32(ImLerp(ImVec4(25 / 255.f, 30 / 255.f, 35 / 255.f, 0.f), ImVec4(25 / 255.f, 30 / 255.f, 35 / 255.f, Sakura::Menu::currentAlphaFade / 255.f), t));
+	ImU32 bg_col = ImGui::GetColorU32(ImLerp(ImVec4(cvar.visual_menu_color_items[0], cvar.visual_menu_color_items[1], cvar.visual_menu_color_items[2], 0.f), ImVec4(cvar.visual_menu_color_tab_selected[0], cvar.visual_menu_color_tab_selected[1], cvar.visual_menu_color_tab_selected[2], Sakura::Menu::currentAlphaFade / 255.f), t));
 
 	if (selected)
 		window->DrawList->AddRectFilled(bb.Min, bb.Max, bg_col);
@@ -150,25 +150,79 @@ bool Sakura::Menu::Widgets::SubTab(const char* label, const ImVec2& size_arg, co
 
 	float t = selected ? 1.0f : 0.0f;
 
-	float ANIM_SPEED = (ImGui::GetIO().Framerate / 15.f) * (1.f / ImGui::GetIO().Framerate);
+	float ANIM_SPEED = (ImGui::GetIO().Framerate / 4.f) * (1.f / ImGui::GetIO().Framerate);
 	if (g.LastActiveId == g.CurrentWindow->GetID(label))// && g.LastActiveIdTimer < ANIM_SPEED)
 	{
 		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
 		t = selected ? (t_anim) : (1.0f - t_anim);
 	}
 
-	ImU32 bg_col = ImGui::GetColorU32(ImLerp(ImVec4(30 / 255.f, 35 / 255.f, 40 / 255.f, 0.f), ImVec4(30 / 255.f, 35 / 255.f, 40 / 255.f, Sakura::Menu::currentAlphaFade / 255.f), t));
-	ImU32 bg_col2 = ImGui::GetColorU32(ImLerp(ImVec4(30 / 255.f, 35 / 255.f, 40 / 255.f, 0.f), GetMenuColor(Sakura::Menu::currentAlphaFade / 255.f), t));
+	ImU32 bg_col = ImGui::GetColorU32(ImLerp(ImVec4(cvar.visual_menu_color_widgets[0], cvar.visual_menu_color_widgets[1], cvar.visual_menu_color_widgets[2], 0.f), ImVec4(cvar.visual_menu_color_subtab_selected[0], cvar.visual_menu_color_subtab_selected[1], cvar.visual_menu_color_subtab_selected[2], Sakura::Menu::currentAlphaFade / 255.f), t));
+	ImU32 bg_col2 = ImGui::GetColorU32(ImLerp(ImVec4(cvar.visual_menu_color_widgets[0], cvar.visual_menu_color_widgets[1], cvar.visual_menu_color_widgets[2], 0.f), GetMenuColor(Sakura::Menu::currentAlphaFade / 255.f), t));
 
 	if (selected)
+	{
 		window->DrawList->AddRectFilled({ bb.Min.x,bb.Min.y }, { bb.Max.x,bb.Max.y }, bg_col);
-
-	if (selected)
 		window->DrawList->AddRectFilled({ bb.Max.x,bb.Max.y }, { bb.Max.x - 3,bb.Min.y }, bg_col2);
+	}
 
 	ImGui::PushFont(Sakura::Menu::Fonts::titleTabFont);
 	window->DrawList->AddText(ImVec2(bb.Min.x + 5, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(label).y / 2), ImColor(255 / 255.f, 255 / 255.f, 255 / 255.f, Sakura::Menu::currentAlphaFade / 255.f), label);
 	ImGui::PopFont();
+
+	return pressed;
+}
+
+bool Sakura::Menu::Widgets::SubSubTab(const char* icon, const char* label, const ImVec2& size_arg, const bool selected, ImFont* customFont)
+{
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	if (window->SkipItems)
+		return false;
+
+	static float sizeplus = 0.f;
+
+	ImGuiContext& g = *GImGui;
+	const ImGuiStyle& style = g.Style;
+	const ImGuiID id = window->GetID(label);
+	const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+
+	ImVec2 pos = window->DC.CursorPos;
+
+	ImVec2 size = ImGui::CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.f, label_size.y + style.FramePadding.y * 2.f);
+
+	const ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
+	ImGui::ItemSize(size, style.FramePadding.y);
+	if (!ImGui::ItemAdd(bb, id))
+		return false;
+
+	bool hovered, held;
+	bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, 0);
+
+	float t = selected ? 1.0f : 0.0f;
+
+	float ANIM_SPEED = (ImGui::GetIO().Framerate / 4.f) * (1.f / ImGui::GetIO().Framerate);
+	if (g.LastActiveId == g.CurrentWindow->GetID(label))
+	{
+		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
+		t = selected ? (t_anim) : (1.0f - t_anim);
+	}
+
+	ImU32 bg_col = ImGui::GetColorU32(ImLerp(ImVec4(1.f, 1.f, 1.f, 0.f), GetMenuColor(Sakura::Menu::currentAlphaFade / 255.f), t));
+
+	ImGui::PushFont(customFont ? customFont : Sakura::Menu::Fonts::icons);
+	window->DrawList->AddText(ImVec2(bb.Min.x + size_arg.x / 2 - ImGui::CalcTextSize(icon).x / 2, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(icon).y / 2), ImColor(255 / 255.f, 255 / 255.f, 255 / 255.f, Sakura::Menu::currentAlphaFade / 255.f), icon);
+
+	if (selected)
+		window->DrawList->AddText(ImVec2(bb.Min.x + size_arg.x / 2 - ImGui::CalcTextSize(icon).x / 2, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(icon).y / 2), bg_col, icon);
+	
+	ImGui::PopFont();
+
+	if (hovered)
+	{
+		ImGui::BeginTooltip();
+		ImGui::Text(label);
+		ImGui::EndTooltip();
+	}
 
 	return pressed;
 }
@@ -293,32 +347,6 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 		return ImGui::TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
 	}
 
-	//if (temp_input_is_active)
-	//{
-		// Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
-	//	const bool is_clamp_input = (flags & ImGuiSliderFlags_AlwaysClamp) != 0;
-	//	return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
-	//}
-	/*bool temp_input_is_active = ImGui::TempInputIsActive(id);
-	bool temp_input_start = false;
-	if (!temp_input_is_active)
-	{
-		const bool focus_requested = ImGui::FocusableItemRegister(window, id);
-		const bool clicked = (hovered && g.IO.MouseClicked[0]);
-		if (focus_requested || clicked || g.NavActivateId == id || g.navinput == id)
-		{
-			ImGui::SetActiveID(id, window);
-			ImGui::SetFocusID(id, window);
-			ImGui::FocusWindow(window);
-			g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
-			if (focus_requested || (clicked && g.IO.KeyCtrl) || g.NavInputId == id)
-			{
-				temp_input_start = true;
-				ImGui::FocusableItemUnregister(window);
-			}
-		}
-	}*/
-
 	//const ImU32 frame_col = ImGui::GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : g.HoveredId == id ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
 	ImGui::RenderNavHighlight(frame_bb, id);
 	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 0,frame_bb.Min.y + 7 + 10 }, ImVec2{ frame_bb.Max.x - 12,frame_bb.Max.y - 3 }, ImColor(19, 22, 26, Sakura::Menu::currentAlphaFade), 6.f);
@@ -330,7 +358,7 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 
 	float t = hovered ? 1.0f : 0.0f;
 
-	float ANIM_SPEED = 0.2f;
+	float ANIM_SPEED = (ImGui::GetIO().Framerate / 8.f) * (1.f / ImGui::GetIO().Framerate);
 	if (g.LastActiveId == g.CurrentWindow->GetID(label))// && g.LastActiveIdTimer < ANIM_SPEED)
 	{
 		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);

@@ -4,12 +4,6 @@ namespace Sakura
 {
 	namespace Lua
 	{
-		extern int ScriptsCount;
-		extern lua_State* pLuaState;
-
-		bool Init();
-		void Reload();
-
 		enum SAKURA_CALLBACK_TYPE
 		{
 			SAKURA_CALLBACK_AT_RENDERING_MENU,
@@ -17,22 +11,64 @@ namespace Sakura
 			SAKURA_CALLBACK_AT_RENDERING_BACKGROUND,
 			SAKURA_CALLBACK_AT_CLIENT_MOVE,
 			SAKURA_CALLBACK_AT_CLIENT_BIND,
-			SAKURA_CALLBACK_AT_CLIENT_ADDENTITY,
+			//SAKURA_CALLBACK_AT_CLIENT_ADDENTITY,
 			SAKURA_CALLBACK_AT_DEATH_MESSAGE,
 			SAKURA_CALLBACK_AT_RESETHUD_MESSAGE,
 			SAKURA_CALLBACK_AT_DAMAGE_MESSAGE,
 			SAKURA_CALLBACK_AT_INIT_BASS,
+			SAKURA_CALLBACK_AT_DYNAMICSOUND,
 
 			SAKURA_CALLBACK_ALL_CALLBACKS
 		};
 
+		class LuaScripts
+		{
+		public:
+			LuaScripts(lua_State* state) : state_(state) {}
+
+			void RegisterCallback(UINT id, const luabridge::LuaRef& callback) {
+				callbacks_[id].push_back(callback);
+			}
+
+			void RemoveCallback(UINT id) {
+				callbacks_.erase(id);
+			}
+
+			void RemoveAllCallbacks() {
+				callbacks_.clear();
+			}
+
+			bool HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE type) {
+				return callbacks_.find(type) != callbacks_.end();
+			}
+
+			std::vector<luabridge::LuaRef>& GetCallbacks(UINT id) {
+				return callbacks_[id];
+			}
+
+			lua_State* GetState() const {
+				return state_;
+			}
+		private:
+			lua_State* state_;
+			std::unordered_map<UINT, std::vector<luabridge::LuaRef>> callbacks_;
+		};
+
+		extern int ScriptsCount;
+		extern std::vector<Sakura::Lua::LuaScripts> scripts;
+		extern int currentScriptIndex;
+		//extern lua_State* pLuaState;
+
+		bool Init(lua_State* L);
+		void Reload();
+
 		namespace Hooks
 		{
 			void RegisterCallBack(UINT type, luabridge::LuaRef f);
-			std::vector<luabridge::LuaRef> GetCallbacks(SAKURA_CALLBACK_TYPE type);
+			/*std::vector<luabridge::LuaRef> GetCallbacks(SAKURA_CALLBACK_TYPE type);
 			bool HasHook(SAKURA_CALLBACK_TYPE type);
 			void RemoveAllCallbacks();
-			extern std::unordered_map<UINT, std::vector<luabridge::LuaRef>> Callbacks;
+			extern std::unordered_map<UINT, std::vector<luabridge::LuaRef>> Callbacks;*/
 		};
 
 		namespace Game
@@ -65,6 +101,7 @@ namespace Sakura
 			Vector GetViewAngles();
 			void SetViewAngles(Vector angles);
 			Vector GetEyePosition();
+			std::string GetWeaponName();
 
 			bool IsCurWeaponKnife();
 			bool IsCurWeaponPistol();
@@ -102,10 +139,10 @@ namespace Sakura
 
 		namespace ImGui
 		{
-			bool Begin(const char* szTitle);
-			void End();
-			bool WindowBegin(const char* szTitle, ImGuiWindowFlags flags);
-			void WindowEnd();
+			void Menu(const char* szTitle, luabridge::LuaRef lfFunction);
+			//void End();
+			void Window(const char* szTitle, ImGuiWindowFlags flags, luabridge::LuaRef lfFunction);
+			//void WindowEnd();
 			void Text(const char* szText);
 			bool Button(const char* szText);
 			bool Checkbox(const char* szText, bool bCurrentValue);
@@ -126,7 +163,7 @@ namespace Sakura
 			};
 		};
 
-		namespace Helpers
+		/*namespace Helpers
 		{
 			position_history_t* get_position_history(cl_entity_s* ent);
 			Vector* get_attachment(cl_entity_s* ent);
@@ -135,6 +172,6 @@ namespace Sakura
 			byte* get_prevblending(latchedvars_t* latched);
 			byte* get_controller(entity_state_t* entityState);
 			byte* get_blending(entity_state_t* entityState);
-		};
+		};*/
 	};
 };

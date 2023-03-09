@@ -18,6 +18,9 @@ namespace Sakura
 				void LocalCharacter();
 				void LocalRealPosition();
 				void LocalWeapon();
+				void LocalBulletTrace();
+				void LocalGrenadeTrajectory();
+				void LocalAntiScreenshot();
 				void LocalAdditions();
 				void Sound();
 				void Radar();

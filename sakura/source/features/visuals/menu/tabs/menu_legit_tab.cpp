@@ -209,28 +209,31 @@ void Sakura::Menu::Tabs::Legit::Hitboxes()
 
 void Sakura::Menu::Tabs::Legit::Recoil()
 {
-	ImGui::BeginChild(/*##la1*/XorStr<0x27, 6, 0x97754AD4>("\x04\x0B\x45\x4B\x1A" + 0x97754AD4).s, ImVec2(250, -1));
+	if (Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
 	{
-		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Pitch*/XorStr<0x48, 6, 0x4873E5B9>("\x18\x20\x3E\x28\x24" + 0x4873E5B9).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_pitch, 0.f, 100.f, "%.0f%%");
-		Sakura::Menu::Widgets::SliderFloat(/*Yaw*/XorStr<0xB5, 4, 0xBFD453D5>("\xEC\xD7\xC0" + 0xBFD453D5).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_yaw, 0.f, 100.f, "%.0f%%");
-		Sakura::Menu::Widgets::SliderFloat(/*Additional Fov Percent*/XorStr<0x2D, 23, 0x27222B62>("\x6C\x4A\x4B\x59\x45\x5B\x5C\x5A\x54\x5A\x17\x7E\x56\x4C\x1B\x6C\x58\x4C\x5C\x25\x2F\x36" + 0x27222B62).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_fov, 0.f, 150.f, "%.0f%%");
-		Sakura::Menu::Widgets::SliderFloat(/*Additional Smooth Percent*/XorStr<0xAA, 26, 0xC354320A>("\xEB\xCF\xC8\xC4\xDA\xC6\xDF\xDF\xD3\xDF\x94\xE6\xDB\xD8\xD7\xCD\xD2\x9B\xEC\xD8\xCC\xDC\xA5\xAF\xB6" + 0xC354320A).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_smooth, 0.f, 150.f, "%.0f%%");
-		Sakura::Menu::Widgets::SliderFloat(/*After Shoots*/XorStr<0xC3, 13, 0x6DF926FF>("\x82\xA2\xB1\xA3\xB5\xE8\x9A\xA2\xA4\xA3\xB9\xBD" + 0x6DF926FF).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_after_shots_fired, 0.f, 10.f, "%.0f");
-		ImGui::PopItemWidth();
+		ImGui::BeginChild(/*##la1*/XorStr<0x27, 6, 0x97754AD4>("\x04\x0B\x45\x4B\x1A" + 0x97754AD4).s, ImVec2(250, -1));
+		{
+			ImGui::PushItemWidth(itemWidth);
+			Sakura::Menu::Widgets::SliderFloat(/*Pitch*/XorStr<0x48, 6, 0x4873E5B9>("\x18\x20\x3E\x28\x24" + 0x4873E5B9).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_pitch, 0.f, 100.f, "%.0f%%");
+			Sakura::Menu::Widgets::SliderFloat(/*Yaw*/XorStr<0xB5, 4, 0xBFD453D5>("\xEC\xD7\xC0" + 0xBFD453D5).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_yaw, 0.f, 100.f, "%.0f%%");
+			Sakura::Menu::Widgets::SliderFloat(/*Additional Fov Percent*/XorStr<0x2D, 23, 0x27222B62>("\x6C\x4A\x4B\x59\x45\x5B\x5C\x5A\x54\x5A\x17\x7E\x56\x4C\x1B\x6C\x58\x4C\x5C\x25\x2F\x36" + 0x27222B62).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_fov, 0.f, 150.f, "%.0f%%");
+			Sakura::Menu::Widgets::SliderFloat(/*Additional Smooth Percent*/XorStr<0xAA, 26, 0xC354320A>("\xEB\xCF\xC8\xC4\xDA\xC6\xDF\xDF\xD3\xDF\x94\xE6\xDB\xD8\xD7\xCD\xD2\x9B\xEC\xD8\xCC\xDC\xA5\xAF\xB6" + 0xC354320A).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_smooth, 0.f, 150.f, "%.0f%%");
+			Sakura::Menu::Widgets::SliderFloat(/*After Shoots*/XorStr<0xC3, 13, 0x6DF926FF>("\x82\xA2\xB1\xA3\xB5\xE8\x9A\xA2\xA4\xA3\xB9\xBD" + 0x6DF926FF).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].recoil_compensation_after_shots_fired, 0.f, 10.f, "%.0f");
+			ImGui::PopItemWidth();
+		}
+		ImGui::EndChild();
+		ImGui::SameLine();
+		ImGui::BeginChild(/*##la2*/XorStr<0x92, 6, 0x9B6AE9B1>("\xB1\xB0\xF8\xF4\xA4" + 0x9B6AE9B1).s, ImVec2(250, -1));
+		{
+			ImGui::PushItemWidth(itemWidth);
+
+			Sakura::Menu::Widgets::Combo(
+				/*Accuracy Boost*/XorStr<0xED, 15, 0x6F26896C>("\xAC\x8D\x8C\x85\x83\x93\x90\x8D\xD5\xB4\x98\x97\x8A\x8E" + 0x6F26896C).s,
+				&cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].accuracy,
+				/*ff\0Aiming\0Recoil\0Recoil / Spread\0*/XorStr<0xC7, 34, 0xD70E3777>("\xA1\xAE\xC9\x8B\xA2\xA1\xA4\xA0\xA8\xD0\x83\xB7\xB0\xBB\xBC\xBA\xD7\x8A\xBC\xB9\xB4\xB5\xB1\xFE\xF0\xC0\xB2\x92\x91\x81\x84\x82\xE7" + 0xD70E3777).s);
+
+			ImGui::PopItemWidth();
+		}
+		ImGui::EndChild();
 	}
-	ImGui::EndChild();
-	ImGui::SameLine();
-	ImGui::BeginChild(/*##la2*/XorStr<0x92, 6, 0x9B6AE9B1>("\xB1\xB0\xF8\xF4\xA4" + 0x9B6AE9B1).s, ImVec2(250, -1));
-	{
-		ImGui::PushItemWidth(itemWidth);
-		
-		Sakura::Menu::Widgets::Combo(
-			/*Accuracy Boost*/XorStr<0xED, 15, 0x6F26896C>("\xAC\x8D\x8C\x85\x83\x93\x90\x8D\xD5\xB4\x98\x97\x8A\x8E" + 0x6F26896C).s,
-			&cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].accuracy,
-			/*ff\0Aiming\0Recoil\0Recoil / Spread\0*/XorStr<0xC7, 34, 0xD70E3777>("\xA1\xAE\xC9\x8B\xA2\xA1\xA4\xA0\xA8\xD0\x83\xB7\xB0\xBB\xBC\xBA\xD7\x8A\xBC\xB9\xB4\xB5\xB1\xFE\xF0\xC0\xB2\x92\x91\x81\x84\x82\xE7" + 0xD70E3777).s);
-		
-		ImGui::PopItemWidth();
-	}
-	ImGui::EndChild();
 }

@@ -254,16 +254,6 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 				if (g_Player[id].iTeam != TEAM_TT)
 					continue;
 
-				if (g_Player[id].bVip)
-				{
-					//ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 5);
-					//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.5f, 1.f));
-					ImGui::Text(/*(VIP)*/XorStr<0xD4, 6, 0xBCB51EA3>("\xFC\x83\x9F\x87\xF1" + 0xBCB51EA3).s);
-					ImGui::PopStyleColor();
-					ImGui::SameLine();
-				}
-
 				bool is_selected = (playerSelected == id);
 				ImGui::PushStyleColor(ImGuiCol_Text, g_Player[id].bAliveInScoreTab ? ImVec4(1.f, 0.5f, 0.5f, 1.f) : ImVec4(1.f, 0.15f, 0.15f, 0.5f));
 				if (ImGui::Selectable(player->name, &is_selected))
@@ -280,20 +270,28 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 					break;
 				case IDHOOK_PLAYER_ON:
 					ImGui::SameLine();
-					//ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 5);
-					//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 0.5f, 1.f));
 					ImGui::Text(/*[ON]*/XorStr<0xAA, 5, 0x2DE0A2A8>("\xF1\xE4\xE2\xF0" + 0x2DE0A2A8).s);
 					ImGui::PopStyleColor();
 					break;
 				case IDHOOK_PLAYER_OFF:
 					ImGui::SameLine();
-					//ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 5);
-					//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.f, 0.f, 1.f));
 					ImGui::Text(/*[OFF]*/XorStr<0x3D, 6, 0xEBD3A96B>("\x66\x71\x79\x06\x1C" + 0xEBD3A96B).s);
 					ImGui::PopStyleColor();
 					break;
+				}
+
+				if (g_Player[id].bVip)
+				{
+					ImGui::SameLine();
+					ImGui::PushFont(Sakura::Menu::Fonts::icons);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 5);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+					ImGui::Text(/*g*/XorStr<0x64, 2, 0xA25B40C7>("\x03" + 0xA25B40C7).s);
+					ImGui::PopStyleColor();
+					ImGui::PopFont();
 				}
 			}
 
@@ -310,16 +308,6 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 
 				if (g_Player[id].iTeam != TEAM_CT)
 					continue;
-
-				if (g_Player[id].bVip)
-				{
-					//ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 5);
-					//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
-					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.5f, 1.f));
-					ImGui::Text(/*(VIP)*/XorStr<0xD4, 6, 0xBCB51EA3>("\xFC\x83\x9F\x87\xF1" + 0xBCB51EA3).s);
-					ImGui::PopStyleColor();
-					ImGui::SameLine();
-				}
 
 				bool is_selected = (playerSelected == id);
 				ImGui::PushStyleColor(ImGuiCol_Text, g_Player[id].bAliveInScoreTab ? ImVec4(0.5f, 0.5f, 1.f, 1.f) : ImVec4(0.15f, 0.15f, 1.f, 0.5f));
@@ -351,6 +339,18 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 					ImGui::Text(/*[OFF]*/XorStr<0x3D, 6, 0xEBD3A96B>("\x66\x71\x79\x06\x1C" + 0xEBD3A96B).s);
 					ImGui::PopStyleColor();
 					break;
+				}
+
+				if (g_Player[id].bVip)
+				{
+					ImGui::SameLine();
+					ImGui::PushFont(Sakura::Menu::Fonts::icons);
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 5);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+					ImGui::Text(/*g*/XorStr<0x64, 2, 0xA25B40C7>("\x03" + 0xA25B40C7).s);
+					ImGui::PopStyleColor();
+					ImGui::PopFont();
 				}
 			}
 		}
@@ -625,16 +625,16 @@ void Sakura::Menu::Tabs::Misc::NameStealer()
 		Sakura::Menu::Widgets::Checkbox(/*Ignore off players on list*/XorStr<0xB1, 27, 0x39D42FAF>("\xF8\xD5\xDD\xDB\xC7\xD3\x97\xD7\xDF\xDC\x9B\xCC\xD1\xDF\xC6\xA5\xB3\xB1\xE3\xAB\xAB\xE6\xAB\xA1\xBA\xBE" + 0x39D42FAF).s, &cvar.misc_namestealer_playerlist);
 		Sakura::Menu::Widgets::Checkbox(/*Ignore spectators*/XorStr<0x74, 18, 0xB6B1FB7D>("\x3D\x12\x18\x18\x0A\x1C\x5A\x08\x0C\x18\x1D\x0B\xE1\xF5\xED\xF1\xF7" + 0xB6B1FB7D).s, &cvar.misc_namestealer_specs);
 
-		ImGui::Spacing();
-		ImGui::Spacing();
-		ImGui::Spacing();
+		//ImGui::Spacing();
+		//ImGui::Spacing();
+		//ImGui::Spacing();
 
-		if (Sakura::Menu::Widgets::Button(/*Invisible name*/XorStr<0xA7, 15, 0xCA0F109F>("\xEE\xC6\xDF\xC3\xD8\xC5\xCF\xC2\xCA\x90\xDF\xD3\xDE\xD1" + 0xCA0F109F).s)) Sakura::Name::Invisible();
-		ImGui::SameLine();
-		if (Sakura::Menu::Widgets::Button(/*Green name*/XorStr<0x30, 11, 0x020F5731>("\x77\x43\x57\x56\x5A\x15\x58\x56\x55\x5C" + 0x020F5731).s)) Sakura::Name::Green();
-		ImGui::Spacing();
-		ImGui::InputText(/*Nickname*/XorStr<0x18, 9, 0xB6300948>("\x56\x70\x79\x70\x72\x7C\x73\x7A" + 0xB6300948).s, nickname, 32);
-		if (Sakura::Menu::Widgets::Button(/*Change*/XorStr<0xC6, 7, 0x36F72FDF>("\x85\xAF\xA9\xA7\xAD\xAE" + 0x36F72FDF).s)) Sakura::Name::Custom();
+		//if (Sakura::Menu::Widgets::Button(/*Invisible name*/XorStr<0xA7, 15, 0xCA0F109F>("\xEE\xC6\xDF\xC3\xD8\xC5\xCF\xC2\xCA\x90\xDF\xD3\xDE\xD1" + 0xCA0F109F).s)) Sakura::Name::Invisible();
+		//ImGui::SameLine();
+		//if (Sakura::Menu::Widgets::Button(/*Green name*/XorStr<0x30, 11, 0x020F5731>("\x77\x43\x57\x56\x5A\x15\x58\x56\x55\x5C" + 0x020F5731).s)) Sakura::Name::Green();
+		//ImGui::Spacing();
+		//ImGui::InputText(/*Nickname*/XorStr<0x18, 9, 0xB6300948>("\x56\x70\x79\x70\x72\x7C\x73\x7A" + 0xB6300948).s, nickname, 32);
+		//if (Sakura::Menu::Widgets::Button(/*Change*/XorStr<0xC6, 7, 0x36F72FDF>("\x85\xAF\xA9\xA7\xAD\xAE" + 0x36F72FDF).s)) Sakura::Name::Custom();
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

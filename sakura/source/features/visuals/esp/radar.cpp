@@ -288,29 +288,15 @@ void DrawOverviewEntities()
 		Vector vforward, vRight, vAngles = Vector(0, -angles[1] + Angle[1] + 90, 0);
 		g_Engine.pfnAngleVectors(vAngles, vforward, vRight, NULL);
 
-		ImVec2 a, b, c, d;
-		ImU32 circleColor = Sakura::Colors::White();
+		ImVec2 center;
+		center.x = screenx;
+		center.y = screeny;
 
-		if (g_Player[ent->index].iTeam == 1) circleColor = Sakura::Colors::Red();
-		if (g_Player[ent->index].iTeam == 2) circleColor = Sakura::Colors::Blue();
+		float radius = cvar.radar_point_size;
 
-		a.x = screenx + cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0];
-		a.y = screeny + cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1];
-		b.x = screenx + cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0];
-		b.y = screeny + cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1];
-		c.x = screenx - cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0];
-		c.y = screeny - cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1];
-		d.x = screenx - cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0];
-		d.y = screeny - cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1];
+		ImRGBA circleColor = Sakura::Colors::GetTeamColor(g_Player[ent->index].iTeam);
 
-		//ImVec2 center;
-		//center.x = (((screenx + cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0]) + (screenx + cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0])) / 2) - cvar.radar_point_size;
-		//center.y = ((screeny + cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1]) + (screeny - cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1])) / 2;
-		
-		//float radius = cvar.radar_point_size;
-
-		ImGui::GetWindowDrawList()->AddQuadFilled(a, b, c, d, circleColor);
-		//ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, circleColor, 100);
+		ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, ImColor(circleColor.r, circleColor.g, circleColor.b, circleColor.a));
 	}
 }
 
@@ -368,22 +354,15 @@ void DrawOverviewEntitiesSoundIndex()
 		Vector vforward, vRight, vAngles = Vector(0, -QAimAngles[1] + Angle[1] - 90, 0);
 		g_Engine.pfnAngleVectors(vAngles, vforward, vRight, NULL);
 
-		ImVec2 a, b, c, d;
-		ImU32 cl = Sakura::Colors::White();
+		ImVec2 center;
+		center.x = screenx;
+		center.y = screeny;
 
-		if (g_Player[ent->index].iTeam == 1) cl = Sakura::Colors::Red();
-		if (g_Player[ent->index].iTeam == 2) cl = Sakura::Colors::Blue();
+		float radius = cvar.radar_point_size;
 
-		a.x = screenx + cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0];
-		a.y = screeny + cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1];
-		b.x = screenx + cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0];
-		b.y = screeny + cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1];
-		c.x = screenx - cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0];
-		c.y = screeny - cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1];
-		d.x = screenx - cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0];
-		d.y = screeny - cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1];
+		ImRGBA circleColor = Sakura::Colors::GetTeamColor(g_Player[ent->index].iTeam);
 
-		ImGui::GetWindowDrawList()->AddQuadFilled(a, b, c, d, cl);
+		ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, ImColor(circleColor.r, circleColor.g, circleColor.b, circleColor.a));
 	}
 }
 
@@ -420,17 +399,15 @@ void DrawOverviewEntitiesSoundNoIndex()
 		Vector vforward, vRight, vAngles = Vector(0, -QAimAngles[1] + Angle[1] - 90, 0);
 		g_Engine.pfnAngleVectors(vAngles, vforward, vRight, NULL);
 
-		ImVec2 a, b, c, d;
-		a.x = screenx + cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0];
-		a.y = screeny + cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1];
-		b.x = screenx + cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0];
-		b.y = screeny + cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1];
-		c.x = screenx - cvar.radar_point_size * vRight[0] - cvar.radar_point_size * vforward[0];
-		c.y = screeny - cvar.radar_point_size * vRight[1] - cvar.radar_point_size * vforward[1];
-		d.x = screenx - cvar.radar_point_size * vRight[0] + cvar.radar_point_size * vforward[0];
-		d.y = screeny - cvar.radar_point_size * vRight[1] + cvar.radar_point_size * vforward[1];
+		ImVec2 center;
+		center.x = screenx;
+		center.y = screeny;
 
-		ImGui::GetWindowDrawList()->AddQuadFilled(a, b, c, d, ImColor(0.f, 1.f, 0.f, 1.f));
+		float radius = cvar.radar_point_size;
+
+		ImColor circleColor = Sakura::Colors::Green();
+
+		ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, circleColor);
 	}
 }
 
@@ -440,17 +417,16 @@ void DrawOverview()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(80.0f, 80.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.f, 0.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, 0.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, cvar.radar_background_opacity / 100.f));
 		ImGui::SetNextWindowPos(ImVec2(cvar.radar_pos_x, cvar.radar_pos_y), ImGuiCond_Once);
 		ImGui::SetNextWindowSize(ImVec2(cvar.radar_size_x, cvar.radar_size_y), ImGuiCond_Once);
-		ImGui::Begin("overview", NULL, ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin(/*radaroverview*/XorStr<0xBE, 14, 0xFBE090F2>("\xCC\xDE\xA4\xA0\xB0\xAC\xB2\xA0\xB4\xB1\xA1\xAC\xBD" + 0xFBE090F2).s, NULL, ImGuiWindowFlags_NoTitleBar);
 		{
-			//if (!MapLoaded)
-			//	ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Missing overview!");
 			iX = ImGui::GetCursorScreenPos().x;
 			iY = ImGui::GetCursorScreenPos().y;
 			iW = ImGui::GetContentRegionAvail().x;
@@ -487,6 +463,6 @@ void DrawOverview()
 		}
 		ImGui::End();
 		ImGui::PopStyleColor();
-		ImGui::PopStyleVar(4);
+		ImGui::PopStyleVar(7);
 	}
 }
