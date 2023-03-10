@@ -1,30 +1,28 @@
 #include "../../client.h"
 
-void AntiAfk::Run(usercmd_s* cmd)
+void Sakura::AntiAfk::Run(usercmd_s* cmd)
 {
-	int afktime = cvar.afk_time;
-	afktime -= 1;
-	afktime *= 1000;
-	static DWORD antiafk = GetTickCount();
-	static Vector prevorigin;
-	static Vector prevangles;
-	if (Sakura::Player::Local::IsAlive())
-	{
-		if (pmove->origin != prevorigin || cmd->viewangles != prevangles)
-			antiafk = GetTickCount();
-		prevorigin = pmove->origin;
-		prevangles = cmd->viewangles;
-		if (cvar.afk_anti)
-		{
-			if (GetTickCount() - antiafk > afktime)
-			{
-				cmd->buttons |= IN_JUMP;
-				cmd->viewangles[1] += 5;
-				g_Engine.SetViewAngles(cmd->viewangles);
-			}
+	int afkTimeInterval = cvar.afk_time * 1000;
+	static DWORD currentTime = GetTickCount();
+	static Vector prevOrigin;
+	static Vector prevAngles;
 
-		}
+	if (!cvar.afk_anti)
+		return;
+
+	if(!Sakura::Player::Local::IsAlive())
+		currentTime = GetTickCount();
+
+	if (pmove->origin != prevOrigin || cmd->viewangles != prevAngles)
+		currentTime = GetTickCount();
+
+	prevOrigin = pmove->origin;
+	prevAngles = cmd->viewangles;
+
+	if (GetTickCount() - currentTime > afkTimeInterval)
+	{
+		cmd->buttons |= IN_JUMP;
+		cmd->viewangles[1] += static_cast<int>(cvar.afk_yaw);
+		g_Engine.SetViewAngles(cmd->viewangles);
 	}
-	else
-		antiafk = GetTickCount();
 }

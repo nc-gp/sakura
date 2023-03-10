@@ -1251,15 +1251,15 @@ void ItemPreFrame(struct local_state_s *from, struct local_state_s *to, struct u
 		static int iLastWpnID = g_Local.weapon.m_iWeaponID;
 		if (iLastWpnID != g_Local.weapon.m_iWeaponID)
 		{
-			if (Sakura::Player::Local::IsAlive()) delay = GetTickCount();
+			if (Sakura::Player::Local::IsAlive()) 
+                delay = GetTickCount();
+
 			iLastWpnID = g_Local.weapon.m_iWeaponID;
 
-            // Clear current weapon hitboxes
-            Model_Aim_Select.deque::clear();
-
-            // Load hitboxes for another weapon
-            LoadHitbox();
-            LoadHitboxLegit();
+            if (cvar.rage_active)
+                Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE);
+            else if (cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].active)
+                Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT);
 		}
 	}
 }

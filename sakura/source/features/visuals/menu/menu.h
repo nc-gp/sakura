@@ -19,7 +19,6 @@ namespace Sakura
 
 		ImColor GetMenuColor(float alpha = 1.f);
 		int CheckWeapon(float global, float sub);
-		char* GetHitboxName(int hitbox);
 		void HudKeyBind(float& key, const char* keyname, ImVec2 size = {}, bool old = false);
 		void HudMenuBind(float& key);
 	};

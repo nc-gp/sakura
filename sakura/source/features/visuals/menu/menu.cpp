@@ -63,34 +63,6 @@ const char* getRandomText()
 	return menu_texts[perviousText];
 }
 
-char* Sakura::Menu::GetHitboxName(int hitbox)
-{
-	switch (hitbox)
-	{
-	case 0: return "Belt";
-	case 1: return "Left Thigh";
-	case 2: return "Left Tibia";
-	case 3: return "Left Foot";
-	case 4: return "Right Thigh";
-	case 5: return "Right Tibia";
-	case 6: return "Right Foot";
-	case 7: return "Stomach";
-	case 8: return "Lower chest";
-	case 9: return "Upper chest";
-	case 10: return "Neck";
-	case 11: return "Head";
-	case 12: return "Left Shoulder";
-	case 13: return "Left Elbow";
-	case 14: return "Left Arm";
-	case 15: return "Left Hand";
-	case 16: return "Right Shoulder";
-	case 17: return "Right Elbow";
-	case 18: return "Right Arm";
-	case 19: return "Right Hand";
-	default: return "Unknown";
-	}
-}
-
 char* KeyEventChar(int Key)
 {
 	switch (Key)
@@ -423,16 +395,6 @@ void DrawCategoryButtons()
 
 		if (Sakura::Menu::Widgets::SubTab(/*Speedhack*/XorStr<0x13, 10, 0x5277386C>("\x40\x64\x70\x73\x73\x70\x78\x79\x70" + 0x5277386C).s, ImVec2(150, 25), ragebottab == 3 ? true : false))
 			ragebottab = 3;
-
-		ImGui::Spacing();
-
-		if (Sakura::Menu::Widgets::SubTab(/*Hitboxes*/XorStr<0x19, 9, 0x804A07C0>("\x51\x73\x6F\x7E\x72\x66\x7A\x53" + 0x804A07C0).s, ImVec2(150, 25), ragebottab == 4 ? true : false))
-			ragebottab  = 4;
-
-		ImGui::Spacing();
-
-		if (Sakura::Menu::Widgets::SubTab(/*Priority Hitboxes*/XorStr<0x89, 18, 0x0411F866>("\xD9\xF8\xE2\xE3\xFF\xE7\xFB\xE9\xB1\xDA\xFA\xE0\xF7\xF9\xEF\xFD\xEA" + 0x0411F866).s, ImVec2(150, 25), ragebottab == 5 ? true : false))
-			ragebottab = 5;
 		break;
 	case 1:
 		if (Sakura::Menu::Widgets::SubTab(/*Aimbot*/XorStr<0x5A, 7, 0x7C571BB6>("\x1B\x32\x31\x3F\x31\x2B" + 0x7C571BB6).s, ImVec2(150, 25), legitbottab == 0 ? true : false))
@@ -457,11 +419,6 @@ void DrawCategoryButtons()
 
 		if (Sakura::Menu::Widgets::SubTab(/*Knifebot*/XorStr<0xD0, 9, 0x4B190BD1>("\x9B\xBF\xBB\xB5\xB1\xB7\xB9\xA3" + 0x4B190BD1).s, ImVec2(150, 25), legitbottab == 4 ? true : false))
 			legitbottab = 4;
-
-		ImGui::Spacing();
-
-		if (Sakura::Menu::Widgets::SubTab(/*Hitboxes*/XorStr<0x20, 9, 0x8140E0C7>("\x68\x48\x56\x41\x4B\x5D\x43\x54" + 0x8140E0C7).s, ImVec2(150, 25), legitbottab == 5 ? true : false))
-			legitbottab = 5;
 		break;
 	case 2:
 		if (Sakura::Menu::Widgets::SubTab(/*Player*/XorStr<0x73, 7, 0x401FCABE>("\x23\x18\x14\x0F\x12\x0A" + 0x401FCABE).s, ImVec2(150, 25), visualstab == 0 ? true : false))
@@ -640,12 +597,6 @@ void DrawTab()
 		case 3:
 			Sakura::Menu::Tabs::Rage::Speedhack();
 			break;
-		case 4:
-			Sakura::Menu::Tabs::Misc::ModelHitboxes();
-			break;
-		case 5:
-			Sakura::Menu::Tabs::Misc::SelectedHitboxes();
-			break;
 		}
 
 		break;
@@ -755,26 +706,8 @@ void DrawTab()
 				break;
 			}
 
-			//ImGui::BeginChild(/*##lweapon1*/XorStr<0xBC, 11, 0xB95E8E0E>("\x9F\x9E\xD2\xC8\xA5\xA0\xB2\xAC\xAA\xF4" + 0xB95E8E0E).s, ImVec2(250, 40));
-			//{
-			//	//ImGui::PushItemWidth(Sakura::Menu::itemWidth + 5);
-			//	//Sakura::Menu::Widgets::Combo(/*Weapon category*/XorStr<0x37, 16, 0x572D301F>("\x60\x5D\x58\x4A\x54\x52\x1D\x5D\x5E\x34\x24\x25\x2C\x36\x3C" + 0x572D301F).s, &cvar.menu_legit_global_section, /*Pistols\0Snipers\0Rifles\0Shotguns\0Machine guns\0Submachine guns\0*/XorStr<0xC4, 62, 0xD4C50B6A>("\x94\xAC\xB5\xB3\xA7\xA5\xB9\xCB\x9F\xA3\xA7\xBF\xB5\xA3\xA1\xD3\x86\xBC\xB0\xBB\xBD\xAA\xDA\x88\xB4\xB2\xAA\xB8\x95\x8F\x91\xE3\xA9\x84\x85\x8F\x81\x87\x8F\xCB\x8B\x98\x80\x9C\xF0\xA2\x87\x91\x99\x94\x95\x9F\x91\x97\x9F\xDB\x9B\x88\x90\x8C\x00" + 0xD4C50B6A).s);
-			//	//ImGui::PopItemWidth();
-			//}
-			//ImGui::EndChild();
-			//ImGui::SameLine();
-			//ImGui::BeginChild(/*##lweapon2*/XorStr<0x2E, 11, 0xAE3DD1A8>("\x0D\x0C\x5C\x46\x57\x52\x44\x5A\x58\x05" + 0xAE3DD1A8).s, ImVec2(250, 40));
-			//{
-			//	ImGui::PushItemWidth(Sakura::Menu::itemWidth + 5);
-			//	if (cvar.menu_legit_global_section == 0) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x8C, 7, 0x59A0CCCD>("\xDB\xE8\xEF\xFF\xFF\xFF" + 0x59A0CCCD).s, &cvar.menu_legit_sub_section, /*Glock-18\0P228\0Deagle\0Dual Elites\0Five-seven\0Usp\0*/XorStr<0x02, 49, 0x42BA9433>("\x45\x6F\x6B\x66\x6D\x2A\x39\x31\x0A\x5B\x3E\x3F\x36\x0F\x54\x74\x73\x74\x78\x70\x16\x53\x6D\x78\x76\x3B\x59\x71\x77\x6B\x45\x52\x22\x65\x4D\x53\x43\x0A\x5B\x4C\x5C\x4E\x42\x2D\x7B\x5C\x40\x31" + 0x42BA9433).s);
-			//	if (cvar.menu_legit_global_section == 1) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xA3, 7, 0x4BC745F0>("\xF4\xC1\xC4\xD6\xC8\xC6" + 0x4BC745F0).s, &cvar.menu_legit_sub_section, /*Awp\0Scout\0G3SG1\0SG550\0*/XorStr<0x3B, 23, 0x5B25F9E0>("\x7A\x4B\x4D\x3E\x6C\x23\x2E\x37\x37\x44\x02\x75\x14\x0F\x78\x4A\x18\x0B\x78\x7B\x7F\x50" + 0x5B25F9E0).s);
-			//	if (cvar.menu_legit_global_section == 2) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xFE, 7, 0xB574A82A>("\xA9\x9A\x61\x71\x6D\x6D" + 0xB574A82A).s, &cvar.menu_legit_sub_section, /*M4A1\0Galil\0Famas\0Aug\0AK-47\0SG552\0*/XorStr<0xA1, 34, 0xBD2E952D>("\xEC\x96\xE2\x95\xA5\xE1\xC6\xC4\xC0\xC6\xAB\xEA\xCC\xC3\xCE\xC3\xB1\xF3\xC6\xD3\xB5\xF7\xFC\x95\x8D\x8D\xBB\xEF\xFA\x8B\x8A\xF2\xC1" + 0xBD2E952D).s);
-			//	if (cvar.menu_legit_global_section == 3) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0xBF, 7, 0x4D7E9BAF>("\xE8\xA5\xA0\xB2\xAC\xAA" + 0x4D7E9BAF).s, &cvar.menu_legit_sub_section, /*XM1014\0M3\0*/XorStr<0x29, 11, 0x20725BEB>("\x71\x67\x1A\x1C\x1C\x1A\x2F\x7D\x02\x32" + 0x20725BEB).s);
-			//	if (cvar.menu_legit_global_section == 4) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x73, 7, 0x98922951>("\x24\x11\x14\x06\x18\x16" + 0x98922951).s, &cvar.menu_legit_sub_section, /*M249\0*/XorStr<0xEA, 6, 0x0F7F0EC4>("\xA7\xD9\xD8\xD4\xEE" + 0x0F7F0EC4).s);
-			//	if (cvar.menu_legit_global_section == 5) Sakura::Menu::Widgets::Combo(/*Weapon*/XorStr<0x52, 7, 0x6116DB37>("\x05\x36\x35\x25\x39\x39" + 0x6116DB37).s, &cvar.menu_legit_sub_section, /*Tmp\0P90\0Mp5\0Mac10\0Ump45\0*/XorStr<0xC3, 25, 0x7F14DE9D>("\x97\xA9\xB5\xC6\x97\xF1\xF9\xCA\x86\xBC\xF8\xCE\x82\xB1\xB2\xE3\xE3\xD4\x80\xBB\xA7\xEC\xEC\xDA" + 0x7F14DE9D).s);
-			//	ImGui::PopItemWidth();
-			//}
-			//ImGui::EndChild();
+			ImGui::Spacing();
+			ImGui::Spacing();
 		}
 		
 		switch (legitbottab)
@@ -793,9 +726,6 @@ void DrawTab()
 			break;
 		case 4:
 			Sakura::Menu::Tabs::Legit::Knifebot();
-			break;
-		case 5:
-			Sakura::Menu::Tabs::Legit::Hitboxes();
 			break;
 		}
 		break;
@@ -1053,6 +983,7 @@ void DrawMenuWindow()
 	if (Sakura::Lua::scripts.size() > 0)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+		ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 		ImGui::Begin(/*Sakura - Lua Scripts*/XorStr<0xBB, 21, 0x73438C7B>("\xE8\xDD\xD6\xCB\xCD\xA1\xE1\xEF\xE3\x88\xB0\xA7\xE7\x9B\xAA\xB8\xA2\xBC\xB9\xBD" + 0x73438C7B).s, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::BeginTabBar(/*luascripts*/XorStr<0xCE, 11, 0x0006A541>("\xA2\xBA\xB1\xA2\xB1\xA1\xBD\xA5\xA2\xA4" + 0x0006A541).s, ImGuiTabBarFlags_NoTooltip);
 		for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)

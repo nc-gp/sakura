@@ -177,7 +177,7 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 	Route(cmd);
 	AntiAim::Local(cmd);
 	FakeLag(frametime, cmd);
-	AntiAfk::Run(cmd);
+	Sakura::AntiAfk::Run(cmd);
 
 	BulletTrace::Local(cmd);
 

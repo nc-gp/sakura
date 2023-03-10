@@ -11,7 +11,6 @@ namespace Sakura
 			SAKURA_CALLBACK_AT_RENDERING_BACKGROUND,
 			SAKURA_CALLBACK_AT_CLIENT_MOVE,
 			SAKURA_CALLBACK_AT_CLIENT_BIND,
-			//SAKURA_CALLBACK_AT_CLIENT_ADDENTITY,
 			SAKURA_CALLBACK_AT_DEATH_MESSAGE,
 			SAKURA_CALLBACK_AT_RESETHUD_MESSAGE,
 			SAKURA_CALLBACK_AT_DAMAGE_MESSAGE,
@@ -57,7 +56,6 @@ namespace Sakura
 		extern int ScriptsCount;
 		extern std::vector<Sakura::Lua::LuaScripts> scripts;
 		extern int currentScriptIndex;
-		//extern lua_State* pLuaState;
 
 		bool Init(lua_State* L);
 		void Reload();
@@ -65,10 +63,6 @@ namespace Sakura
 		namespace Hooks
 		{
 			void RegisterCallBack(UINT type, luabridge::LuaRef f);
-			/*std::vector<luabridge::LuaRef> GetCallbacks(SAKURA_CALLBACK_TYPE type);
-			bool HasHook(SAKURA_CALLBACK_TYPE type);
-			void RemoveAllCallbacks();
-			extern std::unordered_map<UINT, std::vector<luabridge::LuaRef>> Callbacks;*/
 		};
 
 		namespace Game
@@ -140,9 +134,7 @@ namespace Sakura
 		namespace ImGui
 		{
 			void Menu(const char* szTitle, luabridge::LuaRef lfFunction);
-			//void End();
 			void Window(const char* szTitle, ImGuiWindowFlags flags, luabridge::LuaRef lfFunction);
-			//void WindowEnd();
 			void Text(const char* szText);
 			bool Button(const char* szText);
 			bool Checkbox(const char* szText, bool bCurrentValue);
@@ -162,16 +154,5 @@ namespace Sakura
 				void AddRectFilled(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int corners);
 			};
 		};
-
-		/*namespace Helpers
-		{
-			position_history_t* get_position_history(cl_entity_s* ent);
-			Vector* get_attachment(cl_entity_s* ent);
-			byte* get_prevseqblending(latchedvars_t* latched);
-			byte* get_prevcontroller(latchedvars_t* latched);
-			byte* get_prevblending(latchedvars_t* latched);
-			byte* get_controller(entity_state_t* entityState);
-			byte* get_blending(entity_state_t* entityState);
-		};*/
 	};
 };

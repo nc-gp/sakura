@@ -505,13 +505,10 @@ void LegitAimbot(struct usercmd_s* cmd)
 
 	float flAccuracy = cvar.legit[g_Local.weapon.m_iWeaponID].accuracy;
 
-	float flPSilent = cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent / 100;
+	//float flPSilent = cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent / 100;
 
-	// player angles + punch angles
 	Vector vecFOV = {};
 	{
-		//QAngle QAngles = cmd->viewangles + g_Local.vPunchangle;
-
 		QAngle QAngles;
 
 		QAngles.x = (cmd->viewangles.x + g_Local.vPunchangle.x);
@@ -587,10 +584,8 @@ void LegitAimbot(struct usercmd_s* cmd)
 
 			VectorAngles(vAimOriginLegit - vEye, QAimAngles);
 
-			// Psilent
 			if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_enable && CanAttack())
 			{
-				// here we can make calculate it between veye and fov i guess
 				QAngle QAnglePerfectSilent = QAimAngles;
 
 				QAnglePerfectSilent += g_Local.vPunchangle;
@@ -603,15 +598,12 @@ void LegitAimbot(struct usercmd_s* cmd)
 				QAnglePerfectSilent.AngleVectors(&vecPsilentFOV, NULL, NULL);
 				vecPsilentFOV.Normalize();
 
-				// vAimOriginLegit = selected player hitbox
-				// vEye = local view angles
 				Vector vDistance(vAimOriginLegit - vEye);
 				float fov = AngleBetweenA(vecPsilentFOV, vDistance);
-				//float fov = vecPsilentFOV.AngleBetween(vAimOriginLegit - vEye);
 
-				if (fov/* <= flPSilent*/)
+				if (fov)
 				{
-					if(cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot && fov < flPSilent)
+					if(cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot)
 						cmd->buttons |= IN_ATTACK;
 
 					dwBlockAttack = GetTickCount();

@@ -12,7 +12,7 @@ namespace Sakura
 				void Triggerbot();
 				void PerfectSilent();
 				void Knifebot();
-				void Hitboxes();
+				//void Hitboxes();
 				void Recoil();
 			};
 		};

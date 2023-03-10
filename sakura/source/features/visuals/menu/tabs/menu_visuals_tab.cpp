@@ -433,16 +433,16 @@ void Sakura::Menu::Tabs::Visuals::Sound()
 	ImGui::BeginChild(/*##vo1*/XorStr<0xA1, 6, 0x56F93954>("\x82\x81\xD5\xCB\x94" + 0x56F93954).s, ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Fire sounds volume*/XorStr<0x33, 19, 0x46437A26>("\x75\x5D\x47\x53\x17\x4B\x56\x4F\x55\x58\x4E\x1E\x49\x2F\x2D\x37\x2E\x21" + 0x46437A26).s, &cvar.misc_fire_sounds);
-		Sakura::Menu::Widgets::Checkbox(/*Kill Sound*/XorStr<0x13, 11, 0xA07DEF41>("\x58\x7D\x79\x7A\x37\x4B\x76\x6F\x75\x78" + 0xA07DEF41).s, &cvar.radio_kill_sound);
+		Sakura::Menu::Widgets::Checkbox(/*Enable kill sound*/XorStr<0x36, 18, 0x381ABAC5>("\x73\x59\x59\x5B\x56\x5E\x1C\x56\x57\x53\x2C\x61\x31\x2C\x31\x2B\x22" + 0x381ABAC5).s, &cvar.radio_kill_sound);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##vo2*/XorStr<0x8D, 6, 0x1B95C6D6>("\xAE\xAD\xF9\xFF\xA3" + 0x1B95C6D6).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Fire sounds volume*/XorStr<0xF1, 19, 0x3EA2AAB6>("\xB7\x9B\x81\x91\xD5\x85\x98\x8D\x97\x9E\x88\xDC\x8B\x91\x93\x75\x6C\x67" + 0x3EA2AAB6).s, &cvar.misc_fire_sounds_volume, 0, 100, "%.0f%");
-		Sakura::Menu::Widgets::SliderFloat(/*Fire sounds pitch*/XorStr<0xAE, 18, 0xBD0425E6>("\xE8\xC6\xC2\xD4\x92\xC0\xDB\xC0\xD8\xD3\xCB\x99\xCA\xD2\xC8\xDE\xD6" + 0xBD0425E6).s, &cvar.misc_fire_sounds_pitch, 1, 200, "%.0f%");
-		Sakura::Menu::Widgets::SliderFloat(/*Kill Sound Volume*/XorStr<0x69, 18, 0xD04676F3>("\x22\x03\x07\x00\x4D\x3D\x00\x05\x1F\x16\x53\x22\x1A\x1A\x02\x15\x1C" + 0xD04676F3).s, &cvar.radio_kill_volume, 0.f, 100, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Fire sounds volume*/XorStr<0xF1, 19, 0x3EA2AAB6>("\xB7\x9B\x81\x91\xD5\x85\x98\x8D\x97\x9E\x88\xDC\x8B\x91\x93\x75\x6C\x67" + 0x3EA2AAB6).s, &cvar.misc_fire_sounds_volume, 0, 100, "%.0f%%");
+		Sakura::Menu::Widgets::SliderFloat(/*Fire sounds pitch*/XorStr<0xAE, 18, 0xBD0425E6>("\xE8\xC6\xC2\xD4\x92\xC0\xDB\xC0\xD8\xD3\xCB\x99\xCA\xD2\xC8\xDE\xD6" + 0xBD0425E6).s, &cvar.misc_fire_sounds_pitch, 1, 200, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Kill sound volume*/XorStr<0x9D, 18, 0x764D3B4F>("\xD6\xF7\xF3\xCC\x81\xD1\xCC\xD1\xCB\xC2\x87\xDE\xC6\xC6\xDE\xC1\xC8" + 0x764D3B4F).s, &cvar.radio_kill_volume, 0.f, 100, "%.0f%%");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();

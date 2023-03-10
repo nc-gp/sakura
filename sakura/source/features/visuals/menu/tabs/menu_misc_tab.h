@@ -19,8 +19,8 @@ namespace Sakura
 				void NameStealer();
 				void ChatSpammer();
 				void Config();
-				void ModelHitboxes();
-				void SelectedHitboxes();
+				//void ModelHitboxes();
+				//void SelectedHitboxes();
 				void Information();
 			};
 		};

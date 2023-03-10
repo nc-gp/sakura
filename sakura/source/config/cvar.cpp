@@ -241,8 +241,10 @@ void CVARlist::init()
 		AddCvarFloat(str, &cvar.legit[i].block_attack_after_kill); legit[i].block_attack_after_kill = 0.0;
 		sprintf(str, "legit[%d].accuracy", i);
 		AddCvarFloat(str, &cvar.legit[i].accuracy); legit[i].accuracy = 0.0;
-		sprintf(str, "legit[%d].perfect_silent", i);
-		AddCvarFloat(str, &cvar.legit[i].perfect_silent); legit[i].perfect_silent = 0;
+		sprintf(str, "legit[%d].hitbox", i);
+		AddCvarFloat(str, &cvar.legit[i].hitbox); legit[i].hitbox = 11.0;
+		//sprintf(str, "legit[%d].perfect_silent", i);
+		//AddCvarFloat(str, &cvar.legit[i].perfect_silent); legit[i].perfect_silent = 0;
 		sprintf(str, "legit[%d].perfect_silent_fov", i);
 		AddCvarFloat(str, &cvar.legit[i].perfect_silent_fov); legit[i].perfect_silent_fov = 0;
 		sprintf(str, "legit[%d].perfect_silent_enable", i);
@@ -276,6 +278,8 @@ void CVARlist::init()
 		AddCvarFloat(str, &cvar.rage[i].rage_shot_type); rage[i].rage_shot_type = 0.0;
 		sprintf(str, "rage[%d].rage_random_max", i);
 		AddCvarFloat(str, &cvar.rage[i].rage_random_max); rage[i].rage_random_max = 3.0;
+		sprintf(str, "rage[%d].rage_hitbox", i);
+		AddCvarFloat(str, &cvar.rage[i].rage_hitbox); rage[i].rage_hitbox = 11.0;
 	}
 
 	/*for (unsigned int i = 1; i <= 30; i++)
@@ -709,6 +713,7 @@ void CVARlist::init()
 
 	INITCVAR(afk_anti, 0.0);
 	INITCVAR(afk_time, 90.0);
+	INITCVAR(afk_yaw, 5.0);
 
 	INITCVAR(steamid, 0.0); 
 	INITCVAR(id1, 1.0);

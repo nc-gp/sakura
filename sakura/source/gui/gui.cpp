@@ -230,7 +230,7 @@ void HookImGui(HDC hdc)
 {
 	ColorChange();
 	ClearSound();
-	GetModelAndHitbox();
+	Sakura::Hitboxes::GetModelHitboxes();
 	InistalizeImgui(hdc);
 
 	if (!bOldOpenGL)

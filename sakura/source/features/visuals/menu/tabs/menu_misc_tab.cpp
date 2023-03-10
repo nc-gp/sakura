@@ -217,14 +217,15 @@ void Sakura::Menu::Tabs::Misc::AntiAFK()
 {
 	ImGui::BeginChild(/*##maa1*/XorStr<0x45, 7, 0xEBB25610>("\x66\x65\x2A\x29\x28\x7B" + 0xEBB25610).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0xC4, 7, 0x386F884A>("\x81\xAB\xA7\xA5\xA4\xAC" + 0x386F884A).s, &cvar.afk_anti);
+		Sakura::Menu::Widgets::Checkbox(/*Enable anti afk*/XorStr<0xBA, 16, 0xEAB0697C>("\xFF\xD5\xDD\xDF\xD2\xDA\xE0\xA0\xAC\xB7\xAD\xE5\xA7\xA1\xA3" + 0xEAB0697C).s, &cvar.afk_anti);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##maa2*/XorStr<0xE7, 7, 0x8C1EA631>("\xC4\xCB\x84\x8B\x8A\xDE" + 0x8C1EA631).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Time*/XorStr<0x67, 5, 0xFD0EB92C>("\x33\x01\x04\x0F" + 0xFD0EB92C).s, &cvar.afk_time, 3, 90, "%.0fs");
+		Sakura::Menu::Widgets::SliderFloat(/*Time*/XorStr<0x67, 5, 0xFD0EB92C>("\x33\x01\x04\x0F" + 0xFD0EB92C).s, &cvar.afk_time, 3, 90, /*%.0fs*/XorStr<0xAE, 6, 0x0747556F>("\x8B\x81\x80\xD7\xC1" + 0x0747556F).s);
+		Sakura::Menu::Widgets::SliderFloat(/*Yaw degree*/XorStr<0xCA, 11, 0xEDA444AF>("\x93\xAA\xBB\xED\xAA\xAA\xB7\xA3\xB7\xB6" + 0xEDA444AF).s, &cvar.afk_yaw, -45, 45, u8"%.0f°");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
@@ -258,7 +259,7 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 				ImGui::PushStyleColor(ImGuiCol_Text, g_Player[id].bAliveInScoreTab ? ImVec4(1.f, 0.5f, 0.5f, 1.f) : ImVec4(1.f, 0.15f, 0.15f, 0.5f));
 				if (ImGui::Selectable(player->name, &is_selected))
 				{
-					playerSelected = id;
+					playerSelected = -1;
 					IdHook::AddPlayer(id);
 				}
 				ImGui::PopStyleColor();
@@ -313,7 +314,7 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 				ImGui::PushStyleColor(ImGuiCol_Text, g_Player[id].bAliveInScoreTab ? ImVec4(0.5f, 0.5f, 1.f, 1.f) : ImVec4(0.15f, 0.15f, 1.f, 0.5f));
 				if (ImGui::Selectable(player->name, &is_selected))
 				{
-					playerSelected = id;
+					playerSelected = -1;
 					IdHook::AddPlayer(id);
 				}
 				ImGui::PopStyleColor();
@@ -416,206 +417,206 @@ void Sakura::Menu::Tabs::Misc::Notify()
 	ImGui::EndChild();
 }
 
-void Sakura::Menu::Tabs::Misc::ModelHitboxes()
-{
-	static int modelselect = 0;
+//void Sakura::Menu::Tabs::Misc::ModelHitboxes()
+//{
+//	static int modelselect = 0;
+//
+//	ImGui::BeginChild(/*##omh1*/XorStr<0x8F, 7, 0xE3D0899C>("\xAC\xB3\xFE\xFF\xFB\xA5" + 0xE3D0899C).s, ImVec2(250, -1));
+//	{
+//		Sakura::Menu::Widgets::Checkbox(/*Player Hitbox Number*/XorStr<0x13, 21, 0xD4B3C2A0>("\x43\x78\x74\x6F\x72\x6A\x39\x52\x72\x68\x7F\x71\x67\x00\x6F\x57\x4E\x46\x40\x54" + 0xD4B3C2A0).s, &cvar.visual_model_hitbox);
+//	}
+//	ImGui::EndChild();
+//	ImGui::SameLine();
+//	ImGui::BeginChild(/*##omh2*/XorStr<0x4C, 7, 0x16A628A6>("\x6F\x6E\x21\x22\x38\x63" + 0x16A628A6).s, ImVec2(250, -1));
+//	{
+//		for (unsigned int i = 0; i < Model_Aim.size(); i++)
+//		{
+//			if (modelselect > Model_Aim.size() - 1)
+//				modelselect = Model_Aim.size() - 1;
+//
+//			char str[256];
+//			sprintf(str, "%s", Model_Aim[i].displaymodel);
+//
+//			if (Sakura::Menu::Widgets::Button(str)) modelselect = i;
+//
+//			if (i == modelselect)
+//			{
+//				static int Hitbox = 0;
+//				if (Hitbox > Model_Aim[i].numhitboxes - 1)
+//					Hitbox = Model_Aim[i].numhitboxes - 1;
+//				ImGui::SameLine();
+//				if (Sakura::Menu::Widgets::Button(/*<*/XorStr<0x89, 2, 0xECBD3DB2>("\xB5" + 0xECBD3DB2).s, {}, ImGuiDir_Left))
+//				{
+//					if (Hitbox > 0)Hitbox--;
+//					else
+//						Hitbox = Model_Aim[i].numhitboxes - 1;
+//				}
+//				ImGui::SameLine();
+//				if (Sakura::Menu::Widgets::Button(/*>*/XorStr<0x65, 2, 0x8415AD47>("\x5B" + 0x8415AD47).s, {}, ImGuiDir_Right))
+//				{
+//					if (Hitbox < Model_Aim[i].numhitboxes - 1)Hitbox++;
+//					else
+//						Hitbox = 0;
+//				}
+//				ImGui::SameLine();
+//				ImGui::Text("%s", GetHitboxName(Hitbox));
+//				ImGui::SameLine();
+//				if (Sakura::Menu::Widgets::Button(/*Add*/XorStr<0x9F, 4, 0x6CB4C485>("\xDE\xC4\xC5" + 0x6CB4C485).s))
+//				{
+//					bool saved = false;
+//					for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+//					{
+//						if (!strcmp(Model_Selected.checkmodel, Model_Aim[i].checkmodel) && Model_Selected.numhitbox == Hitbox)
+//						{
+//							saved = true;
+//							break;
+//						}
+//					}
+//					if (!saved)
+//					{
+//						model_aim_select_t Model_Select;
+//						sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
+//						sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
+//						Model_Select.numhitbox = Hitbox;
+//						Model_Aim_Select.push_front(Model_Select);
+//					}
+//				}
+//				ImGui::SameLine();
+//				if (Sakura::Menu::Widgets::Button(/*All*/XorStr<0x87, 4, 0xDF739743>("\xC6\xE4\xE5" + 0xDF739743).s))
+//				{
+//					for (int x = Model_Aim[i].numhitboxes - 1; x >= 0; x--)
+//					{
+//						bool saved = false;
+//						for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+//						{
+//							if (!strcmp(Model_Selected.checkmodel, Model_Aim[i].checkmodel) && Model_Selected.numhitbox == x)
+//							{
+//								saved = true;
+//								break;
+//							}
+//						}
+//						if (!saved)
+//						{
+//							model_aim_select_t Model_Select;
+//							sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
+//							sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
+//							Model_Select.numhitbox = x;
+//							Model_Aim_Select.push_front(Model_Select);
+//						}
+//					}
+//				}
+//				//ImGui::PopStyleColor();
+//			}
+//		}
+//	}
+//	ImGui::EndChild();
+//}
 
-	ImGui::BeginChild(/*##omh1*/XorStr<0x8F, 7, 0xE3D0899C>("\xAC\xB3\xFE\xFF\xFB\xA5" + 0xE3D0899C).s, ImVec2(250, -1));
-	{
-		Sakura::Menu::Widgets::Checkbox(/*Player Hitbox Number*/XorStr<0x13, 21, 0xD4B3C2A0>("\x43\x78\x74\x6F\x72\x6A\x39\x52\x72\x68\x7F\x71\x67\x00\x6F\x57\x4E\x46\x40\x54" + 0xD4B3C2A0).s, &cvar.visual_model_hitbox);
-	}
-	ImGui::EndChild();
-	ImGui::SameLine();
-	ImGui::BeginChild(/*##omh2*/XorStr<0x4C, 7, 0x16A628A6>("\x6F\x6E\x21\x22\x38\x63" + 0x16A628A6).s, ImVec2(250, -1));
-	{
-		for (unsigned int i = 0; i < Model_Aim.size(); i++)
-		{
-			if (modelselect > Model_Aim.size() - 1)
-				modelselect = Model_Aim.size() - 1;
-
-			char str[256];
-			sprintf(str, "%s", Model_Aim[i].displaymodel);
-
-			if (Sakura::Menu::Widgets::Button(str)) modelselect = i;
-
-			if (i == modelselect)
-			{
-				static int Hitbox = 0;
-				if (Hitbox > Model_Aim[i].numhitboxes - 1)
-					Hitbox = Model_Aim[i].numhitboxes - 1;
-				ImGui::SameLine();
-				if (Sakura::Menu::Widgets::Button(/*<*/XorStr<0x89, 2, 0xECBD3DB2>("\xB5" + 0xECBD3DB2).s, {}, ImGuiDir_Left))
-				{
-					if (Hitbox > 0)Hitbox--;
-					else
-						Hitbox = Model_Aim[i].numhitboxes - 1;
-				}
-				ImGui::SameLine();
-				if (Sakura::Menu::Widgets::Button(/*>*/XorStr<0x65, 2, 0x8415AD47>("\x5B" + 0x8415AD47).s, {}, ImGuiDir_Right))
-				{
-					if (Hitbox < Model_Aim[i].numhitboxes - 1)Hitbox++;
-					else
-						Hitbox = 0;
-				}
-				ImGui::SameLine();
-				ImGui::Text("%s", GetHitboxName(Hitbox));
-				ImGui::SameLine();
-				if (Sakura::Menu::Widgets::Button(/*Add*/XorStr<0x9F, 4, 0x6CB4C485>("\xDE\xC4\xC5" + 0x6CB4C485).s))
-				{
-					bool saved = false;
-					for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-					{
-						if (!strcmp(Model_Selected.checkmodel, Model_Aim[i].checkmodel) && Model_Selected.numhitbox == Hitbox)
-						{
-							saved = true;
-							break;
-						}
-					}
-					if (!saved)
-					{
-						model_aim_select_t Model_Select;
-						sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
-						sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-						Model_Select.numhitbox = Hitbox;
-						Model_Aim_Select.push_front(Model_Select);
-					}
-				}
-				ImGui::SameLine();
-				if (Sakura::Menu::Widgets::Button(/*All*/XorStr<0x87, 4, 0xDF739743>("\xC6\xE4\xE5" + 0xDF739743).s))
-				{
-					for (int x = Model_Aim[i].numhitboxes - 1; x >= 0; x--)
-					{
-						bool saved = false;
-						for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-						{
-							if (!strcmp(Model_Selected.checkmodel, Model_Aim[i].checkmodel) && Model_Selected.numhitbox == x)
-							{
-								saved = true;
-								break;
-							}
-						}
-						if (!saved)
-						{
-							model_aim_select_t Model_Select;
-							sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
-							sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-							Model_Select.numhitbox = x;
-							Model_Aim_Select.push_front(Model_Select);
-						}
-					}
-				}
-				//ImGui::PopStyleColor();
-			}
-		}
-	}
-	ImGui::EndChild();
-}
-
-void Sakura::Menu::Tabs::Misc::SelectedHitboxes()
-{
-	ImGui::BeginChild(/*##omhs1*/XorStr<0x33, 8, 0x058D1607>("\x10\x17\x5A\x5B\x5F\x4B\x08" + 0x058D1607).s, ImVec2(250, -1));
-	{
-		for (unsigned int i = 0; i < Model_Aim_Select.size(); i++)
-		{
-			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", Model_Aim_Select[i].displaymodel);
-
-			ImGui::SameLine();
-
-			char str[256];
-
-			sprintf(str, "+##%d", i);
-			if (Sakura::Menu::Widgets::Button(str, {}, ImGuiDir_Up))
-			{
-				if (i > 0)
-				{
-					if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[i - 1].checkmodel))
-						std::swap(Model_Aim_Select[i], Model_Aim_Select[i - 1]);
-					else
-					{
-						if (i - 2 > 0)
-						{
-							for (int x = i - 2; x >= 0; x--)
-							{
-								if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[x].checkmodel))
-								{
-									for (int z = i; z > x + 1; z--)
-									{
-										std::swap(Model_Aim_Select[z], Model_Aim_Select[z - 1]);
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::BeginTooltip();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-				ImGui::TextUnformatted(/*Push Priority Front*/XorStr<0x69, 20, 0xDBE1EC27>("\x39\x1F\x18\x04\x4D\x3E\x1D\x19\x1E\x00\x1A\x00\x0C\x56\x31\x0A\x16\x14\x0F" + 0xDBE1EC27).s);
-				ImGui::PopTextWrapPos();
-				ImGui::EndTooltip();
-			}
-
-			ImGui::SameLine();
-
-			sprintf(str, "-##%d", i);
-			if (Sakura::Menu::Widgets::Button(str, {}, ImGuiDir_Down))
-			{
-				if (i + 1 < Model_Aim_Select.size())
-				{
-					if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[i + 1].checkmodel))
-						std::swap(Model_Aim_Select[i], Model_Aim_Select[i + 1]);
-					else
-					{
-						if (i + 2 < Model_Aim_Select.size())
-						{
-							for (unsigned int x = i + 2; x < Model_Aim_Select.size(); x++)
-							{
-								if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[x].checkmodel))
-								{
-									for (unsigned int z = i; z < x - 1; z++)
-									{
-										std::swap(Model_Aim_Select[z], Model_Aim_Select[z + 1]);
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::BeginTooltip();
-				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-				ImGui::TextUnformatted(/*Push Priority Back*/XorStr<0xD6, 19, 0x27C8B319>("\x86\xA2\xAB\xB1\xFA\x8B\xAE\xB4\xB1\xAD\x89\x95\x9B\xC3\xA6\x84\x85\x8C" + 0x27C8B319).s);
-				ImGui::PopTextWrapPos();
-				ImGui::EndTooltip();
-			}
-			ImGui::SameLine();
-			ImGui::Text("%s", GetHitboxName(Model_Aim_Select[i].numhitbox));
-
-			ImGui::SameLine();
-			sprintf(str, "Clear##%d", i);
-			if (Sakura::Menu::Widgets::Button(str))
-				Model_Aim_Select.erase(Model_Aim_Select.begin() + i);
-		}
-	}
-	ImGui::EndChild();
-	ImGui::SameLine();
-	ImGui::BeginChild(/*##omhs2*/XorStr<0x9E, 8, 0x94AF9A06>("\xBD\xBC\xCF\xCC\xCA\xD0\x96" + 0x94AF9A06).s, ImVec2(250, -1));
-	{
-		if (Sakura::Menu::Widgets::Button(/*Save Hitbox*/XorStr<0x02, 12, 0x0C47B7D3>("\x51\x62\x72\x60\x26\x4F\x61\x7D\x68\x64\x74" + 0x0C47B7D3).s)) SaveHitbox();
-		ImGui::SameLine();
-		if (Sakura::Menu::Widgets::Button(/*Load Hitbox*/XorStr<0xE8, 12, 0xEADD439A>("\xA4\x86\x8B\x8F\xCC\xA5\x87\x9B\x92\x9E\x8A" + 0xEADD439A).s)) LoadHitbox();
-		ImGui::SameLine();
-		if (Sakura::Menu::Widgets::Button(/*Clear All*/XorStr<0xF8, 10, 0x5E875C6A>("\xBB\x95\x9F\x9A\x8E\xDD\xBF\x93\x6C" + 0x5E875C6A).s)) Model_Aim_Select.deque::clear();
-	}
-	ImGui::EndChild();
-}
+//void Sakura::Menu::Tabs::Misc::SelectedHitboxes()
+//{
+//	ImGui::BeginChild(/*##omhs1*/XorStr<0x33, 8, 0x058D1607>("\x10\x17\x5A\x5B\x5F\x4B\x08" + 0x058D1607).s, ImVec2(250, -1));
+//	{
+//		for (unsigned int i = 0; i < Model_Aim_Select.size(); i++)
+//		{
+//			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", Model_Aim_Select[i].displaymodel);
+//
+//			ImGui::SameLine();
+//
+//			char str[256];
+//
+//			sprintf(str, "+##%d", i);
+//			if (Sakura::Menu::Widgets::Button(str, {}, ImGuiDir_Up))
+//			{
+//				if (i > 0)
+//				{
+//					if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[i - 1].checkmodel))
+//						std::swap(Model_Aim_Select[i], Model_Aim_Select[i - 1]);
+//					else
+//					{
+//						if (i - 2 > 0)
+//						{
+//							for (int x = i - 2; x >= 0; x--)
+//							{
+//								if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[x].checkmodel))
+//								{
+//									for (int z = i; z > x + 1; z--)
+//									{
+//										std::swap(Model_Aim_Select[z], Model_Aim_Select[z - 1]);
+//									}
+//									break;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//			if (ImGui::IsItemHovered())
+//			{
+//				ImGui::BeginTooltip();
+//				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+//				ImGui::TextUnformatted(/*Push Priority Front*/XorStr<0x69, 20, 0xDBE1EC27>("\x39\x1F\x18\x04\x4D\x3E\x1D\x19\x1E\x00\x1A\x00\x0C\x56\x31\x0A\x16\x14\x0F" + 0xDBE1EC27).s);
+//				ImGui::PopTextWrapPos();
+//				ImGui::EndTooltip();
+//			}
+//
+//			ImGui::SameLine();
+//
+//			sprintf(str, "-##%d", i);
+//			if (Sakura::Menu::Widgets::Button(str, {}, ImGuiDir_Down))
+//			{
+//				if (i + 1 < Model_Aim_Select.size())
+//				{
+//					if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[i + 1].checkmodel))
+//						std::swap(Model_Aim_Select[i], Model_Aim_Select[i + 1]);
+//					else
+//					{
+//						if (i + 2 < Model_Aim_Select.size())
+//						{
+//							for (unsigned int x = i + 2; x < Model_Aim_Select.size(); x++)
+//							{
+//								if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[x].checkmodel))
+//								{
+//									for (unsigned int z = i; z < x - 1; z++)
+//									{
+//										std::swap(Model_Aim_Select[z], Model_Aim_Select[z + 1]);
+//									}
+//									break;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//
+//			if (ImGui::IsItemHovered())
+//			{
+//				ImGui::BeginTooltip();
+//				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+//				ImGui::TextUnformatted(/*Push Priority Back*/XorStr<0xD6, 19, 0x27C8B319>("\x86\xA2\xAB\xB1\xFA\x8B\xAE\xB4\xB1\xAD\x89\x95\x9B\xC3\xA6\x84\x85\x8C" + 0x27C8B319).s);
+//				ImGui::PopTextWrapPos();
+//				ImGui::EndTooltip();
+//			}
+//			ImGui::SameLine();
+//			ImGui::Text("%s", GetHitboxName(Model_Aim_Select[i].numhitbox));
+//
+//			ImGui::SameLine();
+//			sprintf(str, "Clear##%d", i);
+//			if (Sakura::Menu::Widgets::Button(str))
+//				Model_Aim_Select.erase(Model_Aim_Select.begin() + i);
+//		}
+//	}
+//	ImGui::EndChild();
+//	ImGui::SameLine();
+//	ImGui::BeginChild(/*##omhs2*/XorStr<0x9E, 8, 0x94AF9A06>("\xBD\xBC\xCF\xCC\xCA\xD0\x96" + 0x94AF9A06).s, ImVec2(250, -1));
+//	{
+//		if (Sakura::Menu::Widgets::Button(/*Save Hitbox*/XorStr<0x02, 12, 0x0C47B7D3>("\x51\x62\x72\x60\x26\x4F\x61\x7D\x68\x64\x74" + 0x0C47B7D3).s)) SaveHitbox();
+//		ImGui::SameLine();
+//		if (Sakura::Menu::Widgets::Button(/*Load Hitbox*/XorStr<0xE8, 12, 0xEADD439A>("\xA4\x86\x8B\x8F\xCC\xA5\x87\x9B\x92\x9E\x8A" + 0xEADD439A).s)) LoadHitbox();
+//		ImGui::SameLine();
+//		if (Sakura::Menu::Widgets::Button(/*Clear All*/XorStr<0xF8, 10, 0x5E875C6A>("\xBB\x95\x9F\x9A\x8E\xDD\xBF\x93\x6C" + 0x5E875C6A).s)) Model_Aim_Select.deque::clear();
+//	}
+//	ImGui::EndChild();
+//}
 
 void Sakura::Menu::Tabs::Misc::NameStealer()
 {
@@ -674,8 +675,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 
 	ImGui::BeginChild(/*##mc1*/XorStr<0xD6, 6, 0xDEE8EC02>("\xF5\xF4\xB5\xBA\xEB" + 0xDEE8EC02).s, ImVec2(250, -1));
 	{
-		//Sakura::Menu::Widgets::List(selectedConfig, configs, selectedConfig);
-		const char** items = new const char*[configs.size()];  // create an array of const char* pointers
+		const char** items = new const char*[configs.size()];
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
 
 		for (size_t i = 0; i < configs.size(); i++) {
@@ -685,15 +685,6 @@ void Sakura::Menu::Tabs::Misc::Config()
 
 			items[i] = copy;
 		}
-
-		//ImGui::PushItemWidth(itemWidth);
-		//ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)Sakura::Menu::GetMenuColor(0.39f));
-		//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.80f));
-		//ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)Sakura::Menu::GetMenuColor(1.00f));
-		//ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor(0, 0, 0, 50));
-		//ImGui::ListBox(/*##configs*/XorStr<0xD4, 10, 0xCBE191DE>("\xF7\xF6\xB5\xB8\xB6\xBF\xB3\xBC\xAF" + 0xCBE191DE).s, &selectedConfig, items, configs.size(), configs.size());
-		//ImGui::PopStyleColor(4);
-		//ImGui::PopItemWidth();
 
 		ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)Sakura::Menu::GetMenuColor(0.39f));
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.80f));

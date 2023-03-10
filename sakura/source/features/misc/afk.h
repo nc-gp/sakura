@@ -1,9 +1,12 @@
 #ifndef _AFK_
 #define _AFK_
 
-namespace AntiAfk
+namespace Sakura
 {
-	void Run(usercmd_s* cmd);
+	namespace AntiAfk
+	{
+		void Run(usercmd_s* cmd);
+	};
 };
 
 #endif

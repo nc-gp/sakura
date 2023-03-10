@@ -42,12 +42,12 @@ public:
 		float recoil_compensation_smooth;
 		float block_attack_after_kill;
 		float accuracy;
-		float perfect_silent;
 		float perfect_silent_fov;
 		float perfect_silent_enable;
 		float perfect_silent_autoshoot;
 		float fov;
 		float speed_in_attack;
+		float hitbox;
 
 		float trigger_active;
 		float trigger_wall;
@@ -64,6 +64,7 @@ public:
 		float rage_shot_count;
 		float rage_shot_type;
 		float rage_random_max;
+		float rage_hitbox;
 	} rage[31];
 
 	float legit_trigger_only_zoom;
@@ -372,6 +373,7 @@ public:
 
 	float afk_anti;
 	float afk_time;
+	float afk_yaw;
 
 	float steamid;
 	float id1;

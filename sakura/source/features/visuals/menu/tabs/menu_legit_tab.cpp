@@ -1,18 +1,14 @@
 #include "../../../../client.h"
 
-//const char* listbox_count[] = { "Count", "Random" }; Count\0Random\0
-//const char* listbox_attack[] = { "Slash", "Stab" };
-//const char* listbox_accuracy[] = { "Off", "Aiming", "Recoil", "Recoil / Spread" }; Off\0Aiming\0Recoil\0Recoil / Spread\0
-//const char* listbox_accuracy_legit[] = { "None", "Recoil", "Recoil / Spread" }; None\0Recoil\0Recoil / Spread\0
-
 void Sakura::Menu::Tabs::Legit::Aimbot()
 {
 	if (Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
 	{
 		ImGui::BeginChild(/*##la1*/XorStr<0xBF, 6, 0xFC6D3994>("\x9C\xE3\xAD\xA3\xF2" + 0xFC6D3994).s, ImVec2(250, -1));
 		{
-			Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x1D, 7, 0x7FF1244B>("\x58\x70\x7E\x42\x4D\x47" + 0x7FF1244B).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].active);
-			
+			if(Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x1D, 7, 0x7FF1244B>("\x58\x70\x7E\x42\x4D\x47" + 0x7FF1244B).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].active) && !cvar.rage_active)
+				Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT);
+
 			if(cvar.menu_legit_global_section == 1)
 				Sakura::Menu::Widgets::Checkbox(/*Auto Scope*/XorStr<0x8E, 11, 0xF3794D7F>("\xCF\xFA\xE4\xFE\xB2\xC0\xF7\xFA\xE6\xF2" + 0xF3794D7F).s, &cvar.legit_autoscope);
 			
@@ -32,6 +28,15 @@ void Sakura::Menu::Tabs::Legit::Aimbot()
 			Sakura::Menu::Widgets::SliderFloat(/*Block Attack After Kill*/XorStr<0xF1, 24, 0x7207467C>("\xB3\x9E\x9C\x97\x9E\xD6\xB6\x8C\x8D\x9B\x98\x97\xDD\xBF\x99\x74\x64\x70\x23\x4F\x6C\x6A\x6B" + 0x7207467C).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].block_attack_after_kill, 0.f, 1000.f, "%.0fms");
 			Sakura::Menu::Widgets::SliderFloat(/*Reaction Time*/XorStr<0x9D, 14, 0x8550E407>("\xCF\xFB\xFE\xC3\xD5\xCB\xCC\xCA\x85\xF2\xCE\xC5\xCC" + 0x8550E407).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].reaction_time, 0.f, 1000.f, "%.0fms");
 			Sakura::Menu::Widgets::SliderFloat(/*Speed Scale FOV*/XorStr<0xD1, 16, 0x6778C188>("\x82\xA2\xB6\xB1\xB1\xF6\x84\xBB\xB8\xB6\xBE\xFC\x9B\x91\x89" + 0x6778C188).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].speed_scale_fov, 0.f, 100.f, "%.0f%%");
+			
+			if (Sakura::Menu::Widgets::Combo(/*Hitbox*/XorStr<0x95, 7, 0xE0EB7681>("\xDD\xFF\xE3\xFA\xF6\xE2" + 0xE0EB7681).s,
+				&cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].hitbox,
+				/*Belt\0Left thigh\0Left tibia\0Left foot\0Right thigh\0Right tibia\0Right foot\0Stomach\0Lower chest\0Upper chest\0Neck\0Head\0Left shoulder\0Left elbow\0Left arm\0Left hand\0Right shoulder\0Right elbow\0Right arm\0Right hand\0*/XorStr<0x0D, 207, 0x025EDD2D>("\x4F\x6B\x63\x64\x11\x5E\x76\x72\x61\x36\x63\x70\x70\x7D\x73\x1C\x51\x7B\x79\x54\x01\x56\x4A\x46\x4C\x47\x27\x64\x4C\x4C\x5F\x0C\x4B\x41\x40\x44\x31\x60\x5A\x53\x5D\x42\x17\x4C\x51\x53\x5C\x54\x3D\x6C\x56\x27\x29\x36\x63\x30\x2C\x24\x2E\x29\x49\x18\x22\x2B\x25\x3A\x6F\x36\x3E\x3D\x27\x54\x06\x22\x38\x35\x38\x39\x33\x5C\x11\x31\x28\x05\x13\x42\x00\x0C\x00\x15\x13\x68\x3C\x1A\x1B\x09\x1F\x4E\x0C\x18\x14\x01\x07\x74\x3B\x13\x14\x13\x79\x32\x1E\x1D\x19\x7E\x33\xE5\xE7\xF6\xA3\xF7\xED\xE9\xF2\xE4\xED\xEF\xF9\x8C\xC1\xEB\xE9\xE4\xB1\xF7\xFF\xF6\xFA\xE1\x97\xD4\xFC\xFC\xEF\xBC\xFC\xEC\xF2\xA0\xED\xC7\xC5\xD0\x85\xCE\xC6\xC6\xCD\xAA\xF9\xC5\xCA\xC6\xDB\x90\xC2\xDA\xDC\xC1\xD9\xD2\xD2\xCA\xB9\xE8\xD2\xDB\xD5\xCA\x9F\xA5\xAD\xA0\xAC\xB3\xC5\x94\xAE\xAF\xA1\xBE\xEB\xAD\xBF\xA3\xCF\x82\xB8\xB5\xBB\xA0\xF5\xBE\xB6\xB6\xBD\xDA" + 0x025EDD2D).s))
+			{
+				if (cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].active && !cvar.rage_active)
+					Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT);
+			}
+
 			ImGui::PopItemWidth();
 		}
 		ImGui::EndChild();
@@ -96,8 +101,8 @@ void Sakura::Menu::Tabs::Legit::PerfectSilent()
 		ImGui::BeginChild(/*##vp2*/XorStr<0x96, 6, 0x58531295>("\xB5\xB4\xEE\xE9\xA8" + 0x58531295).s, ImVec2(250, -1));
 		{
 			ImGui::PushItemWidth(itemWidth);
-			Sakura::Menu::Widgets::SliderFloat(/*FOV*/XorStr<0x08, 4, 0xCE53C9B5>("\x4E\x46\x5C" + 0xCE53C9B5).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent_fov, 0.f, 3.f, "%.1f");
-			Sakura::Menu::Widgets::SliderFloat(/*Attack speed*/XorStr<0xAE, 13, 0x02496B8E>("\xEF\xDB\xC4\xD0\xD1\xD8\x94\xC6\xC6\xD2\xDD\xDD" + 0x02496B8E).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent, 0.f, 100.f, "%.0f");
+			Sakura::Menu::Widgets::SliderFloat(/*FOV (not working yet)*/XorStr<0x28, 22, 0x4F91C980>("\x6E\x66\x7C\x0B\x04\x43\x41\x5B\x10\x46\x5D\x41\x5F\x5C\x58\x50\x18\x40\x5F\x4F\x15" + 0x4F91C980).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent_fov, 0.f, 3.f, "%.1f");
+			//Sakura::Menu::Widgets::SliderFloat(/*Attack speed*/XorStr<0xAE, 13, 0x02496B8E>("\xEF\xDB\xC4\xD0\xD1\xD8\x94\xC6\xC6\xD2\xDD\xDD" + 0x02496B8E).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent, 0.f, 100.f, "%.0f");
 			ImGui::PopItemWidth();
 		}
 		ImGui::EndChild();
@@ -140,72 +145,72 @@ void Sakura::Menu::Tabs::Legit::Knifebot()
 	ImGui::EndChild();
 }
 
-void Sakura::Menu::Tabs::Legit::Hitboxes()
-{
-	if (Sakura::Menu::Widgets::Button(/*Save Hitbox*/XorStr<0x39, 12, 0xEE6465CB>("\x6A\x5B\x4D\x59\x1D\x76\x56\x34\x23\x2D\x3B" + 0xEE6465CB).s)) SaveHitboxLegit();
-	ImGui::SameLine();
-	if (Sakura::Menu::Widgets::Button(/*Load Hitbox*/XorStr<0x2F, 12, 0x7E4F197D>("\x63\x5F\x50\x56\x13\x7C\x5C\x42\x55\x57\x41" + 0x7E4F197D).s)) LoadHitboxLegit();
-	ImGui::SameLine();
-	if (Sakura::Menu::Widgets::Button(/*Clear Current*/XorStr<0x95, 14, 0x6F2E4414>("\xD6\xFA\xF2\xF9\xEB\xBA\xD8\xE9\xEF\xEC\xFA\xCE\xD5" + 0x6F2E4414).s))
-	{
-		std::deque<int> Hitboxes;
-		for (unsigned int i = 0; i < PlayerAimLegit.size(); i++)
-		{
-			if (PlayerAimLegit[i].m_iWeaponID != CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
-				continue;
-			Hitboxes.push_back(i);
-		}
-		for (int x = Hitboxes.size() - 1; x >= 0; x--)
-			PlayerAimLegit.erase(PlayerAimLegit.begin() + Hitboxes[x]);
-	}
-
-	for (unsigned int x = 0; x < Model_Aim_Select.size(); x++)
-	{
-		float checksave = 1;
-		for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
-		{
-			if (strcmp(AimLegit.checkmodel, Model_Aim_Select[x].checkmodel))
-				continue;
-			if (AimLegit.numhitbox != Model_Aim_Select[x].numhitbox)
-				continue;
-			if (AimLegit.m_iWeaponID != CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
-				continue;
-
-			checksave = 0;
-		}
-
-		char str[256];
-		float button = checksave;
-		sprintf(str, "Model:##%d", x);
-		Sakura::Menu::Widgets::Checkbox(str, &button);
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), Model_Aim_Select[x].displaymodel);
-		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "%s", GetHitboxName(Model_Aim_Select[x].numhitbox));
-		//ImGui::Text("Hitbox: %d", Model_Aim_Select[x].numhitbox);
-
-		if (checksave && !button)
-		{
-			playeraimlegit_t AimLegit;
-			AimLegit.numhitbox = Model_Aim_Select[x].numhitbox;
-			sprintf(AimLegit.displaymodel, Model_Aim_Select[x].displaymodel);
-			sprintf(AimLegit.checkmodel, Model_Aim_Select[x].checkmodel);
-			AimLegit.m_iWeaponID = CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section);
-			PlayerAimLegit.push_back(AimLegit);
-		}
-		if (!checksave && button)
-		{
-			for (unsigned int i = 0; i < PlayerAimLegit.size(); i++)
-			{
-				if (strcmp(PlayerAimLegit[i].checkmodel, Model_Aim_Select[x].checkmodel))
-					continue;
-				if (PlayerAimLegit[i].numhitbox != Model_Aim_Select[x].numhitbox)
-					continue;
-				PlayerAimLegit.erase(PlayerAimLegit.begin() + i);
-			}
-		}
-	}
-}
+//void Sakura::Menu::Tabs::Legit::Hitboxes()
+//{
+//	if (Sakura::Menu::Widgets::Button(/*Save Hitbox*/XorStr<0x39, 12, 0xEE6465CB>("\x6A\x5B\x4D\x59\x1D\x76\x56\x34\x23\x2D\x3B" + 0xEE6465CB).s)) SaveHitboxLegit();
+//	ImGui::SameLine();
+//	if (Sakura::Menu::Widgets::Button(/*Load Hitbox*/XorStr<0x2F, 12, 0x7E4F197D>("\x63\x5F\x50\x56\x13\x7C\x5C\x42\x55\x57\x41" + 0x7E4F197D).s)) LoadHitboxLegit();
+//	ImGui::SameLine();
+//	if (Sakura::Menu::Widgets::Button(/*Clear Current*/XorStr<0x95, 14, 0x6F2E4414>("\xD6\xFA\xF2\xF9\xEB\xBA\xD8\xE9\xEF\xEC\xFA\xCE\xD5" + 0x6F2E4414).s))
+//	{
+//		std::deque<int> Hitboxes;
+//		for (unsigned int i = 0; i < PlayerAimLegit.size(); i++)
+//		{
+//			if (PlayerAimLegit[i].m_iWeaponID != CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
+//				continue;
+//			Hitboxes.push_back(i);
+//		}
+//		for (int x = Hitboxes.size() - 1; x >= 0; x--)
+//			PlayerAimLegit.erase(PlayerAimLegit.begin() + Hitboxes[x]);
+//	}
+//
+//	for (unsigned int x = 0; x < Model_Aim_Select.size(); x++)
+//	{
+//		float checksave = 1;
+//		for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
+//		{
+//			if (strcmp(AimLegit.checkmodel, Model_Aim_Select[x].checkmodel))
+//				continue;
+//			if (AimLegit.numhitbox != Model_Aim_Select[x].numhitbox)
+//				continue;
+//			if (AimLegit.m_iWeaponID != CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
+//				continue;
+//
+//			checksave = 0;
+//		}
+//
+//		char str[256];
+//		float button = checksave;
+//		sprintf(str, "Model:##%d", x);
+//		Sakura::Menu::Widgets::Checkbox(str, &button);
+//		ImGui::SameLine();
+//		ImGui::TextColored(ImVec4(0.5f, 1.0f, 0.5f, 1.0f), Model_Aim_Select[x].displaymodel);
+//		ImGui::SameLine();
+//		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "%s", GetHitboxName(Model_Aim_Select[x].numhitbox));
+//		//ImGui::Text("Hitbox: %d", Model_Aim_Select[x].numhitbox);
+//
+//		if (checksave && !button)
+//		{
+//			playeraimlegit_t AimLegit;
+//			AimLegit.numhitbox = Model_Aim_Select[x].numhitbox;
+//			sprintf(AimLegit.displaymodel, Model_Aim_Select[x].displaymodel);
+//			sprintf(AimLegit.checkmodel, Model_Aim_Select[x].checkmodel);
+//			AimLegit.m_iWeaponID = CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section);
+//			PlayerAimLegit.push_back(AimLegit);
+//		}
+//		if (!checksave && button)
+//		{
+//			for (unsigned int i = 0; i < PlayerAimLegit.size(); i++)
+//			{
+//				if (strcmp(PlayerAimLegit[i].checkmodel, Model_Aim_Select[x].checkmodel))
+//					continue;
+//				if (PlayerAimLegit[i].numhitbox != Model_Aim_Select[x].numhitbox)
+//					continue;
+//				PlayerAimLegit.erase(PlayerAimLegit.begin() + i);
+//			}
+//		}
+//	}
+//}
 
 void Sakura::Menu::Tabs::Legit::Recoil()
 {

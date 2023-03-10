@@ -1,128 +1,36 @@
 #include "../client.h"
 
-bool getmodelhitbox = false;
-
-void SaveHitbox()
+void Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE type)
 {
-	char filename[256];
-	sprintf(filename, "%s%s%d%s", hackdir, /*assets/hitboxes/rage/*/XorStr<0xE1, 22, 0x5F2F2791>("\x80\x91\x90\x81\x91\x95\xC8\x80\x80\x9E\x89\x83\x95\x8B\x9C\xDF\x83\x93\x94\x91\xDA" + 0x5F2F2791).s, g_Local.weapon.m_iWeaponID, /*.sakura*/XorStr<0x77, 8, 0xC3B08125>("\x59\x0B\x18\x11\x0E\x0E\x1C" + 0xC3B08125).s);
-	remove(filename);
-	std::ofstream ofs(filename, std::ios::binary | std::ios::app);
-	for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-	{
-		char text[256];
-		sprintf(text, "Display: %s Path: %s Hitbox: %d", Model_Selected.displaymodel, Model_Selected.checkmodel, Model_Selected.numhitbox);
-		ofs << text << (char)0x0D << (char)0x0A;
-	}
-	ofs.close();
-}
+	// Clear our hitboxes before we append anothers
+	Model_Aim_Select.deque::clear();
 
-void LoadHitbox()
-{
-	char filename[256];
-	sprintf(filename, "%s%s%d%s", hackdir, /*assets/hitboxes/rage/*/XorStr<0x49, 22, 0x2AA1B460>("\x28\x39\x38\x29\x39\x3D\x60\x38\x38\x26\x31\x3B\x2D\x33\x24\x77\x2B\x3B\x3C\x39\x72" + 0x2AA1B460).s, g_Local.weapon.m_iWeaponID, /*.sakura*/XorStr<0xB3, 8, 0x2AD4CA94>("\x9D\xC7\xD4\xDD\xC2\xCA\xD8" + 0x2AD4CA94).s);
-	std::ifstream ifs(filename);
-	while (ifs.good())
+	switch (type)
 	{
-		char buf[1024];
-		ifs.getline(buf, sizeof(buf));
-		int hitbox = -1;
-		char display[256];
-		char path[256];
-		if (sscanf(buf, "%*s %s %*s %s %*s %d", &display, &path, &hitbox))
+	case Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT:
+		for (size_t i = 0; i < Model_Aim.size(); i++)
 		{
-			display[sizeof(display) - 1] = '\0';
-			path[sizeof(path) - 1] = '\0';
-			int len = strlen(display);
-			int len2 = strlen(path);
-			if (len && len2 && hitbox != -1)
-			{
-				bool saved = false;
-				for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-				{
-					if (!strcmp(Model_Selected.checkmodel, path) && Model_Selected.numhitbox == hitbox)
-						saved = true;
-				}
-				if (!saved)
-				{
-					model_aim_select_t Model_Select;
-					sprintf(Model_Select.displaymodel, display);
-					sprintf(Model_Select.checkmodel, path);
-					Model_Select.numhitbox = hitbox;
-					Model_Aim_Select.push_back(Model_Select);
-				}
-			}
+			model_aim_select_t Model_Select;
+			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
+			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
+			Model_Select.numhitbox = cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].hitbox;
+			Model_Aim_Select.push_front(Model_Select);
 		}
-	}
-	ifs.close();
-}
-
-void LoadHitboxLegit()
-{
-	char filename[256];
-	sprintf(filename, "%s%s%d%s", hackdir, /*assets/hitboxes/legit/*/XorStr<0x6B, 23, 0x6BF0AD89>("\x0A\x1F\x1E\x0B\x1B\x03\x5E\x1A\x1A\x00\x17\x19\x0F\x1D\x0A\x55\x17\x19\x1A\x17\x0B\xAF" + 0x6BF0AD89).s, g_Local.weapon.m_iWeaponID, /*.sakura*/XorStr<0x8D, 8, 0xCACC61DB>("\xA3\xFD\xEE\xFB\xE4\xE0\xF2" + 0xCACC61DB).s);
-	std::ifstream ifs(filename);
-	while (ifs.good())
-	{
-		char buf[1024];
-		ifs.getline(buf, sizeof(buf));
-		int hitbox = -1;
-		int weaponid = -1;
-		char display[256];
-		char path[256];
-		if (sscanf(buf, "%*s %s %*s %s %*s %d %*s %d", &display, &path, &hitbox, &weaponid))
+		break;
+	case Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE:
+		for (size_t i = 0; i < Model_Aim.size(); i++)
 		{
-			display[sizeof(display) - 1] = '\0';
-			path[sizeof(path) - 1] = '\0';
-			int len = strlen(display);
-			int len2 = strlen(path);
-			if (len && len2 && hitbox != -1 && weaponid != -1)
-			{
-				for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-				{
-					if (strcmp(Model_Selected.checkmodel, path))
-						continue;
-					if (Model_Selected.numhitbox != hitbox)
-						continue;
-
-					bool saved = false;
-					for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
-					{
-						if (!strcmp(AimLegit.checkmodel, path) && AimLegit.numhitbox == hitbox && AimLegit.m_iWeaponID == weaponid)
-							saved = true;
-					}
-					if (!saved)
-					{
-						playeraimlegit_t AimLegitsave;
-						sprintf(AimLegitsave.displaymodel, display);
-						sprintf(AimLegitsave.checkmodel, path);
-						AimLegitsave.numhitbox = hitbox;
-						AimLegitsave.m_iWeaponID = weaponid;
-						PlayerAimLegit.push_back(AimLegitsave);
-					}
-				}
-			}
+			model_aim_select_t Model_Select;
+			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
+			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
+			Model_Select.numhitbox = cvar.rage[g_Local.weapon.m_iWeaponID].rage_hitbox;
+			Model_Aim_Select.push_front(Model_Select);
 		}
+		break;
 	}
-	ifs.close();
 }
 
-void SaveHitboxLegit()
-{
-	char filename[256];
-	sprintf(filename, "%s%s%d%s", hackdir, /*assets/hitboxes/legit/*/XorStr<0xA2, 23, 0x1EB6DFA3>("\xC3\xD0\xD7\xC0\xD2\xD4\x87\xC1\xC3\xDF\xCE\xC2\xD6\xCA\xC3\x9E\xDE\xD6\xD3\xDC\xC2\x98" + 0x1EB6DFA3).s, g_Local.weapon.m_iWeaponID, /*.sakura*/XorStr<0x23, 8, 0x83D11E18>("\x0D\x57\x44\x4D\x52\x5A\x48" + 0x83D11E18).s);
-	remove(filename);
-	std::ofstream ofs(filename, std::ios::binary | std::ios::app);
-	for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
-	{
-		char text[256];
-		sprintf(text, "Display: %s Path: %s Hitbox: %d Weaponid: %d", AimLegit.displaymodel, AimLegit.checkmodel, AimLegit.numhitbox, AimLegit.m_iWeaponID);
-		ofs << text << (char)0x0D << (char)0x0A;
-	}
-	ofs.close();
-}
-
-void GetModelAndHitbox()
+void Sakura::Hitboxes::GetModelHitboxes()
 {
 	static bool loadnew = false;
 

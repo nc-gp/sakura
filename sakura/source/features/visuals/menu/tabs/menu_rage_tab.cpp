@@ -1,20 +1,12 @@
 #include "../../../../client.h"
 
-//const char* listbox_target[] = { "Field Of View", "Distance", "Cycle" }; 
-//const char* listbox_spread[] = { "Pitch / Yaw", "Roll" }; Pitch / Yaw\0Roll\0
-//const char* listbox_edge[] = { "Off", "Standing", "In Move", "All", "All + Fake" }; Off\0Standing\00In move\0All\0All & fake\0
-//const char* listbox_pitch[] = { "Off", "Down", "Up", "Fake down", "Fake Up", "Fake Jitter", "Random" }; Off\0Down\0Up\0Fake down\0Fake up\0Fake jitter\0Random\0
-//const char* listbox_aa[] = { "Off", "180", "180 Jitter", "Slow Spin", "Fast Spin", "Jitter", "Sideways", "Random", "Static" }; Off\0180\0180 jitter\0Slow spin\0Fast spin\0Jitter\0Sideways\0Random\0Static\0
-//const char* listbox_move[] = { "On Land", "On Move", "In Air", "All" }; On land\0On move\0In air\0All\0
-//const char* listbox_type[] = { "Dynamic", "Maximum", "Flucture", "Break Lag Compensation" }; Dynamic\0Maximum\0Flucture\0Break lag compensation\0
-//const char* listbox_count_attack[] = { "Count", "Random" }; Count\0Random\0
-//const char* listbox_knife[] = { "Slash", "Stab" }; Slash\0Stab\0
-
 void Sakura::Menu::Tabs::Rage::Aimbot()
 {
 	ImGui::BeginChild(/*##ra1*/XorStr<0x06, 6, 0xB1D3746C>("\x25\x24\x7A\x68\x3B" + 0xB1D3746C).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x87, 7, 0xFEF547C7>("\xC2\xE6\xE8\xE8\xE7\xE9" + 0xFEF547C7).s, &cvar.rage_active);
+		if(Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x87, 7, 0xFEF547C7>("\xC2\xE6\xE8\xE8\xE7\xE9" + 0xFEF547C7).s, &cvar.rage_active))
+			Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE);
+
 		Sakura::Menu::Widgets::Checkbox(/*Aim Team*/XorStr<0xB6, 9, 0x7636BCB0>("\xF7\xDE\xD5\x99\xEE\xDE\xDD\xD0" + 0x7636BCB0).s, &cvar.rage_team);
 		Sakura::Menu::Widgets::Checkbox(/*Always Fire Manual*/XorStr<0xD8, 19, 0x42521C49>("\x99\xB5\xAD\xBA\xA5\xAE\xFE\x99\x89\x93\x87\xC3\xA9\x84\x88\x92\x89\x85" + 0x42521C49).s, &cvar.rage_always_fire);
 
@@ -69,6 +61,15 @@ void Sakura::Menu::Tabs::Rage::Aimbot()
 			/*Spread Method*/XorStr<0xD0, 14, 0x73BE3424>("\x83\xA1\xA0\xB6\xB5\xB1\xF6\x9A\xBD\xAD\xB2\xB4\xB8" + 0x73BE3424).s,
 			&cvar.rage_nospread_method,
 			/*Pitch / Yaw\0Roll\0*/XorStr<0xE6, 18, 0x4D488743>("\xB6\x8E\x9C\x8A\x82\xCB\xC3\xCD\xB7\x8E\x87\xF1\xA0\x9C\x98\x99\xF6" + 0x4D488743).s);
+		
+		if (Sakura::Menu::Widgets::Combo(/*Hitbox*/XorStr<0x95, 7, 0xE0EB7681>("\xDD\xFF\xE3\xFA\xF6\xE2" + 0xE0EB7681).s,
+			&cvar.rage[g_Local.weapon.m_iWeaponID].rage_hitbox,
+			/*Belt\0Left thigh\0Left tibia\0Left foot\0Right thigh\0Right tibia\0Right foot\0Stomach\0Lower chest\0Upper chest\0Neck\0Head\0Left shoulder\0Left elbow\0Left arm\0Left hand\0Right shoulder\0Right elbow\0Right arm\0Right hand\0*/XorStr<0x0D, 207, 0x025EDD2D>("\x4F\x6B\x63\x64\x11\x5E\x76\x72\x61\x36\x63\x70\x70\x7D\x73\x1C\x51\x7B\x79\x54\x01\x56\x4A\x46\x4C\x47\x27\x64\x4C\x4C\x5F\x0C\x4B\x41\x40\x44\x31\x60\x5A\x53\x5D\x42\x17\x4C\x51\x53\x5C\x54\x3D\x6C\x56\x27\x29\x36\x63\x30\x2C\x24\x2E\x29\x49\x18\x22\x2B\x25\x3A\x6F\x36\x3E\x3D\x27\x54\x06\x22\x38\x35\x38\x39\x33\x5C\x11\x31\x28\x05\x13\x42\x00\x0C\x00\x15\x13\x68\x3C\x1A\x1B\x09\x1F\x4E\x0C\x18\x14\x01\x07\x74\x3B\x13\x14\x13\x79\x32\x1E\x1D\x19\x7E\x33\xE5\xE7\xF6\xA3\xF7\xED\xE9\xF2\xE4\xED\xEF\xF9\x8C\xC1\xEB\xE9\xE4\xB1\xF7\xFF\xF6\xFA\xE1\x97\xD4\xFC\xFC\xEF\xBC\xFC\xEC\xF2\xA0\xED\xC7\xC5\xD0\x85\xCE\xC6\xC6\xCD\xAA\xF9\xC5\xCA\xC6\xDB\x90\xC2\xDA\xDC\xC1\xD9\xD2\xD2\xCA\xB9\xE8\xD2\xDB\xD5\xCA\x9F\xA5\xAD\xA0\xAC\xB3\xC5\x94\xAE\xAF\xA1\xBE\xEB\xAD\xBF\xA3\xCF\x82\xB8\xB5\xBB\xA0\xF5\xBE\xB6\xB6\xBD\xDA" + 0x025EDD2D).s))
+		{
+			if (cvar.rage_active)
+				Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE);
+		}
+		
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
@@ -88,11 +89,11 @@ void Sakura::Menu::Tabs::Rage::AntiAim()
 	ImGui::BeginChild(/*##raa2*/XorStr<0xBA, 7, 0x29EC639B>("\x99\x98\xCE\xDC\xDF\x8D" + 0x29EC639B).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Static Roll*/XorStr<0x41, 12, 0xC15AE288>("\x12\x36\x22\x30\x2C\x25\x67\x1A\x26\x26\x27" + 0xC15AE288).s, &cvar.aa_roll_static, -180.f, 180.f, "%.0f");
-		Sakura::Menu::Widgets::SliderFloat(/*Static Yaw*/XorStr<0xD7, 11, 0x4C5FA5CF>("\x84\xAC\xB8\xAE\xB2\xBF\xFD\x87\xBE\x97" + 0x4C5FA5CF).s, &cvar.aa_yaw_static, -180.f, 180.f, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Static Roll*/XorStr<0x41, 12, 0xC15AE288>("\x12\x36\x22\x30\x2C\x25\x67\x1A\x26\x26\x27" + 0xC15AE288).s, &cvar.aa_roll_static, -180.f, 180.f, u8"%.0f°");
+		Sakura::Menu::Widgets::SliderFloat(/*Static Yaw*/XorStr<0xD7, 11, 0x4C5FA5CF>("\x84\xAC\xB8\xAE\xB2\xBF\xFD\x87\xBE\x97" + 0x4C5FA5CF).s, &cvar.aa_yaw_static, -180.f, 180.f, u8"%.0f°");
 
-		Sakura::Menu::Widgets::SliderFloat(/*Yaw Jitter Angle*/XorStr<0x93, 17, 0x859FF278>("\xCA\xF5\xE2\xB6\xDD\xF1\xED\xEE\xFE\xEE\xBD\xDF\xF1\xC7\xCD\xC7" + 0x859FF278).s, &cvar.aa_yaw_jitter_angle, -180.f, 180.f, "%.0f");
-		Sakura::Menu::Widgets::SliderFloat(/*Yaw Jitter Variance*/XorStr<0x3E, 20, 0xE9C49F38>("\x67\x5E\x37\x61\x08\x2A\x30\x31\x23\x35\x68\x1F\x2B\x39\x25\x2C\x20\x2C\x35" + 0xE9C49F38).s, &cvar.aa_yaw_jitter_much, 1.f, 90.f, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Yaw Jitter Angle*/XorStr<0x93, 17, 0x859FF278>("\xCA\xF5\xE2\xB6\xDD\xF1\xED\xEE\xFE\xEE\xBD\xDF\xF1\xC7\xCD\xC7" + 0x859FF278).s, &cvar.aa_yaw_jitter_angle, -180.f, 180.f, u8"%.0f°");
+		Sakura::Menu::Widgets::SliderFloat(/*Yaw Jitter Variance*/XorStr<0x3E, 20, 0xE9C49F38>("\x67\x5E\x37\x61\x08\x2A\x30\x31\x23\x35\x68\x1F\x2B\x39\x25\x2C\x20\x2C\x35" + 0xE9C49F38).s, &cvar.aa_yaw_jitter_much, 1.f, 90.f, u8"%.0f°");
 
 		Sakura::Menu::Widgets::Combo(
 			/*Edge*/XorStr<0xBF, 5, 0x3E6C04FB>("\xFA\xA4\xA6\xA7" + 0x3E6C04FB).s,

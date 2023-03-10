@@ -293,8 +293,8 @@ void Sakura::Lua::ImGui::Menu(const char* szTitle, luabridge::LuaRef lfFunction)
 			LogToFile("Lua script error: %s", error.what());
 			Toast::Create({ 7, "An error occured in lua script! Check the logs!" });
 		}
+		::ImGui::EndTabItem();
 	}
-	::ImGui::EndTabItem();
 }
 
 void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, luabridge::LuaRef lfFunction)
@@ -385,38 +385,6 @@ void Sakura::Lua::ImGui::Drawings::AddRectFilled(ImVec2& start, ImVec2& end, ImC
 	::ImGui::GetWindowDrawList()->AddRectFilled(start, end, color, rounding, corners);
 }
 
-//position_history_t* Sakura::Lua::Helpers::get_position_history(cl_entity_s* ent) {
-//	return ent->ph;
-//}
-//
-//Vector* Sakura::Lua::Helpers::get_attachment(cl_entity_s* ent) {
-//	return ent->attachment;
-//}
-//
-//byte* Sakura::Lua::Helpers::get_prevseqblending(latchedvars_t* latched) {
-//	return latched->prevseqblending;
-//}
-//
-//byte* Sakura::Lua::Helpers::get_prevcontroller(latchedvars_t* latched) {
-//	return latched->prevcontroller;
-//}
-//
-//byte* Sakura::Lua::Helpers::get_prevblending(latchedvars_t* latched) {
-//	return latched->prevblending;
-//}
-//
-//byte* Sakura::Lua::Helpers::get_controller(entity_state_t* entityState) {
-//	return entityState->controller;
-//}
-//
-//byte* Sakura::Lua::Helpers::get_blending(entity_state_t* entityState) {
-//	return entityState->blending;
-//}
-//
-//byte* get_pad(mplane_t* a) {
-//	return a->pad;
-//}
-
 void DefineLuaGlobal(lua_State* L, const char* name, int value)
 {
 	lua_pushinteger(L, value);
@@ -425,19 +393,6 @@ void DefineLuaGlobal(lua_State* L, const char* name, int value)
 
 bool Sakura::Lua::Init(lua_State* L)
 {
-	/*Sakura::Lua::pLuaState = luaL_newstate();
-
-	if (!Sakura::Lua::pLuaState)
-	{
-		Sakura::Lua::Hooks::RemoveAllCallbacks();
-		c_Offset.Error("Couldn't initalize lua.");
-		return false;
-	}
-	else
-		Sakura::Lua::Hooks::RemoveAllCallbacks();*/
-
-	//luaL_openlibs(Sakura::Lua::pLuaState);
-
 	luabridge::getGlobalNamespace(L)
 
 		.beginClass<ImVec2>("ImVec2")
@@ -499,140 +454,6 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addProperty("impact_position", &usercmd_s::impact_position)
 		.endClass()
 
-		/*.beginClass<position_history_t>("position_history_t")
-			.addProperty("animtime", &position_history_t::animtime)
-			.addProperty("origin", &position_history_t::origin)
-			.addProperty("angles", &position_history_t::angles)
-		.endClass()*/
-
-		/*.beginClass<mouth_t>("mouth_t")
-			.addProperty("mouthopen", &mouth_t::mouthopen)
-			.addProperty("sndcount", &mouth_t::sndcount)
-			.addProperty("sndavg", &mouth_t::sndavg)
-		.endClass()*/
-
-		/*.beginClass<latchedvars_t>("latchedvars_t")
-			.addProperty("prevanimtime", &latchedvars_t::prevanimtime)
-			.addProperty("sequencetime", &latchedvars_t::sequencetime)
-			.addFunction("get_prevseqblending", &Sakura::Lua::Helpers::get_prevseqblending)
-			.addProperty("prevorigin", &latchedvars_t::prevorigin)
-			.addProperty("prevangles", &latchedvars_t::prevangles)
-			.addProperty("prevsequence", &latchedvars_t::prevsequence)
-			.addProperty("prevframe", &latchedvars_t::prevframe)
-			.addFunction("get_prevcontroller", &Sakura::Lua::Helpers::get_prevcontroller)
-			.addFunction("get_prevblending", &Sakura::Lua::Helpers::get_prevblending)
-		.endClass()*/
-
-		/*.beginClass<modtype_t>("modtype_t")
-			
-			.addData("mod_brush", modtype_t::mod_brush)
-			.addProperty("mod_sprite", 1)
-			.addProperty("mod_alias", 2)
-			.addProperty("mod_studio", 3)
-		.endClass()
-
-		.beginClass<model_s>("model_s")
-			.addProperty("name", &model_s::name)
-			.addProperty("needload", &model_s::needload)
-			.addProperty("type", &model_s::type)
-		.endClass()*/
-
-		/*.beginClass<mplane_t>("mplane_t")
-			.addProperty("normal", &mplane_t::normal)
-			.addProperty("dist", &mplane_t::dist)
-			.addProperty("type", &mplane_t::type)
-			.addProperty("signbits", &mplane_t::signbits)
-			.addFunction("get_pad", &get_pad)
-		.endClass()*/
-
-		/*.beginClass<entity_state_t>("entity_state")
-			.addProperty("entityType", &entity_state_t::entityType)
-			.addProperty("number", &entity_state_t::number)
-			.addProperty("msg_time", &entity_state_t::msg_time)
-			.addProperty("messagenum", &entity_state_t::messagenum)
-			.addProperty("origin", &entity_state_t::origin)
-			.addProperty("angles", &entity_state_t::angles)
-			.addProperty("modelindex", &entity_state_t::modelindex)
-			.addProperty("sequence", &entity_state_t::sequence)
-			.addProperty("frame", &entity_state_t::frame)
-			.addProperty("colormap", &entity_state_t::colormap)
-			.addProperty("skin", &entity_state_t::skin)
-			.addProperty("solid", &entity_state_t::solid)
-			.addProperty("effects", &entity_state_t::effects)
-			.addProperty("scale", &entity_state_t::scale)
-			.addProperty("eflags", &entity_state_t::eflags)
-			.addProperty("rendermode", &entity_state_t::rendermode)
-			.addProperty("renderamt", &entity_state_t::renderamt)
-			.addProperty("rendercolor", &entity_state_t::rendercolor)
-			.addProperty("renderfx", &entity_state_t::renderfx)
-			.addProperty("movetype", &entity_state_t::movetype)
-			.addProperty("animtime", &entity_state_t::animtime)
-			.addProperty("framerate", &entity_state_t::framerate)
-			.addProperty("body", &entity_state_t::body)
-			.addFunction("get_controller", &Sakura::Lua::Helpers::get_controller)
-			.addFunction("get_blending", &Sakura::Lua::Helpers::get_blending)
-			.addProperty("velocity", &entity_state_t::velocity)
-			.addProperty("mins", &entity_state_t::mins)
-			.addProperty("maxs", &entity_state_t::maxs)
-			.addProperty("aiment", &entity_state_t::aiment)
-			.addProperty("owner", &entity_state_t::owner)
-			.addProperty("friction", &entity_state_t::friction)
-			.addProperty("gravity", &entity_state_t::gravity)
-			.addProperty("team", &entity_state_t::team)
-			.addProperty("playerclass", &entity_state_t::playerclass)
-			.addProperty("health", &entity_state_t::health)
-			.addProperty("spectator", &entity_state_t::spectator)
-			.addProperty("weaponmodel", &entity_state_t::weaponmodel)
-			.addProperty("gaitsequence", &entity_state_t::gaitsequence)
-			.addProperty("basevelocity", &entity_state_t::basevelocity)
-			.addProperty("usehull", &entity_state_t::usehull)
-			.addProperty("oldbuttons", &entity_state_t::oldbuttons)
-			.addProperty("onground", &entity_state_t::onground)
-			.addProperty("iStepLeft", &entity_state_t::iStepLeft)
-			.addProperty("flFallVelocity", &entity_state_t::flFallVelocity)
-			.addProperty("fov", &entity_state_t::fov)
-			.addProperty("weaponanim", &entity_state_t::weaponanim)
-			.addProperty("startpos", &entity_state_t::startpos)
-			.addProperty("endpos", &entity_state_t::endpos)
-			.addProperty("impacttime", &entity_state_t::impacttime)
-			.addProperty("starttime", &entity_state_t::starttime)
-			.addProperty("iuser1", &entity_state_t::iuser1)
-			.addProperty("iuser2", &entity_state_t::iuser2)
-			.addProperty("iuser3", &entity_state_t::iuser3)
-			.addProperty("iuser4", &entity_state_t::iuser4)
-			.addProperty("fuser1", &entity_state_t::fuser1)
-			.addProperty("fuser2", &entity_state_t::fuser2)
-			.addProperty("fuser3", &entity_state_t::fuser3)
-			.addProperty("fuser4", &entity_state_t::fuser4)
-			.addProperty("vuser1", &entity_state_t::vuser1)
-			.addProperty("vuser2", &entity_state_t::vuser2)
-			.addProperty("vuser3", &entity_state_t::vuser3)
-			.addProperty("vuser4", &entity_state_t::vuser4)
-		.endClass()*/
-
-		//.beginClass<cl_entity_s>("entity")
-		//	.addProperty("index", &cl_entity_s::index)
-		//	.addProperty("player", &cl_entity_s::player)
-		//	.addProperty("baseline", &cl_entity_s::baseline)
-		//	.addProperty("prevstate", &cl_entity_s::prevstate)
-		//	.addProperty("curstate", &cl_entity_s::curstate)
-		//	.addProperty("current_position", &cl_entity_s::current_position)
-		//	.addFunction("get_position_history", &Sakura::Lua::Helpers::get_position_history)
-		//	.addProperty("mouth", &cl_entity_s::mouth)
-		//	.addProperty("latched", &cl_entity_s::latched)
-		//	.addProperty("lastmove", &cl_entity_s::lastmove)
-		//	.addProperty("origin", &cl_entity_s::origin)
-		//	.addProperty("angles", &cl_entity_s::angles)
-		//	.addFunction("get_attachment", &Sakura::Lua::Helpers::get_attachment)
-		//	.addProperty("trivial_accept", &cl_entity_s::trivial_accept)
-		//	//.addProperty("model", &cl_entity_s::model)
-		//	//.addProperty("efrag", &cl_entity_s::efrag)
-		//	//.addProperty("topnode", &cl_entity_s::topnode)
-		//	.addProperty("syncbase", &cl_entity_s::syncbase)
-		//	.addProperty("visframe", &cl_entity_s::visframe)
-		//	//.addProperty("cvFloorColor", &cl_entity_s::cvFloorColor)
-		//.endClass()
-
 		.beginNamespace("Hooks")
 			.addFunction("Register", &Sakura::Lua::Hooks::RegisterCallBack)
 		.endNamespace()
@@ -644,14 +465,11 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("LoadSound", &Sakura::Lua::Game::InitSound)
 			.addFunction("PlaySound", &Sakura::Lua::Game::SoundPlay)
 			.addFunction("GetTime", &Sakura::Lua::Game::GetTime)
-			//.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
 		.endNamespace()
 
 		.beginNamespace("ImGui")
 			.addFunction("Menu", &Sakura::Lua::ImGui::Menu)
-			//.addFunction("End", &Sakura::Lua::ImGui::End)
 			.addFunction("Window", &Sakura::Lua::ImGui::Window)
-			//.addFunction("WindowEnd", &Sakura::Lua::ImGui::WindowEnd)
 			.addFunction("Text", &Sakura::Lua::ImGui::Text)
 			.addFunction("Button", &Sakura::Lua::ImGui::Button)
 			.addFunction("Checkbox", &Sakura::Lua::ImGui::Checkbox)
@@ -722,7 +540,6 @@ bool Sakura::Lua::Init(lua_State* L)
 	DefineLuaGlobal(L, "SAKURA_BACKGROUND_RENDER", SAKURA_CALLBACK_AT_RENDERING_BACKGROUND);
 	DefineLuaGlobal(L, "SAKURA_CLIENT_MOVE", SAKURA_CALLBACK_AT_CLIENT_MOVE);
 	DefineLuaGlobal(L, "SAKURA_CLIENT_BIND", SAKURA_CALLBACK_AT_CLIENT_BIND);
-	//DefineLuaGlobal(L, "SAKURA_CALLBACK_AT_CLIENT_ADDENTITY", SAKURA_CALLBACK_AT_CLIENT_ADDENTITY);
 	DefineLuaGlobal(L, "SAKURA_DEATH_MESSAGE", SAKURA_CALLBACK_AT_DEATH_MESSAGE);
 	DefineLuaGlobal(L, "SAKURA_NEWROUND_MESSAGE", SAKURA_CALLBACK_AT_RESETHUD_MESSAGE);
 	DefineLuaGlobal(L, "SAKURA_SELFDAMAGE_MESSAGE", SAKURA_CALLBACK_AT_DAMAGE_MESSAGE);
@@ -904,7 +721,6 @@ int panic_function(lua_State* L)
 	const char* source_file = lua_tostring(L, 2);
 	int line_number = lua_tointeger(L, 3);
 	LogToFile("Lua script error: %s (%s:%d)", error_msg, source_file, line_number);
-	//Toast::Create({ 7, "An error occured in lua script! Check the logs!" });
 	return 0;
 }
 
@@ -958,41 +774,4 @@ void Sakura::Lua::Reload()
 		LogToFile("Loaded Lua script: %s", p.path().filename().string().c_str());
 		ScriptsCount++;
 	}
-
-	/*if (Sakura::Lua::pLuaState)
-	{
-		lua_close(Sakura::Lua::pLuaState);
-		Sakura::Lua::pLuaState = 0;
-	}
-
-	if (Sakura::Lua::Init())
-	{
-		const std::string hackDir = hackdir;
-		const std::string scriptExtension = ".lua";
-
-		lua_atpanic(Sakura::Lua::pLuaState, panic_function);
-
-		for (const auto& p : std::filesystem::recursive_directory_iterator(hackDir + "\\scripts\\"))
-		{
-			std::string temp = p.path().stem().string() + scriptExtension;
-
-			if (p.path().extension() == scriptExtension)
-			{
-				if (luaL_loadfile(Sakura::Lua::pLuaState, p.path().string().c_str()) == LUA_OK)
-				{
-					if (lua_pcall(Sakura::Lua::pLuaState, 0, 0, 0) == LUA_OK)
-					{
-						LogToFile("Loaded Lua script: %s", p.path().filename().string().c_str());
-						ScriptsCount++;
-					}
-				}
-				else
-				{
-					const char* error_msg = lua_tostring(Sakura::Lua::pLuaState, -1);
-					LogToFile("Error loading Lua script: %s", error_msg);
-					Toast::Create({ 7, "An error occured in lua script! Check the logs!" });
-				}
-			}
-		}
-	}*/
 }
