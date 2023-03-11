@@ -257,7 +257,7 @@ void Sakura::Menu::Tabs::Legit::Recoil()
 			Sakura::Menu::Widgets::Combo(
 				/*Accuracy Boost*/XorStr<0xED, 15, 0x6F26896C>("\xAC\x8D\x8C\x85\x83\x93\x90\x8D\xD5\xB4\x98\x97\x8A\x8E" + 0x6F26896C).s,
 				&cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].accuracy,
-				/*ff\0Aiming\0Recoil\0Recoil / Spread\0*/XorStr<0xC7, 34, 0xD70E3777>("\xA1\xAE\xC9\x8B\xA2\xA1\xA4\xA0\xA8\xD0\x83\xB7\xB0\xBB\xBC\xBA\xD7\x8A\xBC\xB9\xB4\xB5\xB1\xFE\xF0\xC0\xB2\x92\x91\x81\x84\x82\xE7" + 0xD70E3777).s);
+				/*Off\0Aiming\0Recoil\0Recoil / Spread\0*/XorStr<0xDA, 35, 0x789BCFB9>("\x95\xBD\xBA\xDD\x9F\xB6\x8D\x88\x8C\x84\xE4\xB7\x83\x84\x87\x80\x86\xEB\xBE\x88\x8D\x80\x99\x9D\xD2\xDC\xD4\xA6\x86\x85\x9D\x98\x9E\xFB" + 0x789BCFB9).s);
 
 			ImGui::PopItemWidth();
 		}
