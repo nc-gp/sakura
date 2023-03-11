@@ -94,10 +94,13 @@ void Sakura::Knifebot::SelectTarget(playeraim_t Aim)
 
 void Sakura::Knifebot::Knife(usercmd_s* cmd)
 {
-	iTargetKnife = 0;
-
-	if (!IsCurWeaponKnife() || !cvar.knifebot_active)
+	if (!cvar.knifebot_active)
 		return;
+
+	if (!IsCurWeaponKnife())
+		return;
+
+	iTargetKnife = 0;
 
 	for (const playeraim_t& Aim : PlayerAim)
 	{
@@ -127,38 +130,34 @@ void Sakura::Knifebot::Knife(usercmd_s* cmd)
 	{
 		if (CanAttack())
 		{
-			QAngle QAimAngles;
-			Vector vEye = pmove->origin + pmove->view_ofs;
-			VectorAngles(vAimOriginKnife - vEye, QAimAngles);
-			QAimAngles.Normalize();
+			bool isPerfectSilentOrSilent = false;
+			QAngle aimAngles;
+			Vector eyePosition = pmove->origin + pmove->view_ofs;
+			VectorAngles(vAimOriginKnife - eyePosition, aimAngles);
+			aimAngles.Normalize();
+
+			if (cvar.knifebot_silent)
+			{
+				MakeAngle(aimAngles, cmd);
+				isPerfectSilentOrSilent = true;
+			}
 
 			if (cvar.knifebot_perfect_silent)
 			{
-				MakeAngle(QAimAngles, cmd);
 				bSendpacket(false);
-			}
-			else if (cvar.knifebot_silent)
-			{
-				MakeAngle(QAimAngles, cmd);
-			}
-			else
-			{
-				cmd->viewangles = QAimAngles;
-				g_Engine.SetViewAngles(QAimAngles);
+				isPerfectSilentOrSilent = true;
 			}
 
-			if (cvar.knifebot_attack == 0)
-				cmd->buttons |= IN_ATTACK;
-			else if (cvar.knifebot_attack == 1)
-				cmd->buttons |= IN_ATTACK2;
+			if(!isPerfectSilentOrSilent)
+			{
+				cmd->viewangles = aimAngles;
+				g_Engine.SetViewAngles(aimAngles);
+			}
+
+			cmd->buttons |= (cvar.knifebot_attack == 0) ? IN_ATTACK : IN_ATTACK2;
 		}
 		else
-		{
-			if (cvar.knifebot_attack == 0)
-				cmd->buttons &= ~IN_ATTACK;
-			else if (cvar.knifebot_attack == 1)
-				cmd->buttons &= ~IN_ATTACK2;
-		}
+			cmd->buttons &= (cvar.knifebot_attack == 0) ? IN_ATTACK : IN_ATTACK2;
 	}
 }
 
