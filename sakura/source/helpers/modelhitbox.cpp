@@ -1,5 +1,7 @@
 #include "../client.h"
 
+constexpr auto LIMIT_MODELS = 512;
+
 void Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE type)
 {
 	// Clear our hitboxes before we append anothers
@@ -41,6 +43,7 @@ void Sakura::Hitboxes::GetModelHitboxes()
 		getplayer = checkplayer;
 		loadnew = true;
 	}
+
 	bool checkmodel = bShowMenu && Sakura::ScreenShot::IsDrawing();
 	static bool getmodel = checkmodel;
 	if (getmodel != checkmodel)
@@ -49,29 +52,36 @@ void Sakura::Hitboxes::GetModelHitboxes()
 		if (getmodel)
 			loadnew = true;
 	}
+
 	if (loadnew)
 	{
 		Model_Aim.deque::clear();
-		for (int i = 0; i < 512; i++)
+		for (size_t i = 0; i < LIMIT_MODELS; ++i)
 		{
 			model_t* mod = g_Studio.GetModelByIndex(i);
 			if (!mod)
 				continue;
+
 			if (!strstr(mod->name, ".mdl"))
 				continue;
+
 			if(!strstr(mod->name, "/player/"))
 				continue;
+
 				studiohdr_t* pStudioHeader = (studiohdr_t*)g_Studio.Mod_Extradata(mod);
 			if (!pStudioHeader)
 				continue;
+
 			mstudiobbox_t* pHitbox = (mstudiobbox_t*)((byte*)pStudioHeader + pStudioHeader->hitboxindex);
 			if (!pHitbox)
 				return;
+
 			BoneMatrix_t* pBoneMatrix = (BoneMatrix_t*)g_Studio.StudioGetBoneTransform();
 			if (!pBoneMatrix)
 				return;
+
 			int numhitboxes = 0;
-			for (unsigned int i = 0; i < pStudioHeader->numhitboxes; i++)
+			for (size_t i = 0; i < pStudioHeader->numhitboxes; ++i)
 			{
 				Vector vBBMax, vBBMin, vCubePointsTrans[8], vCubePoints[8];
 				Vector vEye = pmove->origin + pmove->view_ofs;
@@ -86,19 +96,20 @@ void Sakura::Hitboxes::GetModelHitboxes()
 				vCubePoints[5] = Vector(pHitbox[i].bbmin.x, pHitbox[i].bbmax.y, pHitbox[i].bbmax.z);
 				vCubePoints[6] = Vector(pHitbox[i].bbmin.x, pHitbox[i].bbmin.y, pHitbox[i].bbmax.z);
 				vCubePoints[7] = Vector(pHitbox[i].bbmax.x, pHitbox[i].bbmin.y, pHitbox[i].bbmax.z);
-				for (unsigned int x = 0; x < 8; x++)
+
+				for (size_t x = 0; x < 8; ++x)
 					VectorTransform(vCubePoints[x], (*pBoneMatrix)[pHitbox[i].bone], vCubePointsTrans[x]);
 
 				if (!IsSHield(vCubePointsTrans))
 					numhitboxes++;
 			}
+
 			bool saved = false;
 			for (const model_aim_t& Models : Model_Aim)
 			{
 				char out[256];
-				strcpy(out, Sakura::Strings::getfilename(mod->name).c_str());
-				int len = strlen(out);
-				if (len > 1)out[len - 1] = (char)0;
+				memcpy(out, Sakura::Strings::getfilename(mod->name).c_str(), sizeof(Sakura::Strings::getfilename(mod->name).c_str()));
+
 				if (!strcmp(Models.checkmodel, mod->name) || !strcmp(Models.displaymodel, out))
 				{
 					saved = true;
@@ -109,8 +120,8 @@ void Sakura::Hitboxes::GetModelHitboxes()
 
 			model_aim_t Model;
 			Model.numhitboxes = numhitboxes;
-			strcpy(Model.displaymodel, Sakura::Strings::getfilename(mod->name).c_str());
-			strcpy(Model.checkmodel, mod->name);
+			memcpy(Model.displaymodel, Sakura::Strings::getfilename(mod->name).c_str(), sizeof(Sakura::Strings::getfilename(mod->name).c_str()));
+			memcpy(Model.checkmodel, mod->name, sizeof(mod->name));
 			Model_Aim.push_back(Model);
 		}
 
