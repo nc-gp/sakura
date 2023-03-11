@@ -125,9 +125,6 @@ void initDirectories()
 
 	std::filesystem::create_directories(hackDir + /*\\assets\\*/XorStr<0xCE, 9, 0x47946738>("\x92\xAE\xA3\xA2\xB7\xA7\xA7\x89" + 0x47946738).s);
 	std::filesystem::create_directories(hackDir + /*\\assets\\routes\\*/XorStr<0xCA, 16, 0xC777363C>("\x96\xAA\xBF\xBE\xAB\xBB\xA3\x8D\xA0\xBC\xA1\xA1\xB3\xA4\x84" + 0xC777363C).s);
-	std::filesystem::create_directories(hackDir + /*\\assets\\hitboxes\\*/XorStr<0x9C, 18, 0x9AB7FFF6>("\xC0\xFC\xED\xEC\xC5\xD5\xD1\xFF\xCC\xCC\xD2\xC5\xC7\xD1\xCF\xD8\xF0" + 0x9AB7FFF6).s);
-	std::filesystem::create_directories(hackDir + /*\\assets\\hitboxes\\rage\\*/XorStr<0x9F, 23, 0x55FDBF8C>("\xC3\xC1\xD2\xD1\xC6\xD0\xD6\xFA\xCF\xC1\xDD\xC8\xC4\xD4\xC8\xDD\xF3\xC2\xD0\xD5\xD6\xE8" + 0x55FDBF8C).s);
-	std::filesystem::create_directories(hackDir + /*\\assets\\hitboxes\\legit\\*/XorStr<0xD0, 24, 0xA998858C>("\x8C\xB0\xA1\xA0\xB1\xA1\xA5\x8B\xB0\xB0\xAE\xB9\xB3\xA5\xBB\xAC\xBC\x8D\x87\x84\x8D\x91\xBA" + 0xA998858C).s);
 	std::filesystem::create_directories(hackDir + /*\\configs\\*/XorStr<0x1C, 10, 0x1EFC7AD5>("\x40\x7E\x71\x71\x46\x48\x45\x50\x78" + 0x1EFC7AD5).s);
 	std::filesystem::create_directories(hackDir + /*\\scripts\\*/XorStr<0x03, 10, 0xB372F82C>("\x5F\x77\x66\x74\x6E\x78\x7D\x79\x57" + 0xB372F82C).s);
 }

@@ -20,14 +20,6 @@ ImFont* Sakura::Menu::Fonts::weaponsFont = nullptr;
 char nickname[32];
 char chatspam[128];
 
-//const char* listbox_sub1[] = { "GLOCK18", "P228", "DEAGLE", "ELITE", "FIVESEVEN", "USP" }; Glock-18\0P228\0Deagle\0Dual Elites\0Five-seven\0Usp\0
-//const char* listbox_sub2[] = { "AWP", "SCOUT", "G3SG1", "SG550" }; Awp\0Scout\G3SG1\0SG550\0
-//const char* listbox_sub3[] = { "M4A1", "GALIL", "FAMAS", "AUG", "AK47", "SG552" }; M4A1\0Galil\0Famas\0Aug\0AK-47\0SG552\0
-//const char* listbox_sub4[] = { "XM1014", "M3" }; XM1014\0M3\0
-//const char* listbox_sub5[] = { "M249" };
-//const char* listbox_sub6[] = { "TMP", "P90", "MP5N", "MAC10", "UMP45" }; Tmp\0P90\0Mp5\0Mac10\0Ump45\0
-//const char* listbox_section[] = { "Pistol", "Sniper", "Rifle", "Shotgun", "Machine Gun", "Submachine Gun" }; Pistols\0Snipers\0Rifles\0Shotguns\0Machine guns\0Submachine guns\0
-
 const char* menu_texts[] = {
 	"Hello there",
 	"WP GG",

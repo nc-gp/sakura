@@ -347,6 +347,15 @@
     <ClCompile Include="source\features\hns\strafe.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="source\features\legit\knife.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\legit\laim.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\legit\trigger.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="source\features\lua\luabind.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -387,6 +396,9 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="source\features\rage\nospread.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\raim.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\client.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="source\features\sound\killsound.cpp">
@@ -637,6 +649,9 @@
     <ClInclude Include="source\features\hns\groundstrafe.h" />
     <ClInclude Include="source\features\hns\jumpbug.h" />
     <ClInclude Include="source\features\hns\strafe.h" />
+    <ClInclude Include="source\features\legit\knife.h" />
+    <ClInclude Include="source\features\legit\laim.h" />
+    <ClInclude Include="source\features\legit\trigger.h" />
     <ClInclude Include="source\features\lua\luabind.h" />
     <ClInclude Include="source\features\misc\afk.h" />
     <ClInclude Include="source\features\misc\chatspammer.h" />
@@ -651,6 +666,7 @@
     <ClInclude Include="source\features\rage\fakelag.h" />
     <ClInclude Include="source\features\rage\norecoil.h" />
     <ClInclude Include="source\features\rage\nospread.h" />
+    <ClInclude Include="source\features\rage\raim.h" />
     <ClInclude Include="source\features\sound\killsound.h" />
     <ClInclude Include="source\features\sound\sound.h" />
     <ClInclude Include="source\features\sound\soundesp.h" />

@@ -39,7 +39,7 @@ void DrawFullScreenWindow()
 		DrawPlayerEsp();
 		DrawTraceGrenade();
 		DrawWeaponName();
-		DrawAimbot();
+		Sakura::Aimbot::Draws();
 
 		for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 		{

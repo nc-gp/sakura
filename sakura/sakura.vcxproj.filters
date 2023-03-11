@@ -107,6 +107,9 @@
     <Filter Include="source\fonts">
       <UniqueIdentifier>{d8638223-d52c-4bd1-944b-7d3c1d00f40e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\features\legit">
+      <UniqueIdentifier>{95344abf-7ce8-4b5f-87eb-6022672c04e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\config\cvar.cpp">
@@ -483,6 +486,18 @@
     </ClCompile>
     <ClCompile Include="libs\imgui\imgui_tables.cpp">
       <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\legit\laim.cpp">
+      <Filter>source\features\legit</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\rage\raim.cpp">
+      <Filter>source\features\rage</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\legit\trigger.cpp">
+      <Filter>source\features\legit</Filter>
+    </ClCompile>
+    <ClCompile Include="source\features\legit\knife.cpp">
+      <Filter>source\features\legit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -971,6 +986,18 @@
     </ClInclude>
     <ClInclude Include="source\fonts\font.h">
       <Filter>source\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\legit\laim.h">
+      <Filter>source\features\legit</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\rage\raim.h">
+      <Filter>source\features\rage</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\legit\trigger.h">
+      <Filter>source\features\legit</Filter>
+    </ClInclude>
+    <ClInclude Include="source\features\legit\knife.h">
+      <Filter>source\features\legit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -96,6 +96,7 @@ namespace Sakura
 			void SetViewAngles(Vector angles);
 			Vector GetEyePosition();
 			std::string GetWeaponName();
+			int GetWeaponID();
 
 			bool IsCurWeaponKnife();
 			bool IsCurWeaponPistol();

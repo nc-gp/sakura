@@ -109,6 +109,28 @@ void Sakura::Menu::Tabs::Legit::PerfectSilent()
 	}
 }
 
+void Sakura::Menu::Tabs::Legit::Hitboxes()
+{
+	if (CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section))
+	{
+		ImGui::BeginChild(/*##vp1*/XorStr<0x95, 6, 0xB322490F>("\xB6\xB5\xE1\xE8\xA8" + 0xB322490F).s, ImVec2(250, -1));
+		{
+			ImGui::BeginListBox(/*Selected hitboxes*/XorStr<0x21, 18, 0xF91AEE44>("\x72\x47\x4F\x41\x46\x52\x42\x4C\x09\x42\x42\x58\x4F\x41\x57\x55\x42" + 0xF91AEE44).s, ImVec2(250, -1));
+			{
+
+			}
+			ImGui::EndListBox();
+		}
+		ImGui::EndChild();
+		ImGui::SameLine();
+		ImGui::BeginChild(/*##vp2*/XorStr<0x96, 6, 0x58531295>("\xB5\xB4\xEE\xE9\xA8" + 0x58531295).s, ImVec2(250, -1));
+		{
+			ImGui::Text(/*The more hitboxes you will select - the more fps will be eaten during aiming process.*/XorStr<0x91, 86, 0xEFEC2987>("\xC5\xFA\xF6\xB4\xF8\xF9\xE5\xFD\xB9\xF2\xF2\xE8\xFF\xF1\xE7\xC5\xD2\x82\xDA\xCB\xD0\x86\xD0\xC1\xC5\xC6\x8B\xDF\xC8\xC2\xCA\xD3\xC5\x92\x9E\x94\xC1\xDE\xD2\x98\xD4\xD5\xC9\xD9\x9D\xD8\xCF\xB3\xE1\xB5\xAA\xA8\xA9\xE6\xA5\xAD\xE9\xAF\xAA\xB8\xA8\xA0\xEF\xB4\xA4\xA0\xBA\xBA\xB2\xF6\xB6\xB1\xB4\xB3\xB5\xBB\xFD\xAE\xAD\x8F\x82\x87\x90\x97\xCB" + 0xEFEC2987).s);
+		}
+		ImGui::EndChild();
+	}
+}
+
 void Sakura::Menu::Tabs::Legit::Knifebot()
 {
 	ImGui::BeginChild(/*##vp1*/XorStr<0x8E, 6, 0x716FAC5B>("\xAD\xAC\xE6\xE1\xA3" + 0x716FAC5B).s, ImVec2(250, -1));

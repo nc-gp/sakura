@@ -365,31 +365,31 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 		switch (static_cast<int>(cvar.aim_id_mode))
 		{
 		case 0:
-			if (Sakura::Menu::Widgets::Button(/*Attack All*/XorStr<0x84, 11, 0xBA81671B>("\xC5\xF1\xF2\xE6\xEB\xE2\xAA\xCA\xE0\xE1" + 0xBA81671B).s, { ImGui::GetWindowSize().x - 6, 0 }))
+			if (Sakura::Menu::Widgets::Button(/*Attack all*/XorStr<0x93, 11, 0xDC913528>("\xD2\xE0\xE1\xF7\xF4\xF3\xB9\xFB\xF7\xF0" + 0xDC913528).s, { ImGui::GetWindowSize().x - 6, 0 }))
 				IdHook::First_Kill_Mode();
 
 			break;
 
 		case 1:
-			if (Sakura::Menu::Widgets::Button(/*Attack On First | Dont Attack Off*/XorStr<0x43, 34, 0x3E73D19A>("\x02\x30\x31\x27\x24\x23\x69\x05\x25\x6C\x0B\x27\x3D\x23\x25\x72\x53\x74\x11\x39\x39\x2C\x79\x1B\x2F\x28\x3C\x3D\x34\x40\x2E\x04\x05" + 0x3E73D19A).s, { ImGui::GetWindowSize().x - 6, 0 }))
+			if (Sakura::Menu::Widgets::Button(/*Attack on first - don't attack off*/XorStr<0x51, 35, 0x315932F7>("\x10\x26\x27\x35\x36\x3D\x77\x37\x37\x7A\x3D\x35\x2F\x2D\x2B\x40\x4C\x42\x07\x0B\x0B\x41\x13\x48\x08\x1E\x1F\x0D\x0E\x05\x4F\x1F\x17\x14" + 0x315932F7).s, { ImGui::GetWindowSize().x - 6, 0 }))
 				IdHook::First_Kill_Mode();
 
 			break;
 
 		case 2:
-			if (Sakura::Menu::Widgets::Button(/*Attack Only On*/XorStr<0x88, 15, 0xDD4A1FFD>("\xC9\xFD\xFE\xEA\xEF\xE6\xAE\xC0\xFE\xFD\xEB\xB3\xDB\xFB" + 0xDD4A1FFD).s, { ImGui::GetWindowSize().x - 6, 0 }))
+			if (Sakura::Menu::Widgets::Button(/*Attack only on*/XorStr<0x3F, 15, 0xC3E2C53C>("\x7E\x34\x35\x23\x20\x2F\x65\x29\x29\x24\x30\x6A\x24\x22" + 0xC3E2C53C).s, { ImGui::GetWindowSize().x - 6, 0 }))
 				IdHook::First_Kill_Mode();
 
 			break;
 		}
 
-		if (Sakura::Menu::Widgets::Button(/*Clear Players*/XorStr<0x89, 14, 0x155EC908>("\xCA\xE6\xEE\xED\xFF\xAE\xDF\xFC\xF0\xEB\xF6\xE6\xE6" + 0x155EC908).s, { ImGui::GetWindowSize().x - 6, 0 }))
+		if (Sakura::Menu::Widgets::Button(/*Clear players*/XorStr<0xF8, 14, 0x4CBFB9BE>("\xBB\x95\x9F\x9A\x8E\xDD\x8E\x93\x61\x78\x67\x71\x77" + 0x4CBFB9BE).s, { ImGui::GetWindowSize().x - 6, 0 }))
 			IdHook::ClearPlayer();
 
 		ImGui::Spacing();
 		ImGui::Spacing();
 
-		Sakura::Menu::Widgets::Checkbox(/*Esp Only On*/XorStr<0x7A, 12, 0x58D3238C>("\x3F\x08\x0C\x5D\x31\x11\xEC\xF8\xA2\xCC\xEA" + 0x58D3238C).s, &cvar.visual_idhook_only);
+		Sakura::Menu::Widgets::Checkbox(/*Clear players*/XorStr<0xF8, 14, 0x4CBFB9BE>("\xBB\x95\x9F\x9A\x8E\xDD\x8E\x93\x61\x78\x67\x71\x77" + 0x4CBFB9BE).s, &cvar.visual_idhook_only);
 	}
 	ImGui::EndChild();
 }
@@ -690,7 +690,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.80f));
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)Sakura::Menu::GetMenuColor(1.00f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor(0, 0, 0, 50));
-		ImGui::ListBoxHeader(/*##configslist*/XorStr<0x00, 14, 0x769FFB02>("\x23\x22\x61\x6C\x6A\x63\x6F\x60\x7B\x65\x63\x78\x78" + 0x769FFB02).s, ImVec2(250, -1));
+		ImGui::BeginListBox(/*##configslist*/XorStr<0x00, 14, 0x769FFB02>("\x23\x22\x61\x6C\x6A\x63\x6F\x60\x7B\x65\x63\x78\x78" + 0x769FFB02).s, ImVec2(250, -1));
 		{
 			for (int i = 0; i < configs.size(); i++)
 			{
@@ -725,7 +725,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 				}
 			}
 		}
-		ImGui::ListBoxFooter();
+		ImGui::EndListBox();
 		ImGui::PopStyleColor(4);
 		// is this nessecary?
 		for (size_t i = 0; i < configs.size(); i++) {

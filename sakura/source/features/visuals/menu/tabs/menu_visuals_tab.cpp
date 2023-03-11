@@ -653,11 +653,10 @@ void Sakura::Menu::Tabs::Visuals::Removals()
 		Sakura::Menu::Widgets::Checkbox(/*No Hands*/XorStr<0xF6, 9, 0xFBA8AD97>("\xB8\x98\xD8\xB1\x9B\x95\x98\x8E" + 0xFBA8AD97).s, &cvar.visual_skins_viewmodel_nohands);
 		Sakura::Menu::Widgets::Checkbox(/*No Smoke*/XorStr<0xFB, 9, 0xDDCC5EE9>("\xB5\x93\xDD\xAD\x92\x6F\x6A\x67" + 0xDDCC5EE9).s, &cvar.visual_nosmoke);
 		Sakura::Menu::Widgets::Checkbox(/*No Scope*/XorStr<0xDA, 9, 0x250E8B63>("\x94\xB4\xFC\x8E\xBD\xB0\x90\x84" + 0x250E8B63).s, &cvar.visual_remove_scope);
+		Sakura::Menu::Widgets::Checkbox(/*No teammates*/XorStr<0x0B, 13, 0x76589BBD>("\x45\x63\x2D\x7A\x6A\x71\x7C\x7F\x72\x60\x70\x65" + 0x76589BBD).s, &cvar.visual_dont_render_players);
 
 		Sakura::Menu::Widgets::Checkbox(/*Hud Clear*/XorStr<0xFF, 10, 0x3DEC93D0>("\xB7\x75\x65\x22\x40\x68\x60\x67\x75" + 0x3DEC93D0).s, &cvar.visual_hud_clear);
 		Sakura::Menu::Widgets::Checkbox(/*Block motd*/XorStr<0xEA, 11, 0x485E9E42>("\xA8\x87\x83\x8E\x85\xCF\x9D\x9E\x86\x97" + 0x485E9E42).s, &cvar.misc_block_motd);
-
-		Sakura::Menu::Widgets::Checkbox(/*Dont render teammates*/XorStr<0x86, 22, 0xB9E57123>("\xC2\xE8\xE6\xFD\xAA\xF9\xE9\xE3\xEA\xEA\xE2\xB1\xE6\xF6\xF5\xF8\xFB\xF6\xEC\xFC\xE9" + 0xB9E57123).s, &cvar.visual_dont_render_players);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

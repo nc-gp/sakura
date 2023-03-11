@@ -120,7 +120,7 @@ void AutoRoute::CreateMove(usercmd_s* usercmd)
 
 	if (cvar.route_auto && Sakura::Player::Local::IsAlive())
 	{
-		if (iTargetRage && g_Local.weapon.m_iClip)
+		if (Sakura::Aimbot::Rage::iTargetRage && g_Local.weapon.m_iClip)
 		{
 			if (cvar.route_mode || IsCurWeaponKnife())
 			{
@@ -173,7 +173,7 @@ void AutoRoute::CreateMove(usercmd_s* usercmd)
 					i++;
 					if (g_Local.weapon.m_iClip)
 					{
-						if (i == route_line[iRouteLine].count - 1 && !iTargetRage)
+						if (i == route_line[iRouteLine].count - 1 && !Sakura::Aimbot::Rage::iTargetRage)
 						{
 							ChangeViewAngle(route_line[iRouteLine].point[i].origin, usercmd);
 						}
@@ -192,7 +192,7 @@ void AutoRoute::CreateMove(usercmd_s* usercmd)
 					i--;
 					if (g_Local.weapon.m_iClip)
 					{
-						if (i == 0 && !iTargetRage)
+						if (i == 0 && !Sakura::Aimbot::Rage::iTargetRage)
 						{
 							ChangeViewAngle(route_line[iRouteLine].point[i].origin, usercmd);
 						}
@@ -795,7 +795,7 @@ void RouteDirection(usercmd_s* cmd)
 					g_Engine.GetViewAngles(ViewAngles);
 					if (g_Local.weapon.m_iClip)
 					{
-						if (!iTargetRage)
+						if (!Sakura::Aimbot::Rage::iTargetRage)
 						{
 							ViewAngles[1] += 90;
 							g_Engine.SetViewAngles(ViewAngles);

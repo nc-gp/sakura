@@ -143,15 +143,15 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 			Jumpbug = down;
 
 		if (keyrage)
-			RageKeyStatus = down;
+			Sakura::Aimbot::Rage::RageKeyStatus = down;
 
 		if (keylegit)
-			LegitKeyStatus = down;
+			Sakura::Aimbot::Legit::LegitKeyStatus = down;
 
 		if (keylegittrigger && down)
 		{
-			TriggerKeyStatus = !TriggerKeyStatus;
-			Toast::Create({ 3, "Trigger %s", TriggerKeyStatus ? "activated" : "deactivated" });
+			Sakura::Triggerbot::TriggerKeyStatus = !Sakura::Triggerbot::TriggerKeyStatus;
+			Toast::Create({ 3, "Trigger %s", Sakura::Triggerbot::TriggerKeyStatus ? "activated" : "deactivated" });
 		}
 		
 		if ((keystrafe || keyfast || keygstrafe || keybhop || keyjump || keyrage || keylegittrigger || keylegit || keyrush) && down)
@@ -168,7 +168,7 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 	AdjustSpeed(cvar.misc_wav_speed);
 	UpdateWeaponData();
 	Sakura::Player::Local::Update(frametime, cmd);
-	AimBot(cmd);
+	Sakura::Aimbot::Logic(cmd);
 	ContinueFire(cmd);
 	ItemPostFrame(cmd);
 	Kz(frametime, cmd);
@@ -414,28 +414,6 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 
 	if (ent && ent->player && cvar.visual_deathmark_enable && g_Player[ent->index].deathMark)
 		DeathMark::Create(ent);
-
-	/*if (Sakura::Lua::Hooks::HasHook(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_ADDENTITY))
-	{
-		auto v = Sakura::Lua::Hooks::GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_CLIENT_ADDENTITY);
-		for (unsigned int i = 0; i < v.size(); i++)
-		{
-			try
-			{
-				v[i](type, ent, modelname);
-			}
-			catch (luabridge::LuaException const& e)
-			{
-				if (Sakura::Lua::pLuaState)
-				{
-					std::string errorMessage = "Error in function '" + std::to_string(i) + "': " + e.what();
-					MessageBox(0, errorMessage.c_str(), 0, MB_ICONERROR);
-					LogToFile("Error has occured in the lua! \n%s", errorMessage.c_str());
-					Sakura::Lua::Hooks::RemoveAllCallbacks();
-				}
-			}
-		}
-	}*/
 
 	return g_Client.HUD_AddEntity(type, ent, modelname);
 }

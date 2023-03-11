@@ -230,6 +230,11 @@ std::string Sakura::Lua::LocalPlayer::GetWeaponName()
 	return "Unknown";
 }
 
+int Sakura::Lua::LocalPlayer::GetWeaponID()
+{
+	return g_Local.weapon.m_iWeaponID;
+}
+
 int Sakura::Lua::Player::GetTeam(int index)
 {
 	return g_Player[index].iTeam;
@@ -511,6 +516,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("IsCurWeaponSubMachineGun", &Sakura::Lua::LocalPlayer::IsCurWeaponSubMachineGun)
 
 			.addFunction("GetWeaponName", &Sakura::Lua::LocalPlayer::GetWeaponName)
+			.addFunction("GetWeaponID", &Sakura::Lua::LocalPlayer::GetWeaponID)
 			.addFunction("GetCommandString", &Sakura::Lua::LocalPlayer::GetCommandString)
 			.addFunction("GetCommandFloat", &Sakura::Lua::LocalPlayer::GetCommandFloat)
 			.addFunction("ExecuteCommand", &Sakura::Lua::LocalPlayer::ExecuteCommand)
@@ -686,6 +692,39 @@ bool Sakura::Lua::Init(lua_State* L)
 	DefineLuaGlobal(L, "IN_RELOAD", IN_RELOAD);
 	DefineLuaGlobal(L, "IN_ALT1", IN_ALT1);
 	DefineLuaGlobal(L, "IN_SCORE", IN_SCORE);
+
+	DefineLuaGlobal(L, "WEAPON_NONE", WEAPON_NONE);
+	DefineLuaGlobal(L, "WEAPON_P228", WEAPON_P228);
+	DefineLuaGlobal(L, "WEAPON_GLOCK", WEAPON_GLOCK);
+	DefineLuaGlobal(L, "WEAPON_SCOUT", WEAPON_SCOUT);
+	DefineLuaGlobal(L, "WEAPON_HEGRENADE", WEAPON_HEGRENADE);
+	DefineLuaGlobal(L, "WEAPON_XM1014", WEAPON_XM1014);
+	DefineLuaGlobal(L, "WEAPON_C4", WEAPON_C4);
+	DefineLuaGlobal(L, "WEAPON_MAC10", WEAPON_MAC10);
+	DefineLuaGlobal(L, "WEAPON_AUG", WEAPON_AUG);
+	DefineLuaGlobal(L, "WEAPON_SMOKEGRENADE", WEAPON_SMOKEGRENADE);
+	DefineLuaGlobal(L, "WEAPON_ELITE", WEAPON_ELITE);
+	DefineLuaGlobal(L, "WEAPON_FIVESEVEN", WEAPON_FIVESEVEN);
+	DefineLuaGlobal(L, "WEAPON_UMP45", WEAPON_UMP45);
+	DefineLuaGlobal(L, "WEAPON_SG550", WEAPON_SG550);
+	DefineLuaGlobal(L, "WEAPON_GALIL", WEAPON_GALIL);
+	DefineLuaGlobal(L, "WEAPON_FAMAS", WEAPON_FAMAS);
+	DefineLuaGlobal(L, "WEAPON_USP", WEAPON_USP);
+	DefineLuaGlobal(L, "WEAPON_GLOCK18", WEAPON_GLOCK18);
+	DefineLuaGlobal(L, "WEAPON_AWP", WEAPON_AWP);
+	DefineLuaGlobal(L, "WEAPON_MP5N", WEAPON_MP5N);
+	DefineLuaGlobal(L, "WEAPON_M249", WEAPON_M249);
+	DefineLuaGlobal(L, "WEAPON_M3", WEAPON_M3);
+	DefineLuaGlobal(L, "WEAPON_M4A1", WEAPON_M4A1);
+	DefineLuaGlobal(L, "WEAPON_TMP", WEAPON_TMP);
+	DefineLuaGlobal(L, "WEAPON_G3SG1", WEAPON_G3SG1);
+	DefineLuaGlobal(L, "WEAPON_FLASHBANG", WEAPON_FLASHBANG);
+	DefineLuaGlobal(L, "WEAPON_DEAGLE", WEAPON_DEAGLE);
+	DefineLuaGlobal(L, "WEAPON_SG552", WEAPON_SG552);
+	DefineLuaGlobal(L, "WEAPON_AK47", WEAPON_AK47);
+	DefineLuaGlobal(L, "WEAPON_KNIFE", WEAPON_KNIFE);
+	DefineLuaGlobal(L, "WEAPON_P90", WEAPON_P90);
+	DefineLuaGlobal(L, "WEAPON_SHIELDGUN", WEAPON_SHIELDGUN);
 
 	DefineLuaGlobal(L, "ImGuiWindowFlags_None", ImGuiWindowFlags_None);
 	DefineLuaGlobal(L, "ImGuiWindowFlags_NoTitleBar", ImGuiWindowFlags_NoTitleBar);

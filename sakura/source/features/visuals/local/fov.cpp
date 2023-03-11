@@ -9,7 +9,7 @@ void Sakura::FOVS::Aimbot()
 
 	flFov = cvar.legit[g_Local.weapon.m_iWeaponID].fov;
 
-	if (m_flCurrentFOV > cvar.legit[g_Local.weapon.m_iWeaponID].fov) flFov = m_flCurrentFOV;
+	if (Sakura::Aimbot::m_flCurrentFOV > cvar.legit[g_Local.weapon.m_iWeaponID].fov) flFov = Sakura::Aimbot::m_flCurrentFOV;
 
 	float x = ImGui::GetIO().DisplaySize.x / 2;
 	float y = ImGui::GetIO().DisplaySize.y / 2;
@@ -42,6 +42,14 @@ double Interp(double s1, double s2, double s3, double f1, double f3)
 		return f1;
 
 	return f1 + ((s2 - s1) / (s3 - s1)) * (f3 - f1);
+}
+
+float QuadEaseInOut(float t, float b, float c, float d)
+{
+    t /= d / 2;
+    if (t < 1) return c / 2 * t * t + b;
+    t--;
+    return -c / 2 * (t * (t - 2) - 1) + b;
 }
 
 void Sakura::FOVS::Spread()
@@ -80,7 +88,25 @@ void Sakura::FOVS::Spread()
 		change_timestamp = client_state->time;
 	}
 
-	if (change_timestamp + animation_time >= client_state->time)
+	/*float elapsed_time = static_cast<float>(client_state->time - change_timestamp);
+	float t = elapsed_time / static_cast<float>(animation_time);
+	float eased_radius = QuadEaseInOut(t, radius[previous], radius[current] - radius[previous], 1.f);*/
+	float elapsed_time = static_cast<float>(client_state->time - change_timestamp);
+	float t = elapsed_time / static_cast<float>(animation_time);
+	float eased_t = QuadEaseInOut(t, 0.0, 1.0, 1.0);
+	float eased_radius = radius[previous] + (radius[current] - radius[previous]) * eased_t;
+
+	if (elapsed_time >= animation_time)
+	{
+		radius[calculated] = radius[current];
+		radius[previous] = radius[current];
+	}
+	else
+	{
+		radius[calculated] = eased_radius;
+	}
+
+	/*if (change_timestamp + animation_time >= client_state->time)
 	{
 		radius[calculated] = static_cast<float>(Interp(change_timestamp, client_state->time,
 			change_timestamp + animation_time, radius[previous], radius[current]));
@@ -89,7 +115,7 @@ void Sakura::FOVS::Spread()
 	{
 		radius[calculated] = radius[current];
 		radius[previous] = radius[current];
-	}
+	}*/
 
 	if (radius[calculated] < 5.f)
 		return;
