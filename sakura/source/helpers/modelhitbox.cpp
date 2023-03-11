@@ -13,7 +13,7 @@ void Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE type
 			model_aim_select_t Model_Select;
 			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
 			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-			Model_Select.numhitbox = cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].hitbox;
+			Model_Select.numhitbox = cvar.legit[g_Local.weapon.m_iWeaponID].hitbox;
 			Model_Aim_Select.push_front(Model_Select);
 		}
 		break;
