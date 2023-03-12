@@ -66,7 +66,7 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 		{
 			try
 			{
-				callback(entid, szSoundFile, fOrigin, fVolume);
+				callback(entid, szSoundFile, fOrigin, &fVolume);
 			}
 			catch (luabridge::LuaException const& error)
 			{
