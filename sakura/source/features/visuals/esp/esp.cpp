@@ -187,7 +187,7 @@ void DrawPlayerEsp()
 {
 	for (playeresp_t Esp : PlayerEsp)
 	{
-		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[Esp.index] != 1)
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[Esp.index] == IDHOOK_PLAYER_OFF)
 			continue;
 
 		if (!cvar.visual_visual_team && g_Player[Esp.index].iTeam == g_Local.iTeam)
