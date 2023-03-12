@@ -765,7 +765,18 @@ int panic_function(lua_State* L)
 
 void Sakura::Lua::Reload()
 {
-	scripts.clear();
+	if (scripts.size() > 0)
+	{
+		currentScriptIndex = 0;
+
+		for (auto& script : scripts)
+		{
+			script.RemoveAllCallbacks();
+			lua_close(script.GetState());
+		}
+
+		scripts.clear();
+	}
 
 	const std::string hackDir = hackdir;
 	const std::string scriptExtension = ".lua";
