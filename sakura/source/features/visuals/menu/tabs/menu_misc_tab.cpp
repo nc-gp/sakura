@@ -364,19 +364,19 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 	{
 		switch (static_cast<int>(cvar.aim_id_mode))
 		{
-		case 0:
+		case IDHOOK_ATTACK_ALL:
 			if (Sakura::Menu::Widgets::Button(/*Attack all*/XorStr<0x93, 11, 0xDC913528>("\xD2\xE0\xE1\xF7\xF4\xF3\xB9\xFB\xF7\xF0" + 0xDC913528).s, { ImGui::GetWindowSize().x - 6, 0 }))
 				IdHook::First_Kill_Mode();
 
 			break;
 
-		case 1:
+		case IDHOOK_ATTACK_ON_DONT_ATTACK_OFF:
 			if (Sakura::Menu::Widgets::Button(/*Attack on first - don't attack off*/XorStr<0x51, 35, 0x315932F7>("\x10\x26\x27\x35\x36\x3D\x77\x37\x37\x7A\x3D\x35\x2F\x2D\x2B\x40\x4C\x42\x07\x0B\x0B\x41\x13\x48\x08\x1E\x1F\x0D\x0E\x05\x4F\x1F\x17\x14" + 0x315932F7).s, { ImGui::GetWindowSize().x - 6, 0 }))
 				IdHook::First_Kill_Mode();
 
 			break;
 
-		case 2:
+		case IDHOOK_ATTACK_ON:
 			if (Sakura::Menu::Widgets::Button(/*Attack only on*/XorStr<0x3F, 15, 0xC3E2C53C>("\x7E\x34\x35\x23\x20\x2F\x65\x29\x29\x24\x30\x6A\x24\x22" + 0xC3E2C53C).s, { ImGui::GetWindowSize().x - 6, 0 }))
 				IdHook::First_Kill_Mode();
 
@@ -389,7 +389,7 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 		ImGui::Spacing();
 		ImGui::Spacing();
 
-		Sakura::Menu::Widgets::Checkbox(/*Clear players*/XorStr<0xF8, 14, 0x4CBFB9BE>("\xBB\x95\x9F\x9A\x8E\xDD\x8E\x93\x61\x78\x67\x71\x77" + 0x4CBFB9BE).s, &cvar.visual_idhook_only);
+		Sakura::Menu::Widgets::Checkbox(/*Don't draw on OFF*/XorStr<0x82, 18, 0x2047F43E>("\xC6\xEC\xEA\xA2\xF2\xA7\xEC\xFB\xEB\xFC\xAC\xE2\xE0\xAF\xDF\xD7\xD4" + 0x2047F43E).s, &cvar.visual_idhook_only);
 	}
 	ImGui::EndChild();
 }
