@@ -24,15 +24,6 @@ void Sakura::Menu::Tabs::Visuals::Player()
 	if (Sakura::Menu::Widgets::SubSubTab(/*J*/XorStr<0x35, 2, 0xC48D0C62>("\x7F" + 0xC48D0C62).s, /*Deathmark*/XorStr<0x2B, 10, 0x0C7E5E0E>("\x6F\x49\x4C\x5A\x47\x5D\x50\x40\x58" + 0x0C7E5E0E).s, ImVec2(80, 40), playerSplit == 5 ? true : false))
 		playerSplit = 5;
 
-	//ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
-	//
-	//Sakura::Menu::Widgets::Combo(
-	//	/*Type*/XorStr<0xC4, 5, 0x39BD1E07>("\x90\xBC\xB6\xA2" + 0x39BD1E07).s,
-	//	&playerSplit,
-	//	/*Esp\0Sound Esp\0Chams\0Glow\0Light\0Deathmark\0*/XorStr<0xFD, 42, 0xA19CE4D8>("\xB8\x8D\x8F\x00\x52\x6D\x76\x6A\x61\x26\x42\x7B\x79\x0A\x48\x64\x6C\x63\x7C\x10\x56\x7E\x7C\x63\x15\x5A\x7E\x7F\x71\x6E\x1B\x58\x78\x7F\x6B\x48\x4C\x43\x51\x4F\x25" + 0xA19CE4D8).s);
-	//
-	//ImGui::PopItemWidth();
-
 	ImGui::Spacing();
 
 	switch (static_cast<int>(playerSplit))
@@ -480,14 +471,6 @@ void Sakura::Menu::Tabs::Visuals::World()
 	ImGui::SameLine();
 	if (Sakura::Menu::Widgets::SubSubTab(/*G*/XorStr<0x2D, 2, 0xFBD0C83D>("\x6A" + 0xFBD0C83D).s, /*Map*/XorStr<0xE2, 4, 0x2CF9E085>("\xAF\x82\x94" + 0x2CF9E085).s, ImVec2(120, 40), worldSplit == 3 ? true : false))
 		worldSplit = 3;
-
-	//ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
-	//Sakura::Menu::Widgets::Combo(
-	//	/*Type*/XorStr<0x25, 5, 0x0C336CB4>("\x71\x5F\x57\x4D" + 0x0C336CB4).s,
-	//	&worldSplit,
-	//	/*Esp\0Light\0Chams\0Map\0*/XorStr<0x9A, 21, 0x767B0213>("\xDF\xE8\xEC\x9D\xD2\xF6\xC7\xC9\xD6\xA3\xE7\xCD\xC7\xCA\xDB\xA9\xE7\xCA\xDC\xAD" + 0x767B0213).s);
-	//
-	//ImGui::PopItemWidth();
 
 	ImGui::Spacing();
 

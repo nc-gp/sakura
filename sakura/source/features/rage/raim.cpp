@@ -109,8 +109,8 @@ void Sakura::Aimbot::Rage::Aim(usercmd_s* cmd)
 	if (cvar.rage_tapping_mode && (g_Local.vPunchangle.Length2D() > 0.f || g_Local.weapon.m_iShotsFired))
 		return;
 
-	float bestFOV = 180.f;
-	float bestDistance = 8192.f;
+	float bestFOV = 180;
+	float bestDistance = 8192;
 
 	for (const playeraim_t& Aim : PlayerAim)
 	{

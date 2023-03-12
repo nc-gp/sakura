@@ -301,9 +301,6 @@
     <ClCompile Include="source\offsets\offset.cpp">
       <Filter>source\offsets</Filter>
     </ClCompile>
-    <ClCompile Include="source\helpers\modelhitbox.cpp">
-      <Filter>source\helpers</Filter>
-    </ClCompile>
     <ClCompile Include="source\helpers\trace.cpp">
       <Filter>source\helpers</Filter>
     </ClCompile>
@@ -689,9 +686,6 @@
     </ClInclude>
     <ClInclude Include="source\offsets\offset.h">
       <Filter>source\offsets</Filter>
-    </ClInclude>
-    <ClInclude Include="source\helpers\modelhitbox.h">
-      <Filter>source\helpers</Filter>
     </ClInclude>
     <ClInclude Include="source\helpers\parsemsg.h">
       <Filter>source\helpers</Filter>

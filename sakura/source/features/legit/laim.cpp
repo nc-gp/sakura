@@ -290,50 +290,12 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 					if (Aim.index != iTargetLegit)
 						continue;
 
-					bool hitboxselected = false;
-					for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+					for (size_t i = 0; i < 12; ++i)
 					{
-						if (strcmp(Model_Selected.checkmodel, Aim.modelname))
-							continue;
-
-						bool skip = false;
-						for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
+						if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
 						{
-							if (strcmp(AimLegit.checkmodel, Model_Selected.checkmodel))
-								continue;
-
-							if (AimLegit.numhitbox != Model_Selected.numhitbox)
-								continue;
-
-							if (AimLegit.m_iWeaponID != g_Local.weapon.m_iWeaponID)
-								continue;
-
-							skip = true;
-						}
-
-						if (skip)
-							continue;
-
-						hitboxselected = true;
-
-						for (size_t i = 0; i < 12; ++i)
-						{
-							if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
-							{
-								bBlock = false;
-								break;
-							}
-						}
-					}
-					if (!hitboxselected)
-					{
-						for (size_t i = 0; i < 12; ++i)
-						{
-							if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
-							{
-								bBlock = false;
-								break;
-							}
+							bBlock = false;
+							break;
 						}
 					}
 				}

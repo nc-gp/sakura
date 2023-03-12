@@ -3,8 +3,8 @@
 std::deque<playeraim_t> PlayerAim;
 std::deque<playeraimlegit_t> PlayerAimLegit;
 
-std::deque<model_aim_t> Model_Aim;
-std::deque<model_aim_select_t> Model_Aim_Select;
+//std::deque<model_aim_t> Model_Aim;
+//std::deque<model_aim_select_t> Model_Aim_Select;
 
 DWORD dwReactionTime;
 

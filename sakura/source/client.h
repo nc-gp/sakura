@@ -148,7 +148,6 @@ extern char hldir[MAX_PATH];
 #include "features/misc/steamid.h"
 #include "features/visuals/local/world/lightmap.h"
 #include "features/visuals/local/world/sky.h"
-#include "helpers/modelhitbox.h"
 #include "features/visuals/esp/radar.h"
 #include "helpers/strings.h"
 #include "features/visuals/local/skins/viewmodel.h"
