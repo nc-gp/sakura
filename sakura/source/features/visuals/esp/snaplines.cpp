@@ -7,6 +7,9 @@ void Snaplines::Draw(cl_entity_s* ent)
 		if (ent == &g_Player[ent->index].playerHistory || ent == &g_Player[ent->index].playerDeathMark[0] || ent == &g_Player[ent->index].playerDeathMark[1])
 			return;
 
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
+			return;
+
 		if (!cvar.visual_visual_team && g_Player[ent->index].iTeam == g_Local.iTeam)
 			return;
 
