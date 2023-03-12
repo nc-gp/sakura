@@ -12,8 +12,8 @@ namespace Sakura
 			extern bool		RageKeyStatus;
 			extern Vector	vAimOriginRage;
 
-			void Target(playeraim_t Aim, float& m_flBestDist, float& m_flBestFOV, int hitbox);
-			void SelectHitbox(playeraim_t Aim, float& m_flBestDist, float& m_flBestFOV);
+			void Target(playeraim_t Aim, int hitbox);
+			void SelectHitbox(playeraim_t Aim);
 			void Aim(usercmd_s* cmd);
 			void Draw();
 		};
