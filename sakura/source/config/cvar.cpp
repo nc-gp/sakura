@@ -47,7 +47,6 @@ void getAllConfigs()
 	}
 }
 
-
 void getDefaultConfig()
 {
 	const std::string hackDir = hackdir;
@@ -128,7 +127,6 @@ void initDirectories()
 	std::filesystem::create_directories(hackDir + /*\\configs\\*/XorStr<0x1C, 10, 0x1EFC7AD5>("\x40\x7E\x71\x71\x46\x48\x45\x50\x78" + 0x1EFC7AD5).s);
 	std::filesystem::create_directories(hackDir + /*\\scripts\\*/XorStr<0x03, 10, 0xB372F82C>("\x5F\x77\x66\x74\x6E\x78\x7D\x79\x57" + 0xB372F82C).s);
 }
-
 
 std::string GetCurrentConfig()
 {
@@ -266,6 +264,8 @@ void CVARlist::init()
 		AddCvarFloat(str, &cvar.legit[i].trigger_shot_type); legit[i].trigger_shot_type = 0.0;
 		sprintf(str, "legit[%d].trigger_random_max", i);
 		AddCvarFloat(str, &cvar.legit[i].trigger_random_max); legit[i].trigger_random_max = 3.0;
+		sprintf(str, "legit[%d].trigger_hitbox", i);
+		AddCvarFloat(str, &cvar.legit[i].trigger_hitbox); legit[i].trigger_hitbox = 11.0;
 
 		sprintf(str, "rage[%d].rage_delay_shot", i);
 		AddCvarFloat(str, &cvar.rage[i].rage_delay_shot); rage[i].rage_delay_shot = 0.0;
@@ -318,6 +318,7 @@ void CVARlist::init()
 	INITCVAR(knifebot_fov, 45.0);
 	INITCVAR(knifebot_team, 0.0);
 	INITCVAR(knifebot_draw_aim, 1.0);
+	INITCVAR(knifebot_hitbox, 11.0);
 
 	INITCVAR(bypass_trace_rage, 1.0);
 	INITCVAR(bypass_trace_legit, 1.0);

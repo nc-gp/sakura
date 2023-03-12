@@ -56,6 +56,7 @@ public:
 		float trigger_shot_count;
 		float trigger_shot_type;
 		float trigger_random_max;
+		float trigger_hitbox;
 	} legit[31];
 
 	struct rage_weapons
@@ -91,6 +92,7 @@ public:
 	float knifebot_fov;
 	float knifebot_team;
 	float knifebot_draw_aim;
+	float knifebot_hitbox;
 
 	float bypass_trace_rage;
 	float bypass_trace_legit;

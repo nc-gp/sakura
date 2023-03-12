@@ -2,35 +2,35 @@
 
 constexpr auto LIMIT_MODELS = 512;
 
-void Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE type)
-{
-	// Clear our hitboxes before we append anothers
-	Model_Aim_Select.deque::clear();
-
-	switch (type)
-	{
-	case Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT:
-		for (size_t i = 0; i < Model_Aim.size(); i++)
-		{
-			model_aim_select_t Model_Select;
-			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
-			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-			Model_Select.numhitbox = cvar.legit[g_Local.weapon.m_iWeaponID].hitbox;
-			Model_Aim_Select.push_front(Model_Select);
-		}
-		break;
-	case Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE:
-		for (size_t i = 0; i < Model_Aim.size(); i++)
-		{
-			model_aim_select_t Model_Select;
-			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
-			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-			Model_Select.numhitbox = cvar.rage[g_Local.weapon.m_iWeaponID].rage_hitbox;
-			Model_Aim_Select.push_front(Model_Select);
-		}
-		break;
-	}
-}
+//void Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE type)
+//{
+//	// Clear our hitboxes before we append anothers
+//	Model_Aim_Select.deque::clear();
+//
+//	switch (type)
+//	{
+//	case Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT:
+//		for (size_t i = 0; i < Model_Aim.size(); i++)
+//		{
+//			model_aim_select_t Model_Select;
+//			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
+//			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
+//			Model_Select.numhitbox = cvar.legit[g_Local.weapon.m_iWeaponID].hitbox;
+//			Model_Aim_Select.push_front(Model_Select);
+//		}
+//		break;
+//	case Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE:
+//		for (size_t i = 0; i < Model_Aim.size(); i++)
+//		{
+//			model_aim_select_t Model_Select;
+//			sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
+//			sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
+//			Model_Select.numhitbox = cvar.rage[g_Local.weapon.m_iWeaponID].rage_hitbox;
+//			Model_Aim_Select.push_front(Model_Select);
+//		}
+//		break;
+//	}
+//}
 
 void Sakura::Hitboxes::GetModelHitboxes()
 {

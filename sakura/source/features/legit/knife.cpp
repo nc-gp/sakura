@@ -6,85 +6,30 @@ Vector	Sakura::Knifebot::vAimOriginKnife;
 
 void Sakura::Knifebot::SelectTarget(playeraim_t Aim, float& m_flBestDist)
 {
-	bool hitboxselected = false;
-	for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+	pmtrace_t tr;
+
+	g_Engine.pEventAPI->EV_SetTraceHull(2);
+
+	Vector vEye = pmove->origin + pmove->view_ofs;
+
+	if (cvar.bypass_trace_knife)
+		g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.knifebot_hitbox].Hitbox, PM_WORLD_ONLY, -1, &tr);
+	else
+		g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.knifebot_hitbox].Hitbox, PM_GLASS_IGNORE, -1, &tr);
+
+	int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
+
+	if ((cvar.bypass_trace_knife && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_knife && detect == Aim.index))
 	{
-		if (strcmp(Model_Selected.checkmodel, Aim.modelname))
-			continue;
-
-		bool skip = false;
-		for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
+		if (Aim.PlayerAimHitbox[cvar.knifebot_hitbox].HitboxFOV <= cvar.knifebot_fov)
 		{
-			if (strcmp(AimLegit.checkmodel, Model_Selected.checkmodel))
-				continue;
-			if (AimLegit.numhitbox != Model_Selected.numhitbox)
-				continue;
-			if (AimLegit.m_iWeaponID != g_Local.weapon.m_iWeaponID)
-				continue;
-			skip = true;
-		}
-		if (skip)
-			continue;
-
-		hitboxselected = true;
-
-		pmtrace_t tr;
-
-		g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		if (cvar.bypass_trace_knife)
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox, PM_WORLD_ONLY, -1, &tr);
-		else
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox, PM_GLASS_IGNORE, -1, &tr);
-
-		int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-		if ((cvar.bypass_trace_knife && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_knife && detect == Aim.index))
-		{
-			if (Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxFOV <= cvar.knifebot_fov)
+			float fDistance = (Aim.PlayerAimHitbox[Aim.index].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
+			if (fDistance < m_flBestDist)
 			{
-				float fDistance = (Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
-
-				if (fDistance < m_flBestDist)
-				{
-					m_flBestDist = fDistance;
-					iTargetKnife = Aim.index;
-					vAimOriginKnife = Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox;
-					iHitboxKnife = Model_Selected.numhitbox;
-					break;
-				}
-			}
-		}
-	}
-	if (!hitboxselected)
-	{
-		pmtrace_t tr;
-
-		g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		if (cvar.bypass_trace_knife)
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox, PM_WORLD_ONLY, -1, &tr);
-		else
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox, PM_GLASS_IGNORE, -1, &tr);
-
-		int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-		if ((cvar.bypass_trace_knife && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_knife && detect == Aim.index))
-		{
-			if (Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxFOV <= cvar.knifebot_fov)
-			{
-				float fDistance = (Aim.PlayerAimHitbox[Aim.index].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
-				if (fDistance < m_flBestDist)
-				{
-					m_flBestDist = fDistance;
-					iTargetKnife = Aim.index;
-					vAimOriginKnife = Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox;
-					iHitboxKnife = HeadBox[Aim.index];
-				}
+				m_flBestDist = fDistance;
+				iTargetKnife = Aim.index;
+				vAimOriginKnife = Aim.PlayerAimHitbox[cvar.knifebot_hitbox].Hitbox;
+				iHitboxKnife = cvar.knifebot_hitbox;
 			}
 		}
 	}

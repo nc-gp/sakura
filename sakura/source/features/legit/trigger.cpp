@@ -5,167 +5,72 @@ bool	Sakura::Triggerbot::TriggerKeyStatus;
 
 void Sakura::Triggerbot::SelectTarget(usercmd_s* cmd, playeraim_t Aim, float& m_flBestFOV, DWORD delay, Vector vecSpreadDir)
 {
-	bool hitboxselected = false;
-	for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+	Vector vEye = pmove->origin + pmove->view_ofs;
+
+	bool bHitboxPointsVisible[8];
+
+	for (size_t point = 0; point < 8; ++point)
 	{
-		if (strcmp(Model_Selected.checkmodel, Aim.modelname))
-			continue;
+		pmtrace_t tr;
 
-		bool skip = false;
-		for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
+		int detect = 0;
+
+		g_Engine.pEventAPI->EV_SetTraceHull(2);
+
+		if (cvar.bypass_trace_trigger)
+			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
+		else
+			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
+
+		detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
+
+		if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
 		{
-			if (strcmp(AimLegit.checkmodel, Model_Selected.checkmodel))
-				continue;
-
-			if (AimLegit.numhitbox != Model_Selected.numhitbox)
-				continue;
-
-			if (AimLegit.m_iWeaponID != g_Local.weapon.m_iWeaponID)
-				continue;
-
-			skip = true;
-		}
-
-		if (skip)
-			continue;
-
-		hitboxselected = true;
-
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		bool bHitboxPointsVisible[8];
-
-		for (size_t point = 0; point < 8; ++point)
-		{
-			pmtrace_t tr;
-
-			g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-			if (cvar.bypass_trace_trigger)
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
-			else
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
-
-			int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-			if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
+			bHitboxPointsVisible[point] = true;
+			if (Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxPointsFOV[point] < m_flBestFOV)
 			{
-				bHitboxPointsVisible[point] = true;
-				if (Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxPointsFOV[point] < m_flBestFOV)
-				{
-					m_flBestFOV = Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxPointsFOV[point];
-					iTargetTrigger = Aim.index;
-				}
+				m_flBestFOV = Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxPointsFOV[point];
+				iTargetTrigger = Aim.index;
 			}
-			else
+		}
+		else
+		{
+			bHitboxPointsVisible[point] = false;
+
+			int iOriginalPenetration = CurPenetration();
+
+			if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
 			{
-				bHitboxPointsVisible[point] = false;
+				int iDamage = CurDamage();
+				int iBulletType = CurBulletType();
+				float flDistance = CurDistance();
+				float flRangeModifier = CurWallPierce();
 
-				int iOriginalPenetration = CurPenetration();
+				int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
 
-				if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
+				if (iCurrentDamage > 0)
 				{
-					int iDamage = CurDamage();
-					int iBulletType = CurBulletType();
-					float flDistance = CurDistance();
-					float flRangeModifier = CurWallPierce();
-
-					int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
-
-					if (iCurrentDamage > 0)
+					bHitboxPointsVisible[point] = true;
+					if (Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxPointsFOV[point] < m_flBestFOV)
 					{
-						bHitboxPointsVisible[point] = true;
-						if (Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxPointsFOV[point] < m_flBestFOV)
-						{
-							m_flBestFOV = Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxPointsFOV[point];
-							iTargetTrigger = Aim.index;
-						}
+						m_flBestFOV = Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxPointsFOV[point];
+						iTargetTrigger = Aim.index;
 					}
-				}
-			}
-		}
-		for (size_t i = 0; i < 12; ++i)
-		{
-			if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
-			{
-				Vector vEye = pmove->origin + pmove->view_ofs;
-				if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
-				{
-					if (CanAttack() && GetTickCount() - delay > cvar.legit[g_Local.weapon.m_iWeaponID].trigger_delay_shot)
-						cmd->buttons |= IN_ATTACK;
-					break;
 				}
 			}
 		}
 	}
-	if (!hitboxselected)
+	for (size_t i = 0; i < 12; ++i)
 	{
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		bool bHitboxPointsVisible[8];
-
-		for (size_t point = 0; point < 8; ++point)
+		if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
 		{
-			pmtrace_t tr;
-
-			int detect = 0;
-
-			g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-			if (cvar.bypass_trace_trigger)
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
-			else
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
-
-			detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-			if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
+			Vector vEye = pmove->origin + pmove->view_ofs;
+			if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
 			{
-				bHitboxPointsVisible[point] = true;
-				if (Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxPointsFOV[point] < m_flBestFOV)
-				{
-					m_flBestFOV = Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxPointsFOV[point];
-					iTargetTrigger = Aim.index;
-				}
-			}
-			else
-			{
-				bHitboxPointsVisible[point] = false;
+				if (CanAttack() && GetTickCount() - delay > cvar.legit[g_Local.weapon.m_iWeaponID].trigger_delay_shot)
+					cmd->buttons |= IN_ATTACK;
 
-				int iOriginalPenetration = CurPenetration();
-
-				if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
-				{
-					int iDamage = CurDamage();
-					int iBulletType = CurBulletType();
-					float flDistance = CurDistance();
-					float flRangeModifier = CurWallPierce();
-
-					int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
-
-					if (iCurrentDamage > 0)
-					{
-						bHitboxPointsVisible[point] = true;
-						if (Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxPointsFOV[point] < m_flBestFOV)
-						{
-							m_flBestFOV = Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxPointsFOV[point];
-							iTargetTrigger = Aim.index;
-						}
-					}
-				}
-			}
-		}
-		for (size_t i = 0; i < 12; ++i)
-		{
-			if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
-			{
-				Vector vEye = pmove->origin + pmove->view_ofs;
-				if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
-				{
-					if (CanAttack() && GetTickCount() - delay > cvar.legit[g_Local.weapon.m_iWeaponID].trigger_delay_shot)
-						cmd->buttons |= IN_ATTACK;
-					break;
-				}
+				break;
 			}
 		}
 	}
@@ -247,131 +152,133 @@ void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 
 void Sakura::Triggerbot::DrawTarget(playeraim_t Aim)
 {
-	bool hitboxselected = false;
+	//bool hitboxselected = false;
 
-	for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+	//for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+	//{
+	//	if (strcmp(Model_Selected.checkmodel, Aim.modelname))
+	//		continue;
+
+	//	bool skip = false;
+	//	for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
+	//	{
+	//		if (strcmp(AimLegit.checkmodel, Model_Selected.checkmodel))
+	//			continue;
+	//		if (AimLegit.numhitbox != Model_Selected.numhitbox)
+	//			continue;
+	//		if (AimLegit.m_iWeaponID != g_Local.weapon.m_iWeaponID)
+	//			continue;
+	//		skip = true;
+	//	}
+	//	if (skip)
+	//		continue;
+
+	//	hitboxselected = true;
+
+	//	Vector vEye = pmove->origin + pmove->view_ofs;
+
+	//	bool bHitboxPointsVisible[8];
+
+	//	for (size_t point = 0; point < 8; ++point)
+	//	{
+	//		pmtrace_t tr;
+
+	//		g_Engine.pEventAPI->EV_SetTraceHull(2);
+
+	//		if (cvar.bypass_trace_trigger)
+	//			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
+	//		else
+	//			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
+
+	//		int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
+
+	//		if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
+	//			bHitboxPointsVisible[point] = true;
+	//		else
+	//		{
+	//			bHitboxPointsVisible[point] = false;
+
+	//			int iOriginalPenetration = CurPenetration();
+
+	//			if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
+	//			{
+	//				int iDamage = CurDamage();
+	//				int iBulletType = CurBulletType();
+	//				float flDistance = CurDistance();
+	//				float flRangeModifier = CurWallPierce();
+
+	//				int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
+
+	//				if (iCurrentDamage > 0)
+	//					bHitboxPointsVisible[point] = true;
+	//			}
+	//		}
+	//	}
+
+	//	float CalcAnglesMin[2], CalcAnglesMax[2];
+	//	for (size_t i = 0; i < 12; ++i)
+	//	{
+	//		if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
+	//		{
+	//			if (WorldToScreen(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], CalcAnglesMin) && WorldToScreen(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], CalcAnglesMax))
+	//				ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, Sakura::Colors::Green());
+	//		}
+	//	}
+	//}
+	//if (!hitboxselected)
+	//{
+
+	//}
+
+	Vector vEye = pmove->origin + pmove->view_ofs;
+
+	bool bHitboxPointsVisible[8];
+
+	for (size_t point = 0; point < 8; ++point)
 	{
-		if (strcmp(Model_Selected.checkmodel, Aim.modelname))
-			continue;
+		pmtrace_t tr;
 
-		bool skip = false;
-		for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
+		int detect = 0;
+
+		g_Engine.pEventAPI->EV_SetTraceHull(2);
+
+		if (cvar.bypass_trace_trigger)
+			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
+		else
+			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
+
+		detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
+
+		if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
+			bHitboxPointsVisible[point] = true;
+		else
 		{
-			if (strcmp(AimLegit.checkmodel, Model_Selected.checkmodel))
-				continue;
-			if (AimLegit.numhitbox != Model_Selected.numhitbox)
-				continue;
-			if (AimLegit.m_iWeaponID != g_Local.weapon.m_iWeaponID)
-				continue;
-			skip = true;
-		}
-		if (skip)
-			continue;
+			bHitboxPointsVisible[point] = false;
 
-		hitboxselected = true;
+			int iOriginalPenetration = CurPenetration();
 
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		bool bHitboxPointsVisible[8];
-
-		for (size_t point = 0; point < 8; ++point)
-		{
-			pmtrace_t tr;
-
-			g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-			if (cvar.bypass_trace_trigger)
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
-			else
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
-
-			int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-			if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
-				bHitboxPointsVisible[point] = true;
-			else
+			if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
 			{
-				bHitboxPointsVisible[point] = false;
+				int iDamage = CurDamage();
+				int iBulletType = CurBulletType();
+				float flDistance = CurDistance();
+				float flRangeModifier = CurWallPierce();
 
-				int iOriginalPenetration = CurPenetration();
+				int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
 
-				if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
-				{
-					int iDamage = CurDamage();
-					int iBulletType = CurBulletType();
-					float flDistance = CurDistance();
-					float flRangeModifier = CurWallPierce();
-
-					int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
-
-					if (iCurrentDamage > 0)
-						bHitboxPointsVisible[point] = true;
-				}
-			}
-		}
-
-		float CalcAnglesMin[2], CalcAnglesMax[2];
-		for (size_t i = 0; i < 12; ++i)
-		{
-			if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
-			{
-				if (WorldToScreen(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], CalcAnglesMin) && WorldToScreen(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], CalcAnglesMax))
-					ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, Sakura::Colors::Green());
+				if (iCurrentDamage > 0)
+					bHitboxPointsVisible[point] = true;
 			}
 		}
 	}
-	if (!hitboxselected)
+
+	float CalcAnglesMin[2], CalcAnglesMax[2];
+	for (size_t i = 0; i < 12; ++i)
 	{
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		bool bHitboxPointsVisible[8];
-
-		for (size_t point = 0; point < 8; ++point)
+		if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
 		{
-			pmtrace_t tr;
-
-			int detect = 0;
-
-			g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-			if (cvar.bypass_trace_trigger)
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[point], PM_WORLD_ONLY, -1, &tr);
-			else
-				g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[point], PM_GLASS_IGNORE, -1, &tr);
-
-			detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-			if ((cvar.bypass_trace_trigger && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_trigger && detect == Aim.index))
-				bHitboxPointsVisible[point] = true;
-			else
-			{
-				bHitboxPointsVisible[point] = false;
-
-				int iOriginalPenetration = CurPenetration();
-
-				if (iOriginalPenetration && cvar.legit[g_Local.weapon.m_iWeaponID].trigger_wall)
-				{
-					int iDamage = CurDamage();
-					int iBulletType = CurBulletType();
-					float flDistance = CurDistance();
-					float flRangeModifier = CurWallPierce();
-
-					int iCurrentDamage = Sakura::Aimbot::FireBullets(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[point], flDistance, iOriginalPenetration, iBulletType, iDamage, flRangeModifier);
-
-					if (iCurrentDamage > 0)
-						bHitboxPointsVisible[point] = true;
-				}
-			}
-		}
-
-		float CalcAnglesMin[2], CalcAnglesMax[2];
-		for (size_t i = 0; i < 12; ++i)
-		{
-			if (bHitboxPointsVisible[SkeletonHitboxMatrix[i][0]] && bHitboxPointsVisible[SkeletonHitboxMatrix[i][1]])
-			{
-				if (WorldToScreen(Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[SkeletonHitboxMatrix[i][0]], CalcAnglesMin) && WorldToScreen(Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxMulti[SkeletonHitboxMatrix[i][1]], CalcAnglesMax))
-					ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, Sakura::Colors::Green());
-			}
+			if (WorldToScreen(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], CalcAnglesMin) && WorldToScreen(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].trigger_hitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], CalcAnglesMax))
+				ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, Sakura::Colors::Green());
 		}
 	}
 }

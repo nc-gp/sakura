@@ -33,90 +33,32 @@ void Sakura::Aimbot::Legit::SmoothAngles(QAngle MyViewAngles, QAngle AimAngles, 
 
 void Sakura::Aimbot::Legit::SelectHitbox(playeraim_t Aim, Vector vecFOV, float& flBestFOV, float flSpeedScaleFov, float& flSpeed)
 {
-	bool hitboxselected = false;
-	for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
+	pmtrace_t tr;
+
+	g_Engine.pEventAPI->EV_SetTraceHull(2);
+
+	Vector vEye = pmove->origin + pmove->view_ofs;
+
+	if (cvar.bypass_trace_legit)
+		g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox, PM_WORLD_ONLY, -1, &tr);
+	else
+		g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox, PM_GLASS_IGNORE, -1, &tr);
+
+	int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
+
+	if ((cvar.bypass_trace_legit && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_legit && detect == Aim.index))
 	{
-		if (strcmp(Model_Selected.checkmodel, Aim.modelname))
-			continue;
-
-		bool skip = false;
-		for (const playeraimlegit_t& AimLegit : PlayerAimLegit)
-		{
-			if (strcmp(AimLegit.checkmodel, Model_Selected.checkmodel))
-				continue;
-
-			if (AimLegit.numhitbox != Model_Selected.numhitbox)
-				continue;
-
-			if (AimLegit.m_iWeaponID != g_Local.weapon.m_iWeaponID)
-				continue;
-
-			skip = true;
-		}
-
-		if (skip)
-			continue;
-
-		hitboxselected = true;
-
-		pmtrace_t tr;
-
-		g_Engine.pEventAPI->EV_SetTraceHull(2);
-
 		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		if (cvar.bypass_trace_legit)
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox, PM_WORLD_ONLY, -1, &tr);
-		else
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox, PM_GLASS_IGNORE, -1, &tr);
-
-		int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-		if ((cvar.bypass_trace_legit && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_legit && detect == Aim.index))
+		Vector vDistance(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
+		float fov = Sakura::Aimbot::AngleBetween(vecFOV, vDistance);
+		if (fov < flBestFOV)
 		{
-			Vector vEye = pmove->origin + pmove->view_ofs;
-			Vector vDistance(Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox - vEye);
-			float fov = Sakura::Aimbot::AngleBetween(vecFOV, vDistance);
-			if (fov < flBestFOV)
-			{
-				flBestFOV = fov;
-				iTargetLegit = Aim.index;
-				iHitboxLegit = Model_Selected.numhitbox;
-				vAimOriginLegit = Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox;
-				if (flSpeedScaleFov > 0 && flSpeedScaleFov <= 100 && g_Local.vPunchangle.IsZero() && !isnan(Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxFOV))
-					flSpeed = flSpeed - (((Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxFOV * (flSpeed / Sakura::Aimbot::m_flCurrentFOV)) * flSpeedScaleFov) / 100);
-			}
-		}
-	}
-	if (!hitboxselected)
-	{
-		pmtrace_t tr;
-
-		g_Engine.pEventAPI->EV_SetTraceHull(2);
-
-		Vector vEye = pmove->origin + pmove->view_ofs;
-
-		if (cvar.bypass_trace_legit)
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox, PM_WORLD_ONLY, -1, &tr);
-		else
-			g_Engine.pEventAPI->EV_PlayerTrace(vEye, Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox, PM_GLASS_IGNORE, -1, &tr);
-
-		int detect = g_Engine.pEventAPI->EV_IndexFromTrace(&tr);
-
-		if ((cvar.bypass_trace_legit && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_legit && detect == Aim.index))
-		{
-			Vector vEye = pmove->origin + pmove->view_ofs;
-			Vector vDistance(Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox - vEye);
-			float fov = Sakura::Aimbot::AngleBetween(vecFOV, vDistance);
-			if (fov < flBestFOV)
-			{
-				flBestFOV = fov;
-				iTargetLegit = Aim.index;
-				iHitboxLegit = HeadBox[Aim.index];
-				vAimOriginLegit = Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox;
-				if (flSpeedScaleFov > 0 && flSpeedScaleFov <= 100 && g_Local.vPunchangle.IsZero() && !isnan(Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxFOV))
-					flSpeed = flSpeed - (((Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxFOV * (flSpeed / Sakura::Aimbot::m_flCurrentFOV)) * flSpeedScaleFov) / 100);
-			}
+			flBestFOV = fov;
+			iTargetLegit = Aim.index;
+			iHitboxLegit = cvar.legit[g_Local.weapon.m_iWeaponID].hitbox;
+			vAimOriginLegit = Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox;
+			if (flSpeedScaleFov > 0 && flSpeedScaleFov <= 100 && g_Local.vPunchangle.IsZero() && !isnan(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxFOV))
+				flSpeed = flSpeed - (((Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxFOV * (flSpeed / Sakura::Aimbot::m_flCurrentFOV)) * flSpeedScaleFov) / 100);
 		}
 	}
 }

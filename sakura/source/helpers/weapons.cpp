@@ -1248,7 +1248,7 @@ void ItemPreFrame(struct local_state_s *from, struct local_state_s *to, struct u
 		g_Local.weapon.m_flNextAttack = to->client.m_flNextAttack;
 		g_Local.weapon.iuser3 = to->client.iuser3;
 
-		static int iLastWpnID = g_Local.weapon.m_iWeaponID;
+		/*static int iLastWpnID = g_Local.weapon.m_iWeaponID;
 		if (iLastWpnID != g_Local.weapon.m_iWeaponID)
 		{
 			if (Sakura::Player::Local::IsAlive()) 
@@ -1260,7 +1260,7 @@ void ItemPreFrame(struct local_state_s *from, struct local_state_s *to, struct u
                 Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_RAGE);
             else if (cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].active)
                 Sakura::Hitboxes::Update(Sakura::Hitboxes::SAKURA_HITBOXES_UPDATE_TYPE::HITBOX_UPDATE_LEGIT);
-		}
+		}*/
 	}
 }
 
