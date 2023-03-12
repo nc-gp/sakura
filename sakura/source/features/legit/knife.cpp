@@ -1,12 +1,10 @@
 #include "../../client.h"
 
-constexpr auto MAX_DISTANCE = 8192.f;
-
 int		Sakura::Knifebot::iTargetKnife;
 int		Sakura::Knifebot::iHitboxKnife;
 Vector	Sakura::Knifebot::vAimOriginKnife;
 
-void Sakura::Knifebot::SelectTarget(playeraim_t Aim)
+void Sakura::Knifebot::SelectTarget(playeraim_t Aim, float& m_flBestDist)
 {
 	bool hitboxselected = false;
 	for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
@@ -49,9 +47,9 @@ void Sakura::Knifebot::SelectTarget(playeraim_t Aim)
 			{
 				float fDistance = (Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
 
-				if (fDistance < MAX_DISTANCE)
+				if (fDistance < m_flBestDist)
 				{
-					//flDist = fDistance;
+					m_flBestDist = fDistance;
 					iTargetKnife = Aim.index;
 					vAimOriginKnife = Aim.PlayerAimHitbox[Model_Selected.numhitbox].Hitbox;
 					iHitboxKnife = Model_Selected.numhitbox;
@@ -80,9 +78,9 @@ void Sakura::Knifebot::SelectTarget(playeraim_t Aim)
 			if (Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxFOV <= cvar.knifebot_fov)
 			{
 				float fDistance = (Aim.PlayerAimHitbox[Aim.index].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
-				if (fDistance < MAX_DISTANCE)
+				if (fDistance < m_flBestDist)
 				{
-					//flDist = fDistance;
+					m_flBestDist = fDistance;
 					iTargetKnife = Aim.index;
 					vAimOriginKnife = Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox;
 					iHitboxKnife = HeadBox[Aim.index];
@@ -100,7 +98,7 @@ void Sakura::Knifebot::Knife(usercmd_s* cmd)
 	if (!IsCurWeaponKnife())
 		return;
 
-	iTargetKnife = 0;
+	float bestDistance = 8192.f;
 
 	for (const playeraim_t& Aim : PlayerAim)
 	{
@@ -114,10 +112,10 @@ void Sakura::Knifebot::Knife(usercmd_s* cmd)
 			continue;
 
 		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
-			SelectTarget(Aim);
+			SelectTarget(Aim, bestDistance);
 
 		if (!iTargetKnife && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
-			SelectTarget(Aim);
+			SelectTarget(Aim, bestDistance);
 	}
 
 	if (!iTargetKnife)

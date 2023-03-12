@@ -173,8 +173,6 @@ void Sakura::Triggerbot::SelectTarget(usercmd_s* cmd, playeraim_t Aim, float& m_
 
 void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 {
-	iTargetTrigger = 0;
-
 	float m_flBestFOV = 180;
 
 	if (!cvar.legit[g_Local.weapon.m_iWeaponID].trigger_active || !IsCurWeaponGun())

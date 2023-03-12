@@ -1,21 +1,18 @@
 #include "../../client.h"
 
-constexpr auto BEST_FOV = 180;
-constexpr auto BEST_DISTANCE = 8192;
-
 int		Sakura::Aimbot::Rage::iTargetRage;
 int		Sakura::Aimbot::Rage::iHitboxRage;
 bool	Sakura::Aimbot::Rage::RageKeyStatus;
 Vector	Sakura::Aimbot::Rage::vAimOriginRage;
 
-void Sakura::Aimbot::Rage::Target(playeraim_t Aim, int hitbox)
+void Sakura::Aimbot::Rage::Target(playeraim_t Aim, float& m_flBestDist, float& m_flBestFOV, int hitbox)
 {
 	if (IsCurWeaponKnife())
 	{
 		float fDistance = (Aim.PlayerAimHitbox[hitbox].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
-		if (fDistance < BEST_DISTANCE)
+		if (fDistance < m_flBestDist)
 		{
-			//m_flBestDist = fDistance;
+			m_flBestDist = fDistance;
 			iTargetRage = Aim.index;
 			vAimOriginRage = Aim.PlayerAimHitbox[hitbox].Hitbox;
 			iHitboxRage = hitbox;
@@ -25,9 +22,9 @@ void Sakura::Aimbot::Rage::Target(playeraim_t Aim, int hitbox)
 	{
 		if (cvar.rage_target_selection == 0)
 		{
-			if (Aim.PlayerAimHitbox[hitbox].HitboxFOV < BEST_FOV)
+			if (Aim.PlayerAimHitbox[hitbox].HitboxFOV < m_flBestFOV)
 			{
-				//m_flBestFOV = Aim.PlayerAimHitbox[hitbox].HitboxFOV;
+				m_flBestFOV = Aim.PlayerAimHitbox[hitbox].HitboxFOV;
 				iTargetRage = Aim.index;
 				vAimOriginRage = Aim.PlayerAimHitbox[hitbox].Hitbox;
 				iHitboxRage = hitbox;
@@ -36,9 +33,9 @@ void Sakura::Aimbot::Rage::Target(playeraim_t Aim, int hitbox)
 		if (cvar.rage_target_selection == 1)
 		{
 			float fDistance = (Aim.PlayerAimHitbox[hitbox].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
-			if (fDistance < BEST_DISTANCE)
+			if (fDistance < m_flBestDist)
 			{
-				//m_flBestDist = fDistance;
+				m_flBestDist = fDistance;
 				iTargetRage = Aim.index;
 				vAimOriginRage = Aim.PlayerAimHitbox[hitbox].Hitbox;
 				iHitboxRage = hitbox;
@@ -46,13 +43,13 @@ void Sakura::Aimbot::Rage::Target(playeraim_t Aim, int hitbox)
 		}
 		if (cvar.rage_target_selection == 2)
 		{
-			if (Aim.PlayerAimHitbox[hitbox].HitboxFOV < BEST_FOV)
+			if (Aim.PlayerAimHitbox[hitbox].HitboxFOV < m_flBestFOV)
 			{
 				float fDistance = (Aim.PlayerAimHitbox[hitbox].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
-				if (fDistance < BEST_DISTANCE)
+				if (fDistance < m_flBestDist)
 				{
-					//m_flBestFOV = Aim.PlayerAimHitbox[hitbox].HitboxFOV;
-					//m_flBestDist = fDistance;
+					m_flBestFOV = Aim.PlayerAimHitbox[hitbox].HitboxFOV;
+					m_flBestDist = fDistance;
 					iTargetRage = Aim.index;
 					vAimOriginRage = Aim.PlayerAimHitbox[hitbox].Hitbox;
 					iHitboxRage = hitbox;
@@ -62,7 +59,7 @@ void Sakura::Aimbot::Rage::Target(playeraim_t Aim, int hitbox)
 	}
 }
 
-void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim)
+void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim, float& m_flBestDist, float& m_flBestFOV)
 {
 	bool hitboxselected = false;
 
@@ -90,7 +87,7 @@ void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim)
 		{
 			if (Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxFOV <= cvar.rage_fov)
 			{
-				Target(Aim, Model_Selected.numhitbox);
+				Target(Aim, m_flBestDist, m_flBestFOV, Model_Selected.numhitbox);
 				break;
 			}
 		}
@@ -111,7 +108,7 @@ void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim)
 				{
 					if (Aim.PlayerAimHitbox[Model_Selected.numhitbox].HitboxFOV <= cvar.rage_fov)
 					{
-						Target(Aim, Model_Selected.numhitbox);
+						Target(Aim, m_flBestDist, m_flBestFOV, Model_Selected.numhitbox);
 						break;
 					}
 				}
@@ -136,7 +133,7 @@ void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim)
 		if ((cvar.bypass_trace_rage && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_rage && detect == Aim.index))
 		{
 			if (Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxFOV <= cvar.rage_fov)
-				Target(Aim, HeadBox[Aim.index]);
+				Target(Aim, m_flBestDist, m_flBestFOV, HeadBox[Aim.index]);
 		}
 		else
 		{
@@ -154,7 +151,7 @@ void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim)
 				if (iCurrentDamage > 0)
 				{
 					if (Aim.PlayerAimHitbox[HeadBox[Aim.index]].HitboxFOV <= cvar.rage_fov)
-						Target(Aim, HeadBox[Aim.index]);
+						Target(Aim, m_flBestDist, m_flBestFOV, HeadBox[Aim.index]);
 				}
 			}
 		}
@@ -163,13 +160,14 @@ void Sakura::Aimbot::Rage::SelectHitbox(playeraim_t Aim)
 
 void Sakura::Aimbot::Rage::Aim(usercmd_s* cmd)
 {
-	iTargetRage = 0;
-
 	if (IsCurWeaponNonAttack())
 		return;
 
 	if (cvar.rage_tapping_mode && (g_Local.vPunchangle.Length2D() > 0.f || g_Local.weapon.m_iShotsFired))
 		return;
+
+	float bestFOV = 180.f;
+	float bestDistance = 8192.f;
 
 	for (const playeraim_t& Aim : PlayerAim)
 	{
@@ -186,10 +184,10 @@ void Sakura::Aimbot::Rage::Aim(usercmd_s* cmd)
 			continue;
 
 		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
-			SelectHitbox(Aim);
+			SelectHitbox(Aim, bestFOV, bestDistance);
 
 		if (!iTargetRage && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
-			SelectHitbox(Aim);
+			SelectHitbox(Aim, bestFOV, bestDistance);
 	}
 
 	if (iTargetRage)

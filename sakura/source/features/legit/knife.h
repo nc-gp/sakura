@@ -9,7 +9,7 @@ namespace Sakura
 		extern int		iHitboxKnife;
 		extern Vector	vAimOriginKnife;
 
-		void SelectTarget(playeraim_t Aim);
+		void SelectTarget(playeraim_t Aim, float& m_flBestDist);
 		void Knife(usercmd_s* cmd);
 		void Draw();
 	};

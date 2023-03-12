@@ -30,12 +30,10 @@ float Sakura::Aimbot::m_flCurrentFOV;
 
 float Sakura::Aimbot::AngleBetween(Vector& v1, Vector& v2)
 {
-	const float degToRad = static_cast<float>(M_PI / 180.0);
-
 	Vector v4 = v2.Normalized();
 	Vector v3 = v1.Normalized();
 
-	return acos(DotProduct(v3, v4)) * (1.0f / degToRad);
+	return acos(DotProduct(v3, v4)) * static_cast<float>(M_PI / 180.0);
 }
 
 bool Sakura::Aimbot::IsBoxIntersectingRay(const Vector& boxMin, const Vector& boxMax, const Vector& origin, const Vector& delta)
@@ -289,10 +287,11 @@ int Sakura::Aimbot::FireBullets(Vector start, Vector end, float flDistance, int 
 
 void Sakura::Aimbot::Logic(usercmd_s* cmd)
 {
-	//iTargetTrigger = 0;
-	//iTargetLegit = 0;
-	//iTargetKnife = 0;
-	//iTargetRage = 0;
+	Sakura::Triggerbot::iTargetTrigger = 0;
+	Sakura::Aimbot::Legit::iTargetLegit = 0;
+	Sakura::Knifebot::iTargetKnife = 0;
+	Sakura::Aimbot::Rage::iTargetRage = 0;
+
 	if (Sakura::Player::Local::IsAlive() && GetTickCount() - HudRedraw <= 100)
 	{
 		if (cvar.rage_active)

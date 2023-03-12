@@ -123,8 +123,6 @@ void Sakura::Aimbot::Legit::SelectHitbox(playeraim_t Aim, Vector vecFOV, float& 
 
 void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 {
-	iTargetLegit = 0;
-
 	static DWORD dwBlockAttack = 0;
 
 	static float flSpeedSpiralX = 1.3;
