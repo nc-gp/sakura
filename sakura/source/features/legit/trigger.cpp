@@ -227,13 +227,13 @@ void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 		if (!cvar.legit_trigger_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
 			continue;
 
-		if (cvar.aim_id_mode == 2 || (IdHook::FirstKillPlayer[Aim.index] == 1 || cvar.aim_id_mode == 0))
-		{
-			SelectTarget(cmd, Aim, m_flBestFOV, delay, vecSpreadDir);
+		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_OFF && cvar.aim_id_mode == IDHOOK_ATTACK_ON_DONT_ATTACK_OFF)
 			continue;
-		}
 
-		if (!iTargetTrigger && cvar.aim_id_mode != 2 && IdHook::FirstKillPlayer[Aim.index] < 2)
+		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
+			SelectTarget(cmd, Aim, m_flBestFOV, delay, vecSpreadDir);
+
+		if (!iTargetTrigger && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
 			SelectTarget(cmd, Aim, m_flBestFOV, delay, vecSpreadDir);
 	}
 
