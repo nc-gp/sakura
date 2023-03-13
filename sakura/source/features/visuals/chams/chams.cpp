@@ -131,6 +131,9 @@ void Sakura::Chams::Studio()
 
 	if (Player)
 	{
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
+			return;
+
 		if (cvar.visual_player_glow)
 		{
 			playerGlowColor = Sakura::Colors::GetCustomizedTeamColor(ent->index, cvar.visual_player_glow_color_tt, cvar.visual_player_glow_color_ct, cvar.rainbow_glow_player_tt, cvar.rainbow_glow_player_ct);
