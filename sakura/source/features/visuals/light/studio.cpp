@@ -17,7 +17,6 @@ void StudioSetRemapColors(int top, int bottom)
 
 void StudioDrawPoints()
 {
-	//ViewModelSkin();
 	Sakura::Hands::Remove();
 	g_Studio.StudioDrawPoints();
 }
