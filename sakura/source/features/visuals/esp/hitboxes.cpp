@@ -309,7 +309,7 @@ void PlayerHitboxes(cl_entity_s* ent)
 		
 		HitboxBone[ent->index] = -1;
 
-		for (unsigned int i = 0; i < pStudioHeader->numbones; i++)
+		for (size_t i = 0; i < pStudioHeader->numbones; ++i)
 		{
 			char modelname[255];
 			strcpy(modelname, pbones[i].name);
@@ -327,7 +327,7 @@ void PlayerHitboxes(cl_entity_s* ent)
 		{
 			bool found = false;
 
-			for (unsigned int i = 0; i < pStudioHeader->numhitboxes; i++)
+			for (size_t i = 0; i < pStudioHeader->numhitboxes; ++i)
 			{
 				if (pHitbox[i].bone == HitboxBone[ent->index])
 				{
@@ -344,7 +344,7 @@ void PlayerHitboxes(cl_entity_s* ent)
 
 		if (cvar.skeleton_player_bone)
 		{
-			for (unsigned int i = 0; i < pStudioHeader->numbones; i++)
+			for (size_t i = 0; i < pStudioHeader->numbones; ++i)
 			{
 				if (pbones[i].parent >= 0)
 				{
@@ -379,7 +379,6 @@ void PlayerHitboxes(cl_entity_s* ent)
 		Esp.sequence = ent->curstate.sequence;
 		Esp.weaponmodel = ent->curstate.weaponmodel;
 		strcpy(Esp.model, Sakura::Strings::getfilename(m_pRenderModel->name).c_str());
-		//Esp.dummy = false;
 
 		playeraim_t Aim;
 
