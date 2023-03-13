@@ -390,7 +390,7 @@ void PlayerHitboxes(cl_entity_s* ent)
 
 		int numhitboxes = 0;
 
-		for (unsigned int i = 0; i < pStudioHeader->numhitboxes; i++)
+		for (size_t i = 0; i < pStudioHeader->numhitboxes; ++i)
 		{
 			Vector vBBMax, vBBMin, vCubePointsTrans[8], vCubePoints[8];
 			Vector vEye = pmove->origin + pmove->view_ofs;
@@ -411,7 +411,7 @@ void PlayerHitboxes(cl_entity_s* ent)
 			vCubePoints[6] = Vector(pHitbox[i].bbmin.x, pHitbox[i].bbmin.y, pHitbox[i].bbmax.z);
 			vCubePoints[7] = Vector(pHitbox[i].bbmax.x, pHitbox[i].bbmin.y, pHitbox[i].bbmax.z);
 
-			for (unsigned int x = 0; x < 8; x++)
+			for (size_t x = 0; x < 8; ++x)
 				VectorTransform(vCubePoints[x], (*pBoneMatrix)[pHitbox[i].bone], vCubePointsTrans[x]);
 
 			if (!IsSHield(vCubePointsTrans))
@@ -432,7 +432,7 @@ void PlayerHitboxes(cl_entity_s* ent)
 
 					Hitboxes.index = ent->index;
 
-					for (unsigned int x = 0; x < 8; x++)
+					for (size_t x = 0; x < 8; ++x)
 						Hitboxes.vCubePointsTrans[x] = vCubePointsTrans[x];
 
 					PlayerHitbox.push_back(Hitboxes);
@@ -440,14 +440,14 @@ void PlayerHitboxes(cl_entity_s* ent)
 
 				esphitbox_t EspHitbox;
 
-				for (unsigned int x = 0; x < 8; x++)
+				for (size_t x = 0; x < 8; ++x)
 					EspHitbox.HitboxMulti[x] = vCubePointsTrans[x];
 
 				Esp.PlayerEspHitbox.push_back(EspHitbox);
 
 				playeraimhitbox_t AimHitbox;
 
-				for (unsigned int x = 0; x < 8; x++)
+				for (size_t x = 0; x < 8; ++x)
 				{
 					AimHitbox.HitboxMulti[x] = vCubePointsTrans[x];
 					AimHitbox.HitboxPointsFOV[x] = g_Local.vPrevForward.AngleBetween(AimHitbox.HitboxMulti[x] - vEye);
@@ -480,6 +480,9 @@ void DrawSkeletonPlayer()
 
 	for (playerbone_t Bones : PlayerBone)
 	{
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[Bones.index] == IDHOOK_PLAYER_OFF)
+			continue;
+
 		if (!cvar.visual_visual_team && g_Player[Bones.index].iTeam == g_Local.iTeam)
 			continue;
 
@@ -496,6 +499,9 @@ void DrawSkeletonPlayer()
 
 	for (playerhitbox_t Hitbox : PlayerHitbox)
 	{
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[Hitbox.index] == IDHOOK_PLAYER_OFF)
+			continue;
+
 		if (!cvar.visual_visual_team && g_Player[Hitbox.index].iTeam == g_Local.iTeam)
 			continue;
 
@@ -504,7 +510,7 @@ void DrawSkeletonPlayer()
 
 		ImRGBA hitboxColor = Sakura::Colors::GetCustomizedTeamColor(Hitbox.index, cvar.skeleton_player_hitbox_color_tt, cvar.skeleton_player_hitbox_color_ct);
 
-		for (unsigned int x = 0; x < 12; x++)
+		for (size_t x = 0; x < 12; ++x)
 		{
 			float CalcAnglesMin[2], CalcAnglesMax[2];
 			if (WorldToScreen(Hitbox.vCubePointsTrans[SkeletonHitboxMatrix[x][0]], CalcAnglesMin) && WorldToScreen(Hitbox.vCubePointsTrans[SkeletonHitboxMatrix[x][1]], CalcAnglesMax))
@@ -529,38 +535,38 @@ void DrawSkeletonWorld()
 	ImRGBA worldBoneColor = Sakura::Colors::GetCustomizedColor(cvar.skeleton_world_bone_color, cvar.rainbow_world_bone);
 	ImRGBA worldHitboxColor = Sakura::Colors::GetCustomizedColor(cvar.skeleton_world_hitbox_color, cvar.rainbow_world_hitbox);
 
-	for (int i = 0; i < WorldBone.size(); i++)
+	for (worldbone_t Bone : WorldBone)
 	{
-		if (WorldBone[i].parent >= 0)
+		if (Bone.parent >= 0)
 		{
 			float CalcAnglesMin[2], CalcAnglesMax[2];
-			if (WorldToScreen(WorldBone[i].vBone, CalcAnglesMin) && WorldToScreen(WorldBone[i].vBoneParent, CalcAnglesMax))
+			if (WorldToScreen(Bone.vBone, CalcAnglesMin) && WorldToScreen(Bone.vBoneParent, CalcAnglesMax))
 				ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, ImColor(worldBoneColor.r, worldBoneColor.g, worldBoneColor.b, worldBoneColor.a));
 
-			if (WorldToScreen(WorldBone[i].vBoneParent, CalcAnglesMin) && WorldBone[WorldBone[i].parent].parent != -1)
+			if (WorldToScreen(Bone.vBoneParent, CalcAnglesMin) && WorldBone[Bone.parent].parent != -1)
 				ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ IM_ROUND(CalcAnglesMin[0]) - 1, IM_ROUND(CalcAnglesMin[1]) - 1 }, { IM_ROUND(CalcAnglesMin[0]) + 2, IM_ROUND(CalcAnglesMin[1]) + 2 }, ImColor(worldBoneColor.r, worldBoneColor.g, worldBoneColor.b, worldBoneColor.a - 0.7));
 			
-			if (WorldToScreen(WorldBone[i].vBone, CalcAnglesMin))
+			if (WorldToScreen(Bone.vBone, CalcAnglesMin))
 				ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ IM_ROUND(CalcAnglesMin[0]) - 1, IM_ROUND(CalcAnglesMin[1]) - 1 }, { IM_ROUND(CalcAnglesMin[0]) + 2, IM_ROUND(CalcAnglesMin[1]) + 2 }, ImColor(worldBoneColor.r, worldBoneColor.g, worldBoneColor.b, worldBoneColor.a - 0.7));
 		}
 		else
 		{
 			float CalcAnglesMin[2];
-			if (WorldToScreen(WorldBone[i].vBone, CalcAnglesMin))
+			if (WorldToScreen(Bone.vBone, CalcAnglesMin))
 				ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ IM_ROUND(CalcAnglesMin[0]) - 1, IM_ROUND(CalcAnglesMin[1]) - 1 }, { IM_ROUND(CalcAnglesMin[0]) + 2, IM_ROUND(CalcAnglesMin[1]) + 2 }, ImColor(worldBoneColor.r, worldBoneColor.g, worldBoneColor.b, worldBoneColor.a));
 		}
 	}
 
 	for (worldhitbox_t Hitbox : WorldHitbox)
 	{
-		for (unsigned int i = 0; i < 12; i++)
+		for (size_t i = 0; i < 12; ++i)
 		{
 			float CalcAnglesMin[2], CalcAnglesMax[2];
 			if (WorldToScreen(Hitbox.vCubePointsTrans[SkeletonHitboxMatrix[i][0]], CalcAnglesMin) && WorldToScreen(Hitbox.vCubePointsTrans[SkeletonHitboxMatrix[i][1]], CalcAnglesMax))
 				ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, ImColor(worldHitboxColor.r, worldHitboxColor.g, worldHitboxColor.b, worldHitboxColor.a));
 		}
 
-		for (unsigned int i = 0; i < 8; i++)
+		for (size_t i = 0; i < 8; ++i)
 		{
 			float CalcAnglesMin[2];
 			if (WorldToScreen(Hitbox.vCubePointsTrans[i], CalcAnglesMin))
