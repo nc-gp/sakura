@@ -10,6 +10,9 @@
 #include <LuaBridge/detail/Userdata.h>
 
 #include <string>
+#ifdef LUABRIDGE_CXX17
+#include <string_view>
+#endif
 
 namespace luabridge {
 
@@ -23,7 +26,7 @@ struct Stack;
 template<>
 struct Stack<void>
 {
-    static void push(lua_State* L) {}
+    static void push(lua_State*) {}
 };
 
 //------------------------------------------------------------------------------
@@ -67,7 +70,21 @@ struct Stack<int>
         return static_cast<int>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index)
+    {
+        if (lua_type(L, index) != LUA_TNUMBER)
+        {
+            return false;
+        }
+
+#if LUA_VERSION_NUM <= 501
+        return true;
+#else
+        int isNumber;
+        lua_tointegerx(L, index, &isNumber);
+        return isNumber;
+#endif
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -87,7 +104,7 @@ struct Stack<unsigned int>
         return static_cast<unsigned int>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -107,7 +124,7 @@ struct Stack<unsigned char>
         return static_cast<unsigned char>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -127,7 +144,7 @@ struct Stack<short>
         return static_cast<short>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -147,7 +164,7 @@ struct Stack<unsigned short>
         return static_cast<unsigned short>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -167,7 +184,7 @@ struct Stack<long>
         return static_cast<long>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -187,7 +204,7 @@ struct Stack<unsigned long>
         return static_cast<unsigned long>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -207,7 +224,7 @@ struct Stack<long long>
         return static_cast<long long>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -226,7 +243,7 @@ struct Stack<unsigned long long>
         return static_cast<unsigned long long>(luaL_checkinteger(L, index));
     }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNUMBER; }
+    static bool isInstance(lua_State* L, int index) { return Stack<int>::isInstance(L, index); }
 };
 
 //------------------------------------------------------------------------------
@@ -358,6 +375,37 @@ struct Stack<std::string>
     static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TSTRING; }
 };
 
+#ifdef LUABRIDGE_CXX17
+
+//------------------------------------------------------------------------------
+/**
+    Stack specialization for `std::string`.
+*/
+template<>
+struct Stack<std::string_view>
+{
+    static void push(lua_State* L, std::string_view str)
+    {
+        lua_pushlstring(L, str.data(), str.size());
+    }
+
+    static std::string_view get(lua_State* L, int index)
+    {
+        size_t len;
+        if (lua_type(L, index) == LUA_TSTRING)
+        {
+            const char* str = lua_tolstring(L, index, &len);
+            return std::string_view(str, len);
+        }
+
+        return {};
+    }
+
+    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TSTRING; }
+};
+
+#endif // LUABRIDGE_CXX17
+
 namespace detail {
 
 template<class T>
@@ -459,9 +507,19 @@ struct Stack<const T*>
  * Push an object onto the Lua stack.
  */
 template<class T>
-inline void push(lua_State* L, T t)
+void push(lua_State* L, T t)
 {
     Stack<T>::push(L, t);
+}
+
+//------------------------------------------------------------------------------
+/**
+ * Get an object from the Lua stack.
+ */
+template<class T>
+T get(lua_State* L, int index)
+{
+    return Stack<T>::get(L, index);
 }
 
 //------------------------------------------------------------------------------
@@ -469,7 +527,7 @@ inline void push(lua_State* L, T t)
  * Check whether an object on the Lua stack is of type T.
  */
 template<class T>
-inline bool isInstance(lua_State* L, int index)
+bool isInstance(lua_State* L, int index)
 {
     return Stack<T>::isInstance(L, index);
 }

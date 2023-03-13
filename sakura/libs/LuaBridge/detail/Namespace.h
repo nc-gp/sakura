@@ -620,7 +620,7 @@ class Namespace : public detail::Registrar
             assertStackState(); // Stack: const table (co), class table (cl), static table (st)
 
             typedef TG (T::*get_t)() const;
-            new (lua_newuserdata(L, sizeof(get_t))) get_t(get); // Stack: co, cl, st, funcion ptr
+            new (lua_newuserdata(L, sizeof(get_t))) get_t(get); // Stack: co, cl, st, function ptr
             lua_pushcclosure(L, &CFunc::CallConstMember<get_t>::f, 1); // Stack: co, cl, st, getter
             lua_pushvalue(L, -1); // Stack: co, cl, st, getter, getter
             CFunc::addGetter(L, name, -5); // Stack: co, cl, st, getter
@@ -650,7 +650,7 @@ class Namespace : public detail::Registrar
             assertStackState(); // Stack: const table (co), class table (cl), static table (st)
 
             typedef TG (T::*get_t)(lua_State*) const;
-            new (lua_newuserdata(L, sizeof(get_t))) get_t(get); // Stack: co, cl, st, funcion ptr
+            new (lua_newuserdata(L, sizeof(get_t))) get_t(get); // Stack: co, cl, st, function ptr
             lua_pushcclosure(L, &CFunc::CallConstMember<get_t>::f, 1); // Stack: co, cl, st, getter
             lua_pushvalue(L, -1); // Stack: co, cl, st, getter, getter
             CFunc::addGetter(L, name, -5); // Stack: co, cl, st, getter
@@ -1165,6 +1165,21 @@ public:
 
         return *this;
     }
+    template<class T>
+    Namespace& addConstant(char const* name, T value)
+    {
+        if (m_stackSize == 1)
+        {
+            throw std::logic_error("addConstant () called on global namespace");
+        }
+
+        assert(lua_istable(L, -1)); // Stack: namespace table (ns)
+
+        Stack<T>::push(L, value); // Stack: ns, value
+        rawsetfield(L, -2, name); // Stack: ns
+
+        return *this;
+    }
 
     //----------------------------------------------------------------------------
     /**
@@ -1278,6 +1293,27 @@ public:
 
         return *this;
     }
+
+#ifdef _M_IX86 // Windows 32bit only
+
+    //----------------------------------------------------------------------------
+    /**
+        Add or replace a free __stdcall function.
+    */
+    template<class ReturnType, class... Params>
+    Namespace& addFunction(char const* name, ReturnType(__stdcall* fp)(Params...))
+    {
+        assert(lua_istable(L, -1)); // Stack: namespace table (ns)
+
+        using FnType = decltype(fp);
+        lua_pushlightuserdata(L, reinterpret_cast<void*>(fp)); // Stack: ns, function ptr
+        lua_pushcclosure(L, &CFunc::Call<FnType>::f, 1); // Stack: ns, function
+        rawsetfield(L, -2, name); // Stack: ns
+
+        return *this;
+    }
+
+#endif // _M_IX86
 
     //----------------------------------------------------------------------------
     /**

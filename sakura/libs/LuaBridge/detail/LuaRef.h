@@ -40,7 +40,7 @@ struct Stack<Nil>
 {
     static void push(lua_State* L, Nil) { lua_pushnil(L); }
 
-    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TTABLE; }
+    static bool isInstance(lua_State* L, int index) { return lua_type(L, index) == LUA_TNIL; }
 };
 
 /**
@@ -250,13 +250,13 @@ public:
 
     /// Indicate whether it is a nil reference.
     ///
-    /// @returns True if this is a nil reference, false otherwice.
+    /// @returns True if this is a nil reference, false otherwise.
     ///
     bool isNil() const { return type() == LUA_TNIL; }
 
     /// Indicate whether it is a reference to a boolean.
     ///
-    /// @returns True if it is a reference to a boolean, false otherwice.
+    /// @returns True if it is a reference to a boolean, false otherwise.
     ///
     bool isBool() const { return type() == LUA_TBOOLEAN; }
 
@@ -355,7 +355,7 @@ public:
         @returns True if the referred value is equal to the specified one.
     */
     template<class T>
-    bool operator==(T rhs) const
+    bool operator==(T const& rhs) const
     {
         StackPop p(m_L, 2);
         impl().push();
@@ -371,7 +371,7 @@ public:
         @returns True if the referred value is less than the specified one.
     */
     template<class T>
-    bool operator<(T rhs) const
+    bool operator<(T const& rhs) const
     {
         StackPop p(m_L, 2);
         impl().push();
@@ -394,7 +394,7 @@ public:
         @returns True if the referred value is less than or equal to the specified one.
     */
     template<class T>
-    bool operator<=(T rhs) const
+    bool operator<=(T const& rhs) const
     {
         StackPop p(m_L, 2);
         impl().push();
@@ -417,7 +417,7 @@ public:
         @returns True if the referred value is greater than the specified one.
     */
     template<class T>
-    bool operator>(T rhs) const
+    bool operator>(T const& rhs) const
     {
         StackPop p(m_L, 2);
         impl().push();
@@ -463,7 +463,7 @@ public:
         @returns True if the referred value is equal to the specified one.
     */
     template<class T>
-    bool rawequal(T rhs) const
+    bool rawequal(T const& rhs) const
     {
         StackPop p(m_L, 2);
         impl().push();
@@ -481,7 +481,7 @@ public:
         @param v A value to append to the table.
     */
     template<class T>
-    void append(T v) const
+    void append(T const& v) const
     {
         impl().push();
         ;
@@ -507,129 +507,20 @@ public:
 
     //----------------------------------------------------------------------------
     /**
-        Call Lua code.
-        These overloads allow Lua code to be called with up to 8 parameters.
+        Call Lua code with a variable amount of parameters.
         The return value is provided as a LuaRef (which may be LUA_REFNIL).
         If an error occurs, a LuaException is thrown.
 
         @returns A result of the call.
     */
-    /** @{ */
-    LuaRef operator()() const
+    template<typename... Arguments>
+    LuaRef operator()(Arguments&&... arguments) const
     {
         impl().push();
-        ;
-        LuaException::pcall(m_L, 0, 1);
+        pushArguments(std::forward<Arguments>(arguments)...);
+        LuaException::pcall(m_L, sizeof...(arguments), 1);
         return LuaRef::fromStack(m_L);
     }
-
-    template<class P1>
-    LuaRef operator()(P1 p1) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        LuaException::pcall(m_L, 1, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2>
-    LuaRef operator()(P1 p1, P2 p2) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        LuaException::pcall(m_L, 2, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2, class P3>
-    LuaRef operator()(P1 p1, P2 p2, P3 p3) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        Stack<P3>::push(m_L, p3);
-        LuaException::pcall(m_L, 3, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2, class P3, class P4>
-    LuaRef operator()(P1 p1, P2 p2, P3 p3, P4 p4) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        Stack<P3>::push(m_L, p3);
-        Stack<P4>::push(m_L, p4);
-        LuaException::pcall(m_L, 4, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2, class P3, class P4, class P5>
-    LuaRef operator()(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        Stack<P3>::push(m_L, p3);
-        Stack<P4>::push(m_L, p4);
-        Stack<P5>::push(m_L, p5);
-        LuaException::pcall(m_L, 5, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2, class P3, class P4, class P5, class P6>
-    LuaRef operator()(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        Stack<P3>::push(m_L, p3);
-        Stack<P4>::push(m_L, p4);
-        Stack<P5>::push(m_L, p5);
-        Stack<P6>::push(m_L, p6);
-        LuaException::pcall(m_L, 6, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2, class P3, class P4, class P5, class P6, class P7>
-    LuaRef operator()(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7) const
-    {
-        impl().push();
-        ;
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        Stack<P3>::push(m_L, p3);
-        Stack<P4>::push(m_L, p4);
-        Stack<P5>::push(m_L, p5);
-        Stack<P6>::push(m_L, p6);
-        Stack<P7>::push(m_L, p7);
-        LuaException::pcall(m_L, 7, 1);
-        return LuaRef::fromStack(m_L);
-    }
-
-    template<class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
-    LuaRef operator()(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8) const
-    {
-        impl().push();
-        Stack<P1>::push(m_L, p1);
-        Stack<P2>::push(m_L, p2);
-        Stack<P3>::push(m_L, p3);
-        Stack<P4>::push(m_L, p4);
-        Stack<P5>::push(m_L, p5);
-        Stack<P6>::push(m_L, p6);
-        Stack<P7>::push(m_L, p7);
-        Stack<P8>::push(m_L, p8);
-        LuaException::pcall(m_L, 8, 1);
-        return LuaRef::fromStack(m_L);
-    }
-    /** @} */
 
     //============================================================================
 
@@ -640,6 +531,16 @@ private:
     const Impl& impl() const { return static_cast<const Impl&>(*this); }
 
     Impl& impl() { return static_cast<Impl&>(*this); }
+
+    void pushArguments() const {}
+
+    template<typename T, typename... Arguments>
+    void pushArguments(T const& argument, Arguments&&... arguments) const
+    {
+        Stack<T>::push(m_L, argument);
+
+        pushArguments(std::forward<Arguments>(arguments)...);
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -710,12 +611,12 @@ class LuaRef : public LuaRefBase<LuaRef, LuaRef>
             Assign a new value to this table key.
             This may invoke metamethods.
 
-            @tparam T The type of a value to assing.
+            @tparam T The type of a value to assign.
             @param  v A value to assign.
             @returns This reference.
         */
         template<class T>
-        TableItem& operator=(T v)
+        TableItem& operator=(T const& v)
         {
             StackPop p(m_L, 1);
             lua_rawgeti(m_L, LUA_REGISTRYINDEX, m_tableRef);
@@ -730,12 +631,12 @@ class LuaRef : public LuaRefBase<LuaRef, LuaRef>
             Assign a new value to this table key.
             The assignment is raw, no metamethods are invoked.
 
-            @tparam T The type of a value to assing.
+            @tparam T The type of a value to assign.
             @param  v A value to assign.
             @returns This reference.
         */
         template<class T>
-        TableItem& rawset(T v)
+        TableItem& rawset(T const& v)
         {
             StackPop p(m_L, 1);
             lua_rawgeti(m_L, LUA_REGISTRYINDEX, m_tableRef);
@@ -769,7 +670,7 @@ class LuaRef : public LuaRefBase<LuaRef, LuaRef>
             @returns A Lua table item reference.
         */
         template<class T>
-        TableItem operator[](T key) const
+        TableItem operator[](T const& key) const
         {
             return LuaRef(*this)[key];
         }
@@ -785,7 +686,7 @@ class LuaRef : public LuaRefBase<LuaRef, LuaRef>
             @returns A Lua value reference.
         */
         template<class T>
-        LuaRef rawget(T key) const
+        LuaRef rawget(T const& key) const
         {
             return LuaRef(*this).rawget(key);
         }
@@ -981,7 +882,7 @@ public:
         @returns This reference.
     */
     template<class T>
-    LuaRef& operator=(T rhs)
+    LuaRef& operator=(T const& rhs)
     {
         LuaRef ref(m_L, rhs);
         swap(ref);
@@ -1031,7 +932,7 @@ public:
         @returns A reference to the table item.
     */
     template<class T>
-    LuaRef rawget(T key) const
+    LuaRef rawget(T const& key) const
     {
         StackPop(m_L, 1);
         push(m_L);
