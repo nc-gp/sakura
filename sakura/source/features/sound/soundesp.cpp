@@ -54,6 +54,8 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 		}
 	}
 
+	std::string soundFile = szSoundFile;
+
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
 		auto& script = Sakura::Lua::scripts[i];
@@ -66,7 +68,7 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 		{
 			try
 			{
-				callback(entid, szSoundFile, fOrigin, &fVolume);
+				callback(entid, soundFile, &fVolume);
 			}
 			catch (luabridge::LuaException const& error)
 			{
@@ -74,6 +76,7 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 				{
 					LogToFile("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
+					lua_close(script.GetState());
 				}
 			}
 		}
