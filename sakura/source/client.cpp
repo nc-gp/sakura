@@ -371,6 +371,9 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	bool isPlayer = ent && ent->player && Sakura::Player::IsAlive(ent->index);
 	bool isLocalPlayer = ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1;
 
+	if(isPlayer && cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
+		return g_Client.HUD_AddEntity(type, ent, modelname);
+
 	if (isLocalPlayer)
 	{
 		if (cvar.visual_chase_cam)
