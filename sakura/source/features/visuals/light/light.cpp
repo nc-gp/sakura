@@ -51,6 +51,9 @@ void Sakura::Light::Studio(alight_s* plight)
 
 	if (isPlayer && cvar.visual_lambert)
 	{
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
+			return;
+
 		playerColor = Sakura::Colors::GetCustomizedTeamColor(ent->index, cvar.visual_lambert_color_tt, cvar.visual_lambert_color_ct,
 			cvar.rainbow_player_light_tt, cvar.rainbow_player_light_ct);
 
@@ -97,8 +100,6 @@ void Sakura::DynamicLight::Light(cl_entity_s* ent, ImRGBA color)
 	dlight_t* dl = g_Engine.pEfxAPI->CL_AllocElight(ent->index);
 
 	dl->origin = ent->origin;
-	//dl->origin.z += cvar.visual_player_dynamiclight_position * 2;
-
 	dl->radius = cvar.visual_player_dynamiclight_radius;
 
 	if (cvar.visual_player_dynamiclight_fading)
@@ -108,7 +109,6 @@ void Sakura::DynamicLight::Light(cl_entity_s* ent, ImRGBA color)
 	dl->color.r = color.r * 255.f;
 	dl->color.g = color.g * 255.f;
 	dl->color.b = color.b * 255.f;
-	//dl->minlight = cvar.visual_player_dynamiclight_minlight;
 }
 
 void Sakura::DynamicLight::Draw()
@@ -135,6 +135,9 @@ void Sakura::DynamicLight::Draw()
 			continue;
 
 		if (ent == g_Engine.GetViewModel())
+			continue;
+
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
 			continue;
 
 		if (g_Player[ent->index].iTeam == g_Local.iTeam && !cvar.visual_visual_team)
