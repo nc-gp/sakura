@@ -57,11 +57,9 @@ void DrawFullScreenWindow()
 				}
 				catch (luabridge::LuaException const& error)
 				{
-					if (script.GetState())
-					{
-						LogToFile("Error has occured in the lua: %s", error.what());
-						script.RemoveAllCallbacks();
-					}
+					LogToFile("Error has occured in the lua: %s", error.what());
+					script.RemoveAllCallbacks();
+					lua_close(script.GetState());
 				}
 			}
 		}

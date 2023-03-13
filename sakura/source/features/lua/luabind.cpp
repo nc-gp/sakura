@@ -237,27 +237,43 @@ int Sakura::Lua::LocalPlayer::GetWeaponID()
 
 int Sakura::Lua::Player::GetTeam(int index)
 {
+	if (index < 1 || index >= 32)
+		return 0;
+
 	return g_Player[index].iTeam;
 }
 
 Vector Sakura::Lua::Player::GetOrigin(int index)
 {
-	return PlayerEsp[index].origin;
+	if (index < 1 || index >= 32)
+		return Vector(9999, 0, 0);
+
+	cl_entity_s* player = g_Engine.GetEntityByIndex(index);
+	return player->origin;
 }
 
 std::string Sakura::Lua::Player::GetName(int index)
 {
+	if (index < 1 || index >= 32)
+		return 0;
+
 	player_info_s* player = g_Studio.PlayerInfo(index - 1);
 	return player->name;
 }
 
 std::string Sakura::Lua::Player::GetModelName(int index)
 {
+	if (index < 1 || index >= PlayerEsp.size())
+		return 0;
+
 	return PlayerEsp[index].model;
 }
 
 int Sakura::Lua::Player::GetDistance(int index)
 {
+	if (index < 1 || index >= PlayerEsp.size())
+		return 0;
+
 	Vector vDifference = PlayerEsp[index].origin - Sakura::Lua::LocalPlayer::GetEyePosition();
 	int iDistance = int(vDifference.Length() / 22.0f);
 	return iDistance;
@@ -265,18 +281,27 @@ int Sakura::Lua::Player::GetDistance(int index)
 
 float Sakura::Lua::Player::GetActualDistance(int index)
 {
+	if (index < 1 || index >= PlayerEsp.size())
+		return 0;
+
 	Vector vDifference = PlayerEsp[index].origin - Sakura::Lua::LocalPlayer::GetEyePosition();
 	return vDifference.Length();
 }
 
 int Sakura::Lua::Player::GetPing(int index)
 {
+	if (index < 1 || index >= 32)
+		return 0;
+
 	player_info_s* player = g_Studio.PlayerInfo(index - 1);
 	return player->ping;
 }
 
 bool Sakura::Lua::Player::IsAlive(int index)
 {
+	if (index < 1 || index >= 32)
+		return 0;
+
 	return ::Sakura::Player::IsAlive(index);
 }
 
@@ -296,7 +321,6 @@ void Sakura::Lua::ImGui::Menu(const char* szTitle, luabridge::LuaRef lfFunction)
 		catch (luabridge::LuaException const& error)
 		{
 			LogToFile("Lua script error: %s", error.what());
-			Toast::Create({ 7, "An error occured in lua script! Check the logs!" });
 		}
 		::ImGui::EndTabItem();
 	}
@@ -313,7 +337,6 @@ void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, lua
 		catch (luabridge::LuaException const& error)
 		{
 			LogToFile("Lua script error: %s", error.what());
-			Toast::Create({ 7, "An error occured in lua script! Check the logs!" });
 		}
 	}
 	::ImGui::End();
@@ -371,9 +394,9 @@ ImVec2 Sakura::Lua::ImGui::GetWindowSize()
 	return ::ImGui::GetWindowSize();
 }
 
-void Sakura::Lua::ImGui::Drawings::AddRect(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int corners, float thickness)
+void Sakura::Lua::ImGui::Drawings::AddRect(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int flags, float thickness)
 {
-	::ImGui::GetWindowDrawList()->AddRect(start, end, color, rounding, corners, thickness);
+	::ImGui::GetWindowDrawList()->AddRect(start, end, color, rounding, flags, thickness);
 }
 void Sakura::Lua::ImGui::Drawings::AddLine(ImVec2& start, ImVec2& end, ImColor& color, float thickness)
 {
@@ -755,15 +778,6 @@ bool Sakura::Lua::Init(lua_State* L)
 	return true;
 }
 
-int panic_function(lua_State* L)
-{
-	const char* error_msg = lua_tostring(L, -1);
-	const char* source_file = lua_tostring(L, 2);
-	int line_number = lua_tointeger(L, 3);
-	LogToFile("Lua script error: %s (%s:%d)", error_msg, source_file, line_number);
-	return 0;
-}
-
 void Sakura::Lua::Reload()
 {
 	if (scripts.size() > 0)
@@ -798,8 +812,6 @@ void Sakura::Lua::Reload()
 		luaL_openlibs(L);
 
 		Init(L);
-
-		lua_atpanic(L, panic_function);
 
 		if (luaL_loadfile(L, p.path().string().c_str()) != LUA_OK)
 		{

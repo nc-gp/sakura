@@ -149,7 +149,7 @@ namespace Sakura
 
 			namespace Drawings
 			{
-				void AddRect(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int corners, float thickness);
+				void AddRect(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int flags, float thickness);
 				void AddLine(ImVec2& start, ImVec2& end, ImColor& color, float thickness);
 				void AddText(ImVec2& position, ImColor& color, const char* szText);
 				void AddRectFilled(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int corners);
