@@ -129,11 +129,8 @@ void Sakura::Chams::Studio()
 	bool ViewModel		= ent && ent == g_Engine.GetViewModel() && strstr(ent->model->name, "v_");
 	bool World			= ent && ent->model && strstr(ent->model->name, "/w_") && ent != g_Engine.GetViewModel();
 
-	if (Player)
+	if (Player && !(cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF))
 	{
-		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
-			return;
-
 		if (cvar.visual_player_glow)
 		{
 			playerGlowColor = Sakura::Colors::GetCustomizedTeamColor(ent->index, cvar.visual_player_glow_color_tt, cvar.visual_player_glow_color_ct, cvar.rainbow_glow_player_tt, cvar.rainbow_glow_player_ct);
