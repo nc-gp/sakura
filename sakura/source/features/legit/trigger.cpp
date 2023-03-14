@@ -122,22 +122,35 @@ void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 	static DWORD delay = 0;
 	static int tickcount = 0;
 
-	for (const playeraim_t& Aim : PlayerAim)
+	for (playeraim_t Aim : PlayerAim)
 	{
-		if (!Sakura::Player::IsAlive(Aim.index))
-			continue;
-
-		if (!cvar.legit_trigger_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
-			continue;
-
-		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_OFF && cvar.aim_id_mode == IDHOOK_ATTACK_ON_DONT_ATTACK_OFF)
-			continue;
-
 		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
-			SelectTarget(cmd, Aim, m_flBestFOV, delay, vecSpreadDir);
+		{
+			if (!Sakura::Player::IsAlive(Aim.index))
+				continue;
 
-		if (!iTargetTrigger && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+			if (!cvar.legit_trigger_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+				continue;
+
 			SelectTarget(cmd, Aim, m_flBestFOV, delay, vecSpreadDir);
+		}
+	}
+
+	if (!iTargetTrigger && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+	{
+		for (playeraim_t Aim : PlayerAim)
+		{
+			if (IdHook::FirstKillPlayer[Aim.index] < IDHOOK_PLAYER_OFF)
+			{
+				if (!Sakura::Player::IsAlive(Aim.index))
+					continue;
+
+				if (!cvar.legit_trigger_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+					continue;
+
+				SelectTarget(cmd, Aim, m_flBestFOV, delay, vecSpreadDir);
+			}
+		}
 	}
 
 	if (cmd->buttons & IN_ATTACK)tickcount++;

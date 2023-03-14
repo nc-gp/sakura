@@ -12,7 +12,7 @@ void Sakura::Aimbot::Rage::Target(playeraim_t Aim, float& m_flBestDist, float& m
 		float fDistance = (Aim.PlayerAimHitbox[hitbox].Hitbox - (pmove->origin + pmove->view_ofs)).Length();
 		if (fDistance < m_flBestDist)
 		{
-			m_flBestDist = fDistance;
+			m_flBestDist = Aim.PlayerAimHitbox[hitbox].Hitbox.Distance(pmove->origin + pmove->view_ofs);
 			iTargetRage = Aim.index;
 			vAimOriginRage = Aim.PlayerAimHitbox[hitbox].Hitbox;
 			iHitboxRage = hitbox;
@@ -112,25 +112,41 @@ void Sakura::Aimbot::Rage::Aim(usercmd_s* cmd)
 	float bestFOV = 180;
 	float bestDistance = 8192;
 
-	for (const playeraim_t& Aim : PlayerAim)
+	for (playeraim_t Aim : PlayerAim)
 	{
-		if (!Sakura::Player::IsAlive(Aim.index))
-			continue;
-
-		if (!cvar.rage_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
-			continue;
-
-		if (!cvar.rage_shield_attack && (Aim.sequence == 97 || Aim.sequence == 98))
-			continue;
-
-		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_OFF && cvar.aim_id_mode == IDHOOK_ATTACK_ON_DONT_ATTACK_OFF)
-			continue;
-
 		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
-			SelectHitbox(Aim, bestFOV, bestDistance);
+		{
+			if (!Sakura::Player::IsAlive(Aim.index))
+				continue;
 
-		if (!iTargetRage && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
-			SelectHitbox(Aim, bestFOV, bestDistance);
+			if (!cvar.rage_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+				continue;
+
+			if (!cvar.rage_shield_attack && (Aim.sequence == 97 || Aim.sequence == 98))
+				continue;
+
+			SelectHitbox(Aim, bestDistance, bestFOV);
+		}
+	}
+
+	if (!iTargetRage && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+	{
+		for (playeraim_t Aim : PlayerAim)
+		{
+			if (IdHook::FirstKillPlayer[Aim.index] < IDHOOK_PLAYER_OFF)
+			{
+				if (!Sakura::Player::IsAlive(Aim.index))
+					continue;
+
+				if (!cvar.rage_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+					continue;
+
+				if (!cvar.rage_shield_attack && (Aim.sequence == 97 || Aim.sequence == 98))
+					continue;
+
+				SelectHitbox(Aim, bestDistance, bestFOV);
+			}
+		}
 	}
 
 	if (iTargetRage)

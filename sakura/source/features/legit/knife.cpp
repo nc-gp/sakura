@@ -45,22 +45,35 @@ void Sakura::Knifebot::Knife(usercmd_s* cmd)
 
 	float bestDistance = 8192.f;
 
-	for (const playeraim_t& Aim : PlayerAim)
+	for (playeraim_t Aim : PlayerAim)
 	{
-		if (!Sakura::Player::IsAlive(Aim.index))
-			continue;
-
-		if (!cvar.knifebot_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
-			continue;
-
-		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_OFF && cvar.aim_id_mode == IDHOOK_ATTACK_ON_DONT_ATTACK_OFF)
-			continue;
-
 		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
-			SelectTarget(Aim, bestDistance);
+		{
+			if (!Sakura::Player::IsAlive(Aim.index))
+				continue;
 
-		if (!iTargetKnife && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+			if (!cvar.knifebot_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+				continue;
+
 			SelectTarget(Aim, bestDistance);
+		}
+	}
+
+	if (!iTargetKnife && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+	{
+		for (playeraim_t Aim : PlayerAim)
+		{
+			if (IdHook::FirstKillPlayer[Aim.index] < IDHOOK_PLAYER_OFF)
+			{
+				if (!Sakura::Player::IsAlive(Aim.index))
+					continue;
+
+				if (!cvar.knifebot_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+					continue;
+
+				SelectTarget(Aim, bestDistance);
+			}
+		}
 	}
 
 	if (!iTargetKnife)

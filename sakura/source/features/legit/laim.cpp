@@ -50,8 +50,10 @@ void Sakura::Aimbot::Legit::SelectHitbox(playeraim_t Aim, Vector vecFOV, float& 
 	{
 		Vector vEye = pmove->origin + pmove->view_ofs;
 		//Vector vDistance(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
-		float fov = vecFOV.AngleBetween(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
-		if (fov < flBestFOV)
+		Vector vDistance(Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox - vEye);
+		float fov = Sakura::Aimbot::AngleBetween(vecFOV, vDistance);
+		//float fov = vecFOV.AngleBetween(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
+		if (fov <= flBestFOV)
 		{
 			flBestFOV = fov;
 			iTargetLegit = Aim.index;
@@ -157,22 +159,35 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 		}
 	}
 
-	for (const playeraim_t& Aim : PlayerAim)
+	for (playeraim_t Aim : PlayerAim)
 	{
-		if (!Sakura::Player::IsAlive(Aim.index))
-			continue;
-
-		if (!cvar.legit_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
-			continue;
-
-		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_OFF && cvar.aim_id_mode == IDHOOK_ATTACK_ON_DONT_ATTACK_OFF)
-			continue;
-
 		if (IdHook::FirstKillPlayer[Aim.index] == IDHOOK_PLAYER_ON || cvar.aim_id_mode == IDHOOK_ATTACK_ALL)
-			SelectHitbox(Aim, vecFOV, flBestFOV, flSpeedScaleFov, flSpeed);
+		{
+			if (!Sakura::Player::IsAlive(Aim.index))
+				continue;
 
-		if (!iTargetLegit && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+			if (!cvar.legit_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+				continue;
+
 			SelectHitbox(Aim, vecFOV, flBestFOV, flSpeedScaleFov, flSpeed);
+		}
+	}
+		
+	if (!iTargetLegit && cvar.aim_id_mode != IDHOOK_ATTACK_ON)
+	{
+		for (playeraim_t Aim : PlayerAim)
+		{
+			if (IdHook::FirstKillPlayer[Aim.index] < IDHOOK_PLAYER_OFF)
+			{
+				if (!Sakura::Player::IsAlive(Aim.index))
+					continue;
+
+				if (!cvar.legit_team && g_Player[Aim.index].iTeam == g_Local.iTeam)
+					continue;
+
+				SelectHitbox(Aim, vecFOV, flBestFOV, flSpeedScaleFov, flSpeed);
+			}
+		}
 	}
 
 	if (iTargetLegit)
