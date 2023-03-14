@@ -48,13 +48,11 @@ int Steam_GSInitiateGameConnection_Hooked(void* pData, int iMaxBytes, uint64_t g
 {
 	g_Sequences.Clear();
 
-	//std::shuffle(std::begin(g_hashSymbolTable), std::end(g_hashSymbolTable), std::default_random_engine());
-
 	if (cvar.steamid)
 	{
 		if (cvar.steamid == 1)
 		{
-			for (size_t i = 0; i < 7; i++)
+			for (size_t i = 0; i < 7; ++i)
 			{
 				RevEmuTicket_t.Hash[i] = g_hashSymbolTable[rand() % 36];
 			}
@@ -62,14 +60,14 @@ int Steam_GSInitiateGameConnection_Hooked(void* pData, int iMaxBytes, uint64_t g
 		else if(cvar.steamid == 2)
 		{
 			int steamid[7] = { int(cvar.id1), int(cvar.id2), int(cvar.id3), int(cvar.id4), int(cvar.id5), int(cvar.id6), int(cvar.id7) };
-			for (size_t i = 0; i < 7; i++)
+			for (size_t i = 0; i < 7; ++i)
 			{
 				RevEmuTicket_t.Hash[i] = g_hashSymbolTable[steamid[i] + rand() % 20];
 			}
 		}
 		else if (cvar.steamid == 3)
 		{
-			for (size_t i = 0; i < 7; i++)
+			for (size_t i = 0; i < 7; ++i)
 			{
 				RevEmuTicket_t.Hash[i] = customSteamId[i];
 			}

@@ -238,14 +238,12 @@ void CVARlist::init()
 		AddCvarFloat(str, &cvar.legit[i].accuracy); legit[i].accuracy = 0.0;
 		sprintf(str, "legit[%d].hitbox", i);
 		AddCvarFloat(str, &cvar.legit[i].hitbox); legit[i].hitbox = 11.0;
-		//sprintf(str, "legit[%d].perfect_silent", i);
-		//AddCvarFloat(str, &cvar.legit[i].perfect_silent); legit[i].perfect_silent = 0;
 		sprintf(str, "legit[%d].perfect_silent_fov", i);
 		AddCvarFloat(str, &cvar.legit[i].perfect_silent_fov); legit[i].perfect_silent_fov = 0;
 		sprintf(str, "legit[%d].perfect_silent_enable", i);
 		AddCvarFloat(str, &cvar.legit[i].perfect_silent_enable); legit[i].perfect_silent_enable = 0;
-		//sprintf(str, "legit[%d].perfect_silent_autoshoot", i);
-		//AddCvarFloat(str, &cvar.legit[i].perfect_silent_autoshoot); legit[i].perfect_silent_autoshoot = 0;
+		sprintf(str, "legit[%d].perfect_silent_spread", i);
+		AddCvarFloat(str, &cvar.legit[i].perfect_silent_spread); legit[i].perfect_silent_spread = 0;
 		sprintf(str, "legit[%d].fov", i);
 		AddCvarFloat(str, &cvar.legit[i].fov); legit[i].fov = 5.0;
 		sprintf(str, "legit[%d].speed_in_attack", i);
@@ -278,21 +276,6 @@ void CVARlist::init()
 		sprintf(str, "rage[%d].rage_hitbox", i);
 		AddCvarFloat(str, &cvar.rage[i].rage_hitbox); rage[i].rage_hitbox = 11.0;
 	}
-
-	/*for (unsigned int i = 1; i <= 30; i++)
-	{
-		if (i == 2 || i == 4 || i == 6 || i == 9 || i == 25 || i == 29) continue;
-
-		char str[256];
-		sprintf(str, "rage[%d].rage_delay_shot", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_delay_shot); rage[i].rage_delay_shot = 0.0;
-		sprintf(str, "rage[%d].rage_shot_count", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_shot_count); rage[i].rage_shot_count = 1.0;
-		sprintf(str, "rage[%d].rage_shot_type", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_shot_type); rage[i].rage_shot_type = 0.0;
-		sprintf(str, "rage[%d].rage_random_max", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_random_max); rage[i].rage_random_max = 3.0;
-	}*/
 
 	INITCVAR(legit_trigger_only_zoom, 0.0);
 	INITCVAR(legit_trigger_team, 0.0);

@@ -44,7 +44,7 @@ public:
 		float accuracy;
 		float perfect_silent_fov;
 		float perfect_silent_enable;
-		//float perfect_silent_autoshoot;
+		float perfect_silent_spread;
 		float fov;
 		float speed_in_attack;
 		float hitbox;

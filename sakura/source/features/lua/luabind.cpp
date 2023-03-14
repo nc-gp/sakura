@@ -422,6 +422,7 @@ void DefineLuaGlobal(lua_State* L, const char* name, int value)
 
 bool Sakura::Lua::Init(lua_State* L)
 {
+	luabridge::enableExceptions(L);
 	luabridge::getGlobalNamespace(L)
 
 		.beginClass<ImVec2>("ImVec2")
@@ -573,8 +574,8 @@ bool Sakura::Lua::Init(lua_State* L)
 	DefineLuaGlobal(L, "SAKURA_DEATH_MESSAGE", SAKURA_CALLBACK_AT_DEATH_MESSAGE);
 	DefineLuaGlobal(L, "SAKURA_NEWROUND_MESSAGE", SAKURA_CALLBACK_AT_RESETHUD_MESSAGE);
 	DefineLuaGlobal(L, "SAKURA_SELFDAMAGE_MESSAGE", SAKURA_CALLBACK_AT_DAMAGE_MESSAGE);
-	DefineLuaGlobal(L, "SAKURA_CALLBACK_AT_DYNAMICSOUND", SAKURA_CALLBACK_AT_DYNAMICSOUND);
-	DefineLuaGlobal(L, "SAKURA_CALLBACK_AT_INIT_BASS", SAKURA_CALLBACK_AT_INIT_BASS);
+	DefineLuaGlobal(L, "SAKURA_DYNAMICSOUND_PLAY", SAKURA_CALLBACK_AT_DYNAMICSOUND);
+	DefineLuaGlobal(L, "SAKURA_SOUND_INIT", SAKURA_CALLBACK_AT_INIT_BASS);
 
 	DefineLuaGlobal(L, "ENTITY_TYPE_NORMAL", ENTITY_TYPE_NORMAL);
 	DefineLuaGlobal(L, "ENTITY_TYPE_PLAYER", ENTITY_TYPE_PLAYER);

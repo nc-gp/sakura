@@ -213,7 +213,8 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 
 				QAnglePerfectSilent.Normalize();
 
-				GetSpreadOffset(g_Local.weapon.random_seed, 1, QAnglePerfectSilent, QAnglePerfectSilent);
+				if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_spread)
+					GetSpreadOffset(g_Local.weapon.random_seed, 1, QAnglePerfectSilent, QAnglePerfectSilent);
 
 				Vector vecPsilentFOV;
 				QAnglePerfectSilent.AngleVectors(&vecPsilentFOV, NULL, NULL);
@@ -222,7 +223,7 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 				Vector vDistance(vAimOriginLegit - vEye);
 				float fov = Sakura::Aimbot::AngleBetween(vecPsilentFOV, vDistance);
 
-				if (fov && cmd->buttons & IN_ATTACK)
+				if (fov <= cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_fov && cmd->buttons & IN_ATTACK)
 				{
 					//if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot)
 					//	cmd->buttons |= IN_ATTACK;
