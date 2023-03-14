@@ -59,7 +59,6 @@ void DrawFullScreenWindow()
 				{
 					LogToFile("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
-					lua_close(script.GetState());
 				}
 			}
 		}
