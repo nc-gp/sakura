@@ -49,10 +49,7 @@ void Sakura::Aimbot::Legit::SelectHitbox(playeraim_t Aim, Vector vecFOV, float& 
 	if ((cvar.bypass_trace_legit && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_legit && detect == Aim.index))
 	{
 		Vector vEye = pmove->origin + pmove->view_ofs;
-		//Vector vDistance(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
-		Vector vDistance(Aim.PlayerAimHitbox[HeadBox[Aim.index]].Hitbox - vEye);
-		float fov = Sakura::Aimbot::AngleBetween(vecFOV, vDistance);
-		//float fov = vecFOV.AngleBetween(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
+		float fov = vecFOV.AngleBetween(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
 		if (fov <= flBestFOV)
 		{
 			flBestFOV = fov;
