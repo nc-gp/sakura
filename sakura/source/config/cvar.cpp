@@ -244,8 +244,8 @@ void CVARlist::init()
 		AddCvarFloat(str, &cvar.legit[i].perfect_silent_fov); legit[i].perfect_silent_fov = 0;
 		sprintf(str, "legit[%d].perfect_silent_enable", i);
 		AddCvarFloat(str, &cvar.legit[i].perfect_silent_enable); legit[i].perfect_silent_enable = 0;
-		sprintf(str, "legit[%d].perfect_silent_autoshoot", i);
-		AddCvarFloat(str, &cvar.legit[i].perfect_silent_autoshoot); legit[i].perfect_silent_autoshoot = 0;
+		//sprintf(str, "legit[%d].perfect_silent_autoshoot", i);
+		//AddCvarFloat(str, &cvar.legit[i].perfect_silent_autoshoot); legit[i].perfect_silent_autoshoot = 0;
 		sprintf(str, "legit[%d].fov", i);
 		AddCvarFloat(str, &cvar.legit[i].fov); legit[i].fov = 5.0;
 		sprintf(str, "legit[%d].speed_in_attack", i);

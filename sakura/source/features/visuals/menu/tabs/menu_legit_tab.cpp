@@ -93,7 +93,7 @@ void Sakura::Menu::Tabs::Legit::PerfectSilent()
 		ImGui::BeginChild(/*##vp1*/XorStr<0x95, 6, 0xB322490F>("\xB6\xB5\xE1\xE8\xA8" + 0xB322490F).s, ImVec2(250, -1));
 		{
 			Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0xE0, 7, 0x49B16103>("\xA5\x8F\x83\x81\x88\x80" + 0x49B16103).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent_enable);
-			Sakura::Menu::Widgets::Checkbox(/*Auto shoot*/XorStr<0x8D, 11, 0xC50B817C>("\xCC\xFB\xFB\xFF\xB1\xE1\xFB\xFB\xFA\xE2" + 0xC50B817C).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent_autoshoot);
+			//Sakura::Menu::Widgets::Checkbox(/*Auto shoot*/XorStr<0x8D, 11, 0xC50B817C>("\xCC\xFB\xFB\xFF\xB1\xE1\xFB\xFB\xFA\xE2" + 0xC50B817C).s, &cvar.legit[CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].perfect_silent_autoshoot);
 		}
 		ImGui::EndChild();
 		ImGui::SameLine();

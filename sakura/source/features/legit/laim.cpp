@@ -49,8 +49,8 @@ void Sakura::Aimbot::Legit::SelectHitbox(playeraim_t Aim, Vector vecFOV, float& 
 	if ((cvar.bypass_trace_legit && tr.fraction == 1 && !detect) || (!cvar.bypass_trace_legit && detect == Aim.index))
 	{
 		Vector vEye = pmove->origin + pmove->view_ofs;
-		Vector vDistance(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
-		float fov = Sakura::Aimbot::AngleBetween(vecFOV, vDistance);
+		//Vector vDistance(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
+		float fov = vecFOV.AngleBetween(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].Hitbox - vEye);
 		if (fov < flBestFOV)
 		{
 			flBestFOV = fov;
@@ -210,10 +210,10 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 				Vector vDistance(vAimOriginLegit - vEye);
 				float fov = Sakura::Aimbot::AngleBetween(vecPsilentFOV, vDistance);
 
-				if (fov)
+				if (fov && cmd->buttons & IN_ATTACK)
 				{
-					if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot)
-						cmd->buttons |= IN_ATTACK;
+					//if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot)
+					//	cmd->buttons |= IN_ATTACK;
 
 					dwBlockAttack = GetTickCount();
 

@@ -398,6 +398,7 @@ void Sakura::Lua::ImGui::Drawings::AddRect(ImVec2& start, ImVec2& end, ImColor& 
 {
 	::ImGui::GetWindowDrawList()->AddRect(start, end, color, rounding, flags, thickness);
 }
+
 void Sakura::Lua::ImGui::Drawings::AddLine(ImVec2& start, ImVec2& end, ImColor& color, float thickness)
 {
 	::ImGui::GetWindowDrawList()->AddLine(start, end, color, thickness);

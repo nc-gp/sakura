@@ -54,7 +54,7 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 		}
 	}
 
-	std::string soundFile = szSoundFile;
+	//std::string soundFile = szSoundFile;
 
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
@@ -68,7 +68,7 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 		{
 			try
 			{
-				callback(entid, soundFile, &fVolume);
+				callback(entid, std::string(szSoundFile), &fVolume);
 			}
 			catch (luabridge::LuaException const& error)
 			{
