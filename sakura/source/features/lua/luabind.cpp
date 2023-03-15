@@ -797,6 +797,7 @@ void Sakura::Lua::Reload()
 
 	const std::string hackDir = hackdir;
 	const std::string scriptExtension = ".lua";
+	std::string scriptsLoaded;
 
 	for (const auto& p : std::filesystem::recursive_directory_iterator(hackDir + "\\scripts\\"))
 	{
@@ -835,8 +836,12 @@ void Sakura::Lua::Reload()
 		}
 
 		currentScriptIndex++;
-
-		LogToFile("Loaded Lua script: %s", p.path().filename().string().c_str());
 		ScriptsCount++;
+
+		scriptsLoaded += " - ";
+		scriptsLoaded += p.path().filename().string().c_str();
+		scriptsLoaded += "\n";
 	}
+
+	LogToFile("%s (%d): \n%s", ScriptsCount > 1 ? "Loaded scripts" : "Loaded script", ScriptsCount, scriptsLoaded);
 }
