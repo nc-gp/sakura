@@ -225,6 +225,8 @@ public:
 	float visual_sound_steps_segment_thickness;
 	float visual_sound_steps_radius;
 	float visual_sound_steps_color[4];
+	float visual_sound_steps_color_tt[4];
+	float visual_sound_steps_color_ct[4];
 
 	float visual_idhook_only;
 

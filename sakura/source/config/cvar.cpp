@@ -441,6 +441,14 @@ void CVARlist::init()
 	INITCVAR(visual_sound_steps_color[1], 1.0);
 	INITCVAR(visual_sound_steps_color[2], 0.0);
 	INITCVAR(visual_sound_steps_color[3], 1.0);
+	INITCVAR(visual_sound_steps_color_tt[0], 1.0);
+	INITCVAR(visual_sound_steps_color_tt[1], 0.0);
+	INITCVAR(visual_sound_steps_color_tt[2], 0.0);
+	INITCVAR(visual_sound_steps_color_tt[3], 1.0);
+	INITCVAR(visual_sound_steps_color_ct[0], 0.0);
+	INITCVAR(visual_sound_steps_color_ct[1], 0.0);
+	INITCVAR(visual_sound_steps_color_ct[2], 1.0);
+	INITCVAR(visual_sound_steps_color_ct[3], 1.0);
 	INITCVAR(visual_idhook_only, 0.0);
 	INITCVAR(visual_noflash_enable, 0.0);
 	INITCVAR(visual_chase_cam, 0.0);

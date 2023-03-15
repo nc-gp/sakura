@@ -110,7 +110,8 @@ void Sakura::Menu::Tabs::Colors::PlayerSoundEsp()
 {
 	ImGui::BeginChild(/*##vlc1*/XorStr<0x24, 7, 0x257B1DB3>("\x07\x06\x50\x4B\x4B\x18" + 0x257B1DB3).s, ImVec2(250, -1));
 	{
-
+		Sakura::Menu::Widgets::ColorEdit(/*TT Steps*/XorStr<0x26, 9, 0xE3867BED>("\x72\x73\x08\x7A\x5E\x4E\x5C\x5E" + 0xE3867BED).s, (float*)cvar.visual_sound_steps_color_tt, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*CT Steps*/XorStr<0x89, 9, 0xCFBC6731>("\xCA\xDE\xAB\xDF\xF9\xEB\xFF\xE3" + 0xCFBC6731).s, (float*)cvar.visual_sound_steps_color_ct, pickerFlags);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

@@ -100,7 +100,7 @@ void DrawPlayerSoundIndexEsp()
 		if (!cvar.visual_visual_team && g_Player[sound_index.index].iTeam == g_Local.iTeam || ent->index == pmove->player_index + 1)
 			continue;
 
-		ImRGBA soundEspColor = Sakura::Colors::GetTeamColor(sound_index.index);
+		ImRGBA soundEspColor = Sakura::Colors::GetCustomizedTeamColor(sound_index.index, cvar.visual_sound_steps_color_tt, cvar.visual_sound_steps_color_ct);
 
 		if (cvar.visual_sound_steps)
 		{
