@@ -511,43 +511,28 @@ void DrawCategoryButtons()
 			misctab = 11;
 		break;
 	case 4:
-		if (Sakura::Menu::Widgets::SubTab(/*Player Esp*/XorStr<0x50, 11, 0xFB675EA9>("\x00\x3D\x33\x2A\x31\x27\x76\x12\x2B\x29" + 0xFB675EA9).s, ImVec2(150, 25), colorstab == 0 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*Player*/XorStr<0x50, 11, 0xFB675EA9>("\x00\x3D\x33\x2A\x31\x27\x76\x12\x2B\x29" + 0xFB675EA9).s, ImVec2(150, 25), colorstab == 0 ? true : false))
 			colorstab = 0;
 
 		ImGui::Spacing();
 
-		if (Sakura::Menu::Widgets::SubTab(/*Player Glow*/XorStr<0xFA, 12, 0x492B990C>("\xAA\x97\x9D\x84\x9B\x8D\x20\x46\x6E\x6C\x73" + 0x492B990C).s, ImVec2(150, 25), colorstab == 1 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*Local*/XorStr<0x5D, 6, 0x466B0D2F>("\x11\x31\x3C\x01\x0D" + 0x466B0D2F).s, ImVec2(150, 25), colorstab == 1 ? true : false))
 			colorstab = 1;
 
 		ImGui::Spacing();
 
-		if (Sakura::Menu::Widgets::SubTab(/*Player Chams*/XorStr<0xE5, 13, 0x67E5F89D>("\xB5\x8A\x86\x91\x8C\x98\xCB\xAF\x85\x8F\x82\x83" + 0x67E5F89D).s, ImVec2(150, 25), colorstab == 2 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*World*/XorStr<0x39, 6, 0x5038EE1A>("\x6E\x55\x49\x50\x59" + 0x5038EE1A).s, ImVec2(150, 25), colorstab == 2 ? true : false))
 			colorstab = 2;
 
 		ImGui::Spacing();
 
-		if (Sakura::Menu::Widgets::SubTab(/*Player Light*/XorStr<0x97, 13, 0xC08D8CDF>("\xC7\xF4\xF8\xE3\xFE\xEE\xBD\xD2\xF6\xC7\xC9\xD6" + 0xC08D8CDF).s, ImVec2(150, 25), colorstab == 3 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*Route*/XorStr<0x92, 6, 0x1B5E4198>("\xC0\xFC\xE1\xE1\xF3" + 0x1B5E4198).s, ImVec2(150, 25), colorstab == 3 ? true : false))
 			colorstab = 3;
 
 		ImGui::Spacing();
 
-		if (Sakura::Menu::Widgets::SubTab(/*World*/XorStr<0x39, 6, 0x5038EE1A>("\x6E\x55\x49\x50\x59" + 0x5038EE1A).s, ImVec2(150, 25), colorstab == 4 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*Menu*/XorStr<0x28, 5, 0x065EA3AD>("\x65\x4C\x44\x5E" + 0x065EA3AD).s, ImVec2(150, 25), colorstab == 4 ? true : false))
 			colorstab = 4;
-
-		ImGui::Spacing();
-
-		if (Sakura::Menu::Widgets::SubTab(/*Player Backtrack*/XorStr<0x8C, 17, 0xAC251604>("\xDC\xE1\xEF\xF6\xF5\xE3\xB2\xD1\xF5\xF6\xFD\xE3\xEA\xF8\xF9\xF0" + 0xAC251604).s, ImVec2(150, 25), colorstab == 5 ? true : false))
-			colorstab = 5;
-
-		ImGui::Spacing();
-
-		if (Sakura::Menu::Widgets::SubTab(/*Local*/XorStr<0x5D, 6, 0x466B0D2F>("\x11\x31\x3C\x01\x0D" + 0x466B0D2F).s, ImVec2(150, 25), colorstab == 6 ? true : false))
-			colorstab = 6;
-
-		ImGui::Spacing();
-
-		if (Sakura::Menu::Widgets::SubTab(/*Menu*/XorStr<0x28, 5, 0x065EA3AD>("\x65\x4C\x44\x5E" + 0x065EA3AD).s, ImVec2(150, 25), colorstab == 7 ? true : false))
-			colorstab = 7;
 		break;
 	}
 }
@@ -795,27 +780,18 @@ void DrawTab()
 		switch (colorstab)
 		{
 		case 0:
-			Sakura::Menu::Tabs::Colors::PlayerEsp();
+			Sakura::Menu::Tabs::Colors::Player();
 			break;
 		case 1:
-			Sakura::Menu::Tabs::Colors::PlayerGlow();
-			break;
-		case 2:
-			Sakura::Menu::Tabs::Colors::PlayerChams();
-			break;
-		case 3:
-			Sakura::Menu::Tabs::Colors::PlayerLight();
-			break;
-		case 4:
-			Sakura::Menu::Tabs::Colors::World();
-			break;
-		case 5:
-			Sakura::Menu::Tabs::Colors::Backtrack();
-			break;
-		case 6:
 			Sakura::Menu::Tabs::Colors::Local();
 			break;
-		case 7:
+		case 2:
+			Sakura::Menu::Tabs::Colors::World();
+			break;
+		case 3:
+			Sakura::Menu::Tabs::Colors::Route();
+			break;
+		case 4:
 			Sakura::Menu::Tabs::Colors::Menu();
 			break;
 		}
