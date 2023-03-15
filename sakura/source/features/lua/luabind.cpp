@@ -255,7 +255,7 @@ Vector Sakura::Lua::Player::GetOrigin(int index)
 std::string Sakura::Lua::Player::GetName(int index)
 {
 	if (index < 1 || index >= 32)
-		return 0;
+		return "Unknown";
 
 	player_info_s* player = g_Studio.PlayerInfo(index - 1);
 	return player->name;
@@ -264,7 +264,7 @@ std::string Sakura::Lua::Player::GetName(int index)
 std::string Sakura::Lua::Player::GetModelName(int index)
 {
 	if (index < 1 || index >= PlayerEsp.size())
-		return 0;
+		return "Unknown";
 
 	return PlayerEsp[index].model;
 }
