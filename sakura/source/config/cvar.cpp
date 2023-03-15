@@ -585,6 +585,10 @@ void CVARlist::init()
 	INITCVAR(visual_menu_color_logo[1], 0.0784f);
 	INITCVAR(visual_menu_color_logo[2], 0.5764f);
 	INITCVAR(visual_menu_color_logo[3], 1.0);
+	INITCVAR(visual_menu_color_footer_text[0], 0.9803f);
+	INITCVAR(visual_menu_color_footer_text[1], 0.9803f);
+	INITCVAR(visual_menu_color_footer_text[2], 0.9803f);
+	INITCVAR(visual_menu_color_footer_text[3], 1.0);
 	INITCVAR(visual_menu_raining, 0.0);
 	INITCVAR(visual_menu_raining_count, 100.0);
 	INITCVAR(visual_menu_raining_type, 0.0);

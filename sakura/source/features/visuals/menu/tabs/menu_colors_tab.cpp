@@ -522,6 +522,7 @@ void Sakura::Menu::Tabs::Colors::Menu()
 		ImGui::SameLine();
 		Sakura::Menu::Widgets::ColorEdit(/*Main color*/XorStr<0xA5, 11, 0x2CFC34DB>("\xE8\xC7\xCE\xC6\x89\xC9\xC4\xC0\xC2\xDC" + 0x2CFC34DB).s, (float*)cvar.visual_menu_color, pickerFlags);
 		Sakura::Menu::Widgets::ColorEdit(/*Logo*/XorStr<0x0F, 5, 0x8FDB2C7C>("\x43\x7F\x76\x7D" + 0x8FDB2C7C).s, (float*)cvar.visual_menu_color_logo, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Footer text*/XorStr<0x69, 12, 0x51773C8B>("\x2F\x05\x04\x18\x08\x1C\x4F\x04\x14\x0A\x07" + 0x51773C8B).s, (float*)cvar.visual_menu_color_footer_text, pickerFlags);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

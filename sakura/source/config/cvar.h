@@ -315,6 +315,7 @@ public:
 	float visual_menu_color_tab_selected[4];
 	float visual_menu_color_subtab_selected[4];
 	float visual_menu_color_logo[4];
+	float visual_menu_color_footer_text[4];
 	float visual_menu_raining;
 	float visual_menu_raining_count;
 	float visual_menu_raining_type;

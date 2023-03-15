@@ -511,7 +511,7 @@ void DrawCategoryButtons()
 			misctab = 11;
 		break;
 	case 4:
-		if (Sakura::Menu::Widgets::SubTab(/*Player*/XorStr<0x50, 11, 0xFB675EA9>("\x00\x3D\x33\x2A\x31\x27\x76\x12\x2B\x29" + 0xFB675EA9).s, ImVec2(150, 25), colorstab == 0 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*Player*/XorStr<0x5A, 7, 0x66A92CE7>("\x0A\x37\x3D\x24\x3B\x2D" + 0x66A92CE7).s, ImVec2(150, 25), colorstab == 0 ? true : false))
 			colorstab = 0;
 
 		ImGui::Spacing();
@@ -1001,8 +1001,8 @@ void DrawMenuWindow()
 		draw->AddRectFilled({ pos.x, pos.y + 50 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_items[0] * 255), (int)(cvar.visual_menu_color_items[1] * 255), (int)(cvar.visual_menu_color_items[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_All);
 		draw->AddRectFilled({ pos.x, pos.y + 470 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_footer[0] * 255), (int)(cvar.visual_menu_color_footer[1] * 255), (int)(cvar.visual_menu_color_footer[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Bot);
 
-		draw->AddText({ pos.x + 10, pos.y + 470 + 10 - ImGui::CalcTextSize(text).y / 2 }, ImColor(250, 250, 250, Sakura::Menu::currentAlphaFade), text);
-		draw->AddText({ pos.x + 710 - ImGui::CalcTextSize(SAKURA_VERSION).x, pos.y + 470 + 10 - ImGui::CalcTextSize(SAKURA_VERSION).y / 2 }, ImColor(250, 250, 250, Sakura::Menu::currentAlphaFade), SAKURA_VERSION);
+		draw->AddText({ pos.x + 10, pos.y + 470 + 10 - ImGui::CalcTextSize(text).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), text);
+		draw->AddText({ pos.x + 710 - ImGui::CalcTextSize(SAKURA_VERSION).x, pos.y + 470 + 10 - ImGui::CalcTextSize(SAKURA_VERSION).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), SAKURA_VERSION);
 
 		ImGui::PushFont(Sakura::Menu::Fonts::icons);
 		ImGui::SetCursorPos({ 20,25 - ImGui::CalcTextSize(/*P*/XorStr<0x6A, 2, 0x100FA605>("\x3A" + 0x100FA605).s).y / 2 });
