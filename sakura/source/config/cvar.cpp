@@ -509,11 +509,13 @@ void CVARlist::init()
 	INITCVAR(visual_lambert_viewmodel_color[2], 0.0);
 	INITCVAR(visual_lambert_viewmodel_color[3], 1.0);
 	INITCVAR(visual_tg_type, 0.0);
+
 	INITCVAR(visual_draw_fov, 0.0);
 	INITCVAR(visual_draw_fov_color[0], 1.0);
 	INITCVAR(visual_draw_fov_color[1], 1.0);
 	INITCVAR(visual_draw_fov_color[2], 1.0);
 	INITCVAR(visual_draw_fov_color[3], 1.0);
+
 	INITCVAR(visual_noflash_color[0], 0.0);
 	INITCVAR(visual_noflash_color[1], 0.0);
 	INITCVAR(visual_noflash_color[2], 1.0);
@@ -749,6 +751,10 @@ void CVARlist::init()
 	INITCVAR(chams_player_wall_color_ct[2], 1.0);
 	INITCVAR(chams_player_wall_color_ct[3], 1.0);
 	INITCVAR(chams_world, 0.0);
+	INITCVAR(chams_world_color[0], 1.0);
+	INITCVAR(chams_world_color[1], 1.0);
+	INITCVAR(chams_world_color[2], 1.0);
+	INITCVAR(chams_world_color[3], 1.0);
 	INITCVAR(chams_world_wireframe, 0.0);
 	INITCVAR(chams_world_wireframe_mode, 0.0);
 	INITCVAR(chams_world_wall, 0.0);
