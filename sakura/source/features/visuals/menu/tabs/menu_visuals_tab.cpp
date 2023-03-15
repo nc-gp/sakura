@@ -45,6 +45,7 @@ void Sakura::Menu::Tabs::Visuals::Player()
 		break;
 	case 5:
 		Sakura::Menu::Tabs::Visuals::DeathMarks();
+		break;
 	}
 }
 
@@ -192,14 +193,6 @@ void Sakura::Menu::Tabs::Visuals::Local()
 	ImGui::SameLine();
 	if (Sakura::Menu::Widgets::SubSubTab(/*L*/XorStr<0x82, 2, 0xE9BBA131>("\xCE" + 0xE9BBA131).s, /*Additions*/XorStr<0x7A, 10, 0xFC236000>("\x3B\x1F\x18\x14\x0A\x16\xEF\xEF\xF1" + 0xFC236000).s, ImVec2(65, 40), localPlayerSplit == 6 ? true : false))
 		localPlayerSplit = 6;
-	
-	//ImGui::PushItemWidth(Sakura::Menu::itemWidth * 2);
-	//Sakura::Menu::Widgets::Combo(
-	//	/*Type*/XorStr<0xBC, 5, 0xBFF1563E>("\xE8\xC4\xCE\xDA" + 0xBFF1563E).s,
-	//	&localPlayerSplit,
-	//	/*Character\0Real position\0Local weapon\0Additions\0*/XorStr<0x92, 48, 0xD8E8C674>("\xD1\xFB\xF5\xE7\xF7\xF4\xEC\xFC\xE8\x9B\xCE\xF8\xFF\xF3\x80\xD1\xCD\xD0\xCD\xD1\xCF\xC8\xC6\xA9\xE6\xC4\xCF\xCC\xC2\x8F\xC7\xD4\xD3\xC3\xDB\xDB\xB6\xF6\xDC\xDD\xD3\xCF\xD5\xD2\xD0\xCC\xC0" + 0xD8E8C674).s);
-	//
-	//ImGui::PopItemWidth();
 
 	ImGui::Spacing();
 
