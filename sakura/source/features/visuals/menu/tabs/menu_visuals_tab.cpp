@@ -665,7 +665,7 @@ void Sakura::Menu::Tabs::Visuals::Other()
 		
 		Sakura::Menu::Widgets::SliderFloat(/*Raining count*/XorStr<0xD6, 14, 0xD5088BAB>("\x84\xB6\xB1\xB7\xB3\xB5\xBB\xFD\xBD\xB0\x95\x8F\x96" + 0xD5088BAB).s, &cvar.visual_menu_raining_count, 25.f, 500.f, "%.0f");
 		Sakura::Menu::Widgets::SliderFloat(/*Raining speed multipler*/XorStr<0x70,24,0x43E1E724>("\x22\x10\x1B\x1D\x1D\x1B\x11\x57\x0B\x09\x1F\x1E\x18\x5D\x13\x0A\xEC\xF5\xEB\xF3\xE8\xE0\xF4"+0x43E1E724).s, &cvar.visual_menu_raining_speed_multipler, 0.3f, 3.0f, "%.1f*");
-		Sakura::Menu::Widgets::SliderFloat(/*Menu background opacity*/XorStr<0x47, 24, 0x8458E315>("\x0A\x2D\x27\x3F\x6B\x2E\x2C\x2D\x24\x37\x23\x3D\x26\x3A\x31\x76\x38\x28\x38\x39\x32\x28\x24" + 0x8458E315).s, &cvar.visual_menu_bg_opacity, 0.1, 0.5, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Menu background opacity*/XorStr<0x47, 24, 0x8458E315>("\x0A\x2D\x27\x3F\x6B\x2E\x2C\x2D\x24\x37\x23\x3D\x26\x3A\x31\x76\x38\x28\x38\x39\x32\x28\x24" + 0x8458E315).s, &cvar.visual_menu_bg_opacity, 0.1, 0.5, "%.4f");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
