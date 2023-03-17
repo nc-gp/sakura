@@ -415,6 +415,28 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	if (ent && ent->player && cvar.visual_deathmark_enable && g_Player[ent->index].deathMark)
 		DeathMark::Create(ent);
 
+	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
+	{
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_ADDENTITY))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_ADDENTITY);
+		for (const auto& callback : callbacks)
+		{
+			try
+			{
+				callback(ent ? ent->index : NULL, ent ? ent->player : NULL, ent ? ent->origin : NULL, ent ? ent->angles : NULL);
+			}
+			catch (luabridge::LuaException const& error)
+			{
+				LogToFile("Error has occured in the lua: %s", error.what());
+				script.RemoveAllCallbacks();
+			}
+		}
+	}
+
 	return g_Client.HUD_AddEntity(type, ent, modelname);
 }
 

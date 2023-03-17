@@ -6,16 +6,17 @@ namespace Sakura
 	{
 		enum SAKURA_CALLBACK_TYPE
 		{
-			SAKURA_CALLBACK_AT_RENDERING_MENU,
-			SAKURA_CALLBACK_AT_RENDERING_WINDOW,
-			SAKURA_CALLBACK_AT_RENDERING_BACKGROUND,
-			SAKURA_CALLBACK_AT_CLIENT_MOVE,
-			SAKURA_CALLBACK_AT_CLIENT_BIND,
-			SAKURA_CALLBACK_AT_DEATH_MESSAGE,
-			SAKURA_CALLBACK_AT_RESETHUD_MESSAGE,
-			SAKURA_CALLBACK_AT_DAMAGE_MESSAGE,
-			SAKURA_CALLBACK_AT_INIT_BASS,
-			SAKURA_CALLBACK_AT_DYNAMICSOUND,
+			SAKURA_CALLBACK_AT_RENDERING_MENU,        // Callback function triggered during rendering of a menu
+			SAKURA_CALLBACK_AT_RENDERING_WINDOW,      // Callback function triggered during rendering of a window
+			SAKURA_CALLBACK_AT_RENDERING_BACKGROUND,  // Callback function triggered during rendering of a background interface
+			SAKURA_CALLBACK_AT_CLIENT_MOVE,           // Callback function triggered when the client is moved
+			SAKURA_CALLBACK_AT_CLIENT_BIND,           // Callback function triggered when the client is using a custom bind
+			SAKURA_CALLBACK_AT_DEATH_MESSAGE,         // Callback function triggered when a death message is received
+			SAKURA_CALLBACK_AT_RESETHUD_MESSAGE,      // Callback function triggered when a reset HUD message is received
+			SAKURA_CALLBACK_AT_DAMAGE_MESSAGE,        // Callback function triggered when a damage message is received
+			SAKURA_CALLBACK_AT_ADDENTITY,		      // Callback function triggered when an entity message is received
+			SAKURA_CALLBACK_AT_INIT_BASS,             // Callback function triggered during initialization of the BASS library
+			SAKURA_CALLBACK_AT_DYNAMICSOUND,          // Callback function triggered during playback of a dynamic sound
 
 			SAKURA_CALLBACK_ALL_CALLBACKS
 		};
@@ -75,7 +76,8 @@ namespace Sakura
 			DWORD InitSound(const char* filename);
 			void SoundPlay(const DWORD sound, const float volume);
 
-			void CreateVisibleEntity(const int entityType, cl_entity_s* entity);
+			bool CreateVisibleEntity(const int entityType, const int entityIndexToCopy, Vector origin, const bool checkPlayerEntity = false);
+			void CreateBeamPoint(Vector start, Vector end, const ImColor color = ImColor(255, 255, 255, 255), const float life = 0.001f, const float width = 0.9f, const float amplitude = 0, const float speed = 2, const int startFrame = 0, const float framerate = 0);
 
 			DWORD GetTime();
 		};
@@ -94,6 +96,7 @@ namespace Sakura
 			bool IsScoped();
 			Vector GetViewAngles();
 			void SetViewAngles(Vector angles);
+			Vector GetOrigin();
 			Vector GetEyePosition();
 			std::string GetWeaponName();
 			int GetWeaponID();

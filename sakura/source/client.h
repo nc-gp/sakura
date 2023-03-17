@@ -96,6 +96,7 @@ extern char hldir[MAX_PATH];
 #include "../libs/xor/xorstr.h"
 
 #include "../libs/lua/lua.hpp" // include lua lib
+#include "../libs/LuaBridge/Vector.h" // passing vector
 #include "../libs/LuaBridge/LuaBridge.h" // bridge
 #include "features/lua/luabind.h" // custom
 

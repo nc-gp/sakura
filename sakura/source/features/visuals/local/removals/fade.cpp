@@ -4,13 +4,13 @@ screenfade_t Sakura::Fade::Screen;
 
 void Sakura::Fade::RemoveFlashFade()
 {
+	g_Engine.pfnGetScreenFade(&Screen);
+
 	if (!cvar.visual_noflash_enable)
 		return;
 
 	if (!Sakura::ScreenShot::IsVisuals())
 		return;
-
-	g_Engine.pfnGetScreenFade(&Screen);
 
 	if (Screen.fadeEnd <= g_Engine.GetClientTime())
 		return;

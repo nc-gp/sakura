@@ -33,10 +33,36 @@ void Sakura::Lua::Game::SoundPlay(const DWORD sound, const float volume)
 	BASS_ChannelPlay(sound, true);
 }
 
-void Sakura::Lua::Game::CreateVisibleEntity(const int entityType, cl_entity_s* entity)
-{
-	g_Engine.CL_CreateVisibleEntity(entityType, entity);
-}
+//bool Sakura::Lua::Game::CreateVisibleEntity(const int entityType, const int entityIndexToCopy, Vector origin, const bool checkPlayerEntity)
+//{
+//	cl_entity_s* entity = g_Engine.GetEntityByIndex(entityIndexToCopy);
+//
+//	if (!entity)
+//		return false;
+//
+//	if (checkPlayerEntity && !entity->player)
+//		return false;
+//
+//	cl_entity_s* newEntity = entity;
+//
+//	newEntity->origin = origin;
+//
+//	g_Engine.CL_CreateVisibleEntity(entityType, newEntity);
+//
+//	return true;
+//}
+
+//void Sakura::Lua::Game::CreateBeamPoint(Vector start, Vector end, const ImColor color, const float life, const float width, const float amplitude, const float speed, const int startFrame, const float framerate)
+//{
+//	int beamindex = g_Engine.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
+//
+//	//pmtrace_t tr;
+//
+//	//g_Engine.pEventAPI->EV_SetTraceHull(2);
+//	//g_Engine.pEventAPI->EV_PlayerTrace(start, end, PM_GLASS_IGNORE, -1, &tr);
+//
+//	g_Engine.pEfxAPI->R_BeamPoints(start, end, beamindex, life, width, amplitude, color.Value.w, speed, startFrame, framerate, color.Value.x, color.Value.y, color.Value.z);
+//}
 
 bool Sakura::Lua::Game::WorldToScreen(Vector& in)
 {
@@ -111,6 +137,11 @@ void Sakura::Lua::LocalPlayer::FixMoveStart(usercmd_s* cmd)
 void Sakura::Lua::LocalPlayer::FixMoveEnd(usercmd_s* cmd)
 {
 	::FixMoveEnd(cmd);
+}
+
+Vector Sakura::Lua::LocalPlayer::GetOrigin()
+{
+	return pmove->origin;
 }
 
 Vector Sakura::Lua::LocalPlayer::GetViewAngles()
@@ -444,6 +475,13 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addProperty("Value", &ImColor::Value)
 		.endClass()
 
+		/*.beginClass<colorVec>("colorVec")
+			.addProperty("r", &colorVec::r)
+			.addProperty("g", &colorVec::g)
+			.addProperty("b", &colorVec::b)
+			.addProperty("a", &colorVec::a)
+		.endClass()*/
+
 		.beginClass<Vector2D>("Vector2D")
 			.addConstructor<void(*)(float, float)>()
 			.addProperty("x", &Vector2D::x)
@@ -495,6 +533,8 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("LoadSound", &Sakura::Lua::Game::InitSound)
 			.addFunction("PlaySound", &Sakura::Lua::Game::SoundPlay)
 			.addFunction("GetTime", &Sakura::Lua::Game::GetTime)
+			/*.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
+			.addFunction("CreateBeamPoint", &Sakura::Lua::Game::CreateBeamPoint)*/
 		.endNamespace()
 
 		.beginNamespace("ImGui")
@@ -526,10 +566,12 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("CheckButton", &Sakura::Lua::LocalPlayer::CheckButton)
 			.addFunction("PressButton", &Sakura::Lua::LocalPlayer::PressButton)
 			.addFunction("ReleaseButton", &Sakura::Lua::LocalPlayer::ReleaseButton)
+			.addFunction("GetOrigin", &Sakura::Lua::LocalPlayer::GetOrigin)
 			.addFunction("GetViewAngles", &Sakura::Lua::LocalPlayer::GetViewAngles)
 			.addFunction("SetViewAngles", &Sakura::Lua::LocalPlayer::SetViewAngles)
 			.addFunction("IsAlive", &Sakura::Lua::LocalPlayer::IsAlive)
 			.addFunction("IsScoped", &Sakura::Lua::LocalPlayer::IsScoped)
+			.addFunction("IsInGame", &Sakura::Player::Local::InGame)
 
 			.addFunction("IsCurWeaponKnife", &Sakura::Lua::LocalPlayer::IsCurWeaponKnife)
 			.addFunction("IsCurWeaponPistol", &Sakura::Lua::LocalPlayer::IsCurWeaponPistol)
@@ -574,6 +616,7 @@ bool Sakura::Lua::Init(lua_State* L)
 	DefineLuaGlobal(L, "SAKURA_DEATH_MESSAGE", SAKURA_CALLBACK_AT_DEATH_MESSAGE);
 	DefineLuaGlobal(L, "SAKURA_NEWROUND_MESSAGE", SAKURA_CALLBACK_AT_RESETHUD_MESSAGE);
 	DefineLuaGlobal(L, "SAKURA_SELFDAMAGE_MESSAGE", SAKURA_CALLBACK_AT_DAMAGE_MESSAGE);
+	DefineLuaGlobal(L, "SAKURA_ADD_ENTITY", SAKURA_CALLBACK_AT_ADDENTITY);
 	DefineLuaGlobal(L, "SAKURA_DYNAMICSOUND_PLAY", SAKURA_CALLBACK_AT_DYNAMICSOUND);
 	DefineLuaGlobal(L, "SAKURA_SOUND_INIT", SAKURA_CALLBACK_AT_INIT_BASS);
 
