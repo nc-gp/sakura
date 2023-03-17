@@ -4,6 +4,7 @@ int Sakura::Menu::currentAlphaFade;
 int Sakura::Menu::itemWidth = 245;
 int tab = 0;
 int ragebottab = 0, legitbottab = 0, visualstab = 0, misctab = 0, colorstab = 0;
+int selectedScriptIndex = 0;
 
 bool bShowMenu = false;
 bool keysmenu[256];
@@ -951,9 +952,22 @@ void DrawMenuWindow()
 	if (Sakura::Lua::scripts.size() > 0)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+		ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)Sakura::Menu::GetMenuColor(0.39f));
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.80f));
+		ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)Sakura::Menu::GetMenuColor(1.00f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, (ImVec4)Sakura::Menu::GetMenuColor(0.79f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBgCollapsed, (ImVec4)Sakura::Menu::GetMenuColor(0.30f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, (ImVec4)Sakura::Menu::GetMenuColor(1.00f));
+		ImGui::PushStyleColor(ImGuiCol_CheckMark, (ImVec4)Sakura::Menu::GetMenuColor(1.00f));
+		ImGui::PushStyleColor(ImGuiCol_SliderGrab, (ImVec4)Sakura::Menu::GetMenuColor(0.6f));
+		ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, (ImVec4)Sakura::Menu::GetMenuColor(1.00f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)Sakura::Menu::GetMenuColor(0.39f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.5f));
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)Sakura::Menu::GetMenuColor(0.8f));
 		ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 		ImGui::Begin(/*Sakura - Lua Scripts*/XorStr<0xBB, 21, 0x73438C7B>("\xE8\xDD\xD6\xCB\xCD\xA1\xE1\xEF\xE3\x88\xB0\xA7\xE7\x9B\xAA\xB8\xA2\xBC\xB9\xBD" + 0x73438C7B).s, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-		ImGui::BeginTabBar(/*luascripts*/XorStr<0xCE, 11, 0x0006A541>("\xA2\xBA\xB1\xA2\xB1\xA1\xBD\xA5\xA2\xA4" + 0x0006A541).s, ImGuiTabBarFlags_NoTooltip);
+		
+		const char** items = new const char* [Sakura::Lua::scripts.size()];
 		for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 		{
 			auto& script = Sakura::Lua::scripts[i];
@@ -961,25 +975,68 @@ void DrawMenuWindow()
 			if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU))
 				continue;
 
-			auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
-			for (const auto& callback : callbacks)
+			char* copy = new char[script.GetName().size() + 1];
+
+			std::strcpy(copy, script.GetName().c_str());
+
+			items[i] = copy;
+		}
+		
+		ImGui::BeginChild("##scchoose", ImVec2(145, 250), false, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::ListBox("##sclist", &selectedScriptIndex, items, Sakura::Lua::scripts.size(), -1);
+		ImGui::EndChild();
+		ImGui::SameLine();
+		ImGui::BeginChild("##sccmenu", ImVec2(400, 250), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_HorizontalScrollbar);
+		// Render the selected script
+		auto& selectedScript = Sakura::Lua::scripts[selectedScriptIndex];
+		auto& callbacks = selectedScript.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
+		for (const auto& callback : callbacks)
+		{
+			try
 			{
-				try
+				callback();
+			}
+			catch (luabridge::LuaException const& error)
+			{
+				if (selectedScript.GetState())
 				{
-					callback();
-				}
-				catch (luabridge::LuaException const& error)
-				{
-					if (script.GetState())
-					{
-						LogToFile("Error has occured in the lua: %s", error.what());
-						script.RemoveAllCallbacks();
-					}
+					LogToFile("Error has occured in the lua: %s", error.what());
+					selectedScript.RemoveAllCallbacks();
 				}
 			}
 		}
-		ImGui::EndTabBar();
+		ImGui::EndChild();
+
+		delete[] items;
+
+		//ImGui::BeginTabBar(/*luascripts*/XorStr<0xCE, 11, 0x0006A541>("\xA2\xBA\xB1\xA2\xB1\xA1\xBD\xA5\xA2\xA4" + 0x0006A541).s, ImGuiTabBarFlags_NoTooltip);
+		//for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
+		//{
+		//	auto& script = Sakura::Lua::scripts[i];
+
+		//	if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU))
+		//		continue;
+
+		//	auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
+		//	for (const auto& callback : callbacks)
+		//	{
+		//		try
+		//		{
+		//			callback();
+		//		}
+		//		catch (luabridge::LuaException const& error)
+		//		{
+		//			if (script.GetState())
+		//			{
+		//				LogToFile("Error has occured in the lua: %s", error.what());
+		//				script.RemoveAllCallbacks();
+		//			}
+		//		}
+		//	}
+		//}
+		//ImGui::EndTabBar();
 		ImGui::End();
+		ImGui::PopStyleColor(12);
 		ImGui::PopStyleVar();
 	}
 

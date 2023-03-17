@@ -33,36 +33,27 @@ void Sakura::Lua::Game::SoundPlay(const DWORD sound, const float volume)
 	BASS_ChannelPlay(sound, true);
 }
 
-//bool Sakura::Lua::Game::CreateVisibleEntity(const int entityType, const int entityIndexToCopy, Vector origin, const bool checkPlayerEntity)
-//{
-//	cl_entity_s* entity = g_Engine.GetEntityByIndex(entityIndexToCopy);
-//
-//	if (!entity)
-//		return false;
-//
-//	if (checkPlayerEntity && !entity->player)
-//		return false;
-//
-//	cl_entity_s* newEntity = entity;
-//
-//	newEntity->origin = origin;
-//
-//	g_Engine.CL_CreateVisibleEntity(entityType, newEntity);
-//
-//	return true;
-//}
+bool Sakura::Lua::Game::CreateVisibleEntity(const int entityType, const int entityIndexToCopy, Vector origin, const bool checkPlayerEntity)
+{
+	cl_entity_s* entity = g_Engine.GetEntityByIndex(entityIndexToCopy);
 
-//void Sakura::Lua::Game::CreateBeamPoint(Vector start, Vector end, const ImColor color, const float life, const float width, const float amplitude, const float speed, const int startFrame, const float framerate)
-//{
-//	int beamindex = g_Engine.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
-//
-//	//pmtrace_t tr;
-//
-//	//g_Engine.pEventAPI->EV_SetTraceHull(2);
-//	//g_Engine.pEventAPI->EV_PlayerTrace(start, end, PM_GLASS_IGNORE, -1, &tr);
-//
-//	g_Engine.pEfxAPI->R_BeamPoints(start, end, beamindex, life, width, amplitude, color.Value.w, speed, startFrame, framerate, color.Value.x, color.Value.y, color.Value.z);
-//}
+	if (!entity)
+		return false;
+
+	if (checkPlayerEntity && !entity->player)
+		return false;
+
+	g_Engine.CL_CreateVisibleEntity(entityType, entity);
+
+	return true;
+}
+
+void Sakura::Lua::Game::CreateBeamPoint(Vector start, Vector end, const ImColor color, const float life, const float width, const float amplitude, const float speed, const int startFrame, const float framerate)
+{
+	int beamindex = g_Engine.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
+
+	g_Engine.pEfxAPI->R_BeamPoints(start, end, beamindex, life, width, amplitude, color.Value.w, speed, startFrame, framerate, color.Value.x, color.Value.y, color.Value.z);
+}
 
 bool Sakura::Lua::Game::WorldToScreen(Vector& in)
 {
@@ -341,21 +332,21 @@ void Sakura::Lua::Notify::Create(const char* szTitle, const int secondsDisplay =
 	Toast::Create({ secondsDisplay, szTitle });
 }
 
-void Sakura::Lua::ImGui::Menu(const char* szTitle, luabridge::LuaRef lfFunction)
-{
-	if (::ImGui::BeginTabItem(szTitle, 0, 0))
-	{
-		try
-		{
-			lfFunction();
-		}
-		catch (luabridge::LuaException const& error)
-		{
-			LogToFile("Lua script error: %s", error.what());
-		}
-		::ImGui::EndTabItem();
-	}
-}
+//void Sakura::Lua::ImGui::Menu(const char* szTitle, luabridge::LuaRef lfFunction)
+//{
+//	if (::ImGui::BeginTabItem(szTitle, 0, 0))
+//	{
+//		try
+//		{
+//			lfFunction();
+//		}
+//		catch (luabridge::LuaException const& error)
+//		{
+//			LogToFile("Lua script error: %s", error.what());
+//		}
+//		::ImGui::EndTabItem();
+//	}
+//}
 
 void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, luabridge::LuaRef lfFunction)
 {
@@ -418,6 +409,11 @@ float Sakura::Lua::ImGui::KeyBind(const char* szText, int iKey)
 	float iTheKey = iKey;
 	::Sakura::Menu::HudKeyBind(iTheKey, szText, {}, true);
 	return iTheKey;
+}
+
+ImVec2 Sakura::Lua::ImGui::CalcTextSize(const char* label)
+{
+	return ::ImGui::CalcTextSize(label);
 }
 
 ImVec2 Sakura::Lua::ImGui::GetWindowSize()
@@ -533,12 +529,12 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("LoadSound", &Sakura::Lua::Game::InitSound)
 			.addFunction("PlaySound", &Sakura::Lua::Game::SoundPlay)
 			.addFunction("GetTime", &Sakura::Lua::Game::GetTime)
-			/*.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
-			.addFunction("CreateBeamPoint", &Sakura::Lua::Game::CreateBeamPoint)*/
+			.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
+			.addFunction("CreateBeamPoint", &Sakura::Lua::Game::CreateBeamPoint)
 		.endNamespace()
 
 		.beginNamespace("ImGui")
-			.addFunction("Menu", &Sakura::Lua::ImGui::Menu)
+			//.addFunction("Menu", &Sakura::Lua::ImGui::Menu)
 			.addFunction("Window", &Sakura::Lua::ImGui::Window)
 			.addFunction("Text", &Sakura::Lua::ImGui::Text)
 			.addFunction("Button", &Sakura::Lua::ImGui::Button)
@@ -547,7 +543,9 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("Combo", &Sakura::Lua::ImGui::Combo)
 			.addFunction("Slider", &Sakura::Lua::ImGui::SliderInt)
 			.addFunction("KeyBind", &Sakura::Lua::ImGui::KeyBind)
+
 			.addFunction("GetWindowSize", &Sakura::Lua::ImGui::GetWindowSize)
+			.addFunction("CalcTextSize", &Sakura::Lua::ImGui::CalcTextSize)
 		.endNamespace()
 
 		.beginNamespace("Render")
@@ -867,7 +865,7 @@ void Sakura::Lua::Reload()
 			continue;
 		}
 
-		LuaScripts script(L);
+		LuaScripts script(L, p.path().filename().string());
 		scripts.push_back(script);
 
 		if (lua_pcall(L, 0, 0, 0) != LUA_OK)
@@ -882,7 +880,7 @@ void Sakura::Lua::Reload()
 		ScriptsCount++;
 
 		scriptsLoaded += " - ";
-		scriptsLoaded += p.path().filename().string().c_str();
+		scriptsLoaded += p.path().filename().string();
 		scriptsLoaded += "\n";
 	}
 

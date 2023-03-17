@@ -24,7 +24,7 @@ namespace Sakura
 		class LuaScripts
 		{
 		public:
-			LuaScripts(lua_State* state) : state_(state) {}
+			LuaScripts(lua_State* state, std::string name) : state_(state), name_(name) {}
 
 			void RegisterCallback(UINT id, const luabridge::LuaRef& callback) {
 				callbacks_[id].push_back(callback);
@@ -49,8 +49,13 @@ namespace Sakura
 			lua_State* GetState() const {
 				return state_;
 			}
+
+			std::string GetName() {
+				return name_;
+			}
 		private:
 			lua_State* state_;
+			std::string name_;
 			std::unordered_map<UINT, std::vector<luabridge::LuaRef>> callbacks_;
 		};
 
@@ -149,6 +154,7 @@ namespace Sakura
 			float KeyBind(const char* szText, int iKey);
 
 			ImVec2 GetWindowSize();
+			ImVec2 CalcTextSize(const char* label);
 
 			namespace Drawings
 			{
