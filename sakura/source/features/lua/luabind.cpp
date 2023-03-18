@@ -285,7 +285,7 @@ std::string Sakura::Lua::Player::GetName(int index)
 
 std::string Sakura::Lua::Player::GetModelName(int index)
 {
-	if (index < 1 || index >= PlayerEsp.size())
+	if (index < 1 || index >= 32)
 		return "Unknown";
 
 	return PlayerEsp[index].model;
@@ -293,20 +293,24 @@ std::string Sakura::Lua::Player::GetModelName(int index)
 
 int Sakura::Lua::Player::GetDistance(int index)
 {
-	if (index < 1 || index >= PlayerEsp.size())
+	if (index < 1 || index >= 32)
 		return 0;
 
-	Vector vDifference = PlayerEsp[index].origin - Sakura::Lua::LocalPlayer::GetEyePosition();
+	cl_entity_s* player = g_Engine.GetEntityByIndex(index);
+
+	Vector vDifference = player->origin - Sakura::Lua::LocalPlayer::GetEyePosition();
 	int iDistance = int(vDifference.Length() / 22.0f);
 	return iDistance;
 }
 
 float Sakura::Lua::Player::GetActualDistance(int index)
 {
-	if (index < 1 || index >= PlayerEsp.size())
+	if (index < 1 || index >= 32)
 		return 0;
 
-	Vector vDifference = PlayerEsp[index].origin - Sakura::Lua::LocalPlayer::GetEyePosition();
+	cl_entity_s* player = g_Engine.GetEntityByIndex(index);
+
+	Vector vDifference = player->origin - Sakura::Lua::LocalPlayer::GetEyePosition();
 	return vDifference.Length();
 }
 
