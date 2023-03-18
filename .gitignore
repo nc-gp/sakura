@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/sakura/loader/release
+/sakura/release
+/sakura/sakura/assets
+/sakura/sakura/scripts
+/sakura/sakura/sakura.log
+/sakura/sakura/sakura.exe
+/sakura/sakura/sakura.dll
+/sakura/sakura/configs
