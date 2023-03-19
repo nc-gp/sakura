@@ -58,6 +58,33 @@ void Sakura::Sound::Init()
 	soundInit = true;
 }
 
+void Sakura::Sound::Free()
+{
+	BASS_StreamFree(Headshot);
+	BASS_StreamFree(DoubleKill);
+	BASS_StreamFree(TripleKill);
+	BASS_StreamFree(MonsterKill);
+
+	if (Sakura::Lua::Sounds.size() > 0)
+	{
+		for (auto& sound : Sakura::Lua::Sounds)
+		{
+			BASS_SampleFree(sound);
+		}
+
+		Sakura::Lua::Sounds.clear();
+	}
+
+	BASS_Free();
+}
+
+void Sakura::Sound::ReInit()
+{
+	Free();
+	soundInit = false;
+	Init();
+}
+
 //void InitBass()
 //{
 //	//BASS::bass_lib_handle = BASS::bass_lib.LoadFromMemory(bass_dll_image, sizeof(bass_dll_image));

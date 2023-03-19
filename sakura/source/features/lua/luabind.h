@@ -63,6 +63,7 @@ namespace Sakura
 
 		extern int ScriptsCount;
 		extern std::vector<Sakura::Lua::LuaScripts> scripts;
+		extern std::vector<HSAMPLE> Sounds;
 		extern int currentScriptIndex;
 
 		bool Init(lua_State* L);

@@ -5,6 +5,8 @@ int Sakura::Lua::currentScriptIndex = 0;
 
 std::vector<Sakura::Lua::LuaScripts> Sakura::Lua::scripts;
 
+std::vector<HSAMPLE> Sakura::Lua::Sounds;
+
 Vector Sakura::Lua::Game::vLastConvertedVector(0, 0, 0);
 
 void Sakura::Lua::Hooks::RegisterCallBack(UINT type, luabridge::LuaRef f)
@@ -29,6 +31,8 @@ DWORD Sakura::Lua::Game::InitSound(const char* filename)
 
 	if (!sample)
 		LogToFile("Failed to load sound '%s' from lua. Error code: %i.", filename, BASS_ErrorGetCode());
+
+	Sounds.push_back(sample);
 
 	return sample;
 }
@@ -263,10 +267,10 @@ std::string Sakura::Lua::LocalPlayer::GetWeaponName()
 		case WEAPON_SG552:		return "SG552"; break;
 		case WEAPON_AK47:		return "AK-47"; break;
 		case WEAPON_P90:		return "P90"; break;
-		case WEAPON_HEGRENADE:	return "he"; break;
-		case WEAPON_SMOKEGRENADE: return"sg"; break;
-		case WEAPON_FLASHBANG:	return "fh"; break;
-		case WEAPON_KNIFE:		return "knife"; break;
+		case WEAPON_HEGRENADE:	return "HE Grenade"; break;
+		case WEAPON_SMOKEGRENADE: return"SG Grenade"; break;
+		case WEAPON_FLASHBANG:	return "Flashbang"; break;
+		case WEAPON_KNIFE:		return "Knife"; break;
 		default:				return "Unknown"; break;
 		}
 	}

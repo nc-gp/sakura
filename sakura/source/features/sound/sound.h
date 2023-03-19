@@ -8,6 +8,8 @@ namespace Sakura
 		extern bool soundInit;
 
 		void Init();
+		void Free();
+		void ReInit();
 	};
 };
 

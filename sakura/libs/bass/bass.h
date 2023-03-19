@@ -999,9 +999,14 @@ extern "C" {
 		return reinterpret_cast<HCHANNEL(__stdcall*)(HSAMPLE handle, BOOL onlynew)>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_SampleGetChannel")))(handle, onlynew);
 	}
 
+	inline BOOL BASS_SampleFree(HSAMPLE handle)
+	{
+		return reinterpret_cast<BOOL(__stdcall*)(HSAMPLE handle)>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_SampleFree")))(handle);
+	}
+
 	//HSAMPLE BASSDEF(BASS_SampleLoad)(BOOL mem, const void *file, QWORD offset, DWORD length, DWORD max, DWORD flags);
 	HSAMPLE BASSDEF(BASS_SampleCreate)(DWORD length, DWORD freq, DWORD chans, DWORD max, DWORD flags);
-	BOOL BASSDEF(BASS_SampleFree)(HSAMPLE handle);
+	//BOOL BASSDEF(BASS_SampleFree)(HSAMPLE handle);
 	BOOL BASSDEF(BASS_SampleSetData)(HSAMPLE handle, const void *buffer);
 	BOOL BASSDEF(BASS_SampleGetData)(HSAMPLE handle, void *buffer);
 	//BOOL BASSDEF(BASS_SampleGetInfo)(HSAMPLE handle, BASS_SAMPLE *info);

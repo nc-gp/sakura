@@ -782,6 +782,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 		if (Sakura::Menu::Widgets::Button(/*Reload Lua*/XorStr<0x12, 11, 0x8D4E7E59>("\x40\x76\x78\x7A\x77\x73\x38\x55\x6F\x7A" + 0x8D4E7E59).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			Sakura::Lua::Reload();
+			Sakura::Sound::ReInit();
 			Toast::Create({ 3, /*Reloaded LUA*/XorStr<0xA8,13,0x688BFE62>("\xFA\xCC\xC6\xC4\xCD\xC9\xCB\xCB\x90\xFD\xE7\xF2" + 0x688BFE62).s, configs[selectedConfig].c_str() });
 		}
 
