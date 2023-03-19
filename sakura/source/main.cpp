@@ -24,7 +24,7 @@ DWORD WINAPI Hook()
 
 	g_pSCR_UpdateScreen = (SCR_UpdateScreen_t)DetourFunction((LPBYTE)c_Offset.FindUpdateScreen(), (LPBYTE)&SCR_UpdateScreen);
 
-	PreS_DynamicSound_s = (PreS_DynamicSound_t)DetourFunction((LPBYTE)c_Offset.PreS_DynamicSound(), (LPBYTE)&PreS_DynamicSound);
+	PreS_DynamicSound_s = (PreS_DynamicSound_t)DetourFunction((LPBYTE)c_Offset.PreS_DynamicSound(), (LPBYTE)&Sakura::Esp::DynamicSound);
 
 	CL_Move_s = (CL_Move_t)DetourFunction((LPBYTE)c_Offset.CL_Move(), (LPBYTE)&CL_Move);
 

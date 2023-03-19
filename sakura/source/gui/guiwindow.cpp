@@ -33,8 +33,8 @@ void DrawFullScreenWindow()
 		DrawLongJump();
 		DrawSkeletonWorld();
 		DrawWorldEsp();
-		DrawPlayerSoundNoIndexEsp();
-		DrawPlayerSoundIndexEsp();
+		Sakura::Esp::DrawSoundNoIndex();
+		Sakura::Esp::DrawSoundIndex();
 		DrawSkeletonPlayer();
 		DrawPlayerEsp();
 		DrawTraceGrenade();
