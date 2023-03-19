@@ -163,7 +163,30 @@ void load_cvars(void)
 
 		GetPrivateProfileString("CVAR", names.str, "NULL", cvar_f, size, getHackDirFile(GetCurrentConfig().c_str()).c_str());
 		*(float*)r.data = atof(cvar_f);
+
 	}
+
+	/*for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
+	{
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_LOAD_CONFIG))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_LOAD_CONFIG);
+		for (const auto& callback : callbacks)
+		{
+			try
+			{
+				callback();
+			}
+			catch (luabridge::LuaException const& error)
+			{
+				LogToFile("Error has occured in the lua: %s", error.what());
+				script.RemoveAllCallbacks();
+			}
+		}
+	}*/
 }
 
 bool fileExists(const char* filename)
@@ -810,6 +833,28 @@ void CVARlist::init()
 	INITCVAR(rainbow_world_hitbox, 0.0);
 	INITCVAR(rainbow_world_maplight, 0.0);
 	INITCVAR(rainbow_local_glow, 0.0);
+
+	/*for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
+	{
+		auto& script = Sakura::Lua::scripts[i];
+
+		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_SAVE_CONFIG))
+			continue;
+
+		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_SAVE_CONFIG);
+		for (const auto& callback : callbacks)
+		{
+			try
+			{
+				callback();
+			}
+			catch (luabridge::LuaException const& error)
+			{
+				LogToFile("Error has occured in the lua: %s", error.what());
+				script.RemoveAllCallbacks();
+			}
+		}
+	}*/
 }
 
 void SaveCvar()

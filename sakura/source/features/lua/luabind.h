@@ -17,6 +17,8 @@ namespace Sakura
 			SAKURA_CALLBACK_AT_ADDENTITY,		      // Callback function triggered when an entity message is received
 			SAKURA_CALLBACK_AT_INIT_BASS,             // Callback function triggered during initialization of the BASS library
 			SAKURA_CALLBACK_AT_DYNAMICSOUND,          // Callback function triggered during playback of a dynamic sound
+			//SAKURA_CALLBACK_AT_SAVE_CONFIG,			  // Callback function triggered when a config is saved
+			//SAKURA_CALLBACK_AT_LOAD_CONFIG,			  // Callback function triggered when a config is loaded
 
 			SAKURA_CALLBACK_ALL_CALLBACKS
 		};
@@ -116,7 +118,8 @@ namespace Sakura
 			bool IsCurWeaponSubMachineGun();
 
 			std::string GetCommandString(const char* command);
-			int GetCommandFloat(const char* command);
+			int GetCommandInt(const char* command);
+			float GetCommandFloat(const char* command);
 			void ExecuteCommand(const char* command, const char* value);
 
 			void FixMoveStart(usercmd_s* cmd);
@@ -163,6 +166,17 @@ namespace Sakura
 				void AddText(ImVec2& position, ImColor& color, const char* szText);
 				void AddRectFilled(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int corners);
 			};
+		};
+
+		namespace Settings
+		{
+			void SaveInt(const std::string name, int value);
+			void SaveFloat(const std::string name, float value);
+			void SaveBool(const std::string name, bool value);
+
+			int LoadInt(const std::string name, const int value);
+			float LoadFloat(const std::string name, const float value);
+			bool LoadBool(const std::string name, const bool value);
 		};
 	};
 };

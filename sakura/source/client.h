@@ -20,7 +20,7 @@
 #define _USE_MATH_DEFINES
 #define IMGUI_DEFINE_MATH_OPERATORS
 
-#define SAKURA_VERSION "v1.049 @ 2023"
+#define SAKURA_VERSION "v1.050 @ 2023"
 
 #define ENTITY_TYPE_NORMAL 0
 #define ENTITY_TYPE_PLAYER 1
@@ -43,9 +43,9 @@ extern char hackdir[MAX_PATH];
 extern char hldir[MAX_PATH];
 
 #include "../libs/vm/VMProtectSDK.h"
-
 #include "../libs/bass/dll.h"
 #include "../libs/bass/bass.h"
+
 #include "other/smth/interface.h"
 
 #include "../libs/imgui/imgui.h"

@@ -913,7 +913,12 @@ extern "C" {
 	{
 		return reinterpret_cast<DWORD(__stdcall*)()>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_GetVersion")))();
 	}
-	int BASSDEF(BASS_ErrorGetCode)();
+
+	inline int BASS_ErrorGetCode()
+	{
+		return reinterpret_cast<int(__stdcall*)()>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_ErrorGetCode")))();
+	}
+	//int BASSDEF(BASS_ErrorGetCode)();
 	BOOL BASSDEF(BASS_GetDeviceInfo)(DWORD device, BASS_DEVICEINFO *info);
 #if defined(_WIN32) && !defined(_WIN32_WCE) && !(WINAPI_FAMILY && WINAPI_FAMILY!=WINAPI_FAMILY_DESKTOP_APP)
 	inline BOOL BASS_Init(int device, DWORD freq, DWORD flags, HWND win, const GUID *dsguid)
@@ -974,14 +979,34 @@ extern "C" {
 	HMUSIC BASSDEF(BASS_MusicLoad)(BOOL mem, const void *file, QWORD offset, DWORD length, DWORD flags, DWORD freq);
 	BOOL BASSDEF(BASS_MusicFree)(HMUSIC handle);
 
-	HSAMPLE BASSDEF(BASS_SampleLoad)(BOOL mem, const void *file, QWORD offset, DWORD length, DWORD max, DWORD flags);
+	inline HSAMPLE BASS_SampleLoad(BOOL mem, const void* file, QWORD offset, DWORD length, DWORD max, DWORD flags)
+	{
+		return reinterpret_cast<HSAMPLE(__stdcall*)(BOOL mem, const void* file, QWORD offset, DWORD length, DWORD max, DWORD flags)>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_SampleLoad")))(mem, file, offset, length, max, flags);
+	}
+
+	inline BOOL BASS_SampleGetInfo(HSAMPLE handle, BASS_SAMPLE* info)
+	{
+		return reinterpret_cast<BOOL(__stdcall*)(HSAMPLE handle, BASS_SAMPLE * info)>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_SampleGetInfo")))(handle, info);
+	}
+
+	inline BOOL BASS_SampleSetInfo(HSAMPLE handle, const BASS_SAMPLE* info)
+	{
+		return reinterpret_cast<BOOL(__stdcall*)(HSAMPLE handle, const BASS_SAMPLE * info)>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_SampleSetInfo")))(handle, info);
+	}
+
+	inline HCHANNEL BASS_SampleGetChannel(HSAMPLE handle, BOOL onlynew)
+	{
+		return reinterpret_cast<HCHANNEL(__stdcall*)(HSAMPLE handle, BOOL onlynew)>(BASS::bass_lib.GetProcAddressFromMemory(BASS::bass_lib_handle, ("BASS_SampleGetChannel")))(handle, onlynew);
+	}
+
+	//HSAMPLE BASSDEF(BASS_SampleLoad)(BOOL mem, const void *file, QWORD offset, DWORD length, DWORD max, DWORD flags);
 	HSAMPLE BASSDEF(BASS_SampleCreate)(DWORD length, DWORD freq, DWORD chans, DWORD max, DWORD flags);
 	BOOL BASSDEF(BASS_SampleFree)(HSAMPLE handle);
 	BOOL BASSDEF(BASS_SampleSetData)(HSAMPLE handle, const void *buffer);
 	BOOL BASSDEF(BASS_SampleGetData)(HSAMPLE handle, void *buffer);
-	BOOL BASSDEF(BASS_SampleGetInfo)(HSAMPLE handle, BASS_SAMPLE *info);
-	BOOL BASSDEF(BASS_SampleSetInfo)(HSAMPLE handle, const BASS_SAMPLE *info);
-	HCHANNEL BASSDEF(BASS_SampleGetChannel)(HSAMPLE handle, BOOL onlynew);
+	//BOOL BASSDEF(BASS_SampleGetInfo)(HSAMPLE handle, BASS_SAMPLE *info);
+	//BOOL BASSDEF(BASS_SampleSetInfo)(HSAMPLE handle, const BASS_SAMPLE *info);
+	//HCHANNEL BASSDEF(BASS_SampleGetChannel)(HSAMPLE handle, BOOL onlynew);
 	DWORD BASSDEF(BASS_SampleGetChannels)(HSAMPLE handle, HCHANNEL *channels);
 	BOOL BASSDEF(BASS_SampleStop)(HSAMPLE handle);
 
@@ -1094,10 +1119,10 @@ static inline HMUSIC BASS_MusicLoad(BOOL mem, const WCHAR *file, QWORD offset, D
 	return BASS_MusicLoad(mem, (const void*) file, offset, length, flags | BASS_UNICODE, freq);
 }
 
-static inline HSAMPLE BASS_SampleLoad(BOOL mem, const WCHAR *file, QWORD offset, DWORD length, DWORD max, DWORD flags)
-{
-	return BASS_SampleLoad(mem, (const void*) file, offset, length, max, flags | BASS_UNICODE);
-}
+//static inline HSAMPLE BASS_SampleLoad(BOOL mem, const WCHAR *file, QWORD offset, DWORD length, DWORD max, DWORD flags)
+//{
+//	return BASS_SampleLoad(mem, (const void*) file, offset, length, max, flags | BASS_UNICODE);
+//}
 /*
 static inline HSTREAM BASS_StreamCreateFile(BOOL mem, const WCHAR *file, QWORD offset, QWORD length, DWORD flags)
 {

@@ -52,31 +52,29 @@ void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fO
 				Sound_No_Index.push_back(sound_no_index);
 			}
 		}
-	}
 
-	//std::string soundFile = szSoundFile;
-
-	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
-	{
-		auto& script = Sakura::Lua::scripts[i];
-
-		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND))
-			continue;
-
-		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND);
-		for (const auto& callback : callbacks)
+		for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 		{
-			try
+			auto& script = Sakura::Lua::scripts[i];
+
+			if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND))
+				continue;
+
+			auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND);
+			for (const auto& callback : callbacks)
 			{
-				callback(entid, std::string(szSoundFile), &fVolume);
-			}
-			catch (luabridge::LuaException const& error)
-			{
-				if (script.GetState())
+				try
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
-					script.RemoveAllCallbacks();
-					lua_close(script.GetState());
+					callback(entid, std::string(szSoundFile), &fVolume, fOrigin);
+				}
+				catch (luabridge::LuaException const& error)
+				{
+					if (script.GetState())
+					{
+						LogToFile("Error has occured in the lua: %s", error.what());
+						script.RemoveAllCallbacks();
+						lua_close(script.GetState());
+					}
 				}
 			}
 		}

@@ -83,7 +83,7 @@ DWORD WINAPI Hook()
 
 	Sakura::Lua::Reload();
 
-	InitBass();
+	Sakura::Sound::Init();
 
 	client_state = ((client_state_t*)*(unsigned int*)((unsigned int)(g_Engine.GetEntityByIndex) + 0x19));
 

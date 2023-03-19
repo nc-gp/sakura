@@ -127,7 +127,7 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 	if (killer != victim && killer == pmove->player_index + 1 && victim > 0 && victim <= g_Engine.GetMaxClients())
 		dwReactionTime = GetTickCount();
 	
-	KillSound(victim, killer, headshot);
+	Sakura::Sound::KillSound(victim, killer, headshot);
 
 	if (victim != pmove->player_index + 1 && killer == pmove->player_index + 1 && victim > 0 && victim <= g_Engine.GetMaxClients())
 		g_Player[victim].deathMark = true;

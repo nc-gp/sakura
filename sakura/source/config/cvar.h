@@ -467,6 +467,10 @@ struct Entry
 	void* data;
 };
 
+extern std::vector<Entry> entries;
+extern StringFinder names;
+extern std::vector<Entry> luaEntries;
+extern StringFinder luaNames;
 extern std::vector<std::string> configs;
 extern int selectedConfig;
 extern int defaultConfig;

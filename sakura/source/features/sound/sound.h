@@ -1,6 +1,16 @@
 #ifndef _BASS_
 #define _BASS_
 
-void InitBass();
+namespace Sakura
+{
+	namespace Sound
+	{
+		extern bool soundInit;
+
+		void Init();
+	};
+};
+
+//void InitBass();
 
 #endif

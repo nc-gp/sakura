@@ -433,12 +433,6 @@
     <ClCompile Include="libs\lua\ltm.c">
       <Filter>libs\lua</Filter>
     </ClCompile>
-    <ClCompile Include="libs\bass\dll.cpp">
-      <Filter>libs\bass</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\bass\dll_image.cpp">
-      <Filter>libs\bass</Filter>
-    </ClCompile>
     <ClCompile Include="libs\imgui\image_DXT.cpp">
       <Filter>libs\imgui</Filter>
     </ClCompile>
@@ -495,6 +489,12 @@
     </ClCompile>
     <ClCompile Include="source\features\legit\knife.cpp">
       <Filter>source\features\legit</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\bass\dll_image.cpp">
+      <Filter>libs\bass</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\bass\dll.cpp">
+      <Filter>libs\bass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -888,12 +888,6 @@
     <ClInclude Include="libs\lua\ltable.h">
       <Filter>libs\lua</Filter>
     </ClInclude>
-    <ClInclude Include="libs\bass\dll.h">
-      <Filter>libs\bass</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\bass\bass.h">
-      <Filter>libs\bass</Filter>
-    </ClInclude>
     <ClInclude Include="libs\imgui\image_DXT.h">
       <Filter>libs\imgui</Filter>
     </ClInclude>
@@ -993,10 +987,11 @@
     <ClInclude Include="source\features\legit\knife.h">
       <Filter>source\features\legit</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="libs\lua\lua54.lib">
-      <Filter>libs\lua</Filter>
-    </Library>
+    <ClInclude Include="libs\bass\bass.h">
+      <Filter>libs\bass</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\bass\dll.h">
+      <Filter>libs\bass</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

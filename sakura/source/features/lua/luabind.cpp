@@ -24,13 +24,26 @@ DWORD Sakura::Lua::Game::InitSound(const char* filename)
 {
 	char temp[256];
 	sprintf(temp, "%s%s", hackdir, filename);
-	return BASS_StreamCreateFile(FALSE, temp, 0, 0, 0);
+
+	HSAMPLE sample = BASS_SampleLoad(false, temp, 0, 0, 60000, 0);
+
+	if (!sample)
+		LogToFile("Failed to load sound '%s' from lua. Error code: %i.", filename, BASS_ErrorGetCode());
+
+	return sample;
 }
 
-void Sakura::Lua::Game::SoundPlay(const DWORD sound, const float volume)
+void Sakura::Lua::Game::SoundPlay(DWORD sound, const float volume)
 {
-	BASS_ChannelSetAttribute(sound, BASS_ATTRIB_VOL, volume / 100.f);
-	BASS_ChannelPlay(sound, true);
+	BASS_SAMPLE sampleInfo;
+	BASS_SampleGetInfo(sound, &sampleInfo);
+
+	sampleInfo.volume = volume;
+	BASS_SampleSetInfo(sound, &sampleInfo);
+
+	HCHANNEL channel = BASS_SampleGetChannel(sound, false);
+
+	BASS_ChannelPlay(channel, false);
 }
 
 bool Sakura::Lua::Game::CreateVisibleEntity(const int entityType, const int entityIndexToCopy, Vector origin, const bool checkPlayerEntity)
@@ -42,6 +55,8 @@ bool Sakura::Lua::Game::CreateVisibleEntity(const int entityType, const int enti
 
 	if (checkPlayerEntity && !entity->player)
 		return false;
+
+	entity->origin = origin;
 
 	g_Engine.CL_CreateVisibleEntity(entityType, entity);
 
@@ -204,11 +219,18 @@ std::string Sakura::Lua::LocalPlayer::GetCommandString(const char* command)
 	return g_Engine.pfnGetCvarString(fullCommand);
 }
 
-int Sakura::Lua::LocalPlayer::GetCommandFloat(const char* command)
+float Sakura::Lua::LocalPlayer::GetCommandFloat(const char* command)
 {
 	char fullCommand[64];
 	sprintf(fullCommand, "%s", command);
 	return g_Engine.pfnGetCvarFloat(fullCommand);
+}
+
+int Sakura::Lua::LocalPlayer::GetCommandInt(const char* command)
+{
+	char fullCommand[64];
+	sprintf(fullCommand, "%s", command);
+	return static_cast<int>(g_Engine.pfnGetCvarFloat(fullCommand));
 }
 
 std::string Sakura::Lua::LocalPlayer::GetWeaponName()
@@ -445,6 +467,90 @@ void Sakura::Lua::ImGui::Drawings::AddRectFilled(ImVec2& start, ImVec2& end, ImC
 	::ImGui::GetWindowDrawList()->AddRectFilled(start, end, color, rounding, corners);
 }
 
+//void Sakura::Lua::Settings::SaveInt(const std::string name, int value)
+//{
+//	LogToFile("Saving int from lua: %i", value);
+//	std::string luacvar = "lua_" + name;
+//	AddCvarFloat(luacvar.c_str(), &value);
+//}
+//
+//void Sakura::Lua::Settings::SaveFloat(const std::string name, float value)
+//{
+//	LogToFile("Saving float from lua: %.1f", value);
+//	std::string luacvar = "lua_" + name;
+//	AddCvarFloat(luacvar.c_str(), &value);
+//}
+//
+//void Sakura::Lua::Settings::SaveBool(const std::string name, bool value)
+//{
+//	LogToFile("Saving bool from lua: %.0f", &value);
+//	std::string luacvar = "lua_" + name;
+//	AddCvarFloat(luacvar.c_str(), &value);
+//}
+//
+//int Sakura::Lua::Settings::LoadInt(const std::string name, const int value)
+//{
+//	std::string luacvar = "lua_" + name;
+//
+//	for (names.it_start(); names.it_running(); names.it_next())
+//	{
+//		if (strcmp(names.str, luacvar.c_str()) != 0)
+//			continue;
+//
+//		int index = names.num;
+//
+//		if (entries[index].data == nullptr)
+//			break;
+//
+//		int* floatPtr = static_cast<int*>(entries[index].data);
+//		return *floatPtr;
+//	}
+//
+//	return value; // return the default value
+//}
+//
+//float Sakura::Lua::Settings::LoadFloat(const std::string name, const float value)
+//{
+//	std::string luacvar = "lua_" + name;
+//
+//	for (names.it_start(); names.it_running(); names.it_next())
+//	{
+//		if (strcmp(names.str, luacvar.c_str()) != 0)
+//			continue;
+//
+//		int index = names.num;
+//
+//		if (entries[index].data == nullptr)
+//			break;
+//
+//		float* floatPtr = static_cast<float*>(entries[index].data);
+//		return *floatPtr;
+//	}
+//
+//	return value; // return the default value
+//}
+//
+//bool Sakura::Lua::Settings::LoadBool(const std::string name, const bool value)
+//{
+//	std::string luacvar = "lua_" + name;
+//
+//	for (names.it_start(); names.it_running(); names.it_next())
+//	{
+//		if (strcmp(names.str, luacvar.c_str()) != 0)
+//			continue;
+//
+//		int index = names.num;
+//
+//		if (entries[index].data == nullptr)
+//			break;
+//
+//		bool* floatPtr = static_cast<bool*>(entries[index].data);
+//		return *floatPtr;
+//	}
+//
+//	return value; // return the default value
+//}
+
 void DefineLuaGlobal(lua_State* L, const char* name, int value)
 {
 	lua_pushinteger(L, value);
@@ -588,6 +694,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("GetWeaponID", &Sakura::Lua::LocalPlayer::GetWeaponID)
 			.addFunction("GetCommandString", &Sakura::Lua::LocalPlayer::GetCommandString)
 			.addFunction("GetCommandFloat", &Sakura::Lua::LocalPlayer::GetCommandFloat)
+			.addFunction("GetCommandInt", &Sakura::Lua::LocalPlayer::GetCommandInt)
 			.addFunction("ExecuteCommand", &Sakura::Lua::LocalPlayer::ExecuteCommand)
 
 			.addFunction("FixMoveStart", &Sakura::Lua::LocalPlayer::FixMoveStart)
@@ -605,6 +712,16 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("IsAlive", &Sakura::Lua::Player::IsAlive)
 		.endNamespace()
 
+		/*.beginNamespace("Settings")
+			.addFunction("SaveInt", &Sakura::Lua::Settings::SaveInt)
+			.addFunction("SaveFloat", &Sakura::Lua::Settings::SaveFloat)
+			.addFunction("SaveBool", &Sakura::Lua::Settings::SaveBool)
+
+			.addFunction("LoadInt", &Sakura::Lua::Settings::LoadInt)
+			.addFunction("LoadFloat", &Sakura::Lua::Settings::LoadFloat)
+			.addFunction("LoadBool", &Sakura::Lua::Settings::LoadBool)
+		.endNamespace()*/
+
 		.beginNamespace("Notify")
 			.addFunction("Create", &Sakura::Lua::Notify::Create)
 		.endNamespace()
@@ -621,6 +738,8 @@ bool Sakura::Lua::Init(lua_State* L)
 	DefineLuaGlobal(L, "SAKURA_ADD_ENTITY", SAKURA_CALLBACK_AT_ADDENTITY);
 	DefineLuaGlobal(L, "SAKURA_DYNAMICSOUND_PLAY", SAKURA_CALLBACK_AT_DYNAMICSOUND);
 	DefineLuaGlobal(L, "SAKURA_SOUND_INIT", SAKURA_CALLBACK_AT_INIT_BASS);
+	//DefineLuaGlobal(L, "SAKURA_LOAD_CONFIG", SAKURA_CALLBACK_AT_LOAD_CONFIG);
+	//DefineLuaGlobal(L, "SAKURA_SAVE_CONFIG", SAKURA_CALLBACK_AT_SAVE_CONFIG);
 
 	DefineLuaGlobal(L, "ENTITY_TYPE_NORMAL", ENTITY_TYPE_NORMAL);
 	DefineLuaGlobal(L, "ENTITY_TYPE_PLAYER", ENTITY_TYPE_PLAYER);
@@ -830,6 +949,7 @@ void Sakura::Lua::Reload()
 	if (scripts.size() > 0)
 	{
 		currentScriptIndex = 0;
+		ScriptsCount = 0;
 
 		for (auto& script : scripts)
 		{
