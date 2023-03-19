@@ -555,6 +555,11 @@ void Sakura::Lua::ImGui::Drawings::AddRectFilled(ImVec2& start, ImVec2& end, ImC
 //	return value; // return the default value
 //}
 
+void Sakura::Lua::DynamicSound::ChangeNextSoundVolume(float volume)
+{
+	::Sakura::Esp::ChangeDynamicSoundVolume(volume);
+}
+
 void DefineLuaGlobal(lua_State* L, const char* name, int value)
 {
 	lua_pushinteger(L, value);
@@ -645,6 +650,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("GetTime", &Sakura::Lua::Game::GetTime)
 			.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
 			.addFunction("CreateBeamPoint", &Sakura::Lua::Game::CreateBeamPoint)
+			.addFunction("ChangeNextSoundVolume", &Sakura::Lua::DynamicSound::ChangeNextSoundVolume)
 		.endNamespace()
 
 		.beginNamespace("ImGui")

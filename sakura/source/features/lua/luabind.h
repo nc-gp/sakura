@@ -179,5 +179,10 @@ namespace Sakura
 			float LoadFloat(const std::string name, const float value);
 			bool LoadBool(const std::string name, const bool value);
 		};
+
+		namespace DynamicSound
+		{
+			void ChangeNextSoundVolume(float volume);
+		};
 	};
 };
