@@ -104,6 +104,11 @@ int Sakura::Lua::LocalPlayer::GetFlags()
 	return pmove->flags;
 }
 
+int Sakura::Lua::LocalPlayer::GetHealth()
+{
+	return g_Local.iPrevHealth;
+}
+
 bool Sakura::Lua::LocalPlayer::CheckFlag(const int flag)
 {
 	return (pmove->flags & flag);
@@ -300,6 +305,14 @@ Vector Sakura::Lua::Player::GetOrigin(int index)
 	return player->origin;
 }
 
+int Sakura::Lua::Player::GetHealth(int index)
+{
+	if (index < 1 || index >= 32)
+		return 0;
+
+	return g_Player[index].iHealth;
+}
+
 std::string Sakura::Lua::Player::GetName(int index)
 {
 	if (index < 1 || index >= 32)
@@ -439,6 +452,12 @@ float Sakura::Lua::ImGui::KeyBind(const char* szText, int iKey)
 	float iTheKey = iKey;
 	::Sakura::Menu::HudKeyBind(iTheKey, szText, {}, true);
 	return iTheKey;
+}
+
+ImColor Sakura::Lua::ImGui::Color(const char* szText, ImColor& color)
+{
+	::Sakura::Menu::Widgets::ColorEdit(szText, (float*)&color, ImGuiColorEditFlags_NoDragDrop | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaBar);
+	return color;
 }
 
 ImVec2 Sakura::Lua::ImGui::CalcTextSize(const char* label)
@@ -663,6 +682,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("Combo", &Sakura::Lua::ImGui::Combo)
 			.addFunction("Slider", &Sakura::Lua::ImGui::SliderInt)
 			.addFunction("KeyBind", &Sakura::Lua::ImGui::KeyBind)
+			.addFunction("Color", &Sakura::Lua::ImGui::Color)
 
 			.addFunction("GetWindowSize", &Sakura::Lua::ImGui::GetWindowSize)
 			.addFunction("CalcTextSize", &Sakura::Lua::ImGui::CalcTextSize)
@@ -685,6 +705,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("PressButton", &Sakura::Lua::LocalPlayer::PressButton)
 			.addFunction("ReleaseButton", &Sakura::Lua::LocalPlayer::ReleaseButton)
 			.addFunction("GetOrigin", &Sakura::Lua::LocalPlayer::GetOrigin)
+			.addFunction("GetHealth", &Sakura::Lua::LocalPlayer::GetHealth)
 			.addFunction("GetViewAngles", &Sakura::Lua::LocalPlayer::GetViewAngles)
 			.addFunction("SetViewAngles", &Sakura::Lua::LocalPlayer::SetViewAngles)
 			.addFunction("IsAlive", &Sakura::Lua::LocalPlayer::IsAlive)
@@ -719,6 +740,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("GetDistance", &Sakura::Lua::Player::GetDistance)
 			.addFunction("GetActualDistance", &Sakura::Lua::Player::GetActualDistance)
 			.addFunction("GetPing", &Sakura::Lua::Player::GetPing)
+			.addFunction("GetHealth", &Sakura::Lua::Player::GetHealth)
 			.addFunction("IsAlive", &Sakura::Lua::Player::IsAlive)
 		.endNamespace()
 
@@ -750,6 +772,9 @@ bool Sakura::Lua::Init(lua_State* L)
 	DefineLuaGlobal(L, "SAKURA_SOUND_INIT", SAKURA_CALLBACK_AT_INIT_BASS);
 	//DefineLuaGlobal(L, "SAKURA_LOAD_CONFIG", SAKURA_CALLBACK_AT_LOAD_CONFIG);
 	//DefineLuaGlobal(L, "SAKURA_SAVE_CONFIG", SAKURA_CALLBACK_AT_SAVE_CONFIG);
+
+	DefineLuaGlobal(L, "TEAM_TT", TEAM_TT);
+	DefineLuaGlobal(L, "TEAM_CT", TEAM_CT);
 
 	DefineLuaGlobal(L, "ENTITY_TYPE_NORMAL", ENTITY_TYPE_NORMAL);
 	DefineLuaGlobal(L, "ENTITY_TYPE_PLAYER", ENTITY_TYPE_PLAYER);

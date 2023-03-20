@@ -95,6 +95,7 @@ namespace Sakura
 			int GetIndex();
 			int GetTeam();
 			int GetFlags();
+			int GetHealth();
 			bool CheckFlag(const int flag);
 			int GetButtons();
 			bool CheckButton(const usercmd_s* cmd, const int button);
@@ -130,13 +131,14 @@ namespace Sakura
 		namespace Player
 		{
 			int GetTeam(int index);
+			int GetHealth(int index);
+			int GetDistance(int index);
+			int GetPing(int index);
+			float GetActualDistance(int index);
+			bool IsAlive(int index);
 			Vector GetOrigin(int index);
 			std::string GetName(int index);
 			std::string GetModelName(int index);
-			int GetDistance(int index);
-			float GetActualDistance(int index);
-			int GetPing(int index);
-			bool IsAlive(int index);
 		};
 
 		namespace Notify
@@ -156,6 +158,8 @@ namespace Sakura
 			int Combo(const char* szText, int iCurrentValue, const char* szOptions);
 			int SliderInt(const char* szText, int iTheValue, int iMinimium, int iMaximum);
 			float KeyBind(const char* szText, int iKey);
+
+			ImColor Color(const char* szText, ImColor& color);
 
 			ImVec2 GetWindowSize();
 			ImVec2 CalcTextSize(const char* label);
