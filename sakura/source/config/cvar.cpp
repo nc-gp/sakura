@@ -230,9 +230,18 @@ void CVARlist::init()
 
 	INITCVAR(aim_id_mode, 1.0);
 
-	for (unsigned int i = 1; i <= 30; i++)
+	for (size_t i = 1; i <= 30; ++i)
 	{
-		if (i == 2 || i == 4 || i == 6 || i == 9 || i == 25 || i == 29) continue;
+		if (i == WEAPON_GLOCK || i == WEAPON_HEGRENADE || i == WEAPON_C4 || i == WEAPON_SMOKEGRENADE || i == WEAPON_FLASHBANG) continue;
+
+		if (i == WEAPON_KNIFE)
+		{
+			char str[256];
+			sprintf(str, "rage[%d].rage_hitbox", i);
+			AddCvarFloat(str, &cvar.rage[i].rage_hitbox); rage[i].rage_hitbox = 11.0;
+
+			continue;
+		}
 
 		char str[256];
 		sprintf(str, "legit[%d].active", i);
@@ -670,7 +679,6 @@ void CVARlist::init()
 	INITCVAR(visual_deathmark_enable, 0.0);
 	INITCVAR(visual_deathmark_seconds, 5.0);
 	INITCVAR(visual_deathmark_glow, 0.0);
-	//INITCVAR(visual_deathmark_trans, 1.0);
 	INITCVAR(visual_deathmark_transparency, 128.0);
 	INITCVAR(visual_deathmark_color[0], 1.0);
 	INITCVAR(visual_deathmark_color[1], 1.0);
