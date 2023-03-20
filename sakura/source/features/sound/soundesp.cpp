@@ -80,7 +80,12 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 		{
 			try
 			{
-				callback(entid, std::string(szSoundFile), realDynamicSoundVolume, fOrigin);
+				Vector origin;
+				origin.x = fOrigin[0];
+				origin.x = fOrigin[1];
+				origin.x = fOrigin[2];
+
+				callback(entid, std::string(szSoundFile), realDynamicSoundVolume, origin);
 			}
 			catch (luabridge::LuaException const& error)
 			{
