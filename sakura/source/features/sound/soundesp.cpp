@@ -26,7 +26,11 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 		iPitch = cvar.misc_fire_sounds_pitch;
 	}
 
-	if (strstr(szSoundFile, "player"))
+	if (strstr(szSoundFile, "player") &&
+		!strstr(szSoundFile, "pl_shell") &&
+		!strstr(szSoundFile, "ric") &&
+		!strstr(szSoundFile, "glass") &&
+		!strstr(szSoundFile, "debris"))
 	{
 		if (entid > 0 && entid < 33)
 		{
