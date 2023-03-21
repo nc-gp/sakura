@@ -30,7 +30,7 @@ DWORD Sakura::Lua::Game::InitSound(const char* filename)
 	HSAMPLE sample = BASS_SampleLoad(false, temp, 0, 0, 60000, 0);
 
 	if (!sample)
-		LogToFile("Failed to load sound '%s' from lua. Error code: %i.", filename, BASS_ErrorGetCode());
+		Sakura::Log::File("Failed to load sound '%s' from lua. Error code: %i.", filename, BASS_ErrorGetCode());
 
 	Sounds.push_back(sample);
 
@@ -401,7 +401,7 @@ void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, lua
 		}
 		catch (luabridge::LuaException const& error)
 		{
-			LogToFile("Lua script error: %s", error.what());
+			Sakura::Log::File("Lua script error: %s", error.what());
 		}
 	}
 	::ImGui::End();
@@ -1008,7 +1008,7 @@ void Sakura::Lua::Reload()
 
 		if (!L)
 		{
-			LogToFile("Error creating Lua state for script: %s", p.path().filename().string().c_str());
+			Sakura::Log::File("Error creating Lua state for script: %s", p.path().filename().string().c_str());
 			continue;
 		}
 
@@ -1019,7 +1019,7 @@ void Sakura::Lua::Reload()
 		if (luaL_loadfile(L, p.path().string().c_str()) != LUA_OK)
 		{
 			const char* error_msg = lua_tostring(L, -1);
-			LogToFile("Error loading Lua script: %s", error_msg);
+			Sakura::Log::File("Error loading Lua script: %s", error_msg);
 			lua_close(L);
 			continue;
 		}
@@ -1030,7 +1030,7 @@ void Sakura::Lua::Reload()
 		if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 		{
 			const char* error_msg = lua_tostring(L, -1);
-			LogToFile("Error running Lua script: %s", error_msg);
+			Sakura::Log::File("Error running Lua script: %s", error_msg);
 			lua_close(L);
 			continue;
 		}
@@ -1043,5 +1043,5 @@ void Sakura::Lua::Reload()
 		scriptsLoaded += "\n";
 	}
 
-	LogToFile("%s (%d): \n%s", ScriptsCount > 1 ? "Loaded scripts" : "Loaded script", ScriptsCount, scriptsLoaded);
+	Sakura::Log::File("%s (%d): \n%s", ScriptsCount > 1 ? "Loaded scripts" : "Loaded script", ScriptsCount, scriptsLoaded);
 }

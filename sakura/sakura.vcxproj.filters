@@ -496,6 +496,9 @@
     <ClCompile Include="libs\bass\dll.cpp">
       <Filter>libs\bass</Filter>
     </ClCompile>
+    <ClCompile Include="source\helpers\log.cpp">
+      <Filter>source\helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\config\cvar.h">
@@ -992,6 +995,9 @@
     </ClInclude>
     <ClInclude Include="libs\bass\dll.h">
       <Filter>libs\bass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\helpers\log.h">
+      <Filter>source\helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

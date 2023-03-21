@@ -264,7 +264,7 @@ void HookImGui(HDC hdc)
 				{
 					if (script.GetState())
 					{
-						LogToFile("Error has occured in the lua: %s", error.what());
+						Sakura::Log::File("Error has occured in the lua: %s", error.what());
 						script.RemoveAllCallbacks();
 					}
 				}

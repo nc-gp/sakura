@@ -57,7 +57,7 @@ void DrawFullScreenWindow()
 				}
 				catch (luabridge::LuaException const& error)
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}

@@ -11,7 +11,7 @@ void Sakura::Sound::Init()
 
 	if (!BASS_Init(-1, 44100, 0, 0, NULL))
 	{
-		LogToFile("Failed to init sound: %i", BASS_ErrorGetCode());
+		Sakura::Log::File("Failed to init sound: %i", BASS_ErrorGetCode());
 		soundInit = true;
 		return;
 	}
@@ -48,7 +48,7 @@ void Sakura::Sound::Init()
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}

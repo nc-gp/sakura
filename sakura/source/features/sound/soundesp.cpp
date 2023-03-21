@@ -95,7 +95,7 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 					lua_close(script.GetState());
 				}

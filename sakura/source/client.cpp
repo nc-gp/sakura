@@ -86,7 +86,7 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -209,7 +209,7 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -431,7 +431,7 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 			}
 			catch (luabridge::LuaException const& error)
 			{
-				LogToFile("Error has occured in the lua: %s", error.what());
+				Sakura::Log::File("Error has occured in the lua: %s", error.what());
 				script.RemoveAllCallbacks();
 			}
 		}

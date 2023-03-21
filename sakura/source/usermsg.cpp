@@ -107,7 +107,7 @@ int ResetHUD(const char *pszName, int iSize, void *pbuf)
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -150,7 +150,7 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -213,7 +213,7 @@ int Damage(const char* pszName, int iSize, void* pbuf)
 			{
 				if (script.GetState())
 				{
-					LogToFile("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File("Error has occured in the lua: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}

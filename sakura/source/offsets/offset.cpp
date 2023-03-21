@@ -104,7 +104,7 @@ void AutoOffset::Error(char* fmt, ...)
 	va_end(va_alist);
 
 	MessageBox(0, buf, "Fatal Error", MB_OK | MB_ICONERROR);
-	LogToFile("Fatal error: %s", buf);
+	Sakura::Log::File("Fatal error: %s", buf);
 
 	ExitProcess(0);
 }

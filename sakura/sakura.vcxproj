@@ -748,6 +748,9 @@
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
+    <ClCompile Include="source\helpers\log.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="source\helpers\parsemsg.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\client.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -983,6 +986,7 @@
     <ClInclude Include="source\gui\guiwindow.h" />
     <ClInclude Include="source\gui\guiwindowpop.h" />
     <ClInclude Include="source\helpers\color.h" />
+    <ClInclude Include="source\helpers\log.h" />
     <ClInclude Include="source\helpers\parsemsg.h" />
     <ClInclude Include="source\helpers\stringfinder.h" />
     <ClInclude Include="source\helpers\strings.h" />
