@@ -64,6 +64,5 @@ namespace Sakura
 
 extern unsigned int Cstrike_SequenceInfo[];
 void ThirdPerson(struct ref_params_s* pparams);
-void LogToFile(const char* formatedText, ...);
 
 #endif
