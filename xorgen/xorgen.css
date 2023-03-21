@@ -1,0 +1,47 @@
+body {
+	margin: 0;
+	background-color: #2C001E;
+}
+
+#preForm {
+	text-align: center;
+}
+
+.anim {
+	transition: background-color .2s ease;
+}
+
+.anim:hover {
+	background-color: #9b2372;
+}
+
+.m-10-top {
+	margin-top: 10px;
+}
+
+input[type="text"],
+button,
+textarea {
+	color: #F4E3F7;
+	border: none;
+	border-radius: 5px;
+	outline: none;
+}
+
+input[type="text"],
+textarea {
+	background-color: #4D0033;
+	padding: 5px;
+}
+
+button {
+	background-color: #D6336C;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.out {
+	width: 750px;
+    height: 400px;
+    resize: none;
+}

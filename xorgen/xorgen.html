@@ -1,96 +1,30 @@
-<HTML>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+  		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<HEAD>
+		<title>Xorgen</title>
 
-<SCRIPT language=JavaScript>
+		<link rel="stylesheet" href="xorgen.css">
+	</head>
+	<body>
+		<div id="preForm">
+			<form name="formx">
+				<div class="preInput">
+					<input class="m-10-top anim" type="text" name="inp" size="20" value="Input">
+				</div>
 
-var symbols = " !\"#$%&'()*+'-./0123456789:;<=>?@";
-function toAscii (xx)  
-{
-	var loAZ = "abcdefghijklmnopqrstuvwxyz";
-	symbols+= loAZ.toUpperCase();
-	symbols+= "[\\]^_`";
-	symbols+= loAZ;
-	symbols+= "{|}~";
-	var loc;
-	loc = symbols.indexOf(xx);
-	if (loc >-1) 
-	{ 
-		Ascii_Decimal = 32 + loc;
-		return (32 + loc);
-	}
-	return(0);  // If not in range 32-126 return ZERO
-}
+				<div class="preInput">
+					<button class="m-10-top" type="button" onclick="blub(this.form)">CONVERT</button><br>
+				</div>
 
-function Dec2Hex(Decimal) 
-{
-	var hexChars = "0123456789ABCDEF";
-	var a = Decimal % 16;
-	var b = (Decimal - a)/16;
-	hex = "" + hexChars.charAt(b) + hexChars.charAt(a);
-	L = hexChars.charAt(a);
-	H = hexChars.charAt(b);
-	return hex;
-}
+				<div class="preInput">
+					<textarea class="m-10-top out anim" type="text" name="ans"></textarea>
+				</div>
+			</form>
+		</div>
 
-function randByte() { return Math.floor(Math.random()*256%256); }
-
-
-function blub(form) 
-{
-	s1 = form.inp.value;
-	xvaluestart = randByte();
-	xrefkill =  "0x" + Dec2Hex(randByte()) + Dec2Hex(randByte()) + Dec2Hex(randByte()) + Dec2Hex(randByte());
-
-	finallen = s1.length+1;
-
-	hexsequence = '"';
-	xvalue = xvaluestart;
-	for(i=0;i<s1.length;i++)
-	{ 
-		ch     = s1.substr(i,1);
-		var chval;
-		if(ch=="\\"){
-		    i++;
-		    ch     = s1.substr(i,1);
-		    if(ch=="0")       { chval = 0;  }
-		    else if(ch=="n")  { chval = 10; }
-		    else if(ch=="\\") { chval = toAscii("\\"); }
-		    else if(ch=="r")  { chval = 13; }
-		    else { javascript:alert("invalid control sequence: \\"+ch); }
-		    --finallen;
-		}
-		else if(ch=="|"){
-		    chval=0;
-		}
-		else { 
-		    chval  = toAscii(ch); 
-		    if(chval==0) { form.ans.value = "invalid character: "+ch; return; }
-        }
-		chval ^=xvalue;
-		xvalue += 1;
-		xvalue %= 256;
-		hexsequence += "\\x"+ Dec2Hex(chval);
-	}
-	hexsequence += '"';
-	
-	s2  = "/*"+s1+"*/XorStr<0x" + Dec2Hex(xvaluestart) + ","  + finallen + ","+xrefkill+'>('
-	s2 += hexsequence + "+" + xrefkill + ").s";
-	
-	form.ans.value = s2;
-	form.ans.focus();
-	form.ans.select();
-}
-
-
-</SCRIPT>
-</HEAD>
-
-
-<CENTER>
-<FORM name=formx>
-<INPUT name=inp size=20 value="Insert String">  <br><br>	
-<INPUT onclick=blub(this.form) type=button value="******  CONVERT TO XOR STRING   ******"><br>&nbsp;&nbsp; 
-<INPUT name=ans size=220 ?number?> 
-</FORM>
-</CENTER>
+		<script src="xorgen.js"></script>
+	</body>
+</html>
