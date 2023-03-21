@@ -417,207 +417,6 @@ void Sakura::Menu::Tabs::Misc::Notify()
 	ImGui::EndChild();
 }
 
-//void Sakura::Menu::Tabs::Misc::ModelHitboxes()
-//{
-//	static int modelselect = 0;
-//
-//	ImGui::BeginChild(/*##omh1*/XorStr<0x8F, 7, 0xE3D0899C>("\xAC\xB3\xFE\xFF\xFB\xA5" + 0xE3D0899C).s, ImVec2(250, -1));
-//	{
-//		Sakura::Menu::Widgets::Checkbox(/*Player Hitbox Number*/XorStr<0x13, 21, 0xD4B3C2A0>("\x43\x78\x74\x6F\x72\x6A\x39\x52\x72\x68\x7F\x71\x67\x00\x6F\x57\x4E\x46\x40\x54" + 0xD4B3C2A0).s, &cvar.visual_model_hitbox);
-//	}
-//	ImGui::EndChild();
-//	ImGui::SameLine();
-//	ImGui::BeginChild(/*##omh2*/XorStr<0x4C, 7, 0x16A628A6>("\x6F\x6E\x21\x22\x38\x63" + 0x16A628A6).s, ImVec2(250, -1));
-//	{
-//		for (unsigned int i = 0; i < Model_Aim.size(); i++)
-//		{
-//			if (modelselect > Model_Aim.size() - 1)
-//				modelselect = Model_Aim.size() - 1;
-//
-//			char str[256];
-//			sprintf(str, "%s", Model_Aim[i].displaymodel);
-//
-//			if (Sakura::Menu::Widgets::Button(str)) modelselect = i;
-//
-//			if (i == modelselect)
-//			{
-//				static int Hitbox = 0;
-//				if (Hitbox > Model_Aim[i].numhitboxes - 1)
-//					Hitbox = Model_Aim[i].numhitboxes - 1;
-//				ImGui::SameLine();
-//				if (Sakura::Menu::Widgets::Button(/*<*/XorStr<0x89, 2, 0xECBD3DB2>("\xB5" + 0xECBD3DB2).s, {}, ImGuiDir_Left))
-//				{
-//					if (Hitbox > 0)Hitbox--;
-//					else
-//						Hitbox = Model_Aim[i].numhitboxes - 1;
-//				}
-//				ImGui::SameLine();
-//				if (Sakura::Menu::Widgets::Button(/*>*/XorStr<0x65, 2, 0x8415AD47>("\x5B" + 0x8415AD47).s, {}, ImGuiDir_Right))
-//				{
-//					if (Hitbox < Model_Aim[i].numhitboxes - 1)Hitbox++;
-//					else
-//						Hitbox = 0;
-//				}
-//				ImGui::SameLine();
-//				ImGui::Text("%s", GetHitboxName(Hitbox));
-//				ImGui::SameLine();
-//				if (Sakura::Menu::Widgets::Button(/*Add*/XorStr<0x9F, 4, 0x6CB4C485>("\xDE\xC4\xC5" + 0x6CB4C485).s))
-//				{
-//					bool saved = false;
-//					for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-//					{
-//						if (!strcmp(Model_Selected.checkmodel, Model_Aim[i].checkmodel) && Model_Selected.numhitbox == Hitbox)
-//						{
-//							saved = true;
-//							break;
-//						}
-//					}
-//					if (!saved)
-//					{
-//						model_aim_select_t Model_Select;
-//						sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
-//						sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-//						Model_Select.numhitbox = Hitbox;
-//						Model_Aim_Select.push_front(Model_Select);
-//					}
-//				}
-//				ImGui::SameLine();
-//				if (Sakura::Menu::Widgets::Button(/*All*/XorStr<0x87, 4, 0xDF739743>("\xC6\xE4\xE5" + 0xDF739743).s))
-//				{
-//					for (int x = Model_Aim[i].numhitboxes - 1; x >= 0; x--)
-//					{
-//						bool saved = false;
-//						for (const model_aim_select_t& Model_Selected : Model_Aim_Select)
-//						{
-//							if (!strcmp(Model_Selected.checkmodel, Model_Aim[i].checkmodel) && Model_Selected.numhitbox == x)
-//							{
-//								saved = true;
-//								break;
-//							}
-//						}
-//						if (!saved)
-//						{
-//							model_aim_select_t Model_Select;
-//							sprintf(Model_Select.displaymodel, Model_Aim[i].displaymodel);
-//							sprintf(Model_Select.checkmodel, Model_Aim[i].checkmodel);
-//							Model_Select.numhitbox = x;
-//							Model_Aim_Select.push_front(Model_Select);
-//						}
-//					}
-//				}
-//				//ImGui::PopStyleColor();
-//			}
-//		}
-//	}
-//	ImGui::EndChild();
-//}
-
-//void Sakura::Menu::Tabs::Misc::SelectedHitboxes()
-//{
-//	ImGui::BeginChild(/*##omhs1*/XorStr<0x33, 8, 0x058D1607>("\x10\x17\x5A\x5B\x5F\x4B\x08" + 0x058D1607).s, ImVec2(250, -1));
-//	{
-//		for (unsigned int i = 0; i < Model_Aim_Select.size(); i++)
-//		{
-//			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "%s", Model_Aim_Select[i].displaymodel);
-//
-//			ImGui::SameLine();
-//
-//			char str[256];
-//
-//			sprintf(str, "+##%d", i);
-//			if (Sakura::Menu::Widgets::Button(str, {}, ImGuiDir_Up))
-//			{
-//				if (i > 0)
-//				{
-//					if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[i - 1].checkmodel))
-//						std::swap(Model_Aim_Select[i], Model_Aim_Select[i - 1]);
-//					else
-//					{
-//						if (i - 2 > 0)
-//						{
-//							for (int x = i - 2; x >= 0; x--)
-//							{
-//								if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[x].checkmodel))
-//								{
-//									for (int z = i; z > x + 1; z--)
-//									{
-//										std::swap(Model_Aim_Select[z], Model_Aim_Select[z - 1]);
-//									}
-//									break;
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//			if (ImGui::IsItemHovered())
-//			{
-//				ImGui::BeginTooltip();
-//				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-//				ImGui::TextUnformatted(/*Push Priority Front*/XorStr<0x69, 20, 0xDBE1EC27>("\x39\x1F\x18\x04\x4D\x3E\x1D\x19\x1E\x00\x1A\x00\x0C\x56\x31\x0A\x16\x14\x0F" + 0xDBE1EC27).s);
-//				ImGui::PopTextWrapPos();
-//				ImGui::EndTooltip();
-//			}
-//
-//			ImGui::SameLine();
-//
-//			sprintf(str, "-##%d", i);
-//			if (Sakura::Menu::Widgets::Button(str, {}, ImGuiDir_Down))
-//			{
-//				if (i + 1 < Model_Aim_Select.size())
-//				{
-//					if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[i + 1].checkmodel))
-//						std::swap(Model_Aim_Select[i], Model_Aim_Select[i + 1]);
-//					else
-//					{
-//						if (i + 2 < Model_Aim_Select.size())
-//						{
-//							for (unsigned int x = i + 2; x < Model_Aim_Select.size(); x++)
-//							{
-//								if (!strcmp(Model_Aim_Select[i].checkmodel, Model_Aim_Select[x].checkmodel))
-//								{
-//									for (unsigned int z = i; z < x - 1; z++)
-//									{
-//										std::swap(Model_Aim_Select[z], Model_Aim_Select[z + 1]);
-//									}
-//									break;
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//			if (ImGui::IsItemHovered())
-//			{
-//				ImGui::BeginTooltip();
-//				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-//				ImGui::TextUnformatted(/*Push Priority Back*/XorStr<0xD6, 19, 0x27C8B319>("\x86\xA2\xAB\xB1\xFA\x8B\xAE\xB4\xB1\xAD\x89\x95\x9B\xC3\xA6\x84\x85\x8C" + 0x27C8B319).s);
-//				ImGui::PopTextWrapPos();
-//				ImGui::EndTooltip();
-//			}
-//			ImGui::SameLine();
-//			ImGui::Text("%s", GetHitboxName(Model_Aim_Select[i].numhitbox));
-//
-//			ImGui::SameLine();
-//			sprintf(str, "Clear##%d", i);
-//			if (Sakura::Menu::Widgets::Button(str))
-//				Model_Aim_Select.erase(Model_Aim_Select.begin() + i);
-//		}
-//	}
-//	ImGui::EndChild();
-//	ImGui::SameLine();
-//	ImGui::BeginChild(/*##omhs2*/XorStr<0x9E, 8, 0x94AF9A06>("\xBD\xBC\xCF\xCC\xCA\xD0\x96" + 0x94AF9A06).s, ImVec2(250, -1));
-//	{
-//		if (Sakura::Menu::Widgets::Button(/*Save Hitbox*/XorStr<0x02, 12, 0x0C47B7D3>("\x51\x62\x72\x60\x26\x4F\x61\x7D\x68\x64\x74" + 0x0C47B7D3).s)) SaveHitbox();
-//		ImGui::SameLine();
-//		if (Sakura::Menu::Widgets::Button(/*Load Hitbox*/XorStr<0xE8, 12, 0xEADD439A>("\xA4\x86\x8B\x8F\xCC\xA5\x87\x9B\x92\x9E\x8A" + 0xEADD439A).s)) LoadHitbox();
-//		ImGui::SameLine();
-//		if (Sakura::Menu::Widgets::Button(/*Clear All*/XorStr<0xF8, 10, 0x5E875C6A>("\xBB\x95\x9F\x9A\x8E\xDD\xBF\x93\x6C" + 0x5E875C6A).s)) Model_Aim_Select.deque::clear();
-//	}
-//	ImGui::EndChild();
-//}
-
 void Sakura::Menu::Tabs::Misc::NameStealer()
 {
 	ImGui::BeginChild(/*##ns1*/XorStr<0xD3, 6, 0x7793227E>("\xF0\xF7\xBB\xA5\xE6" + 0x7793227E).s, ImVec2(250, -1));
@@ -625,17 +424,6 @@ void Sakura::Menu::Tabs::Misc::NameStealer()
 		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x02, 7, 0x873F1E85>("\x47\x6D\x65\x67\x6A\x62" + 0x873F1E85).s, &cvar.misc_namestealer);
 		Sakura::Menu::Widgets::Checkbox(/*Ignore off players on list*/XorStr<0xB1, 27, 0x39D42FAF>("\xF8\xD5\xDD\xDB\xC7\xD3\x97\xD7\xDF\xDC\x9B\xCC\xD1\xDF\xC6\xA5\xB3\xB1\xE3\xAB\xAB\xE6\xAB\xA1\xBA\xBE" + 0x39D42FAF).s, &cvar.misc_namestealer_playerlist);
 		Sakura::Menu::Widgets::Checkbox(/*Ignore spectators*/XorStr<0x74, 18, 0xB6B1FB7D>("\x3D\x12\x18\x18\x0A\x1C\x5A\x08\x0C\x18\x1D\x0B\xE1\xF5\xED\xF1\xF7" + 0xB6B1FB7D).s, &cvar.misc_namestealer_specs);
-
-		//ImGui::Spacing();
-		//ImGui::Spacing();
-		//ImGui::Spacing();
-
-		//if (Sakura::Menu::Widgets::Button(/*Invisible name*/XorStr<0xA7, 15, 0xCA0F109F>("\xEE\xC6\xDF\xC3\xD8\xC5\xCF\xC2\xCA\x90\xDF\xD3\xDE\xD1" + 0xCA0F109F).s)) Sakura::Name::Invisible();
-		//ImGui::SameLine();
-		//if (Sakura::Menu::Widgets::Button(/*Green name*/XorStr<0x30, 11, 0x020F5731>("\x77\x43\x57\x56\x5A\x15\x58\x56\x55\x5C" + 0x020F5731).s)) Sakura::Name::Green();
-		//ImGui::Spacing();
-		//ImGui::InputText(/*Nickname*/XorStr<0x18, 9, 0xB6300948>("\x56\x70\x79\x70\x72\x7C\x73\x7A" + 0xB6300948).s, nickname, 32);
-		//if (Sakura::Menu::Widgets::Button(/*Change*/XorStr<0xC6, 7, 0x36F72FDF>("\x85\xAF\xA9\xA7\xAD\xAE" + 0x36F72FDF).s)) Sakura::Name::Custom();
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
@@ -796,28 +584,29 @@ void Sakura::Menu::Tabs::Misc::Config()
 
 void Sakura::Menu::Tabs::Misc::Information()
 {
-	ImGui::Text(/*Welcome! nothing usefull can be found here.*/XorStr<0xFF, 44, 0x5B5895EA>("\xA8\x65\x6D\x61\x6C\x69\x60\x27\x27\x66\x66\x7E\x63\x65\x63\x69\x2F\x65\x62\x77\x75\x61\x79\x7A\x37\x7B\x78\x74\x3B\x7E\x78\x3E\x79\x4F\x54\x4C\x47\x04\x4D\x43\x55\x4D\x07" + 0x5B5895EA).s);
+	ImGui::Text(/*Welcome to this information tab!*/XorStr<0x53, 33, 0xC21A02AF>("\x04\x31\x39\x35\x38\x35\x3C\x7A\x2F\x33\x7D\x2A\x37\x09\x12\x42\x0A\x0A\x03\x09\x15\x05\x08\x1E\x02\x03\x03\x4E\x1B\x11\x13\x53" + 0xC21A02AF).s);
 	ImGui::Spacing();
 	ImGui::Spacing();
+	ImGui::Text(/*While there may not be anything particularly useful in this specific message*/XorStr<0x02, 77, 0xFAE31C1C>("\x55\x6B\x6D\x69\x63\x27\x7C\x61\x6F\x79\x69\x2D\x63\x6E\x69\x31\x7C\x7C\x60\x35\x74\x72\x38\x78\x74\x62\x68\x75\x77\x71\x47\x01\x52\x42\x56\x51\x4F\x44\x5D\x45\x4B\x59\x40\x54\x0E\x5A\x43\x54\x54\x46\x58\x15\x5F\x59\x18\x4D\x52\x52\x4F\x1D\x4D\x4F\x25\x22\x2B\x25\x2D\x26\x66\x2A\x2D\x3A\x39\x2A\x2B\x28" + 0xFAE31C1C).s);
+	ImGui::Text(/*we would like to provide some context about the creation of this cheat*/XorStr<0x14, 71, 0xAFA6CEB5>("\x63\x70\x36\x60\x77\x6C\x76\x7F\x3C\x71\x77\x74\x45\x01\x56\x4C\x04\x55\x54\x48\x5E\x40\x4E\x4E\x0C\x5E\x41\x42\x55\x11\x51\x5C\x5A\x41\x53\x4F\x4C\x19\x5B\x59\x53\x48\x4A\x1F\x34\x29\x27\x63\x27\x37\x23\x26\x3C\x20\x25\x25\x6C\x22\x28\x6F\x24\x39\x3B\x20\x74\x36\x3E\x32\x39\x2D" + 0xAFA6CEB5).s);
 	ImGui::Spacing();
-	ImGui::Text(/*The cheat has been created by 'Max "Maxine" Caulfield'*/XorStr<0x09, 55, 0x56B88DAF>("\x5D\x62\x6E\x2C\x6E\x66\x6A\x71\x65\x32\x7B\x75\x66\x36\x75\x7D\x7C\x74\x3B\x7F\x6F\x7B\x7E\x54\x44\x46\x03\x46\x5C\x06\x00\x65\x48\x52\x0B\x0E\x60\x4F\x57\x59\x5F\x57\x11\x14\x76\x57\x42\x54\x5F\x53\x5E\x50\x59\x19" + 0x56B88DAF).s);
-	ImGui::Text(/*Special thanks to:*/XorStr<0xC2, 19, 0x95143EAB>("\x91\xB3\xA1\xA6\xAF\xA6\xA4\xE9\xBE\xA3\xAD\xA3\xA5\xBC\xF0\xA5\xBD\xE9" + 0x95143EAB).s);
-	
-	ImGui::Text(/* - */XorStr<0xBA, 4, 0xDDAF9BC7>("\x9A\x96\x9C" + 0xDDAF9BC7).s);
+	ImGui::Spacing();
+	ImGui::Text(/*It was designed by Max "Maxine" Caulfield - and we would like to extend special thanks to:*/XorStr<0x53, 91, 0xA031A345>("\x1A\x20\x75\x21\x36\x2B\x79\x3E\x3E\x2F\x34\x39\x31\x05\x05\x42\x01\x1D\x45\x2B\x06\x10\x49\x48\x26\x0D\x15\x07\x01\x15\x53\x52\x30\x15\x00\x1A\x11\x11\x1C\x16\x1F\x5C\x50\x5E\x1E\xEE\xE5\xA2\xF4\xE1\xA5\xF1\xE8\xFD\xE5\xEE\xAB\xE0\xE4\xE5\xEA\xB0\xE5\xFD\xB3\xF1\xED\xE2\xF2\xF6\xFD\xBA\xE8\xEC\xF8\xFD\xF6\xC1\xCD\x82\xD7\xCC\xC4\xC8\xCC\xDB\x89\xDE\xC4\x96" + 0xA031A345).s);
+	ImGui::Text(/* - */XorStr<0xFF, 4, 0xDD194FC6>("\xDF\x2D\x21" + 0xDD194FC6).s);
 	ImGui::SameLine();
-	ImGui::TextColored(ImColor(1.f, 1.f, 0.5f, 1.f), /*B# (coding)*/XorStr<0xCC, 12, 0x3B733E67>("\x8E\xEE\xEE\xE7\xB3\xBE\xB6\xBA\xBA\xB2\xFF" + 0x3B733E67).s);
-
-	ImGui::Text(/* - */XorStr<0x17, 4, 0x51236D2A>("\x37\x35\x39" + 0x51236D2A).s);
+	ImGui::TextColored(ImColor(1.f, 1.f, 0.5f, 1.f), /*B#*/XorStr<0x14, 3, 0x40C89877>("\x56\x36" + 0x40C89877).s);
 	ImGui::SameLine();
-	ImGui::TextColored(ImColor(0.5f, 0.5f, 1.f, 1.f), /*Flow of Life (Motivation and inspiration)*/XorStr<0x9A, 42, 0x36F64499>("\xDC\xF7\xF3\xEA\xBE\xF0\xC6\x81\xEE\xCA\xC2\xC0\x86\x8F\xE5\xC6\xDE\xC2\xDA\xCC\xDA\xC6\xDF\xDF\x92\xD2\xDA\xD1\x96\xDE\xD6\xCA\xCA\xD2\xCE\xDC\xCA\xD6\xAF\xAF\xEB" + 0x36F64499).s);
+	ImGui::Text(/* for his coding expertise*/XorStr<0x38, 26, 0x1DA1D491>("\x18\x5F\x55\x49\x1C\x55\x57\x4C\x60\x22\x2D\x27\x2D\x2B\x21\x67\x2D\x31\x3A\x2E\x3E\x39\x27\x3C\x35" + 0x1DA1D491).s);
 
-	ImGui::Spacing();
-
-	ImGui::Text(/* - */XorStr<0x0C, 4, 0xC8FFE9D0>("\x2C\x20\x2E" + 0xC8FFE9D0).s);
+	ImGui::Text(/* - */XorStr<0x82, 4, 0x58E4118C>("\xA2\xAE\xA4" + 0x58E4118C).s);
 	ImGui::SameLine();
-	ImGui::TextColored(ImColor(0.5f, 0.5f, 1.f, 1.f), /*lui1337(tests) */XorStr<0x5B, 16, 0x0D1E3F8D>("\x37\x29\x34\x6F\x6C\x53\x56\x42\x4B\x10\x00\x15\x13\x1B\x40" + 0x0D1E3F8D).s);
+	ImGui::TextColored(ImColor(0.5f, 0.5f, 1.f, 1.f), /*Flow of Life*/XorStr<0xAB, 13, 0xEA35E0AF>("\xED\xC0\xC2\xD9\x8F\xDF\xD7\x92\xFF\xDD\xD3\xD3" + 0xEA35E0AF).s);
+	ImGui::SameLine();
+	ImGui::Text(/* for his motivation and inspiration*/XorStr<0x48, 36, 0x13D35875>("\x68\x2F\x25\x39\x6C\x25\x27\x3C\x70\x3C\x3D\x27\x3D\x23\x37\x23\x31\x36\x34\x7B\x3D\x33\x3A\x7F\x09\x0F\x11\x13\x0D\x17\x07\x13\x01\x06\x04" + 0x13D35875).s);
 
-	ImGui::Spacing();
-	ImGui::Spacing();
-	ImGui::Spacing();
+	ImGui::Text(/* - */XorStr<0xA6, 4, 0xFE8875D5>("\x86\x8A\x88" + 0xFE8875D5).s);
+	ImGui::SameLine();
+	ImGui::TextColored(ImColor(0.1725f, 0.8f, 0.2901f, 1.f), /*lui1337*/XorStr<0x6C, 8, 0x350D7A75>("\x00\x18\x07\x5E\x43\x42\x45" + 0x350D7A75).s);
+	ImGui::SameLine();
+	ImGui::Text(/* for his valuable testing and feedback*/XorStr<0xF7, 39, 0x7A594312>("\xD7\x9E\x96\x88\xDB\x94\x94\x8D\xDF\x76\x60\x6E\x76\x65\x67\x6A\x62\x28\x7D\x6F\x78\x78\x64\x60\x68\x30\x70\x7C\x77\x34\x73\x73\x72\x7C\x7B\x7B\x78\x77" + 0x7A594312).s);
 }
