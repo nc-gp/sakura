@@ -1009,32 +1009,6 @@ void DrawMenuWindow()
 
 		delete[] items;
 
-		//ImGui::BeginTabBar(/*luascripts*/XorStr<0xCE, 11, 0x0006A541>("\xA2\xBA\xB1\xA2\xB1\xA1\xBD\xA5\xA2\xA4" + 0x0006A541).s, ImGuiTabBarFlags_NoTooltip);
-		//for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
-		//{
-		//	auto& script = Sakura::Lua::scripts[i];
-
-		//	if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU))
-		//		continue;
-
-		//	auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
-		//	for (const auto& callback : callbacks)
-		//	{
-		//		try
-		//		{
-		//			callback();
-		//		}
-		//		catch (luabridge::LuaException const& error)
-		//		{
-		//			if (script.GetState())
-		//			{
-		//				LogToFile("Error has occured in the lua: %s", error.what());
-		//				script.RemoveAllCallbacks();
-		//			}
-		//		}
-		//	}
-		//}
-		//ImGui::EndTabBar();
 		ImGui::End();
 		ImGui::PopStyleColor(12);
 		ImGui::PopStyleVar();

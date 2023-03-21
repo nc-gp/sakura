@@ -162,52 +162,6 @@ void MenuHandle()
     }
 }
 
-//void MenuHandle()
-//{
-//	if (checkdrawscreen())
-//	{
-//		if (bShowMenu)
-//		{
-//			if (Sakura::ScreenShot::IsDrawing())
-//			{
-//				ImGui::GetIO().MouseDrawCursor = true;
-//
-//				if (bShowMenu) 
-//                    changewindowfocus = true;
-//			}
-//			else
-//				ImGui::GetIO().MouseDrawCursor = false;
-//		}
-//	}
-//	if (checkmenu())
-//	{
-//		if (bShowMenu)
-//		{
-//			ImGui::GetIO().MouseDrawCursor = true;
-//			g_Client.IN_DeactivateMouse();
-//
-//			if (bShowMenu)
-//                changewindowfocus = true;
-//		}
-//		else
-//		{
-//			SetCursorPos(g_Engine.GetWindowCenterX(), g_Engine.GetWindowCenterY());
-//			ImGui::GetIO().MouseDrawCursor = false;
-//			g_Client.IN_ActivateMouse();
-//		}
-//	}
-//	
-//	if ((bShowMenu) && ::GetActiveWindow() == hGameWnd)
-//	{
-//		POINT ppt;
-//		if (GetCursorPos(&ppt))
-//		{
-//			if (ppt.x == g_Engine.GetWindowCenterX() && ppt.y == g_Engine.GetWindowCenterY())
-//				g_Client.IN_DeactivateMouse();
-//		}
-//	}
-//}
-
 void ClearHudKeys()
 {
 	for (unsigned int i = 0; i < 256; i++)
@@ -230,7 +184,6 @@ void HookImGui(HDC hdc)
 {
 	ColorChange();
 	ClearSound();
-	//Sakura::Hitboxes::GetModelHitboxes();
 	InistalizeImgui(hdc);
 
 	if (!bOldOpenGL)
