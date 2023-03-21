@@ -81,8 +81,8 @@ int ResetHUD(const char *pszName, int iSize, void *pbuf)
 
 	for (size_t i = 1; i <= g_Engine.GetMaxClients(); ++i)
 	{
-		if (strstr(client_state->levelname, "1hp")) g_Player[i].iHealth = 100;
-		else if (strstr(client_state->levelname, "35hp")) g_Player[i].iHealth = 100;
+		if (strstr(client_state->levelname, "1hp")) g_Player[i].iHealth = 1;
+		else if (strstr(client_state->levelname, "35hp")) g_Player[i].iHealth = 35;
 		else g_Player[i].iHealth = 100;
 
 		g_Player[i].deathMark = false;
