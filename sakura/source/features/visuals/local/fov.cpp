@@ -23,7 +23,7 @@ void Sakura::FOVS::Aimbot()
 	positions.x = (x - (dx * g_Local.vNoRecoilAngle[1]));
 	positions.y = (y + (dy * g_Local.vNoRecoilAngle[0]));
 
-	for (unsigned int i = 1; i < (int)radius; i++)
+	for (size_t i = 1; i < (int)radius; ++i)
 	{
 		float opacity = (0.28f * cvar.visual_draw_fov_color[3]) / radius * i;
 		ImGui::GetCurrentWindow()->DrawList->AddCircle({ IM_ROUND(positions.x), IM_ROUND(positions.y) }, i, ImColor(cvar.visual_draw_fov_color[0], cvar.visual_draw_fov_color[1], cvar.visual_draw_fov_color[2], opacity), 100);
@@ -123,7 +123,7 @@ void Sakura::FOVS::Spread()
 	if (radius[calculated] > 250.f)
 		radius[calculated] = 250.f;
 
-	for (float angle = 0.f; angle < radius[calculated]; angle++)
+	for (float angle = 0.f; angle < radius[calculated]; ++angle)
 	{
 		const float opacity = (0.28 * cvar.visual_draw_fov_color[3]) / radius[calculated] * angle;
 
