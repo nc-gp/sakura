@@ -8,3 +8,5 @@ Sakura is a free and public cheat for Counter-Strike 1.6.
 ## To-do:
 * Fix bugs.
 * Improve lua functions.
+* Flash check for legit aimbot.
+* Rewrite code for rest files.
