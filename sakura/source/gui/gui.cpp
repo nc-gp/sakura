@@ -56,8 +56,6 @@ void InistalizeImgui(HDC hdc)
 		ImGui::GetStyle().ItemSpacing = ImVec2(7, 4);
 		ImGui::GetStyle().ItemInnerSpacing = ImVec2(6, 6);
 		ImGui::GetStyle().ScrollbarSize = 8.0f;
-        //ImGui::GetStyle().Window
-		//ImGui::GetStyle().WindowMaxSize = ImGui::GetIO().DisplaySize;
 		ImGui::GetIO().IniFilename = NULL;
 		ImGui::GetIO().LogFilename = NULL;
 
@@ -164,7 +162,7 @@ void MenuHandle()
 
 void ClearHudKeys()
 {
-	for (unsigned int i = 0; i < 256; i++)
+	for (size_t i = 0; i < 256; ++i)
 	{
 		if (keysmenu[i] == true)
 			keysmenu[i] = false;
