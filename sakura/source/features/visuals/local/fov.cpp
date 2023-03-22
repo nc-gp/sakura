@@ -16,40 +16,23 @@ void Sakura::FOVS::Aimbot()
 	float dx = ImGui::GetIO().DisplaySize.x / g_Local.iFOV;
 	float dy = ImGui::GetIO().DisplaySize.y / g_Local.iFOV;
 
-	float radius = tanf(DEG2RAD(flFov) * 0.5f) / tanf(DEG2RAD(g_Local.iFOV) * 0.5f) * ImGui::GetIO().DisplaySize.x;
+
+	static double radius[Sakura::Animation::max_count], change_timestamp;
+	float current_radius = tanf(DEG2RAD(flFov) * 0.5f) / tanf(DEG2RAD(g_Local.iFOV) * 0.5f) * ImGui::GetIO().DisplaySize.x;
+
+	Sakura::Animation::Calculate(radius, change_timestamp, current_radius, 250.f, 0.2);
 
 	ImVec2 positions;
 
 	positions.x = (x - (dx * g_Local.vNoRecoilAngle[1]));
 	positions.y = (y + (dy * g_Local.vNoRecoilAngle[0]));
 
-	for (size_t i = 1; i < (int)radius; ++i)
+	for (float angle = 0.f; angle < radius[Sakura::Animation::calculated]; ++angle)
 	{
-		float opacity = (0.28f * cvar.visual_draw_fov_color[3]) / radius * i;
-		ImGui::GetCurrentWindow()->DrawList->AddCircle({ IM_ROUND(positions.x), IM_ROUND(positions.y) }, i, ImColor(cvar.visual_draw_fov_color[0], cvar.visual_draw_fov_color[1], cvar.visual_draw_fov_color[2], opacity), 100);
+		const float opacity = (0.28 * cvar.visual_draw_fov_color[3]) / radius[Sakura::Animation::calculated] * angle;
+
+		ImGui::GetCurrentWindow()->DrawList->AddCircle({ IM_ROUND(positions.x), IM_ROUND(positions.y) }, angle, ImColor(cvar.visual_draw_fov_color[0], cvar.visual_draw_fov_color[1], cvar.visual_draw_fov_color[2], opacity), 100);
 	}
-}
-
-double Interp(double s1, double s2, double s3, double f1, double f3)
-{
-	if (s2 == s1)
-		return f1;
-
-	if (s2 == s3)
-		return f3;
-
-	if (s3 == s1)
-		return f1;
-
-	return f1 + ((s2 - s1) / (s3 - s1)) * (f3 - f1);
-}
-
-float QuadEaseInOut(float t, float b, float c, float d)
-{
-    t /= d / 2;
-    if (t < 1) return c / 2 * t * t + b;
-    t--;
-    return -c / 2 * (t * (t - 2) - 1) + b;
 }
 
 void Sakura::FOVS::Spread()
@@ -69,66 +52,23 @@ void Sakura::FOVS::Spread()
 	float x = ImGui::GetIO().DisplaySize.x / 2;
 	float y = ImGui::GetIO().DisplaySize.y / 2;
 
-	enum { previous, current, calculated, max_count };
-
-	static double radius[max_count], change_timestamp;
+	static double radius[Sakura::Animation::max_count], change_timestamp;
 
 	float current_radius = g_Local.weapon.m_flSpread > 0 ?
 		g_Local.weapon.m_flSpread * 1000.0 / g_Local.iFOV * 90.0 :
 		0.0;
 
-	constexpr double animation_time = 0.2;
+	Sakura::Animation::Calculate(radius, change_timestamp, current_radius, 250.f, 0.2);
 
-	if (radius[current] != current_radius)
-	{
-		if (change_timestamp + animation_time >= client_state->time)
-			radius[previous] = radius[calculated];
-
-		radius[current] = current_radius;
-		change_timestamp = client_state->time;
-	}
-
-	/*float elapsed_time = static_cast<float>(client_state->time - change_timestamp);
-	float t = elapsed_time / static_cast<float>(animation_time);
-	float eased_radius = QuadEaseInOut(t, radius[previous], radius[current] - radius[previous], 1.f);*/
-	float elapsed_time = static_cast<float>(client_state->time - change_timestamp);
-	float t = elapsed_time / static_cast<float>(animation_time);
-	float eased_t = QuadEaseInOut(t, 0.0, 1.0, 1.0);
-	float eased_radius = radius[previous] + (radius[current] - radius[previous]) * eased_t;
-
-	if (elapsed_time >= animation_time)
-	{
-		radius[calculated] = radius[current];
-		radius[previous] = radius[current];
-	}
-	else
-	{
-		radius[calculated] = eased_radius;
-	}
-
-	/*if (change_timestamp + animation_time >= client_state->time)
-	{
-		radius[calculated] = static_cast<float>(Interp(change_timestamp, client_state->time,
-			change_timestamp + animation_time, radius[previous], radius[current]));
-	}
-	else
-	{
-		radius[calculated] = radius[current];
-		radius[previous] = radius[current];
-	}*/
-
-	if (radius[calculated] < 5.f)
+	if (radius[Sakura::Animation::calculated] < 5.f)
 		return;
 
-	if (radius[calculated] > 250.f)
-		radius[calculated] = 250.f;
-
-	for (float angle = 0.f; angle < radius[calculated]; ++angle)
+	for (float angle = 0.f; angle < radius[Sakura::Animation::calculated]; ++angle)
 	{
-		const float opacity = (0.28 * cvar.visual_draw_fov_color[3]) / radius[calculated] * angle;
+		const float opacity = (0.28 * cvar.visual_draw_fov_color[3]) / radius[Sakura::Animation::calculated] * angle;
 
 		ImGui::GetCurrentWindow()->DrawList->AddCircle({ IM_ROUND(x), IM_ROUND(y) }, angle, ImColor(cvar.visual_draw_fov_color[0], cvar.visual_draw_fov_color[1], cvar.visual_draw_fov_color[2], opacity), 100);
 	}
 
-	ImGui::GetCurrentWindow()->DrawList->AddCircle({ IM_ROUND(x), IM_ROUND(y) }, radius[calculated], ImColor(cvar.visual_draw_fov_color[0], cvar.visual_draw_fov_color[1], cvar.visual_draw_fov_color[2], cvar.visual_draw_fov_color[3]), 100);
+	ImGui::GetCurrentWindow()->DrawList->AddCircle({ IM_ROUND(x), IM_ROUND(y) }, radius[Sakura::Animation::calculated], ImColor(cvar.visual_draw_fov_color[0], cvar.visual_draw_fov_color[1], cvar.visual_draw_fov_color[2], cvar.visual_draw_fov_color[3]), 100);
 }
