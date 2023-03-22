@@ -92,6 +92,7 @@ extern char hldir[MAX_PATH];
 #include "helpers/textures.h"
 #include "helpers/parsemsg.h"
 #include "helpers/log.h"
+#include "helpers/anim.h"
 #include "other/smth/keydefs.h"
 #include "other/smth/gl3winit.h"
 #include "../libs/xor/xorstr.h"
