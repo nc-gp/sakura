@@ -32,11 +32,11 @@ void DrawFullScreenWindow()
 		DrawRouteLine();
 		DrawLongJump();
 		DrawSkeletonWorld();
-		DrawWorldEsp();
+		Sakura::Esp::World::Draw();
 		Sakura::Esp::DrawSoundNoIndex();
 		Sakura::Esp::DrawSoundIndex();
 		DrawSkeletonPlayer();
-		DrawPlayerEsp();
+		Sakura::Esp::Player::Draw();
 		DrawTraceGrenade();
 		DrawWeaponName();
 		Sakura::Aimbot::Draws();
