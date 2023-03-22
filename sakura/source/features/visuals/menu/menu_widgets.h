@@ -21,7 +21,6 @@ namespace Sakura
 			bool Combo(const char* label, float* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
 
 			bool ColorEdit(const char* label, float* color, ImGuiColorEditFlags flags = 0);
-			//bool List(float current_item, std::vector<std::string> items, int& item, ImColor color = ImColor(1.f, 1.f, 1.f));
 
 			bool Tab(const char* icon, const char* label, const ImVec2& size_arg, const bool selected);
 			bool SubTab(const char* label, const ImVec2& size_arg, const bool selected);

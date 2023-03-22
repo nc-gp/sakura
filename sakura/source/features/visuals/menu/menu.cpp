@@ -982,11 +982,11 @@ void DrawMenuWindow()
 			items[i] = copy;
 		}
 		
-		ImGui::BeginChild("##scchoose", ImVec2(145, 250), false, ImGuiWindowFlags_AlwaysAutoResize);
-		ImGui::ListBox("##sclist", &selectedScriptIndex, items, Sakura::Lua::scripts.size(), -1);
+		ImGui::BeginChild(/*##scchoose*/XorStr<0x13, 11, 0x5FFD6DC6>("\x30\x37\x66\x75\x74\x70\x76\x75\x68\x79" + 0x5FFD6DC6).s, ImVec2(145, 250), false, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::ListBox(/*##sclist*/XorStr<0xA7, 9, 0x420FACF5>("\x84\x8B\xDA\xC9\xC7\xC5\xDE\xDA" + 0x420FACF5).s, &selectedScriptIndex, items, Sakura::Lua::scripts.size(), -1);
 		ImGui::EndChild();
 		ImGui::SameLine();
-		ImGui::BeginChild("##sccmenu", ImVec2(400, 250), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::BeginChild(/*##sccmenu*/XorStr<0xC1, 10, 0x8A08E65C>("\xE2\xE1\xB0\xA7\xA6\xAB\xA2\xA6\xBC" + 0x8A08E65C).s, ImVec2(400, 250), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_HorizontalScrollbar);
 		// Render the selected script
 		auto& selectedScript = Sakura::Lua::scripts[selectedScriptIndex];
 		auto& callbacks = selectedScript.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_RENDERING_MENU);
@@ -1000,7 +1000,7 @@ void DrawMenuWindow()
 			{
 				if (selectedScript.GetState())
 				{
-					Sakura::Log::File("Error has occured in the lua: %s", error.what());
+					Sakura::Log::File(/*Error has occured in the lua: %s*/XorStr<0xE2, 33, 0xD1004AED>("\xA7\x91\x96\x8A\x94\xC7\x80\x88\x99\xCB\x83\x8E\x8D\x9A\x82\x94\x96\xD3\x9D\x9B\xD6\x83\x90\x9C\xDA\x97\x89\x9C\xC4\xDF\x25\x72" + 0xD1004AED).s, error.what());
 					selectedScript.RemoveAllCallbacks();
 				}
 			}
@@ -1025,9 +1025,6 @@ void DrawMenuWindow()
 		ImDrawList* draw = ImGui::GetWindowDrawList();
 		ImVec2 pos = ImGui::GetWindowPos();
 
-		// 19, 22, 26
-		// 25, 30, 35
-		// 45, 50, 55
 		draw->AddRectFilled({ pos.x, pos.y }, { pos.x + 720, pos.y + 50 }, ImColor((int)(cvar.visual_menu_color_header[0] * 255), (int)(cvar.visual_menu_color_header[1] * 255), (int)(cvar.visual_menu_color_header[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Top);
 		draw->AddRectFilled({ pos.x, pos.y + 50 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_items[0] * 255), (int)(cvar.visual_menu_color_items[1] * 255), (int)(cvar.visual_menu_color_items[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_All);
 		draw->AddRectFilled({ pos.x, pos.y + 470 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_footer[0] * 255), (int)(cvar.visual_menu_color_footer[1] * 255), (int)(cvar.visual_menu_color_footer[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Bot);
