@@ -3,15 +3,15 @@ body {
 	background-color: #2C001E;
 }
 
-#preForm {
+#xor-pre-form {
 	text-align: center;
 }
 
-.anim {
+.animated-background {
 	transition: background-color .2s ease;
 }
 
-.anim:hover {
+.animated-background:hover {
 	background-color: #9b2372;
 }
 
@@ -26,6 +26,7 @@ textarea {
 	border: none;
 	border-radius: 5px;
 	outline: none;
+	width: 750px;
 }
 
 input[type="text"],
@@ -40,8 +41,7 @@ button {
 	cursor: pointer;
 }
 
-.out {
-	width: 750px;
+textarea {
     height: 400px;
-    resize: none;
+	resize: none;
 }

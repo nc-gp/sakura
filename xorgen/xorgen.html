@@ -9,18 +9,18 @@
 		<link rel="stylesheet" href="xorgen.css">
 	</head>
 	<body>
-		<div id="preForm">
-			<form name="formx">
-				<div class="preInput">
-					<input class="m-10-top anim" type="text" name="inp" size="20" value="Input">
+		<div id="xor-pre-form">
+			<form>
+				<div class="input-container">
+					<input id="user-input-field" class="m-10-top animated-background" type="text" value="Text input">
 				</div>
 
-				<div class="preInput">
-					<button class="m-10-top" type="button" onclick="blub(this.form)">CONVERT</button><br>
+				<div class="input-container">
+					<button id="convert-button" class="m-10-top" type="button">Convert text to Xor string</button>
 				</div>
 
-				<div class="preInput">
-					<textarea class="m-10-top out anim" type="text" name="ans"></textarea>
+				<div class="input-container">
+					<textarea id="xor-output-field" class="m-10-top animated-background" type="text">Text output</textarea>
 				</div>
 			</form>
 		</div>
