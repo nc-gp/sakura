@@ -1,0 +1,3 @@
+[submodule "xorgen"]
+	path = xorgen
+	url = https://github.com/rbl-dot/xorgen-2023.git
