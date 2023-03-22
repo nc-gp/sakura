@@ -35,9 +35,9 @@ void Coal(Vector2D Pos, Vector2D Size, ImU32 color)
 	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y + Size.y }, { Pos.x + Size.x - (Size.x / 4), Pos.y + Size.y }, color);
 }
 
-void Box(float x, float y, float w, float h, ImRGBA color)
+void Sakura::Esp::Player::DrawBox(const float x, const float y, const float w, const float h, const ImRGBA color)
 {
-	if (!cvar.visual_box) 
+	if (!cvar.visual_box)
 		return;
 
 	if (cvar.visual_box_fill > 0) ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ x, y }, { x + w, y + h }, ImColor(color.r, color.g, color.b, cvar.visual_box_fill / 100.f));
@@ -67,89 +67,90 @@ void Box(float x, float y, float w, float h, ImRGBA color)
 	}
 }
 
-void Health(int id, float x, float y, float h)
+void Sakura::Esp::Player::DrawHealth(const int index, const float x, const float y, const float h)
 {
-	if (!cvar.visual_health) 
+	if (!cvar.visual_health)
 		return;
 
-	int hp = g_Player[id].iHealth;
+	static int playerHealth[33];
+	static double hp[33][Sakura::Animation::max_count], change_timestamp;
 
-	if (hp > 100) hp = 100;
-	if (hp < 0) hp = 0;
+	playerHealth[index] = g_Player[index].iHealth;
 
-	float red = 255 - (hp * 2.55);
-	float green = hp * 2.55;
-	float healthHeight = (h / 100) * hp;
+	Sakura::Animation::Calculate(hp[index], change_timestamp, playerHealth[index], 100, 0.8);
+
+	float red = 255 - (playerHealth[index] * 2.55);
+	float green = playerHealth[index] * 2.55;
+	float healthHeight = (h / 100) * hp[index][Sakura::Animation::calculated];
 
 	ImGui::GetCurrentWindow()->DrawList->AddRect({ x - 8, y + h + 1 }, { x - 4, y - 1 }, ImColor(0.f, 0.f, 0.f, 1.f));
 	ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ x - 7, y + h }, { x - 5, (y + h) - healthHeight }, ImColor(red / 255.f, green / 222.f, 0.f, 1.f));
+
+	if (playerHealth[index] < 100)
+	{
+		std::string healthString = std::to_string(static_cast<int>(hp[index][Sakura::Animation::calculated]));
+		int calc = ImGui::CalcTextSize(healthString.c_str()).x;
+		ImGui::GetCurrentWindow()->DrawList->AddText({ x - 7 - calc, (y + h) - healthHeight }, Sakura::Colors::White(), healthString.c_str());
+	}
 }
 
-void Vip(int id, float x, float y)
+void Sakura::Esp::Player::DrawVip(const int index, const float x, const float y)
 {
-	if (!cvar.visual_vip || !g_Player[id].bVip) 
+	if (!cvar.visual_vip || !g_Player[index].bVip)
 		return;
 
 	float label_size = IM_ROUND(ImGui::CalcTextSize("VIP", NULL, true).x / 2.0f);
-	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y}, ImColor(1.f, 1.f, 0.f, 1.f), "VIP");
+	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, ImColor(1.f, 1.f, 0.f, 1.f), "VIP");
 }
 
-bool Reload(int sequence, float x, float y, int id)
+void Sakura::Esp::Player::DrawReload(const int index, const int sequence, const float x, const float y)
 {
 	int seqinfo = Cstrike_SequenceInfo[sequence];
 
-	if (!cvar.visual_reload_bar || seqinfo != 2) 
-		return false;
+	if (!cvar.visual_reload_bar || seqinfo != 2)
+		return;
 
 	float label_size = IM_ROUND(ImGui::CalcTextSize("Reloading", NULL, true).x / 2.0f);
-	float y2 = cvar.visual_vip && g_Player[id].bVip ? 8 : 0;
+	float y2 = cvar.visual_vip && g_Player[index].bVip ? 8 : 0;
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y + y2 }, ImColor(0.f, 1.f, 0.f, 1.f), "Reloading");
-
-	return true;
 }
 
-bool Name(int id, float x, float y)
+void Sakura::Esp::Player::DrawName(const int index, const float x, const float y)
 {
-	if (!cvar.visual_name) return 
-		false;
+	if (!cvar.visual_name)
+		return;
 
-	player_info_s* player = g_Studio.PlayerInfo(id - 1);
+	player_info_s* player = g_Studio.PlayerInfo(index - 1);
 
-	if (!player || !(lstrlenA(player->name) > 0)) 
-		return false;
+	if (!player || !(lstrlenA(player->name) > 0))
+		return;
 
 	float label_size = IM_ROUND(ImGui::CalcTextSize(player->name, NULL, true).x / 2.0f);
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y - 16 }, ImColor(1.f, 1.f, 1.f, 1.f), player->name);
-
-	return true;
 }
 
-bool Model(char* model, float x, float y)
+void Sakura::Esp::Player::DrawWeapon(const int weaponId, const float x, const float y)
 {
-	if (!cvar.visual_model) 
-		return false;
+	model_s* mdl = g_Studio.GetModelByIndex(weaponId);
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize(model, NULL, true).x / 2.0f);
-	float y2 = cvar.visual_weapon ? 8 : 0;
-	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y + y2 }, ImColor(1.f, 1.f, 1.f, 1.f), model);
-
-	return true;
-}
-
-bool Weapon(int weaponmodel, float x, float y)
-{
-	model_s* mdl = g_Studio.GetModelByIndex(weaponmodel);
-
-	if (!cvar.visual_weapon || !mdl) 
-		return false;
+	if (!cvar.visual_weapon || !mdl)
+		return;
 
 	char weapon[256];
 	sprintf(weapon, Sakura::Strings::getfilename(mdl->name).c_str() + 2);
 
 	float label_size = IM_ROUND(ImGui::CalcTextSize(weapon, NULL, true).x / 2.0f);
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, ImColor(1.f, 1.f, 1.f, 1.f), weapon);
+}
 
-	return true;
+void Sakura::Esp::Player::DrawModel(const char* model, const float x, const float y)
+{
+	if (!cvar.visual_model)
+		return;
+
+	float label_size = IM_ROUND(ImGui::CalcTextSize(model, NULL, true).x / 2.0f);
+	float y2 = cvar.visual_weapon ? 8 : 0;
+	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y + y2 }, ImColor(1.f, 1.f, 1.f, 1.f), model);
 }
 
 bool bCalcScreen(playeresp_t Esp, float& x, float& y, float& w, float& h, float& xo, float& yo)
@@ -183,7 +184,7 @@ bool bCalcScreen(playeresp_t Esp, float& x, float& y, float& w, float& h, float&
 	return false;
 }
 
-void DrawPlayerEsp()
+void Sakura::Esp::Player::Draw()
 {
 	for (playeresp_t Esp : PlayerEsp)
 	{
@@ -203,18 +204,18 @@ void DrawPlayerEsp()
 
 		if (bCalcScreen(Esp, x, y, w, h, xo, yo))
 		{
-			Box(x, y, w, h, boxColor);
-			Health(Esp.index, x, y, h);
-			Reload(Esp.sequence, xo + w, y, Esp.index);
-			Name(Esp.index, xo, y);
-			Model(Esp.model, xo, y + h);
-			Weapon(Esp.weaponmodel, xo, y + h);
-			Vip(Esp.index, x + w, y);
+			DrawBox(x, y, w, h, boxColor);
+			DrawHealth(Esp.index, x, y, h);
+			DrawReload(Esp.sequence, xo + w, y, Esp.index);
+			DrawName(Esp.index, xo, y);
+			DrawModel(Esp.model, xo, y + h);
+			DrawWeapon(Esp.weaponmodel, xo, y + h);
+			DrawVip(Esp.index, x + w, y);
 		}
 	}
 }
 
-void BoxWorld(float x, float y, float w, float h)
+void Sakura::Esp::World::DrawBox(const float x, const float y, const float w, const float h)
 {
 	if (!cvar.visual_box_world) return;
 
@@ -248,26 +249,26 @@ void BoxWorld(float x, float y, float w, float h)
 	}
 }
 
-bool NameWorld(int id, float x, float y, ImU32 color)
+void Sakura::Esp::World::DrawName(const int index, const float x, const float y, const ImU32 color)
 {
-	if (id < 1 || id > g_Engine.GetMaxClients())
-		return false;
+	if (index < 1 || index > g_Engine.GetMaxClients())
+		return;
 
 	if (!cvar.visual_name_world)
-		return false;
+		return;
 
-	player_info_s* player = g_Studio.PlayerInfo(id - 1);
+	player_info_s* player = g_Studio.PlayerInfo(index - 1);
 
 	if (!player || !(lstrlenA(player->name) > 0)) 
-		return false;
+		return;
 
 	float label_size = IM_ROUND(ImGui::CalcTextSize(player->name, NULL, true).x / 2);
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, color, player->name);
 
-	return true;
+	return;
 }
 
-void ModelWorld(char* name, float x, float y, ImU32 white)
+void Sakura::Esp::World::DrawModel(const char* name, const float x, const float y, const ImU32 white)
 {
 	if (!cvar.visual_model_world)
 		return;
@@ -310,49 +311,7 @@ bool bCalcScreenWorld(worldesp_t Esp, float& x, float& y, float& w, float& h, fl
 	return false;
 }
 
-/*bool bCalcScreenWorldPrev(worldespprev_t Esp, float& x, float& y, float& w, float& h, float& xo, float& yo)
-{
-	float vOrigin[2];
-	if (WorldToScreen(Esp.origin, vOrigin))
-	{
-		xo = IM_ROUND(vOrigin[0]);
-		yo = IM_ROUND(vOrigin[1]);
-		float x0 = vOrigin[0], x1 = vOrigin[0], y0 = vOrigin[1], y1 = vOrigin[1];
-		for (esphitbox_t Hitbox : Esp.WorldEspHitbox)
-		{
-			for (unsigned int i = 0; i < 8; i++)
-			{
-				float vHitbox[2];
-				if (WorldToScreen(Hitbox.HitboxMulti[i], vHitbox))
-				{
-					x0 = min(x0, vHitbox[0]);
-					x1 = max(x1, vHitbox[0]);
-					y0 = min(y0, vHitbox[1]);
-					y1 = max(y1, vHitbox[1]);
-				}
-			}
-		}
-		for (espbone_t Bone : Esp.WorldEspBone)
-		{
-			float vBone[2];
-			if (WorldToScreen(Bone.Bone, vBone))
-			{
-				x0 = min(x0, vBone[0]);
-				x1 = max(x1, vBone[0]);
-				y0 = min(y0, vBone[1]);
-				y1 = max(y1, vBone[1]);
-			}
-		}
-		x = IM_ROUND(x0);
-		y = IM_ROUND(y0);
-		w = IM_ROUND(x1) - IM_ROUND(x0) + 1;
-		h = IM_ROUND(y1) - IM_ROUND(y0) + 1;
-		return true;
-	}
-	return false;
-}*/
-
-void DrawWorldEsp()
+void Sakura::Esp::World::Draw()
 {
 	for (worldesp_t Esp : WorldEsp)
 	{
@@ -364,9 +323,9 @@ void DrawWorldEsp()
 		{
 			ImU32 teamColor = g_Player[Esp.index].iTeam == 1 ? Sakura::Colors::Red() : Sakura::Colors::Blue();
 
-			BoxWorld(x, y, w, h);
-			NameWorld(Esp.index, xo, y + h, teamColor);
-			ModelWorld(Esp.name, xo, y, Sakura::Colors::White());
+			DrawBox(x, y, w, h);
+			DrawName(Esp.index, xo, y + h, teamColor);
+			DrawModel(Esp.name, xo, y, Sakura::Colors::White());
 		}
 	}
 }

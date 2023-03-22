@@ -39,11 +39,30 @@ typedef struct
 } worldespprev_t;
 extern std::deque<worldespprev_t> WorldEspPrev;
 
-void Box(float x, float y, float w, float h, ImRGBA color);
-void Health(int id, float x, float y, float h);
-void Vip(int id, float x, float y);
-bool Name(int id, float x, float y);
-void DrawWorldEsp();
-void DrawPlayerEsp();
+namespace Sakura
+{
+	namespace Esp
+	{
+		namespace Player
+		{
+			void DrawBox(const float x, const float y, const float w, const float h, const ImRGBA color);
+			void DrawHealth(const int index, const float x, const float y, const float h);
+			void DrawVip(const int index, const float x, const float y);
+			void DrawReload(const int index, const int sequence, const float x, const float y);
+			void DrawName(const int index, const float x, const float y);
+			void DrawWeapon(const int weaponId, const float x, const float y);
+			void DrawModel(const char* model, const float x, const float y);
+			void Draw();
+		};
+
+		namespace World
+		{
+			void DrawBox(const float x, const float y, const float w, const float h);
+			void DrawName(const int index, const float x, const float y, const ImU32 color);
+			void DrawModel(const char* name, const float x, const float y, const ImU32 white);
+			void Draw();
+		};
+	};
+};
 
 #endif

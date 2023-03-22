@@ -106,88 +106,6 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 	PreS_DynamicSound_s(entid, entchannel, szSoundFile, fOrigin, realDynamicSoundVolume, fAttenuation, iTimeOff, iPitch);
 }
 
-//void PreS_DynamicSound(int entid, DWORD entchannel, char* szSoundFile, float* fOrigin, float fVolume, float fAttenuation, int iTimeOff, int iPitch)
-//{
-//	realVolume = fVolume;
-//
-//	if (szSoundFile && fOrigin)
-//	{
-//		if (strstr(szSoundFile, "weapons"))
-//		{
-//			if (cvar.misc_fire_sounds)
-//			{
-//				realVolume = cvar.misc_fire_sounds_volume / 100.f;
-//				iPitch = cvar.misc_fire_sounds_pitch;
-//			}
-//
-//		}
-//
-//		if (!strstr(szSoundFile, "pl_shell") &&
-//			!strstr(szSoundFile, "ric") &&
-//			!strstr(szSoundFile, "glass") &&
-//			!strstr(szSoundFile, "debris") &&
-//			strstr(szSoundFile, "player"))
-//		{
-//			if (entid > 0 && entid < 33)
-//			{
-//				if (strstr(szSoundFile, "bhit_helmet"))
-//					g_Player[entid].iHealth -= g_Engine.pfnRandomLong(65, 70);
-//				else if (strstr(szSoundFile, "bhit_kevlar"))
-//					g_Player[entid].iHealth -= g_Engine.pfnRandomLong(15, 20);
-//				else if (strstr(szSoundFile, "bhit_flesh"))
-//					g_Player[entid].iHealth -= g_Engine.pfnRandomLong(25, 30);
-//				else if (strstr(szSoundFile, "headshot"))
-//					g_Player[entid].iHealth -= g_Engine.pfnRandomLong(75, 80);
-//				else if (strstr(szSoundFile, "die") || strstr(szSoundFile, "death"))
-//					g_Player[entid].iHealth = 100;
-//				if (cvar.visual_sound_steps)
-//				{
-//					player_sound_index_t sound_index;
-//					sound_index.index = entid;
-//					sound_index.origin = fOrigin;
-//					sound_index.timestamp = GetTickCount();
-//					Sound_Index.push_back(sound_index);
-//				}
-//			}
-//			else if (cvar.visual_sound_steps)
-//			{
-//				player_sound_no_index_t sound_no_index;
-//				sound_no_index.origin = fOrigin;
-//				sound_no_index.timestamp = GetTickCount();
-//				Sound_No_Index.push_back(sound_no_index);
-//			}
-//		}
-//
-//		for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
-//		{
-//			auto& script = Sakura::Lua::scripts[i];
-//
-//			if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND))
-//				continue;
-//
-//			auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_DYNAMICSOUND);
-//			for (const auto& callback : callbacks)
-//			{
-//				try
-//				{
-//					callback(entid, std::string(szSoundFile), realVolume, fOrigin);
-//				}
-//				catch (luabridge::LuaException const& error)
-//				{
-//					if (script.GetState())
-//					{
-//						LogToFile("Error has occured in the lua: %s", error.what());
-//						script.RemoveAllCallbacks();
-//						lua_close(script.GetState());
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	PreS_DynamicSound_s(entid, entchannel, szSoundFile, fOrigin, realVolume, fAttenuation, iTimeOff, iPitch);
-//}
-
 void Sakura::Esp::DrawSoundIndex()
 {
 	if (!cvar.visual_sound_steps)
@@ -236,10 +154,10 @@ void Sakura::Esp::DrawSoundIndex()
 		if (WorldToScreen(vPointTop, vTop) && WorldToScreen(vPointBot, vBot))
 		{
 			float h = IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), w = h, x = IM_ROUND(vTop[0]) - IM_ROUND(w / 2), y = IM_ROUND(vTop[1]), xo = IM_ROUND(vTop[0]);
-			Box(x, y, w, h, soundEspColor);
-			Health(sound_index.index, x, y, h);
-			::Name(sound_index.index, xo, y);
-			Vip(sound_index.index, x + w, y);
+			Player::DrawBox(x, y, w, h, soundEspColor);
+			Player::DrawHealth(sound_index.index, x, y, h);
+			Player::DrawName(sound_index.index, xo, y);
+			Player::DrawVip(sound_index.index, x + w, y);
 		}
 	}
 }
@@ -274,7 +192,7 @@ void Sakura::Esp::DrawSoundNoIndex()
 		float vTop[2], vBot[2];
 		if (WorldToScreen(vPointTop, vTop) && WorldToScreen(vPointBot, vBot))
 		{
-			Box(IM_ROUND(vTop[0]) - IM_ROUND((IM_ROUND(vBot[1]) - IM_ROUND(vTop[1])) / 2), IM_ROUND(vTop[1]), IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), soundStepsColor);
+			Player::DrawBox(IM_ROUND(vTop[0]) - IM_ROUND((IM_ROUND(vBot[1]) - IM_ROUND(vTop[1])) / 2), IM_ROUND(vTop[1]), IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), soundStepsColor);
 		}
 	}
 }
