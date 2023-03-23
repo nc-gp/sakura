@@ -36,9 +36,13 @@ void Sakura::Log::Console(const char* text, ...)
 	va_list va_alist;
 	char buf[256];
 
+	sprintf(buf, /*%s */XorStr<0x58, 4, 0x90052BEC>("\x7D\x2A\x7A" + 0x90052BEC).s, /*[SAKURA]*/XorStr<0xC1, 9, 0x077918D5>("\x9A\x91\x82\x8F\x90\x94\x86\x95" + 0x077918D5).s);
+
 	va_start(va_alist, text);
 	vsprintf(buf, text, va_alist);
 	va_end(va_alist);
+
+	sprintf(buf, /*%s%s*/XorStr<0x46, 5, 0x91528E04>("\x63\x34\x6D\x3A" + 0x91528E04).s, buf, /*\n*/XorStr<0x65, 2, 0x795F054D>("\x6F" + 0x795F054D).s);
 
 	g_Engine.Con_DPrintf(buf);
 }
