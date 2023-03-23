@@ -34,6 +34,9 @@ DWORD WINAPI Hook()
 
 	Netchan_TransmitBits_s = (Netchan_TransmitBits_t)DetourFunction((LPBYTE)c_Offset.FindNetchanTransmit(), (LPBYTE)&Netchan_TransmitBits);
 
+	Snapshot_s = (Snapshot_t)DetourFunction((LPBYTE)c_Offset.FindSnapshot(), (LPBYTE)&Sakura::ScreenShot::Snapshot);
+	Screenshot_s = (Screenshot_t)DetourFunction((LPBYTE)c_Offset.FindScreenshot(), (LPBYTE)&Sakura::ScreenShot::Screenshot);
+
 	c_Offset.PatchInterpolation();
 
 	initDirectories();
