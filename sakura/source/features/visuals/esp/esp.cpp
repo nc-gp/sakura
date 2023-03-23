@@ -99,8 +99,8 @@ void Sakura::Esp::Player::DrawVip(const int index, const float x, const float y)
 	if (!cvar.visual_vip || !g_Player[index].bVip)
 		return;
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize("VIP", NULL, true).x / 2.0f);
-	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, ImColor(1.f, 1.f, 0.f, 1.f), "VIP");
+	float label_size = ImGui::CalcTextSize(/*VIP*/XorStr<0x62, 4, 0x78CA5FE3>("\x34\x2A\x34" + 0x78CA5FE3).s, NULL, true).x / 2.0f;
+	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, ImColor(1.f, 1.f, 0.f, 1.f), /*VIP*/XorStr<0x62, 4, 0x78CA5FE3>("\x34\x2A\x34" + 0x78CA5FE3).s);
 }
 
 void Sakura::Esp::Player::DrawReload(const int index, const int sequence, const float x, const float y)
@@ -110,9 +110,9 @@ void Sakura::Esp::Player::DrawReload(const int index, const int sequence, const 
 	if (!cvar.visual_reload_bar || seqinfo != 2)
 		return;
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize("Reloading", NULL, true).x / 2.0f);
+	float label_size = ImGui::CalcTextSize(/*Reloading*/XorStr<0xFB, 10, 0x76A68975>("\xA9\x99\x91\x91\x9E\x64\x68\x6C\x64" + 0x76A68975).s, NULL, true).x / 2.0f;
 	float y2 = cvar.visual_vip && g_Player[index].bVip ? 8 : 0;
-	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y + y2 }, ImColor(0.f, 1.f, 0.f, 1.f), "Reloading");
+	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y + y2 }, ImColor(0.f, 1.f, 0.f, 1.f), /*Reloading*/XorStr<0xFB, 10, 0x76A68975>("\xA9\x99\x91\x91\x9E\x64\x68\x6C\x64" + 0x76A68975).s);
 }
 
 void Sakura::Esp::Player::DrawName(const int index, const float x, const float y)
@@ -125,7 +125,7 @@ void Sakura::Esp::Player::DrawName(const int index, const float x, const float y
 	if (!player || !(lstrlenA(player->name) > 0))
 		return;
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize(player->name, NULL, true).x / 2.0f);
+	float label_size = ImGui::CalcTextSize(player->name, NULL, true).x / 2.0f;
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y - 16 }, ImColor(1.f, 1.f, 1.f, 1.f), player->name);
 }
 
@@ -139,7 +139,7 @@ void Sakura::Esp::Player::DrawWeapon(const int weaponId, const float x, const fl
 	char weapon[256];
 	sprintf(weapon, Sakura::Strings::getfilename(mdl->name).c_str() + 2);
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize(weapon, NULL, true).x / 2.0f);
+	float label_size = ImGui::CalcTextSize(weapon, NULL, true).x / 2.0f;
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, ImColor(1.f, 1.f, 1.f, 1.f), weapon);
 }
 
@@ -148,7 +148,7 @@ void Sakura::Esp::Player::DrawModel(const char* model, const float x, const floa
 	if (!cvar.visual_model)
 		return;
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize(model, NULL, true).x / 2.0f);
+	float label_size = ImGui::CalcTextSize(model, NULL, true).x / 2.0f;
 	float y2 = cvar.visual_weapon ? 8 : 0;
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y + y2 }, ImColor(1.f, 1.f, 1.f, 1.f), model);
 }
@@ -207,9 +207,9 @@ void Sakura::Esp::Player::Draw()
 			DrawBox(x, y, w, h, boxColor);
 			DrawHealth(Esp.index, x, y, h);
 			DrawReload(Esp.sequence, xo + w, y, Esp.index);
-			DrawName(Esp.index, xo, y);
-			DrawModel(Esp.model, xo, y + h);
-			DrawWeapon(Esp.weaponmodel, xo, y + h);
+			DrawName(Esp.index, x + (w / 2), y);
+			DrawModel(Esp.model, x + (w / 2), y + h);
+			DrawWeapon(Esp.weaponmodel, x + (w / 2), y + h);
 			DrawVip(Esp.index, x + w, y);
 		}
 	}
@@ -262,7 +262,7 @@ void Sakura::Esp::World::DrawName(const int index, const float x, const float y,
 	if (!player || !(lstrlenA(player->name) > 0)) 
 		return;
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize(player->name, NULL, true).x / 2);
+	float label_size = ImGui::CalcTextSize(player->name, NULL, true).x / 2;
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y }, color, player->name);
 
 	return;
@@ -276,7 +276,7 @@ void Sakura::Esp::World::DrawModel(const char* name, const float x, const float 
 	char world[256];
 	sprintf(world, Sakura::Strings::getfilename(name).c_str() + 2);
 
-	float label_size = IM_ROUND(ImGui::CalcTextSize(world, NULL, true).x / 2);
+	float label_size = ImGui::CalcTextSize(world, NULL, true).x / 2;
 	ImGui::GetCurrentWindow()->DrawList->AddText({ x - label_size, y - 16 }, white, world);
 }
 
@@ -324,8 +324,8 @@ void Sakura::Esp::World::Draw()
 			ImU32 teamColor = g_Player[Esp.index].iTeam == 1 ? Sakura::Colors::Red() : Sakura::Colors::Blue();
 
 			DrawBox(x, y, w, h);
-			DrawName(Esp.index, xo, y + h, teamColor);
-			DrawModel(Esp.name, xo, y, Sakura::Colors::White());
+			DrawName(Esp.index, x + (w / 2), y + h, teamColor);
+			DrawModel(Esp.name, x + (w / 2), y, Sakura::Colors::White());
 		}
 	}
 }
