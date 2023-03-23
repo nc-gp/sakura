@@ -18,6 +18,9 @@ StudioModelRenderer_t g_StudioModelRenderer;
 netchan_t* g_pNetchan;
 Netchan_TransmitBits_t Netchan_TransmitBits_s;
 
+Screenshot_t Screenshot_s;
+Snapshot_t Snapshot_s;
+
 //EV_HLDM_FireBullets_t EV_HLDM_FireBullets_s;
 
 client_state_t* client_state;

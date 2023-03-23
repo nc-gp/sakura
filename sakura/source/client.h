@@ -241,6 +241,11 @@ typedef void(__cdecl *Netchan_TransmitBits_t)(netchan_t*, int, byte*);
 extern Netchan_TransmitBits_t Netchan_TransmitBits_s;
 extern netchan_t* g_pNetchan;
 
+typedef void(__cdecl* Screenshot_t)();
+typedef void(__cdecl* Snapshot_t)();
+extern Screenshot_t Screenshot_s;
+extern Snapshot_t Snapshot_s;
+
 extern client_state_t* client_state;
 extern client_static_t* client_static;
 
