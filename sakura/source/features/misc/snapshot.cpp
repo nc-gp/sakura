@@ -1,9 +1,9 @@
 #include "../../client.h"
 
-std::vector<byte> Sakura::ScreenShot::BufferScreen;
+int Sakura::ScreenShot::Type = -1;
+int Sakura::ScreenShot::SkippedFrames = 0;
 bool Sakura::ScreenShot::DrawVisuals = true;
-DWORD Sakura::ScreenShot::time_scr = 0;
-int Sakura::ScreenShot::SSStatus = Sakura::ScreenShot::SS_NotTaking;
+bool Sakura::ScreenShot::CanMakeScreen = true;
 
 bool Sakura::ScreenShot::IsDrawing()
 {
@@ -19,56 +19,58 @@ void Sakura::ScreenShot::Run()
 {
 	if (!bInitializeImGui)
 	{
-		SSStatus = SS_NotTaking;
 		DrawVisuals = true;
+		CanMakeScreen = true;
+		SkippedFrames = 0;
 		return;
 	}
 
-	static bool bDoOnce = true;
-	if (bDoOnce)
-	{
-		time_scr = GetTickCount();
+	if (!cvar.antiss_active)
+		return;
 
-		bDoOnce = false;
+	if (DrawVisuals)
+		return;
+
+	SkippedFrames++;
+
+	if (SkippedFrames > 10)
+	{
+		DrawVisuals = true;
+		SkippedFrames = 0;
+		CanMakeScreen = true;
 	}
 
-	if (cvar.snapshot_memory)
+	if (CanMakeScreen)
 	{
-		if (SSStatus == SS_NotTaking)
-		{
-			if ((GetTickCount() - time_scr) > (cvar.snapshot_time))
-			{
-				ImVec2& iv2DisplaySize = ImGui::GetIO().DisplaySize;
-				auto bytesToRecord = iv2DisplaySize.x * iv2DisplaySize.y * 3;
-				//if (!BufferScreen.size())
-					/*BufferScreen(bytesToRecord);
-				else*/
-				BufferScreen.resize(bytesToRecord);
-				DrawVisuals = false;
-				SSStatus = SS_CleanFrame;
-			}
-		}
-		else if (SSStatus == SS_CleanFrame)
-		{
-			// Do nothing because we need a clean screen...
-			SSStatus = SS_RecordingScreen;
-		}
-		else if (SSStatus == SS_RecordingScreen)
-		{
-			ImVec2& iv2DisplaySize = ImGui::GetIO().DisplaySize;
-			auto bytesToRecord = iv2DisplaySize.x * iv2DisplaySize.y * 3;
-			if (BufferScreen.size() <= bytesToRecord)
-			{
-				time_scr = GetTickCount();
+		CanMakeScreen = false;
 
-				if (pglReadPixels)
-					pglReadPixels(0, 0, iv2DisplaySize.x, iv2DisplaySize.y, GL_RGB, GL_UNSIGNED_BYTE, BufferScreen.data());
-
-				DrawVisuals = true;
-				SSStatus = SS_NotTaking;
-			}
-		}
+		if (Type) // 1 = screenshot
+			Screenshot_s();
+		else
+			Snapshot_s();
 	}
-	else
-		SSStatus = SS_NotTaking;
+}
+
+void Sakura::ScreenShot::Snapshot()
+{
+	if (!cvar.antiss_active)
+	{
+		Snapshot_s();
+		return;
+	}
+
+	Type = MAKING_SNAPSHOT;
+	DrawVisuals = false;
+}
+
+void Sakura::ScreenShot::Screenshot()
+{
+	if (!cvar.antiss_active)
+	{
+		Screenshot_s();
+		return;
+	}
+
+	Type = MAKING_SCREENSHOT;
+	DrawVisuals = false;
 }

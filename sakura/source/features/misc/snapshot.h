@@ -5,21 +5,23 @@ namespace Sakura
 {
 	namespace ScreenShot
 	{
-		enum Status
-		{
-			SS_NotTaking,
-			SS_CleanFrame,
-			SS_RecordingScreen
+		enum {
+			MAKING_SNAPSHOT,
+			MAKING_SCREENSHOT,
+			MAKING_MAX_COUNT
 		};
 
-		extern int SSStatus;
-		extern std::vector<byte> BufferScreen;
+		extern int SkippedFrames;
+		extern int Type;
 		extern bool DrawVisuals;
-		extern DWORD time_scr;
+		extern bool CanMakeScreen;
 
 		bool IsDrawing();
 		bool IsVisuals();
 		void Run();
+
+		void Snapshot();
+		void Screenshot();
 	};
 };
 
