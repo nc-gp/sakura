@@ -124,8 +124,7 @@ public:
 	float speedhack_active;
 	float speedhack_speed;
 
-	float snapshot_memory;
-	float snapshot_time;
+	float antiss_active;
 
 	float misc_wav_speed;
 	float misc_thirdperson_key;

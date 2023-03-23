@@ -365,8 +365,7 @@ void CVARlist::init()
 	INITCVAR(speedhack_active, 0.0);
 	INITCVAR(speedhack_speed, 64.0);
 
-	INITCVAR(snapshot_memory, 0.0);
-	INITCVAR(snapshot_time, 10.0);
+	INITCVAR(antiss_active, 0.0);
 
 	INITCVAR(misc_wav_speed, 1.0);
 	INITCVAR(misc_thirdperson_key, -1.0);
