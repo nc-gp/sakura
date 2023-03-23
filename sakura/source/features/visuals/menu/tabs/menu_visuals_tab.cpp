@@ -381,14 +381,14 @@ void Sakura::Menu::Tabs::Visuals::LocalAntiScreenshot()
 {
 	ImGui::BeginChild(/*##vo1*/XorStr<0x28, 6, 0x6C8DDCCA>("\x0B\x0A\x5C\x44\x1D" + 0x6C8DDCCA).s, ImVec2(250, -1));
 	{
-		Sakura::Menu::Widgets::Checkbox(/*Enable anti screenshot*/XorStr<0xAF, 23, 0x1DC967D3>("\xEA\xDE\xD0\xD0\xDF\xD1\x95\xD7\xD9\xCC\xD0\x9A\xC8\xDF\xCF\xDB\xDA\xAE\xB2\xAA\xAC\xB0" + 0x1DC967D3).s, &cvar.snapshot_memory);
+		Sakura::Menu::Widgets::Checkbox(/*Enable anti screenshot*/XorStr<0xAF, 23, 0x1DC967D3>("\xEA\xDE\xD0\xD0\xDF\xD1\x95\xD7\xD9\xCC\xD0\x9A\xC8\xDF\xCF\xDB\xDA\xAE\xB2\xAA\xAC\xB0" + 0x1DC967D3).s, &cvar.antiss_active);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##vo2*/XorStr<0xB0, 6, 0x9E278B18>("\x93\x92\xC4\xDC\x86" + 0x9E278B18).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Anti screenshot time*/XorStr<0x08, 21, 0xE4B43384>("\x49\x67\x7E\x62\x2C\x7E\x6D\x7D\x75\x74\x7C\x60\x7C\x7A\x62\x37\x6C\x70\x77\x7E" + 0xE4B43384).s, &cvar.snapshot_time, 350, 2000, "%.0fms");
+
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
