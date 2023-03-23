@@ -55,6 +55,8 @@ public:
 	DWORD FindNetchanTransmit();
 	DWORD FindFireBullets();
 	PUserMsg FindUserMsgBase();
+	DWORD FindScreenshot();
+	DWORD FindSnapshot();
 };
 extern AutoOffset c_Offset;
 

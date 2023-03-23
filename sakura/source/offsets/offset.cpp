@@ -542,3 +542,23 @@ int* AutoOffset::FindSkyTexNumber()
 
 	return (int*)*(DWORD*)(Address);
 }
+
+DWORD AutoOffset::FindScreenshot()
+{
+	DWORD Address = FindPush(HwBase, HwEnd, "HalfLife__.tga") - 0x45;
+
+	if (FarProc(Address, HwBase, HwEnd))
+		Error("Couldn't find %s.", __FUNCTION__);
+
+	return Address;
+}
+
+DWORD AutoOffset::FindSnapshot()
+{
+	DWORD Address = FindPush(HwBase, HwEnd, "%s%04d.bmp") - 0x46;
+
+	if (FarProc(Address, HwBase, HwEnd))
+		Error("Couldn't find %s.", __FUNCTION__);
+
+	return Address;
+}
