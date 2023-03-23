@@ -6,14 +6,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="injector.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="..\..\..\eVOL-2022-master\eVOL-2022\eVOL-Loader\ReflectiveDLLInjection.h">
+    <ClInclude Include="GetProcAddressR.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\eVOL-2022-master\eVOL-2022\eVOL-Loader\GetProcAddressR.h">
+    <ClInclude Include="injector.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -24,7 +21,7 @@
     <ClCompile Include="injector.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\eVOL-2022-master\eVOL-2022\eVOL-Loader\GetProcAddressR.cpp">
+    <ClCompile Include="GetProcAddressR.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
