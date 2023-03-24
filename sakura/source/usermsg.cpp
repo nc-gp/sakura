@@ -81,8 +81,8 @@ int ResetHUD(const char *pszName, int iSize, void *pbuf)
 
 	for (size_t i = 1; i <= g_Engine.GetMaxClients(); ++i)
 	{
-		if (strstr(client_state->levelname, "1hp")) g_Player[i].iHealth = 1;
-		else if (strstr(client_state->levelname, "35hp")) g_Player[i].iHealth = 35;
+		if (strstr(client_state->levelname, /*1hp*/XorStr<0x12, 4, 0x15F81363>("\x23\x7B\x64" + 0x15F81363).s)) g_Player[i].iHealth = 1;
+		else if (strstr(client_state->levelname, /*35hp*/XorStr<0x72, 5, 0xD32634A4>("\x41\x46\x1C\x05" + 0xD32634A4).s)) g_Player[i].iHealth = 35;
 		else g_Player[i].iHealth = 100;
 
 		g_Player[i].deathMark = false;
@@ -107,7 +107,7 @@ int ResetHUD(const char *pszName, int iSize, void *pbuf)
 			{
 				if (script.GetState())
 				{
-					Sakura::Log::File("Error has occured in the lua: %s", error.what());
+					Sakura::Lua::Error(/*Error has occured in the lua "On New Round" script: %s*/XorStr<0xF8, 55, 0xBCA33903>("\xBD\x8B\x88\x94\x8E\xDD\x96\x9E\x73\x21\x6D\x60\x67\x70\x74\x62\x6C\x29\x63\x65\x2C\x79\x66\x6A\x30\x7D\x67\x72\x34\x37\x59\x79\x38\x57\x7F\x6C\x3C\x4F\x71\x6A\x4E\x45\x00\x03\x57\x46\x54\x4E\x58\x5D\x10\x0B\x09\x5E" + 0xBCA33903).s, error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -150,7 +150,7 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 			{
 				if (script.GetState())
 				{
-					Sakura::Log::File("Error has occured in the lua: %s", error.what());
+					Sakura::Lua::Error(/*Error has occured in the lua "On Death" script: %s*/XorStr<0xB6, 51, 0x930D6831>("\xF3\xC5\xCA\xD6\xC8\x9B\xD4\xDC\xCD\x9F\xAF\xA2\xA1\xB6\xB6\xA0\xA2\xE7\xA1\xA7\xEA\xBF\xA4\xA8\xEE\xA3\xA5\xB0\xF2\xF1\x9B\xBB\xF6\x93\xBD\xB8\xAE\xB3\xFE\xFD\xAD\xBC\x92\x88\x92\x97\xDE\xC5\xC3\x94" + 0x930D6831).s, error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -213,7 +213,7 @@ int Damage(const char* pszName, int iSize, void* pbuf)
 			{
 				if (script.GetState())
 				{
-					Sakura::Log::File("Error has occured in the lua: %s", error.what());
+					Sakura::Lua::Error(/*Error has occured in the lua "On Damage" script: %s*/XorStr<0xC7, 52, 0x18B6D3CA>("\x82\xBA\xBB\xA5\xB9\xEC\xA5\xAF\xBC\xF0\xBE\xB1\xB0\xA1\xA7\xB3\xB3\xF8\xB0\xB4\xFB\xA8\xB5\xBB\xFF\x8C\x94\x83\xC3\xC6\xAA\x88\xC7\xAC\x88\x87\x8A\x8B\x88\xCC\xCF\x83\x92\x80\x9A\x84\x81\xCC\xD7\xDD\x8A" + 0x18B6D3CA).s, error.what());
 					script.RemoveAllCallbacks();
 				}
 			}

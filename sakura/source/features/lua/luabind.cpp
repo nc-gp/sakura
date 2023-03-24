@@ -996,10 +996,10 @@ void Sakura::Lua::Reload()
 	}
 
 	const std::string hackDir = hackdir;
-	const std::string scriptExtension = ".lua";
+	const std::string scriptExtension = /*.lua*/XorStr<0x27, 5, 0x52E70E20>("\x09\x44\x5C\x4B" + 0x52E70E20).s;
 	std::string scriptsLoaded;
 
-	for (const auto& p : std::filesystem::recursive_directory_iterator(hackDir + "\\scripts\\"))
+	for (const auto& p : std::filesystem::recursive_directory_iterator(hackDir + /*\\scripts\\*/XorStr<0xA3, 10, 0x25B9F64A>("\xFF\xD7\xC6\xD4\xCE\xD8\xDD\xD9\xF7" + 0x25B9F64A).s))
 	{
 		if (p.path().extension() != scriptExtension)
 			continue;
@@ -1008,7 +1008,7 @@ void Sakura::Lua::Reload()
 
 		if (!L)
 		{
-			Sakura::Log::File("Error creating Lua state for script: %s", p.path().filename().string().c_str());
+			Sakura::Lua::Error(/*Error creating Lua state for script: %s*/XorStr<0x99, 40, 0x12146F81>("\xDC\xE8\xE9\xF3\xEF\xBE\xFC\xD2\xC4\xC3\xD7\xCD\xCB\xC1\x87\xE4\xDC\xCB\x8B\xDF\xD9\xCF\xDB\xD5\x91\xD4\xDC\xC6\x95\xC5\xD4\xCA\xD0\xCA\xCF\x86\x9D\x9B\xCC" + 0x12146F81).s, p.path().filename().string().c_str());
 			continue;
 		}
 
@@ -1019,7 +1019,7 @@ void Sakura::Lua::Reload()
 		if (luaL_loadfile(L, p.path().string().c_str()) != LUA_OK)
 		{
 			const char* error_msg = lua_tostring(L, -1);
-			Sakura::Log::File("Error loading Lua script: %s", error_msg);
+			Sakura::Lua::Error(/*Error loading Lua script: %s*/XorStr<0x98, 29, 0xAA02A755>("\xDD\xEB\xE8\xF4\xEE\xBD\xF2\xF0\xC1\xC5\xCB\xCD\xC3\x85\xEA\xD2\xC9\x89\xD9\xC8\xDE\xC4\xDE\xDB\x8A\x91\x97\xC0" + 0xAA02A755).s, error_msg);
 			lua_close(L);
 			continue;
 		}
@@ -1030,7 +1030,7 @@ void Sakura::Lua::Reload()
 		if (lua_pcall(L, 0, 0, 0) != LUA_OK)
 		{
 			const char* error_msg = lua_tostring(L, -1);
-			Sakura::Log::File("Error running Lua script: %s", error_msg);
+			Sakura::Lua::Error(/*Error running Lua script: %s*/XorStr<0xE6, 29, 0x45A06148>("\xA3\x95\x9A\x86\x98\xCB\x9E\x98\x80\x81\x99\x9F\x95\xD3\xB8\x80\x97\xD7\x8B\x9A\x88\x92\x8C\x89\xC4\xDF\x25\x72" + 0x45A06148).s, error_msg);
 			lua_close(L);
 			continue;
 		}
@@ -1038,10 +1038,10 @@ void Sakura::Lua::Reload()
 		currentScriptIndex++;
 		ScriptsCount++;
 
-		scriptsLoaded += " - ";
+		scriptsLoaded += /* - */XorStr<0xFA, 4, 0x8CF978D3>("\xDA\xD6\xDC" + 0x8CF978D3).s;
 		scriptsLoaded += p.path().filename().string();
-		scriptsLoaded += "\n";
+		scriptsLoaded += /*\n*/XorStr<0x14, 2, 0x6E034713>("\x1E" + 0x6E034713).s;
 	}
 
-	Sakura::Log::File("%s (%d): \n%s", ScriptsCount > 1 ? "Loaded scripts" : "Loaded script", ScriptsCount, scriptsLoaded);
+	Sakura::Log::File(/*%s (%d): \n%s*/XorStr<0x74, 13, 0xF313DFA4>("\x51\x06\x56\x5F\x5D\x1D\x53\x41\x5C\x77\x5B\x0C" + 0xF313DFA4).s, ScriptsCount > 1 ? /*Loaded scripts*/XorStr<0x4D, 15, 0x7D9CE133>("\x01\x21\x2E\x34\x34\x36\x73\x27\x36\x24\x3E\x28\x2D\x29" + 0x7D9CE133).s : /*Loaded script*/XorStr<0x27, 14, 0x7EC8B322>("\x6B\x47\x48\x4E\x4E\x48\x0D\x5D\x4C\x42\x58\x42\x47" + 0x7EC8B322).s, ScriptsCount, scriptsLoaded);
 }

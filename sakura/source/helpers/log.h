@@ -3,6 +3,11 @@
 
 namespace Sakura
 {
+	namespace Lua
+	{
+		void Error(const char* errorMsg, ...);
+	};
+
 	namespace Log
 	{
 		void File(const char* text, ...);

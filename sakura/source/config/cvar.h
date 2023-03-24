@@ -263,6 +263,8 @@ public:
 	float visual_skins_chicken;
 
 	float visual_viewmodel_fov;
+	/*float visual_hud;
+	float visual_hud_color[4];*/
 
 	float visual_lambert;
 	float visual_lambert_color_tt[4];

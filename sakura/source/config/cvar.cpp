@@ -697,6 +697,12 @@ void CVARlist::init()
 	INITCVAR(visual_player_dynamiclight_color_ct[2], 1.0);
 	INITCVAR(visual_player_dynamiclight_color_ct[3], 1.0);
 
+	/*INITCVAR(visual_hud, 0.0);
+	INITCVAR(visual_hud_color[0], 0.0);
+	INITCVAR(visual_hud_color[1], 1.0);
+	INITCVAR(visual_hud_color[2], 0.0);
+	INITCVAR(visual_hud_color[3], 1.0);*/
+
 	INITCVAR(skeleton_player_bone, 0.0);
 	INITCVAR(skeleton_player_bone_color_tt[0], 1.0);
 	INITCVAR(skeleton_player_bone_color_tt[1], 0.0);

@@ -89,7 +89,7 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 			{
 				if (script.GetState())
 				{
-					Sakura::Log::File("Error has occured in the lua: %s", error.what());
+					Sakura::Lua::Error(/*Error has occured in the lua "On Key Bind" script: %s*/XorStr<0x98, 54, 0x6238048E>("\xDD\xEB\xE8\xF4\xEE\xBD\xF6\xFE\xD3\x81\xCD\xC0\xC7\xD0\xD4\xC2\xCC\x89\xC3\xC5\x8C\xD9\xC6\xCA\x90\xDD\xC7\xD2\x94\x97\xF9\xD9\x98\xF2\xDF\xC2\x9C\xFF\xD7\xD1\xA4\xE3\xE2\xB0\xA7\xB7\xAF\xB7\xBC\xF3\xEA\xEE\xBF" + 0x6238048E).s, error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -212,7 +212,7 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 			{
 				if (script.GetState())
 				{
-					Sakura::Log::File("Error has occured in the lua: %s", error.what());
+					Sakura::Lua::Error(/*Error has occured in the lua "On Create Move" script: %s*/XorStr<0x0C, 57, 0x2A87B702>("\x49\x7F\x7C\x60\x62\x31\x7A\x72\x67\x35\x79\x74\x7B\x6C\x68\x7E\x78\x3D\x77\x71\x00\x55\x4A\x46\x04\x49\x53\x46\x08\x0B\x65\x45\x0C\x6E\x5C\x4A\x51\x45\x57\x13\x79\x5A\x40\x52\x1A\x19\x49\x58\x4E\x54\x4E\x4B\x7A\x61\x67\x30" + 0x2A87B702).s, error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -434,7 +434,7 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 			}
 			catch (luabridge::LuaException const& error)
 			{
-				Sakura::Log::File("Error has occured in the lua: %s", error.what());
+				Sakura::Lua::Error(/*Error has occured in the lua "On Add Entity" script: %s*/XorStr<0xE3, 56, 0x09B37070>("\xA6\x96\x97\x89\x95\xC8\x81\x8B\x98\xCC\x82\x8D\x8C\x85\x83\x97\x97\xD4\x9C\x98\xD7\x8C\x91\x9F\xDB\x90\x88\x9F\xDF\x22\x4E\x6C\x23\x45\x61\x62\x27\x4D\x67\x7E\x62\x78\x74\x2C\x2F\x63\x72\x60\x7A\x64\x61\x2C\x37\x3D\x6A" + 0x09B37070).s, error.what());
 				script.RemoveAllCallbacks();
 			}
 		}
@@ -457,6 +457,18 @@ static void HUD_TempEntUpdate(double frametime, double client_time, double cl_gr
 	g_Client.HUD_TempEntUpdate(frametime, client_time, cl_gravity, ppTempEntFree, ppTempEntActive, Callback_AddVisibleEntity, Callback_TempEntPlaySound);
 }
 
+//void pfnSPRSet(HSPRITE hPic, int r, int g, int b)
+//{
+//	if (cvar.visual_hud && Sakura::ScreenShot::IsVisuals() && hPic)
+//	{
+//		r = cvar.visual_hud_color[0];
+//		g = cvar.visual_hud_color[1];
+//		b = cvar.visual_hud_color[2];
+//	}
+//
+//	g_pEngine->pfnSPR_Set(hPic, r, g, b);
+//}
+
 void HookClientFunctions()
 {
 	g_pClient->HUD_CreateEntities = HUD_CreateEntities;
@@ -474,6 +486,7 @@ void HookClientFunctions()
 	g_pClient->HUD_TempEntUpdate = HUD_TempEntUpdate;
 
 	g_pEngine->pfnVGUI2DrawCharacterAdd = pfnDrawUnicodeCharacter;
+	/*g_pEngine->pfnSPR_Set = pfnSPRSet;*/
 
 	g_pClient->HUD_AddEntity = HUD_AddEntity;
 }
