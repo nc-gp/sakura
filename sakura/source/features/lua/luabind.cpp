@@ -401,7 +401,7 @@ void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, lua
 		}
 		catch (luabridge::LuaException const& error)
 		{
-			Sakura::Log::File("Lua script error: %s", error.what());
+			Sakura::Lua::Error(/*Error has occured in the lua "Window Create" script: %s*/XorStr<0x7B, 56, 0xCD3EFD1A>("\x3E\x0E\x0F\x11\x0D\xA0\xE9\xE3\xF0\xA4\xEA\xE5\xE4\xFD\xFB\xEF\xEF\xAC\xE4\xE0\xAF\xE4\xF9\xF7\xB3\xF8\xE0\xF7\xB7\xBA\xCE\xF3\xF5\xF8\xF2\xE9\xBF\xE3\xD3\xC7\xC2\xD0\xC0\x84\x87\xDB\xCA\xD8\xC2\xDC\xD9\x94\x8F\x95\xC2" + 0xCD3EFD1A).s, error.what());
 		}
 	}
 	::ImGui::End();
