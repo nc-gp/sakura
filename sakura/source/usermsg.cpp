@@ -248,7 +248,7 @@ pfnUserMsgHook HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
 		return Original;
 	}
 	
-	c_Offset.Error("Couldn't find '%s' message.", szMsgName);
+	c_Offset.Error(/*Couldn't find '%s' message.*/XorStr<0xAA, 28, 0x7A45AE40>("\xE9\xC4\xD9\xC1\xCA\xC1\x97\xC5\x92\xD5\xDD\xDB\xD2\x97\x9F\x9C\xC9\x9C\x9C\xD0\xDB\xCC\xB3\xA0\xA5\xA6\xEA" + 0x7A45AE40).s, szMsgName);
 }
 
 void HookUserMessages()
