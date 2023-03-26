@@ -27,7 +27,9 @@
 
 ## Key Features
 
-
+* Modern menu interface: Sakura features a sleek, user-friendly menu that is easy to navigate.
+* Customizable menu colors
+* Rich and dynamic LUA scripting: Built on top of the powerful LUA scripting language, which allows for complex and dynamic interactions.
 
 ## How To Use
 
@@ -40,6 +42,8 @@ $ git clone https://github.com/rbl-dot/sakura
 ## Known bugs
 
 * Fov for perfect silent doesn't work at all.
+* CreateBeamPoint is not working from lua script.
+* Boxes are not drawing in sound esp.
 
 ## To-do
 
@@ -48,10 +52,10 @@ $ git clone https://github.com/rbl-dot/sakura
 * Add save/load functions for lua.
 * Flash check for legit aimbot.
 * Rewrite code for rest files.
+* Update readme.
+* Github lua wiki.
 
 ## Credits
-
-This software is created by:
 
 - [BloodSharp](https://github.com/BloodSharp)
 - [Imgui](https://github.com/ocornut/imgui)
