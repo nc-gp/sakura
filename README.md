@@ -43,6 +43,7 @@ $ git clone https://github.com/rbl-dot/sakura
 
 * Fov for perfect silent doesn't work at all.
 * CreateBeamPoint is not working from lua script.
+* Boxes are not drawing in sound esp.
 
 ## To-do
 
