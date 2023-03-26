@@ -1,7 +1,6 @@
 #ifndef _USERMSG_
 #define _USERMSG_
 
-pfnUserMsgHook HookUserMsg(char *szMsgName, pfnUserMsgHook pfn);
 typedef struct TUserMsg
 {
 	int number;
@@ -10,7 +9,29 @@ typedef struct TUserMsg
 	struct TUserMsg* next;
 	pfnUserMsgHook pfn;
 } *PUserMsg;
-extern PUserMsg pUserMsgBase;
-void HookUserMessages();
+
+namespace Sakura
+{
+	namespace Message
+	{
+		namespace User
+		{
+			extern PUserMsg Base;
+
+			extern pfnUserMsgHook pResetHUD;
+			extern pfnUserMsgHook pTeamInfo;
+			extern pfnUserMsgHook pDeathMsg;
+			extern pfnUserMsgHook pScoreAttrib;
+			extern pfnUserMsgHook pServerName;
+			extern pfnUserMsgHook pSetFOV;
+			extern pfnUserMsgHook pMOTD;
+			extern pfnUserMsgHook pDamage;
+
+			PUserMsg ByName(char* messageName);
+			pfnUserMsgHook Hook(char* messageName, pfnUserMsgHook pfn);
+			void Init();
+		};
+	};
+};
 
 #endif

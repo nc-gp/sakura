@@ -65,8 +65,8 @@ DWORD WINAPI Hook()
 	while (!pmove)
 		pmove = (playermove_t*)c_Offset.FindPlayerMove();
 
-	while (!pUserMsgBase)
-		pUserMsgBase = c_Offset.FindUserMsgBase();
+	while (!Sakura::Message::User::Base)
+		Sakura::Message::User::Base = c_Offset.FindUserMsgBase();
 
 	if (c_Offset.HLType != RENDERTYPE_UNDEFINED)
 	{
@@ -80,7 +80,7 @@ DWORD WINAPI Hook()
 
 	HookStudiModelRendererFunctions();
 
-	HookUserMessages();
+	Sakura::Message::User::Init();
 
 	HookOpenGL();
 

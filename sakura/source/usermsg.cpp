@@ -1,14 +1,14 @@
 #include "client.h"
 
-PUserMsg pUserMsgBase;
-pfnUserMsgHook pResetHUD;
-pfnUserMsgHook pTeamInfo;
-pfnUserMsgHook pDeathMsg;
-pfnUserMsgHook pScoreAttrib;
-pfnUserMsgHook pServerName;
-pfnUserMsgHook pSetFOV;
-pfnUserMsgHook pMOTD;
-pfnUserMsgHook pDamage;
+PUserMsg Sakura::Message::User::Base;
+pfnUserMsgHook Sakura::Message::User::pResetHUD;
+pfnUserMsgHook Sakura::Message::User::pTeamInfo;
+pfnUserMsgHook Sakura::Message::User::pDeathMsg;
+pfnUserMsgHook Sakura::Message::User::pScoreAttrib;
+pfnUserMsgHook Sakura::Message::User::pServerName;
+pfnUserMsgHook Sakura::Message::User::pSetFOV;
+pfnUserMsgHook Sakura::Message::User::pMOTD;
+pfnUserMsgHook Sakura::Message::User::pDamage;
 
 int MOTD(const char* pszName, int iSize, void* pbuf)
 {
@@ -17,7 +17,7 @@ int MOTD(const char* pszName, int iSize, void* pbuf)
 	if (cvar.misc_block_motd)
 		return 0;
 
-	return pMOTD(pszName, iSize, pbuf);
+	return Sakura::Message::User::pMOTD(pszName, iSize, pbuf);
 }
 
 int SetFOV(const char* pszName, int iSize, void* pbuf)
@@ -34,10 +34,10 @@ int SetFOV(const char* pszName, int iSize, void* pbuf)
 	{
 		g_Local.iFOV = 90;
 
-		return (*pSetFOV)(pszName, iSize, &g_Local.iFOV);
+		return (*Sakura::Message::User::pSetFOV)(pszName, iSize, &g_Local.iFOV);
 	}
 
-	return pSetFOV(pszName, iSize, pbuf);
+	return Sakura::Message::User::pSetFOV(pszName, iSize, pbuf);
 }
 
 int ServerName(const char* pszName, int iSize, void* pbuf)
@@ -45,7 +45,7 @@ int ServerName(const char* pszName, int iSize, void* pbuf)
 	BEGIN_READ(pbuf, iSize);
 	char* m_szServerName = READ_STRING();
 	sprintf(sServerName, "%s\0", m_szServerName);
-	return pServerName(pszName, iSize, pbuf);
+	return Sakura::Message::User::pServerName(pszName, iSize, pbuf);
 }
 
 int ScoreAttrib(const char* pszName, int iSize, void* pbuf)
@@ -58,7 +58,7 @@ int ScoreAttrib(const char* pszName, int iSize, void* pbuf)
 		g_Player[id].bVip = (info & (1 << 2));
 		g_Player[id].bAliveInScoreTab = !(info & (1 << 0));
 	}
-	return pScoreAttrib(pszName, iSize, pbuf);
+	return Sakura::Message::User::pScoreAttrib(pszName, iSize, pbuf);
 }
 
 int ResetHUD(const char *pszName, int iSize, void *pbuf)
@@ -114,7 +114,7 @@ int ResetHUD(const char *pszName, int iSize, void *pbuf)
 		}
 	}
 
-	return pResetHUD(pszName, iSize, pbuf);
+	return Sakura::Message::User::pResetHUD(pszName, iSize, pbuf);
 }
 
 int DeathMsg(const char *pszName, int iSize, void *pbuf)
@@ -157,7 +157,7 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 		}
 	}
 
-	return pDeathMsg(pszName, iSize, pbuf);
+	return Sakura::Message::User::pDeathMsg(pszName, iSize, pbuf);
 }
 
 int TeamInfo(const char *pszName, int iSize, void *pbuf)
@@ -186,7 +186,7 @@ int TeamInfo(const char *pszName, int iSize, void *pbuf)
 				g_Local.iTeam = 0;
 		}
 	}
-	return pTeamInfo(pszName, iSize, pbuf);
+	return Sakura::Message::User::pTeamInfo(pszName, iSize, pbuf);
 }
 
 int Damage(const char* pszName, int iSize, void* pbuf)
@@ -220,48 +220,53 @@ int Damage(const char* pszName, int iSize, void* pbuf)
 		}
 	}
 
-	return pDamage(pszName, iSize, pbuf);
+	return Sakura::Message::User::pDamage(pszName, iSize, pbuf);
 }
 
-PUserMsg UserMsgByName(char* szMsgName)
+PUserMsg Sakura::Message::User::ByName(char* messageName)
 {
 	PUserMsg Ptr = NULL;
-	Ptr = pUserMsgBase;
+
+	Ptr = Base;
+
 	while (Ptr->next)
 	{
-		if (!strcmp(Ptr->name, szMsgName))
+		if (!strcmp(Ptr->name, messageName))
 			return Ptr;
+
 		Ptr = Ptr->next;
 	}
+
 	Ptr->pfn = 0;
+
 	return Ptr;
 }
 
-pfnUserMsgHook HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
+pfnUserMsgHook Sakura::Message::User::Hook(char* messageName, pfnUserMsgHook pfn)
 {
 	PUserMsg Ptr = NULL;
 	pfnUserMsgHook Original = NULL;
-	Ptr = UserMsgByName(szMsgName);
-	if (Ptr->pfn != 0) {
+
+	Ptr = ByName(messageName);
+
+	if (Ptr->pfn != 0)
+	{
 		Original = Ptr->pfn;
 		Ptr->pfn = pfn;
 		return Original;
 	}
 	
-	c_Offset.Error(/*Couldn't find '%s' message.*/XorStr<0xAA, 28, 0x7A45AE40>("\xE9\xC4\xD9\xC1\xCA\xC1\x97\xC5\x92\xD5\xDD\xDB\xD2\x97\x9F\x9C\xC9\x9C\x9C\xD0\xDB\xCC\xB3\xA0\xA5\xA6\xEA" + 0x7A45AE40).s, szMsgName);
+	c_Offset.Error(/*Couldn't find '%s' message.*/XorStr<0xAA, 28, 0x7A45AE40>("\xE9\xC4\xD9\xC1\xCA\xC1\x97\xC5\x92\xD5\xDD\xDB\xD2\x97\x9F\x9C\xC9\x9C\x9C\xD0\xDB\xCC\xB3\xA0\xA5\xA6\xEA" + 0x7A45AE40).s, messageName);
 }
 
-void HookUserMessages()
+void Sakura::Message::User::Init()
 {
-#define HOOK_MSG(n) \
-	p##n = HookUserMsg(#n, ##n);
-
-	HOOK_MSG(ResetHUD);
-	HOOK_MSG(TeamInfo);
-	HOOK_MSG(DeathMsg);
-	HOOK_MSG(ScoreAttrib);
-	HOOK_MSG(ServerName);
-	HOOK_MSG(SetFOV);
-	HOOK_MSG(MOTD);
-	HOOK_MSG(Damage);
+	pResetHUD = Hook(/*ResetHUD*/XorStr<0x20, 9, 0xE522A0CA>("\x72\x44\x51\x46\x50\x6D\x73\x63" + 0xE522A0CA).s, ResetHUD);
+	pTeamInfo = Hook(/*TeamInfo*/XorStr<0xAA, 9, 0xDA84AFF9>("\xFE\xCE\xCD\xC0\xE7\xC1\xD6\xDE" + 0xDA84AFF9).s, TeamInfo);
+	pDeathMsg = Hook(/*DeathMsg*/XorStr<0xA4, 9, 0x2FD82F9B>("\xE0\xC0\xC7\xD3\xC0\xE4\xD9\xCC" + 0x2FD82F9B).s, DeathMsg);
+	pScoreAttrib = Hook(/*ScoreAttrib*/XorStr<0xA4, 12, 0x72E29F43>("\xF7\xC6\xC9\xD5\xCD\xE8\xDE\xDF\xDE\xC4\xCC" + 0x72E29F43).s, ScoreAttrib);
+	pServerName = Hook(/*ServerName*/XorStr<0x63, 11, 0xFC1D837D>("\x30\x01\x17\x10\x02\x1A\x27\x0B\x06\x09" + 0xFC1D837D).s, ServerName);
+	pSetFOV = Hook(/*SetFOV*/XorStr<0xC9, 7, 0x9382CC98>("\x9A\xAF\xBF\x8A\x82\x98" + 0x9382CC98).s, SetFOV);
+	pMOTD = Hook(/*MOTD*/XorStr<0xC3, 5, 0x4AA646A2>("\x8E\x8B\x91\x82" + 0x4AA646A2).s, MOTD);
+	pDamage = Hook(/*Damage*/XorStr<0x29, 7, 0x66684510>("\x6D\x4B\x46\x4D\x4A\x4B" + 0x66684510).s, Damage);
 }
