@@ -393,11 +393,6 @@ public:
 	float radar;
 	float radar_zoom;
 	float radar_point_size;
-	float radar_background_opacity;
-	float radar_pos_x;
-	float radar_pos_y;
-	float radar_size_x;
-	float radar_size_y;
 
 	float chams_view_model;
 	float chams_view_model_wireframe;
@@ -468,21 +463,45 @@ struct Entry
 	void* data;
 };
 
+namespace Sakura
+{
+	namespace Config
+	{
+		extern int SelectedConfig;
+		extern int DefaultConfig;
+		extern int ConfigCount;
+
+		extern std::vector<std::string> List;
+
+		void GetAll();
+		void GetDefault();
+		void SaveDefault();
+
+		std::string GetCurrent();
+
+		void Save(std::ofstream& ofs);
+		void Load();
+	};
+
+	namespace Cvar
+	{
+		void Add(const char* name, void* data);
+		void New(const char* cvarName, float &cvar, float defaultValue = 0.0);
+	};
+
+	namespace File
+	{
+		void Init();
+		bool Exists(const char* filename);
+
+		inline std::string GetSakuraDir(const char* basename);
+	};
+};
+
 extern std::vector<Entry> entries;
 extern StringFinder names;
-extern std::vector<Entry> luaEntries;
-extern StringFinder luaNames;
-extern std::vector<std::string> configs;
-extern int selectedConfig;
-extern int defaultConfig;
-extern int configCount;
 
 void SaveCvar();
 void LoadCvar();
-void getAllConfigs();
-void getDefaultConfig();
-void saveDefaultConfig();
-void initDirectories();
-void AddCvarFloat(const char* name, void* data);
 
 #endif

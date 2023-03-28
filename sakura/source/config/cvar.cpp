@@ -4,16 +4,16 @@ CVARlist cvar;
 StringFinder names; 
 std::vector<Entry> entries;
 
-std::vector<std::string> configs;
-int selectedConfig = 0;
-int defaultConfig = 0;
-int configCount = 0;
+int Sakura::Config::SelectedConfig = 0;
+int Sakura::Config::DefaultConfig = 0;
+int Sakura::Config::ConfigCount = 0;
+std::vector<std::string> Sakura::Config::List;
 
 const std::string configExtension = /*.ini*/XorStr<0x84, 5, 0x54BDC5D7>("\xAA\xEC\xE8\xEE" + 0x54BDC5D7).s;
 
-void getAllConfigs()
+void Sakura::Config::GetAll()
 {
-	configs.push_back(/*default.ini*/XorStr<0x43, 12, 0x717EB79D>("\x27\x21\x23\x27\x32\x24\x3D\x64\x22\x22\x24" + 0x717EB79D).s);
+	List.push_back(/*default.ini*/XorStr<0x43, 12, 0x717EB79D>("\x27\x21\x23\x27\x32\x24\x3D\x64\x22\x22\x24" + 0x717EB79D).s);
 
 	const std::string hackDir = hackdir;
 	const std::string configDir = hackDir + /*\\configs\\*/XorStr<0x3C, 10, 0x0E5CC77F>("\x60\x5E\x51\x51\x26\x28\x25\x30\x18" + 0x0E5CC77F).s;
@@ -34,11 +34,11 @@ void getAllConfigs()
 			// Skip over default.ini
 			if (temp == /*default.ini*/XorStr<0xAE, 12, 0x63568316>("\xCA\xCA\xD6\xD0\xC7\xDF\xC0\x9B\xDF\xD9\xD1" + 0x63568316).s) continue;
 
-			configCount++;
+			ConfigCount++;
 
 			// Add any config files to the configs vector
 			if (p.path().extension() == configExtension)
-				configs.push_back(std::string(temp));
+				List.push_back(std::string(temp));
 		}
 	}
 	catch (const std::filesystem::filesystem_error& e)
@@ -47,7 +47,7 @@ void getAllConfigs()
 	}
 }
 
-void getDefaultConfig()
+void Sakura::Config::GetDefault()
 {
 	const std::string hackDir = hackdir;
 
@@ -70,8 +70,8 @@ void getDefaultConfig()
 				{
 					try
 					{
-						selectedConfig = std::stoi(line);
-						defaultConfig = selectedConfig;
+						SelectedConfig = std::stoi(line);
+						DefaultConfig = SelectedConfig;
 					}
 					catch (const std::invalid_argument& e)
 					{
@@ -94,7 +94,7 @@ void getDefaultConfig()
 	}
 }
 
-void saveDefaultConfig()
+void Sakura::Config::SaveDefault()
 {
 	const std::string hackDir = hackdir;
 	const std::string configPath = hackDir + /*\\assets\\config.sakura*/XorStr<0x73, 22, 0x2093A6FF>("\x2F\x15\x06\x05\x12\x0C\x0A\x26\x18\x13\x13\x18\x16\xE7\xAF\xF1\xE2\xEF\xF0\xF4\xE6" + 0x2093A6FF).s;
@@ -109,7 +109,7 @@ void saveDefaultConfig()
 			return;
 		}
 
-		file << selectedConfig;
+		file << SelectedConfig;
 		file.close();
 	}
 	catch (const std::exception& e)
@@ -118,7 +118,51 @@ void saveDefaultConfig()
 	}
 }
 
-void initDirectories()
+std::string Sakura::Config::GetCurrent()
+{
+	return List[SelectedConfig];
+}
+
+void Sakura::Config::Save(std::ofstream& ofs)
+{
+	ofs << /*[CVAR]\n*/XorStr<0xD6, 8, 0x81CD2591>("\x8D\x94\x8E\x98\x88\x86\xD6" + 0x81CD2591).s;
+
+	for (names.it_start(); names.it_running(); names.it_next())
+	{
+		Entry& r = entries[names.num];
+		ofs << names.str << /*=*/XorStr<0xDD, 2, 0x12448F07>("\xE0" + 0x12448F07).s << *(float*)r.data << /*\n*/XorStr<0xAF, 2, 0x6981A996>("\xA5" + 0x6981A996).s;
+	}
+}
+
+void Sakura::Config::Load()
+{
+	char cvar_f[500];
+	DWORD size = 500;
+
+	for (names.it_start(); names.it_running(); names.it_next())
+	{
+		Entry& r = entries[names.num];
+
+		GetPrivateProfileString(/*CVAR*/XorStr<0x8C, 5, 0x07B4A87E>("\xCF\xDB\xCF\xDD" + 0x07B4A87E).s, names.str, /*NULL*/XorStr<0xB6, 5, 0x0D14959C>("\xF8\xE2\xF4\xF5" + 0x0D14959C).s, cvar_f, size, Sakura::File::GetSakuraDir(GetCurrent().c_str()).c_str());
+		*(float*)r.data = atof(cvar_f);
+	}
+}
+
+void Sakura::Cvar::Add(const char* name, void* data)
+{
+	int index = entries.size();
+	Entry tmp = { data };
+	entries.push_back(tmp);
+	names.add(name, index);
+}
+
+void Sakura::Cvar::New(const char* cvarName, float &cvar, float defaultValue)
+{
+	Add(cvarName, &cvar);
+	cvar = defaultValue;
+}
+
+void Sakura::File::Init()
 {
 	const std::string hackDir = hackdir;
 
@@ -128,12 +172,14 @@ void initDirectories()
 	std::filesystem::create_directories(hackDir + /*\\scripts\\*/XorStr<0x03, 10, 0xB372F82C>("\x5F\x77\x66\x74\x6E\x78\x7D\x79\x57" + 0xB372F82C).s);
 }
 
-std::string GetCurrentConfig()
+bool Sakura::File::Exists(const char* filename)
 {
-	return configs[selectedConfig];
+	WIN32_FIND_DATA finddata;
+	HANDLE handle = FindFirstFile(filename, &finddata);
+	return (handle != INVALID_HANDLE_VALUE);
 }
 
-inline std::string getHackDirFile(const char* basename)
+inline std::string Sakura::File::GetSakuraDir(const char* basename)
 {
 	if (strstr(basename, "..")) { return ":*?\\/<>\""; }
 	std::string ret = hackdir;
@@ -141,94 +187,28 @@ inline std::string getHackDirFile(const char* basename)
 	return (aaa + basename);
 }
 
-void save_cvars(std::ofstream& ofs)
-{
-	ofs << "[CVAR]\n";
-
-	for (names.it_start(); names.it_running(); names.it_next())
-	{
-		Entry& r = entries[names.num];
-		ofs << names.str << "=" << *(float*)r.data << "\n";
-	}
-}
-
-void load_cvars(void)
-{
-	char cvar_f[500];
-	DWORD size = 500;
-
-	for (names.it_start(); names.it_running(); names.it_next())
-	{
-		Entry& r = entries[names.num];
-
-		GetPrivateProfileString("CVAR", names.str, "NULL", cvar_f, size, getHackDirFile(GetCurrentConfig().c_str()).c_str());
-		*(float*)r.data = atof(cvar_f);
-
-	}
-
-	/*for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
-	{
-		auto& script = Sakura::Lua::scripts[i];
-
-		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_LOAD_CONFIG))
-			continue;
-
-		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_LOAD_CONFIG);
-		for (const auto& callback : callbacks)
-		{
-			try
-			{
-				callback();
-			}
-			catch (luabridge::LuaException const& error)
-			{
-				LogToFile("Error has occured in the lua: %s", error.what());
-				script.RemoveAllCallbacks();
-			}
-		}
-	}*/
-}
-
-bool fileExists(const char* filename)
-{
-	WIN32_FIND_DATA finddata;
-	HANDLE handle = FindFirstFile(filename, &finddata);
-	return (handle != INVALID_HANDLE_VALUE);
-}
-
-void AddCvarFloat(const char* name, void* data)
-{
-	int index = entries.size();
-	Entry tmp = { data };
-	entries.push_back(tmp);
-	names.add(name, index);
-}
-
 void CVARlist::init()
 {
-	#define INITCVAR(name,value) AddCvarFloat(#name, &##name );##name=##value;
+	char str[256];
 
-	INITCVAR(rage_active, 0.0);
-	INITCVAR(rage_wall, 0.0);
-	INITCVAR(rage_fov, 45.0);
-	INITCVAR(rage_target_selection, 0.0);
-	INITCVAR(rage_perfect_silent, 0.0);
-	INITCVAR(rage_silent, 0.0); 
-	INITCVAR(rage_knife_attack, 1.0);
-	INITCVAR(rage_shield_attack, 0.0);
-	INITCVAR(rage_nospread_method, 0.0);
-	INITCVAR(rage_auto_fire, 0.0);
-	INITCVAR(rage_auto_fire_key, -1.0);
-	INITCVAR(rage_team, 0.0);
-	INITCVAR(rage_always_fire, 0.0);
-	INITCVAR(rage_draw_aim, 1.0);
-	INITCVAR(rage_no_spread, 0.0);
-	INITCVAR(rage_no_recoil, 0.0);
-	INITCVAR(rage_tapping_mode, 0.0);
-
-	INITCVAR(rage_antiaim_active, 0.0);
-
-	INITCVAR(aim_id_mode, 1.0);
+	Sakura::Cvar::New(/*rage_wall*/XorStr<0x5A, 10, 0x2048D9AB>("\x28\x3A\x3B\x38\x01\x28\x01\x0D\x0E" + 0x2048D9AB).s, cvar.rage_wall, 0.0);
+	Sakura::Cvar::New(/*rage_fov*/XorStr<0x91, 9, 0xB38E9923>("\xE3\xF3\xF4\xF1\xCA\xF0\xF8\xEE" + 0xB38E9923).s, cvar.rage_fov, 45.0);
+	Sakura::Cvar::New(/*rage_target_selection*/XorStr<0x6C, 22, 0x6947E2E4>("\x1E\x0C\x09\x0A\x2F\x05\x13\x01\x13\x10\x02\x28\x0B\x1C\x16\x1E\x1F\x09\x17\x10\xEE" + 0x6947E2E4).s, cvar.rage_target_selection, 0.0);
+	Sakura::Cvar::New(/*rage_perfect_silent*/XorStr<0xEF, 20, 0xE749F77F>("\x9D\x91\x96\x97\xAC\x84\x90\x84\x91\x9D\x9A\x8E\xA4\x8F\x94\x92\x9A\x6E\x75" + 0xE749F77F).s, cvar.rage_perfect_silent, 0.0);
+	Sakura::Cvar::New(/*rage_silent*/XorStr<0x0C, 12, 0x80FF611F>("\x7E\x6C\x69\x6A\x4F\x62\x7B\x7F\x71\x7B\x62" + 0x80FF611F).s, cvar.rage_silent, 0.0);
+	Sakura::Cvar::New(/*rage_knife_attack*/XorStr<0x79, 18, 0xD58F0D9A>("\x0B\x1B\x1C\x19\x22\x15\x11\xE9\xE7\xE7\xDC\xE5\xF1\xF2\xE6\xEB\xE2" + 0xD58F0D9A).s, cvar.rage_knife_attack, 1.0);
+	Sakura::Cvar::New(/*rage_shield_attack*/XorStr<0x1B, 19, 0xC880C90E>("\x69\x7D\x7A\x7B\x40\x53\x49\x4B\x46\x48\x41\x79\x46\x5C\x5D\x4B\x48\x47" + 0xC880C90E).s, cvar.rage_shield_attack, 0.0);
+	Sakura::Cvar::New(/*rage_nospread_method*/XorStr<0x7C, 21, 0x749DE584>("\x0E\x1C\x19\x1A\xDF\xEF\xED\xF0\xF4\xF7\xE3\xE6\xEC\xD6\xE7\xEE\xF8\xE5\xE1\xEB" + 0x749DE584).s, cvar.rage_nospread_method, 0.0);
+	Sakura::Cvar::New(/*rage_auto_fire*/XorStr<0x6B, 15, 0x4D15290F>("\x19\x0D\x0A\x0B\x30\x11\x04\x06\x1C\x2B\x13\x1F\x05\x1D" + 0x4D15290F).s, cvar.rage_auto_fire, 0.0);
+	Sakura::Cvar::New(/*rage_auto_fire_key*/XorStr<0x24, 19, 0xFCAAFEBD>("\x56\x44\x41\x42\x77\x48\x5F\x5F\x43\x72\x48\x46\x42\x54\x6D\x58\x51\x4C" + 0xFCAAFEBD).s, cvar.rage_auto_fire_key, -1.0);
+	Sakura::Cvar::New(/*rage_team*/XorStr<0x86, 10, 0x62FB25EE>("\xF4\xE6\xEF\xEC\xD5\xFF\xE9\xEC\xE3" + 0x62FB25EE).s, cvar.rage_team, 0.0);
+	Sakura::Cvar::New(/*rage_always_fire*/XorStr<0x67, 17, 0x9FDB52D7>("\x15\x09\x0E\x0F\x34\x0D\x01\x19\x0E\x09\x02\x2D\x15\x1D\x07\x13" + 0x9FDB52D7).s, cvar.rage_always_fire, 0.0);
+	Sakura::Cvar::New(/*rage_draw_aim*/XorStr<0x25, 14, 0xB25C2945>("\x57\x47\x40\x4D\x76\x4E\x59\x4D\x5A\x71\x4E\x59\x5C" + 0xB25C2945).s, cvar.rage_draw_aim, 1.0);
+	Sakura::Cvar::New(/*rage_no_spread*/XorStr<0xFF, 15, 0x555F94DF>("\x8D\x61\x66\x67\x5C\x6A\x6A\x59\x74\x78\x7B\x6F\x6A\x68" + 0x555F94DF).s, cvar.rage_no_spread, 0.0);
+	Sakura::Cvar::New(/*rage_no_recoil*/XorStr<0x20, 15, 0x9F1770B9>("\x52\x40\x45\x46\x7B\x4B\x49\x78\x5A\x4C\x49\x44\x45\x41" + 0x9F1770B9).s, cvar.rage_no_recoil, 0.0);
+	Sakura::Cvar::New(/*rage_tapping_mode*/XorStr<0x81, 18, 0x720770F4>("\xF3\xE3\xE4\xE1\xDA\xF2\xE6\xF8\xF9\xE3\xE5\xEB\xD2\xE3\xE0\xF4\xF4" + 0x720770F4).s, cvar.rage_tapping_mode, 0.0);
+	Sakura::Cvar::New(/*rage_antiaim_active*/XorStr<0x3D, 20, 0xC3B43A24>("\x4F\x5F\x58\x25\x1E\x23\x2D\x30\x2C\x27\x2E\x25\x16\x2B\x28\x38\x24\x38\x2A" + 0xC3B43A24).s, cvar.rage_antiaim_active, 0.0);
+	Sakura::Cvar::New(/*aim_id_mode*/XorStr<0x09, 12, 0xE1C07727>("\x68\x63\x66\x53\x64\x6A\x50\x7D\x7E\x76\x76" + 0xE1C07727).s, cvar.aim_id_mode, 1.0);
 
 	for (size_t i = 1; i <= 30; ++i)
 	{
@@ -236,650 +216,608 @@ void CVARlist::init()
 
 		if (i == WEAPON_KNIFE)
 		{
-			char str[256];
-			sprintf(str, "rage[%d].rage_hitbox", i);
-			AddCvarFloat(str, &cvar.rage[i].rage_hitbox); rage[i].rage_hitbox = 11.0;
-
+			sprintf(str, /*rage[%d].rage_hitbox*/XorStr<0x68, 21, 0x98367AA6>("\x1A\x08\x0D\x0E\x37\x48\x0A\x32\x5E\x03\x13\x14\x11\x2A\x1E\x1E\x0C\x1B\x15\x03" + 0x98367AA6).s, i);
+			Sakura::Cvar::New(str, cvar.rage[i].rage_hitbox, 11.0);
 			continue;
 		}
 
-		char str[256];
-		sprintf(str, "legit[%d].active", i);
-		AddCvarFloat(str, &cvar.legit[i].active); legit[i].active = 0.0;
-		sprintf(str, "legit[%d].speed", i);
-		AddCvarFloat(str, &cvar.legit[i].speed); legit[i].speed = 0.0;
-		sprintf(str, "legit[%d].speed_scale_fov", i);
-		AddCvarFloat(str, &cvar.legit[i].speed_scale_fov); legit[i].speed_scale_fov = 0.0;
-		sprintf(str, "legit[%d].reaction_time", i);
-		AddCvarFloat(str, &cvar.legit[i].reaction_time); legit[i].reaction_time = 0.0;
-		sprintf(str, "legit[%d].humanize", i);
-		AddCvarFloat(str, &cvar.legit[i].humanize); legit[i].humanize = 0.0;
-		sprintf(str, "legit[%d].recoil_compensation_pitch", i);
-		AddCvarFloat(str, &cvar.legit[i].recoil_compensation_pitch); legit[i].recoil_compensation_pitch = 0.0;
-		sprintf(str, "legit[%d].recoil_compensation_yaw", i);
-		AddCvarFloat(str, &cvar.legit[i].recoil_compensation_yaw); legit[i].recoil_compensation_yaw = 0.0;
-		sprintf(str, "legit[%d].recoil_compensation_after_shots_fired", i);
-		AddCvarFloat(str, &cvar.legit[i].recoil_compensation_after_shots_fired); legit[i].recoil_compensation_after_shots_fired = 0.0;
-		sprintf(str, "legit[%d].recoil_compensation_fov", i);
-		AddCvarFloat(str, &cvar.legit[i].recoil_compensation_fov); legit[i].recoil_compensation_fov = 0.0;
-		sprintf(str, "legit[%d].recoil_compensation_smooth", i);
-		AddCvarFloat(str, &cvar.legit[i].recoil_compensation_smooth); legit[i].recoil_compensation_smooth = 0.0;
-		sprintf(str, "legit[%d].block_attack_after_kill", i);
-		AddCvarFloat(str, &cvar.legit[i].block_attack_after_kill); legit[i].block_attack_after_kill = 0.0;
-		sprintf(str, "legit[%d].accuracy", i);
-		AddCvarFloat(str, &cvar.legit[i].accuracy); legit[i].accuracy = 0.0;
-		sprintf(str, "legit[%d].hitbox", i);
-		AddCvarFloat(str, &cvar.legit[i].hitbox); legit[i].hitbox = 11.0;
-		sprintf(str, "legit[%d].perfect_silent_fov", i);
-		AddCvarFloat(str, &cvar.legit[i].perfect_silent_fov); legit[i].perfect_silent_fov = 0;
-		sprintf(str, "legit[%d].perfect_silent_enable", i);
-		AddCvarFloat(str, &cvar.legit[i].perfect_silent_enable); legit[i].perfect_silent_enable = 0;
-		sprintf(str, "legit[%d].perfect_silent_spread", i);
-		AddCvarFloat(str, &cvar.legit[i].perfect_silent_spread); legit[i].perfect_silent_spread = 0;
-		sprintf(str, "legit[%d].fov", i);
-		AddCvarFloat(str, &cvar.legit[i].fov); legit[i].fov = 5.0;
-		sprintf(str, "legit[%d].speed_in_attack", i);
-		AddCvarFloat(str, &cvar.legit[i].speed_in_attack); legit[i].speed_in_attack = 100;
-		sprintf(str, "legit[%d].trigger_active", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_active); legit[i].trigger_active = 0.0;
-		sprintf(str, "legit[%d].trigger_wall", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_wall); legit[i].trigger_wall = 0.0;
-		sprintf(str, "legit[%d].trigger_accuracy", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_accuracy); legit[i].trigger_accuracy = 0.0;
-		sprintf(str, "legit[%d].trigger_delay_shot", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_delay_shot); legit[i].trigger_delay_shot = 0.0;
-		sprintf(str, "legit[%d].trigger_shot_count", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_shot_count); legit[i].trigger_shot_count = 1.0;
-		sprintf(str, "legit[%d].trigger_shot_type", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_shot_type); legit[i].trigger_shot_type = 0.0;
-		sprintf(str, "legit[%d].trigger_random_max", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_random_max); legit[i].trigger_random_max = 3.0;
-		sprintf(str, "legit[%d].trigger_hitbox", i);
-		AddCvarFloat(str, &cvar.legit[i].trigger_hitbox); legit[i].trigger_hitbox = 11.0;
+		sprintf(str, /*legit[%d].active*/XorStr<0x40, 17, 0x62CF7119>("\x2C\x24\x25\x2A\x30\x1E\x63\x23\x15\x67\x2B\x28\x38\x24\x38\x2A" + 0x62CF7119).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].active);
+		sprintf(str, /*legit[%d].speed*/XorStr<0x40, 16, 0xB54E205B>("\x2C\x24\x25\x2A\x30\x1E\x63\x23\x15\x67\x39\x3B\x29\x28\x2A" + 0xB54E205B).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].speed);
+		sprintf(str, /*legit[%d].speed_scale_fov*/XorStr<0x70, 26, 0x0838DF34>("\x1C\x14\x15\x1A\x00\x2E\x53\x13\x25\x57\x09\x0B\x19\x18\x1A\x20\xF3\xE2\xE3\xEF\xE1\xDA\xE0\xE8\xFE" + 0x0838DF34).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].speed_scale_fov);
+		sprintf(str, /*legit[%d].reaction_time*/XorStr<0x97, 24, 0x5756B52B>("\xFB\xFD\xFE\xF3\xEF\xC7\xB8\xFA\xC2\x8E\xD3\xC7\xC2\xC7\xD1\xCF\xC8\xC6\xF6\xDE\xC2\xC1\xC8" + 0x5756B52B).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].reaction_time);
+		sprintf(str, /*legit[%d].humanize*/XorStr<0x43, 19, 0xB07020B8>("\x2F\x21\x22\x2F\x33\x13\x6C\x2E\x16\x62\x25\x3B\x22\x31\x3F\x3B\x29\x31" + 0xB07020B8).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].humanize);
+		sprintf(str, /*legit[%d].recoil_compensation_pitch*/XorStr<0x44, 36, 0x6602EBC5>("\x28\x20\x21\x2E\x3C\x12\x6F\x2F\x11\x63\x3C\x2A\x33\x3E\x3B\x3F\x0B\x36\x39\x3A\x28\x3C\x34\x28\x3D\x29\x37\x30\x0E\x3E\x12\x0A\x10\x06\x0E" + 0x6602EBC5).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].recoil_compensation_pitch);
+		sprintf(str, /*legit[%d].recoil_compensation_yaw*/XorStr<0x53, 34, 0xA07B2823>("\x3F\x31\x32\x3F\x23\x03\x7C\x3E\x06\x72\x2F\x3B\x3C\x0F\x08\x0E\x3C\x07\x0A\x0B\x17\x0D\x07\x19\x0A\x18\x04\x01\x01\x2F\x08\x13\x04" + 0xA07B2823).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].recoil_compensation_yaw);
+		sprintf(str, /*legit[%d].recoil_compensation_after_shots_fired*/XorStr<0xA6, 48, 0x90107666>("\xCA\xC2\xCF\xC0\xDE\xF0\x89\xC9\xF3\x81\xC2\xD4\xD1\xDC\xDD\xD9\xE9\xD4\xD7\xD4\xCA\xDE\xD2\xCE\xDF\xCB\xA9\xAE\xAC\x9C\xA5\xA3\xB2\xA2\xBA\x96\xB9\xA3\xA3\xB9\xBD\x90\xB6\xB8\xA0\xB6\xB0" + 0x90107666).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].recoil_compensation_after_shots_fired);
+		sprintf(str, /*legit[%d].recoil_compensation_fov*/XorStr<0x60, 34, 0x45F4C6B8>("\x0C\x04\x05\x0A\x10\x3E\x43\x03\x35\x47\x18\x0E\x0F\x02\x07\x03\x2F\x12\x1D\x1E\x04\x10\x18\x04\x19\x0D\x13\x14\x12\x22\x18\x10\xF6" + 0x45F4C6B8).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].recoil_compensation_fov);
+		sprintf(str, /*legit[%d].recoil_compensation_smooth*/XorStr<0x6D, 37, 0x206278D6>("\x01\x0B\x08\x19\x05\x29\x56\x10\x28\x58\x05\x1D\x1A\x15\x12\x10\x22\x1D\x10\xED\xF1\xE7\xED\xF7\xE4\xF2\xEE\xE7\xE7\xD5\xF8\xE1\xE2\xE1\xFB\xF8" + 0x206278D6).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].recoil_compensation_smooth);
+		sprintf(str, /*legit[%d].block_attack_after_kill*/XorStr<0x50,34,0xA11B8042>("\x3C\x34\x35\x3A\x20\x0E\x73\x33\x05\x77\x38\x37\x33\x3E\x35\x00\x01\x15\x16\x02\x07\x0E\x39\x06\x0E\x1D\x0F\x19\x33\x06\x07\x03\x1C" + 0xA11B8042).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].block_attack_after_kill);
+		sprintf(str, /*legit[%d].accuracy*/XorStr<0xA7, 19, 0x9B9F0BDA>("\xCB\xCD\xCE\xC3\xDF\xF7\x88\xCA\xF2\x9E\xD0\xD1\xD0\xC1\xC7\xD7\xD4\xC1" + 0x9B9F0BDA).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].accuracy);
+		sprintf(str, /*legit[%d].hitbox*/XorStr<0x95, 17, 0x1ADD1602>("\xF9\xF3\xF0\xF1\xED\xC1\xBE\xF8\xC0\xB0\xF7\xC9\xD5\xC0\xCC\xDC" + 0x1ADD1602).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].hitbox, 11.0);
+		sprintf(str, /*legit[%d].perfect_silent_fov*/XorStr<0x8C, 29, 0x37B5418B>("\xE0\xE8\xE9\xE6\xE4\xCA\xB7\xF7\xC9\xBB\xE6\xF2\xEA\xFF\xFF\xF8\xE8\xC2\xED\xF6\xCC\xC4\xCC\xD7\xFB\xC3\xC9\xD1" + 0x37B5418B).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].perfect_silent_fov);
+		sprintf(str, /*legit[%d].perfect_silent_enable*/XorStr<0xE5,32,0x1B6858BB>("\x89\x83\x80\x81\x9D\xB1\xCE\x88\xB0\xC0\x9F\x95\x83\x94\x96\x97\x81\xA9\x84\x91\x95\x9F\x95\x88\xA2\x9B\x91\x61\x63\x6E\x66" + 0x1B6858BB).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].perfect_silent_enable);
+		sprintf(str, /*legit[%d].perfect_silent_spread*/XorStr<0x6C, 32, 0x7B93B755>("\x00\x08\x09\x06\x04\x2A\x57\x17\x29\x5B\x06\x12\x0A\x1F\x1F\x18\x08\x22\x0D\x16\xEC\xE4\xEC\xF7\xDB\xF6\xF6\xF5\xED\xE8\xEE" + 0x7B93B755).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].perfect_silent_spread);
+		sprintf(str, /*legit[%d].fov*/XorStr<0xBF, 14, 0x53F98C75>("\xD3\xA5\xA6\xAB\xB7\x9F\xE0\xA2\x9A\xE6\xAF\xA5\xBD" + 0x53F98C75).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].fov, 5.0);
+		sprintf(str, /*legit[%d].speed_in_attack*/XorStr<0x46, 26, 0xE75E1C51>("\x2A\x22\x2F\x20\x3E\x10\x69\x29\x13\x61\x23\x21\x37\x36\x30\x0A\x3F\x39\x07\x38\x2E\x2F\x3D\x3E\x35" + 0xE75E1C51).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].speed_in_attack, 100.0);
+		sprintf(str, /*legit[%d].trigger_active*/XorStr<0x64, 25, 0x1A01CB77>("\x08\x00\x01\x0E\x1C\x32\x4F\x0F\x31\x43\x1A\x1D\x19\x16\x15\x16\x06\x2A\x17\x14\x0C\x10\x0C\x1E" + 0x1A01CB77).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_active);
+		sprintf(str, /*legit[%d].trigger_wall*/XorStr<0x1C, 23, 0x5F439C7D>("\x70\x78\x79\x76\x54\x7A\x07\x47\x79\x0B\x52\x55\x41\x4E\x4D\x4E\x5E\x72\x59\x4E\x5C\x5D" + 0x5F439C7D).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_wall);
+		sprintf(str, /*legit[%d].trigger_accuracy*/XorStr<0xEC, 27, 0x5E67A5A8>("\x80\x88\x89\x86\x84\xAA\xD7\x97\xA9\xDB\x82\x85\x91\x9E\x9D\x9E\x8E\xA2\x9F\x9C\x63\x74\x70\x62\x67\x7C" + 0x5E67A5A8).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_accuracy);
+		sprintf(str, /*legit[%d].trigger_delay_shot*/XorStr<0x38, 29, 0x7563F0FA>("\x54\x5C\x5D\x52\x48\x66\x1B\x5B\x1D\x6F\x36\x31\x2D\x22\x21\x22\x3A\x16\x2E\x2E\x20\x2C\x37\x10\x23\x39\x3D\x27" + 0x7563F0FA).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_delay_shot);
+		sprintf(str, /*legit[%d].trigger_shot_count*/XorStr<0xA7,29,0x3616A9E8>("\xCB\xCD\xCE\xC3\xDF\xF7\x88\xCA\xF2\x9E\xC5\xC0\xDA\xD3\xD2\xD3\xC5\xE7\xCA\xD2\xD4\xC8\xE2\xDD\xD0\xB5\xAF\xB6" + 0x3616A9E8).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_shot_count, 1.0);
+		sprintf(str, /*legit[%d].trigger_shot_type*/XorStr<0x2C,28,0x1D15F97B>("\x40\x48\x49\x46\x44\x6A\x17\x57\x69\x1B\x42\x45\x51\x5E\x5D\x5E\x4E\x62\x4D\x57\x2F\x35\x1D\x37\x3D\x35\x23" + 0x1D15F97B).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_shot_type);
+		sprintf(str, /*legit[%d].trigger_random_max*/XorStr<0xBC, 29, 0x35FA4185>("\xD0\xD8\xD9\xD6\xB4\x9A\xE7\xA7\x99\xEB\xB2\xB5\xA1\xAE\xAD\xAE\xBE\x92\xBC\xAE\xBE\xB5\xBD\xBE\x8B\xB8\xB7\xAF" + 0x35FA4185).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_random_max, 3.0);
+		sprintf(str, /*legit[%d].trigger_hitbox*/XorStr<0x0B, 25, 0x24913136>("\x67\x69\x6A\x67\x7B\x4B\x34\x76\x4E\x3A\x61\x64\x7E\x7F\x7E\x7F\x69\x43\x75\x77\x6B\x42\x4E\x5A" + 0x24913136).s, i);
+		Sakura::Cvar::New(str, cvar.legit[i].trigger_hitbox, 11.0);
 
-		sprintf(str, "rage[%d].rage_delay_shot", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_delay_shot); rage[i].rage_delay_shot = 0.0;
-		sprintf(str, "rage[%d].rage_shot_count", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_shot_count); rage[i].rage_shot_count = 1.0;
-		sprintf(str, "rage[%d].rage_shot_type", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_shot_type); rage[i].rage_shot_type = 0.0;
-		sprintf(str, "rage[%d].rage_random_max", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_random_max); rage[i].rage_random_max = 3.0;
-		sprintf(str, "rage[%d].rage_hitbox", i);
-		AddCvarFloat(str, &cvar.rage[i].rage_hitbox); rage[i].rage_hitbox = 11.0;
+		sprintf(str, /*rage[%d].rage_delay_shot*/XorStr<0x00, 25, 0x851B77BB>("\x72\x60\x65\x66\x5F\x20\x62\x5A\x26\x7B\x6B\x6C\x69\x52\x6A\x6A\x7C\x70\x6B\x4C\x67\x7D\x79\x63" + 0x851B77BB).s, i);
+		Sakura::Cvar::New(str, cvar.rage[i].rage_delay_shot);
+		sprintf(str, /*rage[%d].rage_shot_count*/XorStr<0xE1, 25, 0x5B6A98C5>("\x93\x83\x84\x81\xBE\xC3\x83\xB5\xC7\x98\x8A\x8B\x88\xB1\x9C\x98\x9E\x86\xAC\x97\x9A\x83\x99\x8C" + 0x5B6A98C5).s, i);
+		Sakura::Cvar::New(str, cvar.rage[i].rage_shot_count, 1.0);
+		sprintf(str, /*rage[%d].rage_shot_type*/XorStr<0x84, 24, 0x483CD08B>("\xF6\xE4\xE1\xE2\xD3\xAC\xEE\xD6\xA2\xFF\xEF\xE8\xF5\xCE\xE1\xFB\xFB\xE1\xC9\xE3\xE1\xE9\xFF" + 0x483CD08B).s, i);
+		Sakura::Cvar::New(str, cvar.rage[i].rage_shot_type);
+		sprintf(str, /*rage[%d].rage_random_max*/XorStr<0x08, 25, 0x2EBF0176>("\x7A\x68\x6D\x6E\x57\x28\x6A\x52\x3E\x63\x73\x74\x71\x4A\x64\x76\x76\x7D\x75\x76\x43\x70\x7F\x67" + 0x2EBF0176).s, i);
+		Sakura::Cvar::New(str, cvar.rage[i].rage_random_max, 3.0);
+		sprintf(str, /*rage[%d].rage_hitbox*/XorStr<0x2A, 21, 0x802812D0>("\x58\x4A\x4B\x48\x75\x0A\x54\x6C\x1C\x41\x55\x52\x53\x68\x50\x50\x4E\x59\x53\x45" + 0x802812D0).s, i);
+		Sakura::Cvar::New(str, cvar.rage[i].rage_hitbox, 11.0);
 	}
 
-	INITCVAR(legit_trigger_only_zoom, 0.0);
-	INITCVAR(legit_trigger_team, 0.0);
-	INITCVAR(legit_trigger_key, -1.0);
-	INITCVAR(legit_trigger_draw_aim, 1.0);
+	Sakura::Cvar::New(/*legit_trigger_team*/XorStr<0x2A, 19, 0x27C4E8E1>("\x46\x4E\x4B\x44\x5A\x70\x44\x43\x5B\x54\x53\x50\x44\x68\x4C\x5C\x5B\x56" + 0x27C4E8E1).s, cvar.legit_trigger_team, 0.0);
+	Sakura::Cvar::New(/*legit_trigger_key*/XorStr<0x8C, 18, 0x94E227D3>("\xE0\xE8\xE9\xE6\xE4\xCE\xE6\xE1\xFD\xF2\xF1\xF2\xEA\xC6\xF1\xFE\xE5" + 0x94E227D3).s, cvar.legit_trigger_key, -1.0);
+	Sakura::Cvar::New(/*legit_trigger_draw_aim*/XorStr<0xDB, 23, 0x2469A2A5>("\xB7\xB9\xBA\xB7\xAB\xBF\x95\x90\x8A\x83\x82\x83\x95\xB7\x8D\x98\x8A\x9B\xB2\x8F\x86\x9D" + 0x2469A2A5).s, cvar.legit_trigger_draw_aim, 1.0);
+	Sakura::Cvar::New(/*legit_autoscope*/XorStr<0x95, 16, 0x00F6B182>("\xF9\xF3\xF0\xF1\xED\xC5\xFA\xE9\xE9\xF1\xEC\xC3\xCE\xD2\xC6" + 0x00F6B182).s, cvar.legit_autoscope, 0.0);
+	Sakura::Cvar::New(/*legit_team*/XorStr<0x28, 11, 0x39F07C81>("\x44\x4C\x4D\x42\x58\x72\x5A\x4A\x51\x5C" + 0x39F07C81).s, cvar.legit_team, 0.0);
+	Sakura::Cvar::New(/*legit_key*/XorStr<0xF9, 10, 0xBF4F9A99>("\x95\x9F\x9C\x95\x89\xA1\x94\x65\x78" + 0xBF4F9A99).s, cvar.legit_key, -1.0);
+	Sakura::Cvar::New(/*legit_draw_aim*/XorStr<0xCC, 15, 0x097ADCCB>("\xA0\xA8\xA9\xA6\xA4\x8E\xB6\xA1\xB5\xA2\x89\xB6\xB1\xB4" + 0x097ADCCB).s, cvar.legit_draw_aim, 1.0);
+	
+	Sakura::Cvar::New(/*menu_legit_global_section*/XorStr<0xF4, 26, 0x74D430B3>("\x99\x90\x98\x82\xA7\x95\x9F\x9C\x95\x89\xA1\x98\x6C\x6E\x60\x62\x68\x5A\x75\x62\x6B\x7D\x63\x64\x62" + 0x74D430B3).s, cvar.menu_legit_global_section, 0.0);
+	Sakura::Cvar::New(/*menu_legit_sub_section*/XorStr<0xA5, 23, 0x1DB4ACA9>("\xC8\xC3\xC9\xDD\xF6\xC6\xCE\xCB\xC4\xDA\xF0\xC3\xC4\xD0\xEC\xC7\xD0\xD5\xC3\xD1\xD6\xD4" + 0x1DB4ACA9).s, cvar.menu_legit_sub_section, 0.0);
+	Sakura::Cvar::New(/*menu_rage_global_section*/XorStr<0x40, 25, 0x411AA136>("\x2D\x24\x2C\x36\x1B\x37\x27\x20\x2D\x16\x2D\x27\x23\x2F\x2F\x23\x0F\x22\x37\x30\x20\x3C\x39\x39" + 0x411AA136).s, cvar.menu_rage_global_section, 0.0);
+	Sakura::Cvar::New(/*menu_rage_sub_section*/XorStr<0x94, 22, 0xC8AFA838>("\xF9\xF0\xF8\xE2\xC7\xEB\xFB\xFC\xF9\xC2\xED\xEA\xC2\xFE\xD1\xC6\xC7\xD1\xCF\xC8\xC6" + 0xC8AFA838).s, cvar.menu_rage_sub_section, 0.0);
+	
+	Sakura::Cvar::New(/*knifebot_active*/XorStr<0xDA, 16, 0xB605E3F5>("\xB1\xB5\xB5\xBB\xBB\xBD\x8F\x95\xBD\x82\x87\x91\x8F\x91\x8D" + 0xB605E3F5).s, cvar.knifebot_active, 0.0);
+	Sakura::Cvar::New(/*knifebot_attack*/XorStr<0x0A, 16, 0x51979512>("\x61\x65\x65\x6B\x6B\x6D\x7F\x65\x4D\x72\x60\x61\x77\x74\x73" + 0x51979512).s, cvar.knifebot_attack, 1.0);
+	Sakura::Cvar::New(/*knifebot_attack_distance*/XorStr<0xDB, 25, 0xAC8C09B0>("\xB0\xB2\xB4\xB8\xBA\x82\x8E\x96\xBC\x85\x91\x92\x86\x8B\x82\xB5\x8F\x85\x9E\x9A\x8E\x9E\x92\x97" + 0xAC8C09B0).s, cvar.knifebot_attack_distance, 72.0);
+	Sakura::Cvar::New(/*knifebot_attack2_distance*/XorStr<0xD9, 26, 0x87AC9460>("\xB2\xB4\xB2\xBA\xB8\xBC\xB0\x94\xBE\x83\x97\x90\x84\x85\x8C\xDA\xB6\x8E\x82\x9F\x99\x8F\x81\x93\x94" + 0x87AC9460).s, cvar.knifebot_attack2_distance, 64.0);
+	Sakura::Cvar::New(/*knifebot_silent*/XorStr<0xE7, 16, 0x778EBDB0>("\x8C\x86\x80\x8C\x8E\x8E\x82\x9A\xB0\x83\x98\x9E\x96\x9A\x81" + 0x778EBDB0).s, cvar.knifebot_silent, 0.0);
+	Sakura::Cvar::New(/*knifebot_perfect_silent*/XorStr<0x3C, 24, 0x5DB9105E>("\x57\x53\x57\x59\x25\x23\x2D\x37\x1B\x35\x23\x35\x2E\x2C\x29\x3F\x13\x3E\x27\x23\x35\x3F\x26" + 0x5DB9105E).s, cvar.knifebot_perfect_silent, 0.0);
+	Sakura::Cvar::New(/*knifebot_fov*/XorStr<0x55, 13, 0xCB1024AA>("\x3E\x38\x3E\x3E\x3C\x38\x34\x28\x02\x38\x30\x16" + 0xCB1024AA).s, cvar.knifebot_fov, 45.0);
+	Sakura::Cvar::New(/*knifebot_team*/XorStr<0x34, 14, 0x1B911F7F>("\x5F\x5B\x5F\x51\x5D\x5B\x55\x4F\x63\x49\x5B\x5E\x2D" + 0x1B911F7F).s, cvar.knifebot_team, 0.0);
+	Sakura::Cvar::New(/*knifebot_draw_aim*/XorStr<0xC9, 18, 0x58C7693B>("\xA2\xA4\xA2\xAA\xA8\xAC\xA0\xA4\x8E\xB6\xA1\xB5\xA2\x89\xB6\xB1\xB4" + 0x58C7693B).s, cvar.knifebot_draw_aim, 1.0);
+	Sakura::Cvar::New(/*knifebot_hitbox*/XorStr<0xB6, 16, 0x3AA44F8E>("\xDD\xD9\xD1\xDF\xDF\xD9\xD3\xC9\xE1\xD7\xA9\xB5\xA0\xAC\xBC" + 0x3AA44F8E).s, cvar.knifebot_hitbox, 11.0);
+	
+	Sakura::Cvar::New(/*bypass_trace_rage*/XorStr<0x32, 18, 0x6E5ED058>("\x50\x4A\x44\x54\x45\x44\x67\x4D\x48\x5A\x5F\x58\x61\x4D\x21\x26\x27" + 0x6E5ED058).s, cvar.bypass_trace_rage, 1.0);
+	Sakura::Cvar::New(/*bypass_trace_legit*/XorStr<0xB2, 19, 0x6673A04C>("\xD0\xCA\xC4\xD4\xC5\xC4\xE7\xCD\xC8\xDA\xDF\xD8\xE1\xD3\xA5\xA6\xAB\xB7" + 0x6673A04C).s, cvar.bypass_trace_legit, 1.0);
+	Sakura::Cvar::New(/*bypass_trace_trigger*/XorStr<0xAE, 21, 0x596A166D>("\xCC\xD6\xC0\xD0\xC1\xC0\xEB\xC1\xC4\xD6\xDB\xDC\xE5\xCF\xCE\xD4\xD9\xD8\xA5\xB3" + 0x596A166D).s, cvar.bypass_trace_trigger, 1.0);
+	Sakura::Cvar::New(/*bypass_trace_knife*/XorStr<0x2A, 19, 0xD90FBBC4>("\x48\x52\x5C\x4C\x5D\x5C\x6F\x45\x40\x52\x57\x50\x69\x5C\x56\x50\x5C\x5E" + 0xD90FBBC4).s, cvar.bypass_trace_knife, 1.0);
+	
+	Sakura::Cvar::New(/*aa_pitch*/XorStr<0xB5, 9, 0xE72B8459>("\xD4\xD7\xE8\xC8\xD0\xCE\xD8\xD4" + 0xE72B8459).s, cvar.aa_pitch, 0.0);
+	Sakura::Cvar::New(/*aa_edge*/XorStr<0xE9, 8, 0x876A96DC>("\x88\x8B\xB4\x89\x89\x89\x8A" + 0x876A96DC).s, cvar.aa_edge, 0.0);
+	Sakura::Cvar::New(/*aa_yaw*/XorStr<0x67, 7, 0xE3FD7733>("\x06\x09\x36\x13\x0A\x1B" + 0xE3FD7733).s, cvar.aa_yaw, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_static*/XorStr<0xAF, 14, 0x6F06C9AA>("\xCE\xD1\xEE\xCB\xD2\xC3\xEA\xC5\xC3\xD9\xCD\xD3\xD8" + 0x6F06C9AA).s, cvar.aa_yaw_static, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_while_running*/XorStr<0x49, 21, 0xE9592B2E>("\x28\x2B\x14\x35\x2C\x39\x10\x27\x39\x3B\x3F\x31\x0A\x24\x22\x36\x37\x33\x35\x3B" + 0xE9592B2E).s, cvar.aa_yaw_while_running, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_jitter_custom*/XorStr<0xF2, 21, 0xD40B06EA>("\x93\x92\xAB\x8C\x97\x80\xA7\x93\x93\x8F\x88\x98\x8C\xA0\x63\x74\x71\x77\x6B\x68" + 0xD40B06EA).s, cvar.aa_yaw_jitter_custom, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_jitter_angle*/XorStr<0x0A, 20, 0x04EBBC8A>("\x6B\x6A\x53\x74\x6F\x78\x4F\x7B\x7B\x67\x60\x70\x64\x48\x79\x77\x7D\x77\x79" + 0x04EBBC8A).s, cvar.aa_yaw_jitter_angle, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_jitter_much*/XorStr<0x37, 19, 0x0AC91E11>("\x56\x59\x66\x43\x5A\x4B\x62\x54\x56\x34\x35\x27\x31\x1B\x28\x33\x24\x20" + 0x0AC91E11).s, cvar.aa_yaw_jitter_much, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_sideway*/XorStr<0x03, 15, 0x804B7BD2>("\x62\x65\x5A\x7F\x66\x7F\x56\x79\x62\x68\x68\x79\x6E\x69" + 0x804B7BD2).s, cvar.aa_yaw_sideway, 0.0);
+	Sakura::Cvar::New(/*aa_yaw_sideway_key*/XorStr<0x35, 19, 0x15F824C5>("\x54\x57\x68\x41\x58\x4D\x64\x4F\x54\x5A\x5A\x37\x20\x3B\x1C\x2F\x20\x3F" + 0x15F824C5).s, cvar.aa_yaw_sideway_key, -1.0);
+	Sakura::Cvar::New(/*aa_roll*/XorStr<0x64, 8, 0x80C408F6>("\x05\x04\x39\x15\x07\x05\x06" + 0x80C408F6).s, cvar.aa_roll, 0.0);
+	Sakura::Cvar::New(/*aa_roll_active*/XorStr<0xA4, 15, 0x6D16E9D7>("\xC5\xC4\xF9\xD5\xC7\xC5\xC6\xF4\xCD\xCE\xDA\xC6\xC6\xD4" + 0x6D16E9D7).s, cvar.aa_roll_active, 0.0);
+	Sakura::Cvar::New(/*aa_roll_static*/XorStr<0x5D, 15, 0xDCB58F93>("\x3C\x3F\x00\x12\x0E\x0E\x0F\x3B\x16\x12\x06\x1C\x00\x09" + 0xDCB58F93).s, cvar.aa_roll_static, 0.0);
+	Sakura::Cvar::New(/*aa_roll_while_running*/XorStr<0x75, 22, 0x8C363BD1>("\x14\x17\x28\x0A\x16\x16\x17\x23\x0A\x16\x16\xEC\xE4\xDD\xF1\xF1\xEB\xE8\xEE\xE6\xEE" + 0x8C363BD1).s, cvar.aa_roll_while_running, 0.0);
+	
+	Sakura::Cvar::New(/*fakelag_active*/XorStr<0xD7, 15, 0x851A5F4F>("\xB1\xB9\xB2\xBF\xB7\xBD\xBA\x81\xBE\x83\x95\x8B\x95\x81" + 0x851A5F4F).s, cvar.fakelag_active, 0.0);
+	Sakura::Cvar::New(/*fakelag_while_shooting*/XorStr<0xD1, 23, 0x4CB1CECE>("\xB7\xB3\xB8\xB1\xB9\xB7\xB0\x87\xAE\xB2\xB2\xB0\xB8\x81\xAC\x88\x8E\x8D\x97\x8D\x8B\x81" + 0x4CB1CECE).s, cvar.fakelag_while_shooting, 0.0);
+	Sakura::Cvar::New(/*fakelag_move*/XorStr<0x94, 13, 0xACFE154D>("\xF2\xF4\xFD\xF2\xF4\xF8\xFD\xC4\xF1\xF2\xE8\xFA" + 0xACFE154D).s, cvar.fakelag_move, 2.0);
+	Sakura::Cvar::New(/*fakelag_type*/XorStr<0xB5, 13, 0x61D435FE>("\xD3\xD7\xDC\xDD\xD5\xDB\xDC\xE3\xC9\xC7\xCF\xA5" + 0x61D435FE).s, cvar.fakelag_type, 2.0);
+	Sakura::Cvar::New(/*fakelag_limit*/XorStr<0x42, 14, 0x6CA49039>("\x24\x22\x2F\x20\x2A\x26\x2F\x16\x26\x22\x21\x24\x3A" + 0x6CA49039).s, cvar.fakelag_limit, 0.0);
+	Sakura::Cvar::New(/*fakelag_variance*/XorStr<0x3C, 17, 0x391FF779>("\x5A\x5C\x55\x5A\x2C\x20\x25\x1C\x32\x24\x34\x2E\x29\x27\x29\x2E" + 0x391FF779).s, cvar.fakelag_variance, 0.0);
+	
+	Sakura::Cvar::New(/*speedhack_active*/XorStr<0xF3, 17, 0x4E182B06>("\x80\x84\x90\x93\x93\x90\x98\x99\x90\xA3\x9C\x9D\x8B\x69\x77\x67" + 0x4E182B06).s, cvar.speedhack_active, 0.0);
+	Sakura::Cvar::New(/*speedhack_speed*/XorStr<0x84, 16, 0x2C289A3B>("\xF7\xF5\xE3\xE2\xEC\xE1\xEB\xE8\xE7\xD2\xFD\xFF\xF5\xF4\xF6" + 0x2C289A3B).s, cvar.speedhack_speed, 64.0);
+	
+	Sakura::Cvar::New(/*antiss_active*/XorStr<0xF2, 14, 0x11071B71>("\x93\x9D\x80\x9C\x85\x84\xA7\x98\x99\x8F\x95\x8B\x9B" + 0x11071B71).s, cvar.antiss_active, 0.0);
+	
+	Sakura::Cvar::New(/*misc_wav_speed*/XorStr<0x85, 15, 0x3251B5FF>("\xE8\xEF\xF4\xEB\xD6\xFD\xEA\xFA\xD2\xFD\xFF\xF5\xF4\xF6" + 0x3251B5FF).s, cvar.misc_wav_speed, 1.0);
+	Sakura::Cvar::New(/*misc_thirdperson_key*/XorStr<0xA7, 21, 0xE03DCD4E>("\xCA\xC1\xDA\xC9\xF4\xD8\xC5\xC7\xDD\xD4\xC1\xD7\xC1\xC7\xDA\xD8\xE8\xD3\xDC\xC3" + 0xE03DCD4E).s, cvar.misc_thirdperson_key, -1.0);
+	Sakura::Cvar::New(/*misc_namestealer*/XorStr<0x19, 17, 0x45FD3D96>("\x74\x73\x68\x7F\x42\x70\x7E\x4D\x44\x51\x57\x41\x44\x4A\x42\x5A" + 0x45FD3D96).s, cvar.misc_namestealer, 0.0);
+	Sakura::Cvar::New(/*misc_namestealer_time*/XorStr<0x32, 22, 0xC020FFB7>("\x5F\x5A\x47\x56\x69\x59\x59\x54\x5F\x48\x48\x58\x5F\x53\x25\x33\x1D\x37\x2D\x28\x23" + 0xC020FFB7).s, cvar.misc_namestealer_time, 250.0);
+	Sakura::Cvar::New(/*misc_namestealer_playerlist*/XorStr<0xAB, 28, 0xDA3D80E4>("\xC6\xC5\xDE\xCD\xF0\xDE\xD0\xDF\xD6\xC7\xC1\xD3\xD6\xD4\xDC\xC8\xE4\xCC\xD1\xDF\xC6\xA5\xB3\xAE\xAA\xB7\xB1" + 0xDA3D80E4).s, cvar.misc_namestealer_playerlist, 0.0);
+	Sakura::Cvar::New(/*misc_namestealer_specs*/XorStr<0x15, 23, 0x5B206F1D>("\x78\x7F\x64\x7B\x46\x74\x7A\x71\x78\x6D\x6B\x45\x40\x4E\x46\x56\x7A\x55\x57\x4D\x4A\x59" + 0x5B206F1D).s, cvar.misc_namestealer_specs, 0.0);
+	Sakura::Cvar::New(/*misc_chatspammer*/XorStr<0xB8, 17, 0x147FBCA2>("\xD5\xD0\xC9\xD8\xE3\xDE\xD6\xDE\xB4\xB2\xB2\xA2\xA9\xA8\xA3\xB5" + 0x147FBCA2).s, cvar.misc_chatspammer, 0.0);
+	Sakura::Cvar::New(/*misc_chatspammer_time*/XorStr<0xA3, 22, 0x183C8885>("\xCE\xCD\xD6\xC5\xF8\xCB\xC1\xCB\xDF\xDF\xDD\xCF\xC2\xDD\xD4\xC0\xEC\xC0\xDC\xDB\xD2" + 0x183C8885).s, cvar.misc_chatspammer_time, 250.0);
+	Sakura::Cvar::New(/*misc_fire_sounds*/XorStr<0x44, 17, 0x00DC4F89>("\x29\x2C\x35\x24\x17\x2F\x23\x39\x29\x12\x3D\x20\x25\x3F\x36\x20" + 0x00DC4F89).s, cvar.misc_fire_sounds, 0.0);
+	Sakura::Cvar::New(/*misc_fire_sounds_volume*/XorStr<0x90, 24, 0x95953811>("\xFD\xF8\xE1\xF0\xCB\xF3\xFF\xE5\xFD\xC6\xE9\xF4\xE9\xF3\xFA\xEC\xFF\xD7\xCD\xCF\xD1\xC8\xC3" + 0x95953811).s, cvar.misc_fire_sounds_volume, 0.2);
+	Sakura::Cvar::New(/*misc_fire_sounds_pitch*/XorStr<0xD2, 23, 0xBB8E9A27>("\xBF\xBA\xA7\xB6\x89\xB1\xB1\xAB\xBF\x84\xAF\xB2\xAB\xB1\x84\x92\xBD\x93\x8D\x91\x85\x8F" + 0xBB8E9A27).s, cvar.misc_fire_sounds_pitch, 100.0);
+	Sakura::Cvar::New(/*misc_block_motd*/XorStr<0x0A, 16, 0xE684DA41>("\x67\x62\x7F\x6E\x51\x6D\x7C\x7E\x71\x78\x4B\x78\x79\x63\x7C" + 0xE684DA41).s, cvar.misc_block_motd, 0.0);
+	Sakura::Cvar::New(/*misc_skipframes*/XorStr<0x3B, 16, 0x46C9D230>("\x56\x55\x4E\x5D\x60\x33\x2A\x2B\x33\x22\x37\x27\x2A\x2D\x3A" + 0x46C9D230).s, cvar.misc_skipframes, 0.0);
+	Sakura::Cvar::New(/*misc_fakelatency*/XorStr<0x49, 17, 0x1EC55549>("\x24\x23\x38\x2F\x12\x28\x2E\x3B\x34\x3E\x32\x20\x30\x38\x34\x21" + 0x1EC55549).s, cvar.misc_fakelatency, 0.0);
+	Sakura::Cvar::New(/*misc_fakelatency_amount*/XorStr<0xFC, 24, 0x35A131FE>("\x91\x94\x8D\x9C\x5F\x67\x63\x68\x61\x69\x67\x73\x6D\x67\x69\x72\x53\x6C\x63\x60\x65\x7F\x66" + 0x35A131FE).s, cvar.misc_fakelatency_amount, 50.0);
+	Sakura::Cvar::New(/*misc_backtrack_chams*/XorStr<0x27, 21, 0x5C80CA2B>("\x4A\x41\x5A\x49\x74\x4E\x4C\x4D\x44\x44\x43\x53\x50\x5F\x6A\x55\x5F\x59\x54\x49" + 0x5C80CA2B).s, cvar.misc_backtrack_chams, 0.0);
+	Sakura::Cvar::New(/*misc_backtrack_wireframe*/XorStr<0x51, 25, 0xD5919F84>("\x3C\x3B\x20\x37\x0A\x34\x36\x3B\x32\x2E\x29\x3D\x3E\x35\x00\x17\x08\x10\x06\x02\x17\x07\x0A\x0D" + 0xD5919F84).s, cvar.misc_backtrack_wireframe, 0.0);
+	Sakura::Cvar::New(/*misc_backtrack_wireframe_mode*/XorStr<0x72, 30, 0x7A0CBFB8>("\x1F\x1A\x07\x16\x29\x15\x19\x1A\x11\x0F\x0E\x1C\x1D\x14\xDF\xF6\xEB\xF1\xE1\xE3\xF4\xE6\xE5\xEC\xD5\xE6\xE3\xE9\xEB" + 0x7A0CBFB8).s, cvar.misc_backtrack_wireframe_mode, 0.0);
+	Sakura::Cvar::New(/*misc_backtrack_chams_color[0]*/XorStr<0x71, 30, 0x004BC030>("\x1C\x1B\x00\x17\x2A\x14\x16\x1B\x12\x0E\x09\x1D\x1E\x15\x20\xE3\xE9\xE3\xEE\xF7\xDA\xE5\xE8\xE4\xE6\xF8\xD0\xBC\xD0" + 0x004BC030).s, cvar.misc_backtrack_chams_color[0], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_chams_color[1]*/XorStr<0x59, 30, 0xA471586E>("\x34\x33\x28\x3F\x02\x3C\x3E\x03\x0A\x16\x11\x05\x06\x0D\x38\x0B\x01\x0B\x06\x1F\x32\x0D\x00\x1C\x1E\x00\x28\x45\x28" + 0xA471586E).s, cvar.misc_backtrack_chams_color[1], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_chams_color[2]*/XorStr<0x4E, 30, 0x17682E0D>("\x23\x26\x23\x32\x0D\x31\x35\x36\x3D\x23\x2A\x38\x39\x30\x03\x3E\x36\x3E\x0D\x12\x3D\x00\x0B\x09\x09\x15\x33\x5B\x37" + 0x17682E0D).s, cvar.misc_backtrack_chams_color[2], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_chams_color[3]*/XorStr<0x26, 30, 0x05826586>("\x4B\x4E\x5B\x4A\x75\x49\x4D\x4E\x45\x5B\x42\x50\x51\x58\x6B\x56\x5E\x56\x55\x4A\x65\x58\x53\x51\x51\x4D\x1B\x72\x1F" + 0x05826586).s, cvar.misc_backtrack_chams_color[3], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_light*/XorStr<0x0E, 21, 0x473B3DA8>("\x63\x66\x63\x72\x4D\x71\x75\x76\x7D\x63\x6A\x78\x79\x70\x43\x71\x77\x78\x48\x55" + 0x473B3DA8).s, cvar.misc_backtrack_light, 0.0);
+	Sakura::Cvar::New(/*misc_backtrack_light_color[0]*/XorStr<0x38, 30, 0x29F74B6C>("\x55\x50\x49\x58\x63\x5F\x5F\x5C\x2B\x35\x30\x22\x27\x2E\x19\x2B\x21\x2E\x22\x3F\x13\x2E\x21\x23\x3F\x23\x09\x63\x09" + 0x29F74B6C).s, cvar.misc_backtrack_light_color[0], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_light_color[1]*/XorStr<0x65, 30, 0x699F2823>("\x08\x0F\x14\x0B\x36\x08\x0A\x0F\x06\x1A\x1D\x11\x12\x19\x2C\x18\x1C\x11\x1F\x0C\x26\x19\x14\x10\x12\x0C\x24\xB1\xDC" + 0x699F2823).s, cvar.misc_backtrack_light_color[1], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_light_color[2]*/XorStr<0x1B, 30, 0x66B2408B>("\x76\x75\x6E\x7D\x40\x42\x40\x41\x48\x50\x57\x47\x44\x43\x76\x46\x42\x4B\x45\x5A\x70\x53\x5E\x5E\x5C\x46\x6E\x04\x6A" + 0x66B2408B).s, cvar.misc_backtrack_light_color[2], 1.0);
+	Sakura::Cvar::New(/*misc_backtrack_light_color[3]*/XorStr<0x66, 30, 0x34421600>("\x0B\x0E\x1B\x0A\x35\x09\x0D\x0E\x05\x1B\x02\x10\x11\x18\x2B\x19\x1F\x10\x10\x0D\x25\x18\x13\x11\x11\x0D\xDB\xB2\xDF" + 0x34421600).s, cvar.misc_backtrack_light_color[3], 1.0);
+	
+	Sakura::Cvar::New(/*misc_auto_config_save*/XorStr<0x1F, 22, 0xBC724E62>("\x72\x49\x52\x41\x7C\x45\x50\x52\x48\x77\x4A\x45\x45\x4A\x44\x49\x70\x43\x50\x44\x56" + 0xBC724E62).s, cvar.misc_auto_config_save, 1.0);
+	
+	Sakura::Cvar::New(/*notifications_enable*/XorStr<0x14, 21, 0x962491BD>("\x7A\x7A\x62\x7E\x7E\x70\x79\x7A\x68\x74\x71\x71\x53\x7E\x47\x4D\x45\x47\x4A\x42" + 0x962491BD).s, cvar.notifications_enable, 0.0);
+	Sakura::Cvar::New(/*notifications_text_only*/XorStr<0x93, 24, 0xDD45D0D9>("\xFD\xFB\xE1\xFF\xF1\xF1\xFA\xFB\xEF\xF5\xF2\xF0\xEC\xFF\xD5\xC7\xDB\xD0\xFA\xC9\xC9\xC4\xD0" + 0xDD45D0D9).s, cvar.notifications_text_only, 0.0);
+	Sakura::Cvar::New(/*notifications_fade*/XorStr<0x1C, 19, 0x0EE9D803>("\x72\x72\x6A\x76\x46\x48\x41\x42\x50\x4C\x49\x49\x5B\x76\x4C\x4A\x48\x48" + 0x0EE9D803).s, cvar.notifications_fade, 200.0);
+	
+	Sakura::Cvar::New(/*kz_strafe_psilent*/XorStr<0xB7, 18, 0xB93966DE>("\xDC\xC2\xE6\xC9\xCF\xCE\xDC\xD8\xDA\x9F\xB1\xB1\xAA\xA8\xA0\xA8\xB3" + 0xB93966DE).s, cvar.kz_strafe_psilent, 0.0);
+	Sakura::Cvar::New(/*kz_strafe*/XorStr<0x92, 10, 0x97A77018>("\xF9\xE9\xCB\xE6\xE2\xE5\xF9\xFF\xFF" + 0x97A77018).s, cvar.kz_strafe, 0.0);
+	Sakura::Cvar::New(/*kz_fast_run*/XorStr<0xB9, 12, 0x194EA787>("\xD2\xC0\xE4\xDA\xDC\xCD\xCB\x9F\xB3\xB7\xAD" + 0x194EA787).s, cvar.kz_fast_run, 0.0);
+	Sakura::Cvar::New(/*kz_ground_strafe*/XorStr<0xBF, 17, 0xC13EAAA7>("\xD4\xBA\x9E\xA5\xB1\xAB\xB0\xA8\xA3\x97\xBA\xBE\xB9\xAD\xAB\xAB" + 0xC13EAAA7).s, cvar.kz_ground_strafe, 0.0);
+	Sakura::Cvar::New(/*kz_bhop*/XorStr<0xF9, 8, 0x54FBBD0A>("\x92\x80\xA4\x9E\x95\x91\x8F" + 0x54FBBD0A).s, cvar.kz_bhop, 0.0);
+	Sakura::Cvar::New(/*kz_bhop_double*/XorStr<0x08, 15, 0xBF5E1C64>("\x63\x73\x55\x69\x64\x62\x7E\x50\x74\x7E\x67\x71\x78\x70" + 0xBF5E1C64).s, cvar.kz_bhop_double, 0.0);
+	Sakura::Cvar::New(/*kz_bhop_triple*/XorStr<0x79, 15, 0x627ACB55>("\x12\x00\x24\x1E\x15\x11\x0F\xDF\xF5\xF0\xEA\xF4\xE9\xE3" + 0x627ACB55).s, cvar.kz_bhop_triple, 0.0);
+	Sakura::Cvar::New(/*kz_jump_bug*/XorStr<0xC4, 12, 0x70774349>("\xAF\xBF\x99\xAD\xBD\xA4\xBA\x94\xAE\xB8\xA9" + 0x70774349).s, cvar.kz_jump_bug, 0.0);
+	Sakura::Cvar::New(/*kz_jump_bug_auto*/XorStr<0x23, 17, 0xB4561747>("\x48\x5E\x7A\x4C\x52\x45\x59\x75\x49\x59\x4A\x71\x4E\x45\x45\x5D" + 0xB4561747).s, cvar.kz_jump_bug_auto, 0.0);
+	Sakura::Cvar::New(/*kz_show_kz*/XorStr<0x46, 11, 0x0C534F05>("\x2D\x3D\x17\x3A\x22\x24\x3B\x12\x25\x35" + 0x0C534F05).s, cvar.kz_show_kz, 0.0);
+	Sakura::Cvar::New(/*kz_display_time*/XorStr<0x45, 16, 0xD16AC5E9>("\x2E\x3C\x18\x2C\x20\x39\x3B\x20\x2C\x37\x10\x24\x38\x3F\x36" + 0xD16AC5E9).s, cvar.kz_display_time, 10.0);
+	Sakura::Cvar::New(/*kz_strafe_key*/XorStr<0x6A, 14, 0x95ECCB26>("\x01\x11\x33\x1E\x1A\x1D\x11\x17\x17\x2C\x1F\x10\x0F" + 0x95ECCB26).s, cvar.kz_strafe_key, -1.0);
+	Sakura::Cvar::New(/*kz_fastrun_key*/XorStr<0x71, 15, 0x82BFA97A>("\x1A\x08\x2C\x12\x14\x05\x03\x0A\x0C\x14\x24\x17\x18\x07" + 0x82BFA97A).s, cvar.kz_fastrun_key, -1.0);
+	Sakura::Cvar::New(/*kz_ground_strafe_key*/XorStr<0xEC, 21, 0x8EB6C531>("\x87\x97\xB1\x88\x82\x9E\x87\x9D\x90\xAA\x85\x83\x8A\x98\x9C\x9E\xA3\x96\x9B\x86" + 0x8EB6C531).s, cvar.kz_ground_strafe_key, -1.0);
+	Sakura::Cvar::New(/*kz_bhop_key*/XorStr<0xFF, 12, 0x3F278543>("\x94\x7A\x5E\x60\x6B\x6B\x75\x59\x6C\x6D\x70" + 0x3F278543).s, cvar.kz_bhop_key, -1.0);
+	Sakura::Cvar::New(/*kz_jumpbug_key*/XorStr<0x1F, 15, 0xF1C5C9FE>("\x74\x5A\x7E\x48\x56\x49\x55\x44\x52\x4F\x76\x41\x4E\x55" + 0xF1C5C9FE).s, cvar.kz_jumpbug_key, -1.0);
+	Sakura::Cvar::New(/*kz_strafe_toggle_key*/XorStr<0xE6, 21, 0xA25AC96F>("\x8D\x9D\xB7\x9A\x9E\x99\x8D\x8B\x8B\xB0\x84\x9E\x95\x94\x98\x90\xA9\x9C\x9D\x80" + 0xA25AC96F).s, cvar.kz_strafe_toggle_key, -1.0);
+	Sakura::Cvar::New(/*kz_sgs*/XorStr<0x6A, 7, 0xB791CCEC>("\x01\x11\x33\x1E\x09\x1C" + 0xB791CCEC).s, cvar.kz_sgs, 0.0);
+	Sakura::Cvar::New(/*kz_sgs_ground_origin*/XorStr<0xB2, 21, 0xBF6BE51A>("\xD9\xC9\xEB\xC6\xD1\xC4\xE7\xDE\xC8\xD4\xC9\xD3\xDA\xE0\xAF\xB3\xAB\xA4\xAD\xAB" + 0xBF6BE51A).s, cvar.kz_sgs_ground_origin, 1.0);
+	Sakura::Cvar::New(/*kz_bgs*/XorStr<0xBB, 7, 0xEE2B1C83>("\xD0\xC6\xE2\xDC\xD8\xB3" + 0xEE2B1C83).s, cvar.kz_bgs, 0.0);
+	
+	Sakura::Cvar::New(/*route_activate*/XorStr<0x4D, 15, 0x10C7503A>("\x3F\x21\x3A\x24\x34\x0D\x32\x37\x21\x3F\x21\x39\x2D\x3F" + 0x10C7503A).s, cvar.route_activate, 0.0);
+	Sakura::Cvar::New(/*route_mode*/XorStr<0xC9, 11, 0x36257626>("\xBB\xA5\xBE\xB8\xA8\x91\xA2\xBF\xB5\xB7" + 0x36257626).s, cvar.route_mode, 1.0);
+	Sakura::Cvar::New(/*route_auto*/XorStr<0x81, 11, 0x00542E2F>("\xF3\xED\xF6\xF0\xE0\xD9\xE6\xFD\xFD\xE5" + 0x00542E2F).s, cvar.route_auto, 0.0);
+	Sakura::Cvar::New(/*route_jump*/XorStr<0xED, 11, 0xB1CF4071>("\x9F\x81\x9A\x84\x94\xAD\x99\x81\x98\x86" + 0xB1CF4071).s, cvar.route_jump, 1.0);
+	Sakura::Cvar::New(/*route_jump_step*/XorStr<0x60, 16, 0x0683A4DF>("\x12\x0E\x17\x17\x01\x3A\x0C\x12\x05\x19\x35\x18\x18\x08\x1E" + 0x0683A4DF).s, cvar.route_jump_step, 2.0);
+	Sakura::Cvar::New(/*route_direction*/XorStr<0xE3, 16, 0x1FBEB5F6>("\x91\x8B\x90\x92\x82\xB7\x8D\x83\x99\x89\x8E\x9A\x86\x9F\x9F" + 0x1FBEB5F6).s, cvar.route_direction, 1.0);
+	Sakura::Cvar::New(/*route_direction_step*/XorStr<0x35, 21, 0x5F1E4382>("\x47\x59\x42\x4C\x5C\x65\x5F\x55\x4F\x5B\x5C\x34\x28\x2D\x2D\x1B\x36\x32\x22\x38" + 0x5F1E4382).s, cvar.route_direction_step, 4.0);
+	Sakura::Cvar::New(/*route_draw_visual*/XorStr<0x08, 18, 0x709EE604>("\x7A\x66\x7F\x7F\x69\x52\x6A\x7D\x71\x66\x4D\x65\x7D\x66\x63\x76\x74" + 0x709EE604).s, cvar.route_draw_visual, 0.0);
+	Sakura::Cvar::New(/*route_draw*/XorStr<0xA8, 11, 0x622553CA>("\xDA\xC6\xDF\xDF\xC9\xF2\xCA\xDD\xD1\xC6" + 0x622553CA).s, cvar.route_draw, 1.0);
+	Sakura::Cvar::New(/*route_rush_key*/XorStr<0x80, 15, 0x00EF74C7>("\xF2\xEE\xF7\xF7\xE1\xDA\xF4\xF2\xFB\xE1\xD5\xE0\xE9\xF4" + 0x00EF74C7).s, cvar.route_rush_key, -1.0);
+	Sakura::Cvar::New(/*route_line_color[0]*/XorStr<0xCF, 20, 0xAB3213F3>("\xBD\xBF\xA4\xA6\xB6\x8B\xB9\xBF\xB9\xBD\x86\xB9\xB4\xB0\xB2\xAC\x84\xD0\xBC" + 0xAB3213F3).s, cvar.route_line_color[0], 1.0);
+	Sakura::Cvar::New(/*route_line_color[1]*/XorStr<0xCE, 20, 0x5FCC1648>("\xBC\xA0\xA5\xA5\xB7\x8C\xB8\xBC\xB8\xB2\x87\xBA\xB5\xB7\xB3\xAF\x85\xEE\xBD" + 0x5FCC1648).s, cvar.route_line_color[1], 1.0);
+	Sakura::Cvar::New(/*route_line_color[2]*/XorStr<0x04, 20, 0x673952C8>("\x76\x6A\x73\x73\x6D\x56\x66\x62\x62\x68\x51\x6C\x7F\x7D\x7D\x61\x4F\x27\x4B" + 0x673952C8).s, cvar.route_line_color[2], 1.0);
+	Sakura::Cvar::New(/*route_line_color[3]*/XorStr<0x3B, 20, 0xCF96D14B>("\x49\x53\x48\x4A\x5A\x1F\x2D\x2B\x2D\x21\x1A\x25\x28\x24\x26\x38\x10\x7F\x10" + 0xCF96D14B).s, cvar.route_line_color[3], 1.0);
+	Sakura::Cvar::New(/*route_point_color[0]*/XorStr<0x97, 21, 0x5BD8816F>("\xE5\xF7\xEC\xEE\xFE\xC3\xED\xF1\xF6\xCE\xD5\xFD\xC0\xCB\xC9\xC9\xD5\xF3\x99\xF7" + 0x5BD8816F).s, cvar.route_point_color[0], 1.0);
+	Sakura::Cvar::New(/*route_point_color[1]*/XorStr<0xE5, 21, 0xACEDA4AC>("\x97\x89\x92\x9C\x8C\xB5\x9B\x83\x84\x80\x9B\xAF\x92\x9D\x9F\x9B\x87\xAD\xC6\xA5" + 0xACEDA4AC).s, cvar.route_point_color[1], 1.0);
+	Sakura::Cvar::New(/*route_point_color[2]*/XorStr<0x34, 21, 0xC5C76498>("\x46\x5A\x43\x43\x5D\x66\x4A\x54\x55\x53\x4A\x60\x23\x2E\x2E\x2C\x36\x1E\x74\x1A" + 0xC5C76498).s, cvar.route_point_color[2], 1.0);
+	Sakura::Cvar::New(/*route_point_color[3]*/XorStr<0xB8, 21, 0x589DBC20>("\xCA\xD6\xCF\xCF\xD9\xE2\xCE\xD0\xA9\xAF\xB6\x9C\xA7\xAA\xAA\xA8\xBA\x92\xF9\x96" + 0x589DBC20).s, cvar.route_point_color[3], 1.0);
+	
+	Sakura::Cvar::New(/*visual_model_hitbox*/XorStr<0xAE, 20, 0x0ADDB42A>("\xD8\xC6\xC3\xC4\xD3\xDF\xEB\xD8\xD9\xD3\xDD\xD5\xE5\xD3\xD5\xC9\xDC\xD0\xB8" + 0x0ADDB42A).s, cvar.visual_model_hitbox, 0.0);
+	Sakura::Cvar::New(/*visual_name*/XorStr<0x0B, 12, 0x09D7A67E>("\x7D\x65\x7E\x7B\x6E\x7C\x4E\x7C\x72\x79\x70" + 0x09D7A67E).s, cvar.visual_name, 0.0);
+	Sakura::Cvar::New(/*visual_name_world*/XorStr<0x6A, 18, 0x194D5F9A>("\x1C\x02\x1F\x18\x0F\x03\x2F\x1F\x13\x1E\x11\x2A\x01\x18\x0A\x15\x1E" + 0x194D5F9A).s, cvar.visual_name_world, 0.0);
+	Sakura::Cvar::New(/*visual_model*/XorStr<0xDF, 13, 0x5E58CAC5>("\xA9\x89\x92\x97\x82\x88\xBA\x8B\x88\x8C\x8C\x86" + 0x5E58CAC5).s, cvar.visual_model, 0.0);
+	Sakura::Cvar::New(/*visual_model_world*/XorStr<0x93, 19, 0x3064F015>("\xE5\xFD\xE6\xE3\xF6\xF4\xC6\xF7\xF4\xF8\xF8\xF2\xC0\xD7\xCE\xD0\xCF\xC0" + 0x3064F015).s, cvar.visual_model_world, 0.0);
+	Sakura::Cvar::New(/*visual_weapon*/XorStr<0xB4, 14, 0x124455E3>("\xC2\xDC\xC5\xC2\xD9\xD5\xE5\xCC\xD9\xDC\xCE\xD0\xAE" + 0x124455E3).s, cvar.visual_weapon, 0.0);
+	Sakura::Cvar::New(/*visual_reload_bar*/XorStr<0xEB, 18, 0x2DDB8606>("\x9D\x85\x9E\x9B\x8E\x9C\xAE\x80\x96\x98\x9A\x97\x93\xA7\x9B\x9B\x89" + 0x2DDB8606).s, cvar.visual_reload_bar, 0.0);
+	Sakura::Cvar::New(/*visual_box*/XorStr<0x75, 11, 0xCAA8BF1A>("\x03\x1F\x04\x0D\x18\x16\x24\x1E\x12\x06" + 0xCAA8BF1A).s, cvar.visual_box, 0.0);
+	Sakura::Cvar::New(/*visual_box_color_ct[0]*/XorStr<0x1A, 23, 0x75299F91>("\x6C\x72\x6F\x68\x7F\x73\x7F\x43\x4D\x5B\x7B\x46\x49\x4B\x47\x5B\x75\x48\x58\x76\x1E\x72" + 0x75299F91).s, cvar.visual_box_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*visual_box_color_ct[1]*/XorStr<0xE4, 23, 0x53286614>("\x92\x8C\x95\x92\x89\x85\xB5\x89\x83\x95\xB1\x8C\x9F\x9D\x9D\x81\xAB\x96\x82\xAC\xC9\xA4" + 0x53286614).s, cvar.visual_box_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*visual_box_color_ct[2]*/XorStr<0x36, 23, 0x2130D8F9>("\x40\x5E\x4B\x4C\x5B\x57\x63\x5F\x51\x47\x1F\x22\x2D\x2F\x2B\x37\x19\x24\x3C\x12\x78\x16" + 0x2130D8F9).s, cvar.visual_box_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*visual_box_color_ct[3]*/XorStr<0xDA, 23, 0x5AED2555>("\xAC\xB2\xAF\xA8\xBF\xB3\xBF\x83\x8D\x9B\xBB\x86\x89\x8B\x87\x9B\xB5\x88\x98\xB6\xDD\xB2" + 0x5AED2555).s, cvar.visual_box_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*visual_box_color_tt[0]*/XorStr<0x38, 23, 0x0D220FFB>("\x4E\x50\x49\x4E\x5D\x51\x61\x5D\x2F\x39\x1D\x20\x2B\x29\x29\x35\x17\x3D\x3E\x10\x7C\x10" + 0x0D220FFB).s, cvar.visual_box_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*visual_box_color_tt[1]*/XorStr<0x0C, 23, 0x6679ECD7>("\x7A\x64\x7D\x7A\x71\x7D\x4D\x71\x7B\x6D\x49\x74\x77\x75\x75\x69\x43\x69\x6A\x44\x11\x7C" + 0x6679ECD7).s, cvar.visual_box_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*visual_box_color_tt[2]*/XorStr<0x8B, 23, 0xB25C9635>("\xFD\xE5\xFE\xFB\xEE\xFC\xCE\xF0\xFC\xEC\xCA\xF5\xF8\xF4\xF6\xE8\xC4\xE8\xE9\xC5\xAD\xFD" + 0xB25C9635).s, cvar.visual_box_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*visual_box_color_tt[3]*/XorStr<0x18, 23, 0x9BE945D2>("\x6E\x70\x69\x6E\x7D\x71\x41\x7D\x4F\x59\x7D\x40\x4B\x49\x49\x55\x77\x5D\x5E\x70\x1F\x70" + 0x9BE945D2).s, cvar.visual_box_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*visual_box_draw*/XorStr<0x8E, 16, 0xD82BCF7A>("\xF8\xE6\xE3\xE4\xF3\xFF\xCB\xF7\xF9\xEF\xC7\xFD\xE8\xFA\xEB" + 0xD82BCF7A).s, cvar.visual_box_draw, 0.0);
+	Sakura::Cvar::New(/*visual_box_world*/XorStr<0xA3, 17, 0xB0CD587C>("\xD5\xCD\xD6\xD3\xC6\xC4\xF6\xC8\xC4\xD4\xF2\xD9\xC0\xC2\xDD\xD6" + 0xB0CD587C).s, cvar.visual_box_world, 0.0);
+	Sakura::Cvar::New(/*visual_box_type*/XorStr<0x8F, 16, 0x5D4A9A74>("\xF9\xF9\xE2\xE7\xF2\xF8\xCA\xF4\xF8\xE0\xC6\xEE\xE2\xEC\xF8" + 0x5D4A9A74).s, cvar.visual_box_type, 0.0);
+	Sakura::Cvar::New(/*visual_box_fill*/XorStr<0xDC, 16, 0xE4DBC78F>("\xAA\xB4\xAD\xAA\x81\x8D\xBD\x81\x8B\x9D\xB9\x81\x81\x85\x86" + 0xE4DBC78F).s, cvar.visual_box_fill, 0.0);
+	Sakura::Cvar::New(/*visual_health*/XorStr<0xF3, 14, 0x6C3025D8>("\x85\x9D\x86\x83\x96\x94\xA6\x92\x9E\x9D\x91\x8A\x97" + 0x6C3025D8).s, cvar.visual_health, 0.0);
+	Sakura::Cvar::New(/*visual_visual_team*/XorStr<0x9A, 19, 0x4B29B193>("\xEC\xF2\xEF\xE8\xFF\xF3\xFF\xD7\xCB\xD0\xD1\xC4\xCA\xF8\xDC\xCC\xCB\xC6" + 0x4B29B193).s, cvar.visual_visual_team, 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps*/XorStr<0x7D, 19, 0x91D35E9E>("\x0B\x17\x0C\xF5\xE0\xEE\xDC\xF7\xEA\xF3\xE9\xEC\xD6\xF9\xFF\xE9\xFD\xFD" + 0x91D35E9E).s, cvar.visual_sound_steps, 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_segments*/XorStr<0xDC, 28, 0x7037A02C>("\xAA\xB4\xAD\xAA\x81\x8D\xBD\x90\x8B\x90\x88\x83\xB7\x9A\x9E\x8E\x9C\x9E\xB1\x9C\x95\x96\x9F\x96\x9A\x81\x85" + 0x7037A02C).s, cvar.visual_sound_steps_segments, 15.0);
+	Sakura::Cvar::New(/*visual_sound_steps_segment_thickness*/XorStr<0x0E, 37, 0x6A8A2CA8>("\x78\x66\x63\x64\x73\x7F\x4B\x66\x79\x62\x76\x7D\x45\x68\x68\x78\x6E\x6C\x7F\x52\x47\x44\x49\x40\x48\x53\x77\x5D\x42\x42\x4F\x46\x40\x4A\x43\x42" + 0x6A8A2CA8).s, cvar.visual_sound_steps_segment_thickness, 1.0);
+	Sakura::Cvar::New(/*visual_sound_steps_radius*/XorStr<0x0F, 26, 0x43121F15>("\x79\x79\x62\x67\x72\x78\x4A\x65\x78\x6D\x77\x7E\x44\x6F\x69\x7B\x6F\x53\x7E\x50\x42\x40\x4C\x53\x54" + 0x43121F15).s, cvar.visual_sound_steps_radius, 13.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color[0]*/XorStr<0x24, 28, 0xCDE36FF3>("\x52\x4C\x55\x52\x49\x45\x75\x58\x43\x58\x40\x4B\x6F\x42\x46\x56\x44\x46\x69\x54\x57\x55\x55\x49\x67\x0D\x63" + 0xCDE36FF3).s, cvar.visual_sound_steps_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color[1]*/XorStr<0xA0, 28, 0x19BA8F7A>("\xD6\xC8\xD1\xD6\xC5\xC9\xF9\xD4\xC7\xDC\xC4\xCF\xF3\xDE\xDA\xCA\xC0\xC2\xED\xD0\xDB\xD9\xD9\xC5\xE3\x88\xE7" + 0x19BA8F7A).s, cvar.visual_sound_steps_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color[2]*/XorStr<0xA4, 28, 0xE3D0AEC9>("\xD2\xCC\xD5\xD2\xC9\xC5\xF5\xD8\xC3\xD8\xC0\xCB\xEF\xC2\xC6\xD6\xC4\xC6\xE9\xD4\xD7\xD5\xD5\xC9\xE7\x8F\xE3" + 0xE3D0AEC9).s, cvar.visual_sound_steps_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color[3]*/XorStr<0x5E, 28, 0xAEDB1682>("\x28\x36\x13\x14\x03\x0F\x3B\x16\x09\x12\x06\x0D\x35\x18\x18\x08\x1E\x1C\x2F\x12\x1D\x1F\x1B\x07\x2D\x44\x25" + 0xAEDB1682).s, cvar.visual_sound_steps_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_tt[0]*/XorStr<0xA2, 31, 0xCCB44ABC>("\xD4\xCA\xD7\xD0\xC7\xCB\xF7\xDA\xC5\xDE\xC2\xC9\xF1\xDC\xC4\xD4\xC2\xC0\xEB\xD6\xD9\xDB\xD7\xCB\xE5\xCF\xC8\xE6\x8E\xE2" + 0xCCB44ABC).s, cvar.visual_sound_steps_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_tt[1]*/XorStr<0x35, 31, 0x324FE2ED>("\x43\x5F\x44\x4D\x58\x56\x64\x4F\x52\x4B\x51\x24\x1E\x31\x37\x21\x35\x35\x18\x2B\x26\x26\x24\x3E\x12\x3A\x3B\x0B\x60\x0F" + 0x324FE2ED).s, cvar.visual_sound_steps_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_tt[2]*/XorStr<0x30, 31, 0x544A64FB>("\x46\x58\x41\x46\x55\x59\x69\x44\x57\x4C\x54\x5F\x63\x4E\x4A\x5A\x30\x32\x1D\x20\x2B\x29\x29\x35\x17\x3D\x3E\x10\x7E\x10" + 0x544A64FB).s, cvar.visual_sound_steps_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_tt[3]*/XorStr<0x54, 31, 0x407CB8E2>("\x22\x3C\x25\x22\x39\x35\x05\x28\x33\x28\x30\x3B\x3F\x12\x16\x06\x14\x16\x39\x04\x07\x05\x05\x19\x33\x19\x1A\x34\x43\x2C" + 0x407CB8E2).s, cvar.visual_sound_steps_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_ct[0]*/XorStr<0x22, 31, 0xC4F5E22C>("\x54\x4A\x57\x50\x47\x4B\x77\x5A\x45\x5E\x42\x49\x71\x5C\x44\x54\x42\x40\x6B\x56\x59\x5B\x57\x4B\x65\x58\x48\x66\x0E\x62" + 0xC4F5E22C).s, cvar.visual_sound_steps_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_ct[1]*/XorStr<0x8C, 31, 0xD39239C2>("\xFA\xE4\xFD\xFA\xF1\xFD\xCD\xE0\xFB\xE0\xF8\xF3\xC7\xEA\xEE\xFE\xEC\xEE\xC1\xFC\xCF\xCD\xCD\xD1\xFB\xC6\xD2\xFC\x99\xF4" + 0xD39239C2).s, cvar.visual_sound_steps_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_ct[2]*/XorStr<0xD4, 31, 0x0696CB3B>("\xA2\xBC\xA5\xA2\xB9\xB5\x85\xA8\xB3\xA8\xB0\xBB\xBF\x92\x96\x86\x94\x96\xB9\x84\x87\x85\x85\x99\xB3\x8E\x9A\xB4\xC2\xAC" + 0x0696CB3B).s, cvar.visual_sound_steps_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*visual_sound_steps_color_ct[3]*/XorStr<0x7C, 31, 0x480D1A9F>("\x0A\x14\x0D\x0A\xE1\xED\xDD\xF0\xEB\xF0\xE8\xE3\xD7\xFA\xFE\xEE\xFC\xFE\xD1\xEC\xFF\xFD\xFD\xE1\xCB\xF6\xE2\xCC\xAB\xC4" + 0x480D1A9F).s, cvar.visual_sound_steps_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*visual_idhook_only*/XorStr<0xAF, 19, 0xE7EA9BCD>("\xD9\xD9\xC2\xC7\xD2\xD8\xEA\xDF\xD3\xD0\xD6\xD5\xD0\xE3\xD2\xD0\xD3\xB9" + 0xE7EA9BCD).s, cvar.visual_idhook_only, 0.0);
+	Sakura::Cvar::New(/*visual_noflash_enable*/XorStr<0xCE, 22, 0x68255D1F>("\xB8\xA6\xA3\xA4\xB3\xBF\x8B\xBB\xB9\xB1\xB4\xB8\xA9\xB3\x83\xB8\xB0\xBE\x82\x8D\x87" + 0x68255D1F).s, cvar.visual_noflash_enable, 0.0);
+	Sakura::Cvar::New(/*visual_chase_cam*/XorStr<0x4B, 17, 0x6AE45495>("\x3D\x25\x3E\x3B\x2E\x3C\x0E\x31\x3B\x35\x26\x33\x08\x3B\x38\x37" + 0x6AE45495).s, cvar.visual_chase_cam, 0.0);
+	Sakura::Cvar::New(/*visual_chase_back*/XorStr<0xDF, 18, 0x65A8A22F>("\xA9\x89\x92\x97\x82\x88\xBA\x85\x8F\x89\x9A\x8F\xB4\x8E\x8C\x8D\x84" + 0x65A8A22F).s, cvar.visual_chase_back, 100.0);
+	Sakura::Cvar::New(/*visual_chase_up*/XorStr<0x67, 16, 0xD4A42BF4>("\x11\x01\x1A\x1F\x0A\x00\x32\x0D\x07\x11\x02\x17\x2C\x01\x05" + 0xD4A42BF4).s, cvar.visual_chase_up, 16.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory*/XorStr<0xBC, 26, 0xA4209481>("\xCA\xD4\xCD\xCA\xA1\xAD\x9D\xA4\xB6\xA0\xA8\xA6\xAC\xAC\x95\xBF\xBE\xAC\xA4\xAA\xB3\xA5\xBD\xA1\xAD" + 0xA4209481).s, cvar.visual_grenade_trajectory, 0.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_point_color[0]*/XorStr<0xAB, 41, 0xAC611A47>("\xDD\xC5\xDE\xDB\xCE\xDC\xEE\xD5\xC1\xD1\xDB\xD7\xD3\xDD\xE6\xCE\xC9\xDD\xD7\xDB\xDC\xB4\xAE\xB0\xBA\x9B\xB5\xA9\xAE\xA6\xBD\x95\xA8\xA3\xA1\xA1\xBD\x8B\xE1\x8F" + 0xAC611A47).s, cvar.visual_grenade_trajectory_point_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_point_color[1]*/XorStr<0xA5, 41, 0x261791C8>("\xD3\xCF\xD4\xDD\xC8\xC6\xF4\xCB\xDF\xCB\xC1\xD1\xD5\xD7\xEC\xC0\xC7\xD7\xDD\xDD\xDA\xCE\xD4\xCE\xC4\xE1\xCF\xAF\xA8\xAC\xB7\x9B\xA6\xA9\xAB\xA7\xBB\x91\xFA\x91" + 0x261791C8).s, cvar.visual_grenade_trajectory_point_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_point_color[2]*/XorStr<0x80, 41, 0xAD89F306>("\xF6\xE8\xF1\xF6\xE5\xE9\xD9\xE0\xFA\xEC\xE4\xEA\xE8\xE8\xD1\xFB\xE2\xF0\xF8\xF6\xF7\xE1\xF9\xE5\xE1\xC6\xEA\xF4\xF5\xF3\xEA\xC0\xC3\xCE\xCE\xCC\xD6\xFE\x94\xFA" + 0xAD89F306).s, cvar.visual_grenade_trajectory_point_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_point_color[3]*/XorStr<0xE0, 41, 0x8C52CFC7>("\x96\x88\x91\x96\x85\x89\xB9\x80\x9A\x8C\x84\x8A\x88\x88\xB1\x9B\x82\x90\x98\x96\x97\x81\x99\x85\x81\xA6\x8A\x94\x95\x93\x8A\xA0\x63\x6E\x6E\x6C\x76\x5E\x35\x5A" + 0x8C52CFC7).s, cvar.visual_grenade_trajectory_point_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_line_color[0]*/XorStr<0x20, 40, 0x220B3F53>("\x56\x48\x51\x56\x45\x49\x79\x40\x5A\x4C\x44\x4A\x48\x48\x71\x5B\x42\x50\x58\x56\x57\x41\x59\x45\x41\x66\x56\x52\x52\x58\x61\x5C\x2F\x2D\x2D\x31\x1F\x75\x1B" + 0x220B3F53).s, cvar.visual_grenade_trajectory_line_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_line_color[1]*/XorStr<0xF0, 40, 0xB259CC8F>("\x86\x98\x81\x86\x95\x99\xA9\x90\x8A\x9C\x94\x9A\x98\x98\xA1\x8B\x72\x60\x68\x66\x67\x71\x69\x75\x71\x56\x66\x62\x62\x68\x51\x6C\x7F\x7D\x7D\x61\x4F\x24\x4B" + 0xB259CC8F).s, cvar.visual_grenade_trajectory_line_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_line_color[2]*/XorStr<0x5C, 40, 0x4FEE4571>("\x2A\x34\x2D\x2A\x01\x0D\x3D\x04\x16\x00\x08\x06\x0C\x0C\x35\x1F\x1E\x0C\x04\x0A\x13\x05\x1D\x01\x0D\x2A\x1A\x1E\x16\x1C\x25\x18\x13\x11\x11\x0D\xDB\xB3\xDF" + 0x4FEE4571).s, cvar.visual_grenade_trajectory_line_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_grenade_trajectory_line_color[3]*/XorStr<0x01, 40, 0x48E8FB3E>("\x77\x6B\x70\x71\x64\x6A\x58\x6F\x7B\x6F\x65\x6D\x69\x6B\x50\x64\x63\x73\x79\x71\x76\x62\x78\x6A\x60\x45\x77\x75\x73\x7B\x40\x43\x4E\x4E\x4C\x56\x7E\x15\x7A" + 0x48E8FB3E).s, cvar.visual_grenade_trajectory_line_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_crosshair*/XorStr<0x37, 17, 0xA2709023>("\x41\x51\x4A\x4F\x5A\x50\x62\x5D\x4D\x2F\x32\x31\x2B\x25\x2C\x34" + 0xA2709023).s, cvar.visual_crosshair, 0.0);
+	Sakura::Cvar::New(/*visual_crosshair_color[0]*/XorStr<0x55, 26, 0x3AEDCD9D>("\x23\x3F\x24\x2D\x38\x36\x04\x3F\x2F\x31\x2C\x13\x09\x03\x0A\x16\x3A\x05\x08\x04\x06\x18\x30\x5C\x30" + 0x3AEDCD9D).s, cvar.visual_crosshair_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_crosshair_color[1]*/XorStr<0xBB, 26, 0xA58C02CC>("\xCD\xD5\xCE\xCB\xDE\xAC\x9E\xA1\xB1\xAB\xB6\xB5\xAF\xA9\xA0\xB8\x94\xAF\xA2\xA2\xA0\xA2\x8A\xE3\x8E" + 0xA58C02CC).s, cvar.visual_crosshair_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_crosshair_color[2]*/XorStr<0x5E, 26, 0xCFBA456E>("\x28\x36\x13\x14\x03\x0F\x3B\x06\x14\x08\x1B\x1A\x02\x0A\x05\x1F\x31\x0C\x1F\x1D\x1D\x01\x2F\x47\x2B" + 0xCFBA456E).s, cvar.visual_crosshair_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_crosshair_color[3]*/XorStr<0x60, 26, 0x0A1CDFB5>("\x16\x08\x11\x16\x05\x09\x39\x04\x1A\x06\x19\x18\x04\x0C\x07\x1D\x2F\x12\x1D\x1F\x1B\x07\x2D\x44\x25" + 0x0A1CDFB5).s, cvar.visual_crosshair_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_vip*/XorStr<0x25, 11, 0xDFF5BC98>("\x53\x4F\x54\x5D\x48\x46\x74\x5A\x44\x5E" + 0xDFF5BC98).s, cvar.visual_vip, 0.0);
+	Sakura::Cvar::New(/*visual_weapon_local*/XorStr<0x97, 20, 0x69CF9F97>("\xE1\xF1\xEA\xEF\xFA\xF0\xC2\xE9\xFA\xC1\xD1\xCD\xCD\xFB\xC9\xC9\xC4\xC9\xC5" + 0x69CF9F97).s, cvar.visual_weapon_local, 0.0);
+	Sakura::Cvar::New(/*visual_lightmap*/XorStr<0xFA, 16, 0xF1B79C1F>("\x8C\x92\x8F\x88\x9F\x93\x5F\x6D\x6B\x64\x6C\x71\x6B\x66\x78" + 0xF1B79C1F).s, cvar.visual_lightmap, 0.0);
+	Sakura::Cvar::New(/*visual_lightmap_color[0]*/XorStr<0x1F, 25, 0x1418C445>("\x69\x49\x52\x57\x42\x48\x7A\x4A\x4E\x4F\x41\x5E\x46\x4D\x5D\x71\x4C\x5F\x5D\x5D\x41\x6F\x05\x6B" + 0x1418C445).s, cvar.visual_lightmap_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_lightmap_color[1]*/XorStr<0xC8, 25, 0xD84765D4>("\xBE\xA0\xB9\xBE\xAD\xA1\x91\xA3\xB9\xB6\xBA\xA7\xB9\xB4\xA6\x88\xBB\xB6\xB6\xB4\xAE\x86\xEF\x82" + 0xD84765D4).s, cvar.visual_lightmap_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_lightmap_color[2]*/XorStr<0x22, 25, 0x7095A28F>("\x54\x4A\x57\x50\x47\x4B\x77\x45\x43\x4C\x44\x59\x43\x4E\x40\x6E\x51\x5C\x58\x5A\x44\x6C\x0A\x64" + 0x7095A28F).s, cvar.visual_lightmap_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_sky*/XorStr<0x7C, 11, 0x34BF185C>("\x0A\x14\x0D\x0A\xE1\xED\xDD\xF0\xEF\xFC" + 0x34BF185C).s, cvar.visual_sky, 0.0);
+	Sakura::Cvar::New(/*visual_skins_player*/XorStr<0xBC, 20, 0xE1504526>("\xCA\xD4\xCD\xCA\xA1\xAD\x9D\xB0\xAF\xAC\xA8\xB4\x97\xB9\xA6\xAA\xB5\xA8\xBC" + 0xE1504526).s, cvar.visual_skins_player, 0.0);
+	Sakura::Cvar::New(/*visual_skins_player_weapon*/XorStr<0x0A, 27, 0x29FC20DA>("\x7C\x62\x7F\x78\x6F\x63\x4F\x62\x79\x7A\x7A\x66\x49\x67\x74\x78\x63\x7E\x6E\x42\x69\x7A\x41\x51\x4D\x4D" + 0x29FC20DA).s, cvar.visual_skins_player_weapon, 0.0);
+	Sakura::Cvar::New(/*visual_skins_player_backweapon*/XorStr<0xE4, 31, 0xBE95912A>("\x92\x8C\x95\x92\x89\x85\xB5\x98\x87\x84\x80\x9C\xAF\x81\x9E\x92\x8D\x90\x84\xA8\x9A\x98\x99\x90\x8B\x98\x9F\x8F\x6F\x6F" + 0xBE95912A).s, cvar.visual_skins_player_backweapon, 0.0);
+	Sakura::Cvar::New(/*visual_skins_backpack*/XorStr<0x5A, 22, 0xA5F4DF56>("\x2C\x32\x2F\x28\x3F\x33\x3F\x12\x09\x0A\x0A\x16\x39\x05\x09\x0A\x01\x1B\x0D\x0E\x05" + 0xA5F4DF56).s, cvar.visual_skins_backpack, 0.0);
+	Sakura::Cvar::New(/*visual_skins_thighpack*/XorStr<0x18, 23, 0x96C7297B>("\x6E\x70\x69\x6E\x7D\x71\x41\x6C\x4B\x48\x4C\x50\x7B\x51\x4E\x4E\x4F\x41\x5A\x4A\x4F\x46" + 0x96C7297B).s, cvar.visual_skins_thighpack, 0.0);
+	Sakura::Cvar::New(/*visual_skins_viewmodel*/XorStr<0x42, 23, 0xB5A1B4D0>("\x34\x2A\x37\x30\x27\x2B\x17\x3A\x21\x22\x22\x3E\x11\x39\x39\x34\x25\x3E\x3B\x31\x33\x3B" + 0xB5A1B4D0).s, cvar.visual_skins_viewmodel, 0.0);
+	Sakura::Cvar::New(/*visual_skins_viewmodel_color[0]*/XorStr<0xFF, 32, 0x92590083>("\x89\x69\x72\x77\x62\x68\x5A\x75\x6C\x61\x67\x79\x54\x7A\x64\x6B\x78\x7D\x7E\x76\x76\x78\x4A\x75\x78\x74\x76\x68\x40\x2C\x40" + 0x92590083).s, cvar.visual_skins_viewmodel_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_skins_viewmodel_color[1]*/XorStr<0xC8, 32, 0x55C6065A>("\xBE\xA0\xB9\xBE\xAD\xA1\x91\xBC\xBB\xB8\xBC\xA0\x8B\xA3\xBF\xB2\xAF\xB4\xB5\xBF\xB9\xB1\x81\xBC\x8F\x8D\x8D\x91\xBF\xD4\xBB" + 0x55C6065A).s, cvar.visual_skins_viewmodel_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_skins_viewmodel_color[2]*/XorStr<0x87, 32, 0x55CEE81E>("\xF1\xE1\xFA\xFF\xEA\xE0\xD2\xFD\xE4\xF9\xFF\xE1\xCC\xE2\xFC\xF3\xE0\xF5\xF6\xFE\xFE\xF0\xC2\xFD\xF0\xCC\xCE\xD0\xF8\x96\xF8" + 0x55CEE81E).s, cvar.visual_skins_viewmodel_color[2], 0.5);
+	Sakura::Cvar::New(/*visual_skins_viewmodel_color[3]*/XorStr<0x92, 32, 0xAE43880C>("\xE4\xFA\xE7\xE0\xF7\xFB\xC7\xEA\xF1\xF2\xF2\xEE\xC1\xE9\xC9\xC4\xD5\xCE\xCB\xC1\xC3\xCB\xF7\xCA\xC5\xC7\xC3\xDF\xF5\x9C\xED" + 0xAE43880C).s, cvar.visual_skins_viewmodel_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_skins_viewmodel_hands*/XorStr<0x69, 29, 0xD576C626>("\x1F\x03\x18\x19\x0C\x02\x30\x03\x1A\x1B\x1D\x07\x2A\x00\x1E\x1D\x0E\x17\x14\x18\x18\x12\x20\xE8\xE0\xEC\xE7\xF7" + 0xD576C626).s, cvar.visual_skins_viewmodel_hands, 0.0);
+	Sakura::Cvar::New(/*visual_skins_viewmodel_nohands*/XorStr<0x4A, 31, 0x24BF9B75>("\x3C\x22\x3F\x38\x2F\x23\x0F\x22\x39\x3A\x3A\x26\x09\x21\x31\x3C\x2D\x36\x33\x39\x3B\x33\x3F\x0F\x0D\x0B\x05\x0B\x02\x14" + 0x24BF9B75).s, cvar.visual_skins_viewmodel_nohands, 0.0);
+	Sakura::Cvar::New(/*visual_skins_world*/XorStr<0x58, 19, 0xE0276CB4>("\x2E\x30\x29\x2E\x3D\x31\x01\x2C\x0B\x08\x0C\x10\x3B\x12\x09\x15\x04\x0D" + 0xE0276CB4).s, cvar.visual_skins_world, 0.0);
+	Sakura::Cvar::New(/*visual_skins_bullet_shell*/XorStr<0x19, 26, 0xE267E900>("\x6F\x73\x68\x69\x7C\x72\x40\x53\x4A\x4B\x4D\x57\x7A\x44\x52\x44\x45\x4F\x5F\x73\x5E\x46\x4A\x5C\x5D" + 0xE267E900).s, cvar.visual_skins_bullet_shell, 0.0);
+	Sakura::Cvar::New(/*visual_skins_wall*/XorStr<0xB0, 18, 0xD8B13DBB>("\xC6\xD8\xC1\xC6\xD5\xD9\xE9\xC4\xD3\xD0\xD4\xC8\xE3\xCA\xDF\xD3\xAC" + 0xD8B13DBB).s, cvar.visual_skins_wall, 0.0);
+	Sakura::Cvar::New(/*visual_skins_chicken*/XorStr<0x72, 21, 0x22571E1A>("\x04\x1A\x07\x00\x17\x1B\x27\x0A\x11\x12\x12\x0E\x21\x1C\xE8\xE8\xE1\xE8\xE1\xEB" + 0x22571E1A).s, cvar.visual_skins_chicken, 0.0);
+	Sakura::Cvar::New(/*visual_viewmodel_fov*/XorStr<0x67, 21, 0x3D67D728>("\x11\x01\x1A\x1F\x0A\x00\x32\x18\x06\x15\x06\x1F\x1C\x10\x10\x1A\x28\x1E\x16\x0C" + 0x3D67D728).s, cvar.visual_viewmodel_fov, 0.0);
+	Sakura::Cvar::New(/*visual_lambert*/XorStr<0x67, 15, 0xA91D1C20>("\x11\x01\x1A\x1F\x0A\x00\x32\x02\x0E\x1D\x13\x17\x01\x00" + 0xA91D1C20).s, cvar.visual_lambert, 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_tt[0]*/XorStr<0x54, 27, 0x26D38E2D>("\x22\x3C\x25\x22\x39\x35\x05\x37\x3D\x30\x3C\x3A\x12\x15\x3D\x00\x0B\x09\x09\x15\x37\x1D\x1E\x30\x5C\x30" + 0x26D38E2D).s, cvar.visual_lambert_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_color_tt[1]*/XorStr<0x8F, 27, 0x9A55B263>("\xF9\xF9\xE2\xE7\xF2\xF8\xCA\xFA\xF6\xF5\xFB\xFF\xE9\xE8\xC2\xFD\xF0\xCC\xCE\xD0\xFC\xD0\xD1\xFD\x96\xF5" + 0x9A55B263).s, cvar.visual_lambert_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_tt[2]*/XorStr<0x62, 27, 0xB5E30E65>("\x14\x0A\x17\x10\x07\x0B\x37\x05\x0B\x06\x0E\x08\x1C\x1B\x2F\x12\x1D\x1F\x1B\x07\x29\x03\x0C\x22\x48\x26" + 0xB5E30E65).s, cvar.visual_lambert_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_tt[3]*/XorStr<0x4D, 27, 0xE3118096>("\x3B\x27\x3C\x25\x30\x3E\x0C\x38\x34\x3B\x35\x3D\x2B\x2E\x04\x3F\x32\x32\x30\x12\x3E\x16\x17\x3F\x56\x3B" + 0xE3118096).s, cvar.visual_lambert_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_color_ct[0]*/XorStr<0xDC, 27, 0xDDFBFAD6>("\xAA\xB4\xAD\xAA\x81\x8D\xBD\x8F\x85\x88\x84\x82\x9A\x9D\xB5\x88\x83\x81\x81\x9D\xAF\x92\x86\xA8\xC4\xA8" + 0xDDFBFAD6).s, cvar.visual_lambert_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_ct[1]*/XorStr<0x74, 27, 0xF3ECF952>("\x02\x1C\x05\x02\x19\x15\x25\x17\x1D\x10\x1C\x1A\xF2\xF5\xDD\xE0\xEB\xE9\xE9\xF5\xD7\xEA\xFE\xD0\xBD\xD0" + 0xF3ECF952).s, cvar.visual_lambert_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_ct[2]*/XorStr<0x26, 27, 0xAF62AC2B>("\x50\x4E\x5B\x5C\x4B\x47\x73\x41\x4F\x42\x52\x54\x40\x47\x6B\x56\x59\x5B\x57\x4B\x65\x58\x48\x66\x0C\x62" + 0xAF62AC2B).s, cvar.visual_lambert_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_color_ct[3]*/XorStr<0xC4, 27, 0xA76A6F6A>("\xB2\xAC\xB5\xB2\xA9\xA5\x95\xA7\xAD\xA0\xAC\xAA\xA2\xA5\x8D\xB0\xBB\xB9\xB9\xA5\x87\xBA\xAE\x80\xEF\x80" + 0xA76A6F6A).s, cvar.visual_lambert_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_local*/XorStr<0x8D, 21, 0xC42B3B1C>("\xFB\xE7\xFC\xE5\xF0\xFE\xCC\xF8\xF4\xFB\xF5\xFD\xEB\xEE\xC4\xF0\xF2\xFD\xFE\xCC" + 0xC42B3B1C).s, cvar.visual_lambert_local, 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_local[0]*/XorStr<0x6D, 30, 0x3D1C193B>("\x1B\x07\x1C\x05\x10\x1E\x2C\x18\x14\x1B\x15\x1D\x0B\x0E\x24\x1F\x12\x12\x10\xF2\xDE\xEE\xEC\xE7\xE4\xEA\xDC\xB8\xD4" + 0x3D1C193B).s, cvar.visual_lambert_color_local[0], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_local[1]*/XorStr<0xA1, 30, 0x75160067>("\xD7\xCB\xD0\xD1\xC4\xCA\xF8\xC4\xC8\xC7\xC9\xC9\xDF\xDA\xF0\xD3\xDE\xDE\xDC\xC6\xEA\xDA\xD8\xDB\xD8\xD6\xE0\x8D\xE0" + 0x75160067).s, cvar.visual_lambert_color_local[1], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_color_local[2]*/XorStr<0x93, 30, 0xC61551D8>("\xE5\xFD\xE6\xE3\xF6\xF4\xC6\xF6\xFA\xF1\xFF\xFB\xED\xD4\xFE\xC1\xCC\xC8\xCA\xD4\xF8\xC4\xC6\xC9\xCA\xC0\xF6\x9C\xF2" + 0xC61551D8).s, cvar.visual_lambert_color_local[2], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_color_local[3]*/XorStr<0x1F, 30, 0xA2151B1E>("\x69\x49\x52\x57\x42\x48\x7A\x4A\x46\x45\x4B\x4F\x59\x58\x72\x4D\x40\x5C\x5E\x40\x6C\x58\x5A\x55\x56\x54\x62\x09\x66" + 0xA2151B1E).s, cvar.visual_lambert_color_local[3], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_world*/XorStr<0x41, 21, 0xC0317926>("\x37\x2B\x30\x31\x24\x2A\x18\x24\x28\x27\x29\x29\x3F\x3A\x10\x27\x3E\x20\x3F\x30" + 0xC0317926).s, cvar.visual_lambert_world, 0.0);
+	Sakura::Cvar::New(/*visual_lambert_world_color[0]*/XorStr<0xAB, 30, 0xB9106A1E>("\xDD\xC5\xDE\xDB\xCE\xDC\xEE\xDE\xD2\xD9\xD7\xD3\xC5\xCC\xE6\xCD\xD4\xCE\xD1\xDA\xE0\xA3\xAE\xAE\xAC\xB6\x9E\xF6\x9A" + 0xB9106A1E).s, cvar.visual_lambert_world_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_world_color[1]*/XorStr<0xAD, 30, 0x6D97D20C>("\xDB\xC7\xDC\xC5\xD0\xDE\xEC\xD8\xD4\xDB\xD5\xDD\xCB\xCE\xE4\xCB\xD2\xCC\xD3\xA4\x9E\xA1\xAC\xA8\xAA\xB4\x9C\xF9\x94" + 0x6D97D20C).s, cvar.visual_lambert_world_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_world_color[2]*/XorStr<0x86, 30, 0xE2D8021A>("\xF0\xEE\xFB\xFC\xEB\xE7\xD3\xE1\xEF\xE2\xF2\xF4\xE0\xE7\xCB\xE2\xF9\xE5\xF4\xFD\xC5\xF8\xF3\xF1\xF1\xED\xFB\x93\xFF" + 0xE2D8021A).s, cvar.visual_lambert_world_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_world_color[3]*/XorStr<0xF6, 30, 0xB8D31663>("\x80\x9E\x8B\x8C\x9B\x97\xA3\x91\x9F\x92\x62\x64\x70\x77\x5B\x72\x69\x75\x64\x6D\x55\x68\x63\x61\x61\x7D\x4B\x22\x4F" + 0xB8D31663).s, cvar.visual_lambert_world_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_viewmodel*/XorStr<0xBB, 25, 0x805F8B1A>("\xCD\xD5\xCE\xCB\xDE\xAC\x9E\xAE\xA2\xA9\xA7\xA3\xB5\xBC\x96\xBC\xA2\xA9\xBA\xA3\xA0\xB4\xB4\xBE" + 0x805F8B1A).s, cvar.visual_lambert_viewmodel, 0.0);
+	Sakura::Cvar::New(/*visual_lambert_viewmodel_color[0]*/XorStr<0x75, 34, 0x4BBFF221>("\x03\x1F\x04\x0D\x18\x16\x24\x10\x1C\x13\x1D\xE5\xF3\xF6\xDC\xF2\xEC\xE3\xF0\xE5\xE6\xEE\xEE\xE0\xD2\xED\xE0\xFC\xFE\xE0\xC8\xA4\xC8" + 0x4BBFF221).s, cvar.visual_lambert_viewmodel_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_viewmodel_color[1]*/XorStr<0x67, 34, 0x84A58594>("\x11\x01\x1A\x1F\x0A\x00\x32\x02\x0E\x1D\x13\x17\x01\x00\x2A\x00\x1E\x1D\x0E\x17\x14\x18\x18\x12\x20\xE3\xEE\xEE\xEC\xF6\xDE\xB7\xDA" + 0x84A58594).s, cvar.visual_lambert_viewmodel_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_lambert_viewmodel_color[2]*/XorStr<0xED, 34, 0xA9FE7088>("\x9B\x87\x9C\x85\x90\x9E\xAC\x98\x94\x9B\x95\x9D\x8B\x8E\xA4\x8A\x94\x9B\x88\x6D\x6E\x66\x66\x68\x5A\x65\x68\x64\x66\x78\x50\x3E\x50" + 0xA9FE7088).s, cvar.visual_lambert_viewmodel_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_lambert_viewmodel_color[3]*/XorStr<0xA6, 34, 0x85D54218>("\xD0\xCE\xDB\xDC\xCB\xC7\xF3\xC1\xCF\xC2\xD2\xD4\xC0\xC7\xEB\xC3\xDF\xD2\xCF\xD4\xD5\xDF\xD9\xD1\xE1\xDC\xAF\xAD\xAD\xB1\x9F\xF6\x9B" + 0x85D54218).s, cvar.visual_lambert_viewmodel_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_tg_type*/XorStr<0xB4, 15, 0x68A39C46>("\xC2\xDC\xC5\xC2\xD9\xD5\xE5\xCF\xDB\xE2\xCA\xC6\xB0\xA4" + 0x68A39C46).s, cvar.visual_tg_type, 0.0);
+	Sakura::Cvar::New(/*visual_draw_fov*/XorStr<0x5C, 16, 0xEBD63A92>("\x2A\x34\x2D\x2A\x01\x0D\x3D\x07\x16\x04\x11\x38\x0E\x06\x1C" + 0xEBD63A92).s, cvar.visual_draw_fov, 0.0);
+	Sakura::Cvar::New(/*visual_draw_fov_color[0]*/XorStr<0x76, 25, 0x3D579875>("\x00\x1E\x0B\x0C\x1B\x17\x23\x19\x0C\x1E\xF7\xDE\xE4\xEC\xF2\xDA\xE5\xE8\xE4\xE6\xF8\xD0\xBC\xD0" + 0x3D579875).s, cvar.visual_draw_fov_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_draw_fov_color[1]*/XorStr<0x94, 25, 0xA8F4E71B>("\xE2\xFC\xE5\xE2\xF9\xF5\xC5\xFF\xEE\xFC\xE9\xC0\xC6\xCE\xD4\xFC\xC7\xCA\xCA\xC8\xDA\xF2\x9B\xF6" + 0xA8F4E71B).s, cvar.visual_draw_fov_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_draw_fov_color[2]*/XorStr<0xA2, 25, 0x062E5EEB>("\xD4\xCA\xD7\xD0\xC7\xCB\xF7\xCD\xD8\xCA\xDB\xF2\xC8\xC0\xC6\xEE\xD1\xDC\xD8\xDA\xC4\xEC\x8A\xE4" + 0x062E5EEB).s, cvar.visual_draw_fov_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_draw_fov_color[3]*/XorStr<0xF8, 25, 0x6EA9B8B4>("\x8E\x90\x89\x8E\x9D\x91\xA1\x9B\x72\x60\x75\x5C\x62\x6A\x70\x58\x6B\x66\x66\x64\x7E\x56\x3D\x52" + 0x6EA9B8B4).s, cvar.visual_draw_fov_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_noflash_color[0]*/XorStr<0x79, 24, 0x26F4412F>("\x0F\x13\x08\x09\x1C\x12\x20\xEE\xEE\xE4\xEF\xE5\xF6\xEE\xD8\xEB\xE6\xE6\xE4\xFE\xD6\xBE\xD2" + 0x26F4412F).s, cvar.visual_noflash_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_noflash_color[1]*/XorStr<0x57, 24, 0xCFB19641>("\x21\x31\x2A\x2F\x3A\x30\x02\x30\x30\x06\x0D\x03\x10\x0C\x3A\x05\x08\x04\x06\x18\x30\x5D\x30" + 0xCFB19641).s, cvar.visual_noflash_color[1], 0.0);
+	Sakura::Cvar::New(/*visual_noflash_color[2]*/XorStr<0x63, 24, 0x90FBB281>("\x15\x0D\x16\x13\x06\x04\x36\x04\x04\x0A\x01\x0F\x1C\x18\x2E\x11\x1C\x18\x1A\x04\x2C\x4A\x24" + 0x90FBB281).s, cvar.visual_noflash_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_noflash_color[3]*/XorStr<0x37, 24, 0xD10A096A>("\x41\x51\x4A\x4F\x5A\x50\x62\x50\x50\x26\x2D\x23\x30\x2C\x1A\x25\x28\x24\x26\x38\x10\x7F\x10" + 0xD10A096A).s, cvar.visual_noflash_color[3], 0.5);
+	Sakura::Cvar::New(/*visual_lines*/XorStr<0xD6, 13, 0xBEA12CAE>("\xA0\xBE\xAB\xAC\xBB\xB7\x83\xB1\xB7\xB1\x85\x92" + 0xBEA12CAE).s, cvar.visual_lines, 0.0);
+	Sakura::Cvar::New(/*visual_lines_thickness*/XorStr<0x77, 23, 0x9F9E8670>("\x01\x11\x0A\x0F\x1A\x10\x22\x12\x16\xEE\xE4\xF1\xDC\xF0\xED\xEF\xE4\xE3\xE7\xEF\xF8\xFF" + 0x9F9E8670).s, cvar.visual_lines_thickness, 1.0);
+	Sakura::Cvar::New(/*visual_lines_color_tt[0]*/XorStr<0x86, 25, 0x2967E4AE>("\xF0\xEE\xFB\xFC\xEB\xE7\xD3\xE1\xE7\xE1\xF5\xE2\xCD\xF0\xFB\xF9\xF9\xE5\xC7\xED\xEE\xC0\xAC\xC0" + 0x2967E4AE).s, cvar.visual_lines_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*visual_lines_color_tt[1]*/XorStr<0xC9, 25, 0x36177FF7>("\xBF\xA3\xB8\xB9\xAC\xA2\x90\xBC\xB8\xBC\xB6\xA7\x8A\xB5\xB8\xB4\xB6\xA8\x84\xA8\xA9\x85\xEE\xBD" + 0x36177FF7).s, cvar.visual_lines_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*visual_lines_color_tt[2]*/XorStr<0x91, 25, 0x10351774>("\xE7\xFB\xE0\xE1\xF4\xFA\xC8\xF4\xF0\xF4\xFE\xEF\xC2\xFD\xF0\xCC\xCE\xD0\xFC\xD0\xD1\xFD\x95\xF5" + 0x10351774).s, cvar.visual_lines_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*visual_lines_color_tt[3]*/XorStr<0xB9, 25, 0x72C6E5EE>("\xCF\xD3\xC8\xC9\xDC\xD2\xE0\xAC\xA8\xAC\xA6\xB7\x9A\xA5\xA8\xA4\xA6\xB8\x94\xB8\xB9\x95\xFC\x8D" + 0x72C6E5EE).s, cvar.visual_lines_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*visual_lines_color_ct[0]*/XorStr<0xCC, 25, 0x3747A9E9>("\xBA\xA4\xBD\xBA\xB1\xBD\x8D\xBF\xBD\xBB\xB3\xA4\x87\xBA\xB5\xB7\xB3\xAF\x81\xBC\x94\xBA\xD2\xBE" + 0x3747A9E9).s, cvar.visual_lines_color_ct[0], 1.0);
+	Sakura::Cvar::New(/*visual_lines_color_ct[1]*/XorStr<0xDC, 25, 0x08FC3E6C>("\xAA\xB4\xAD\xAA\x81\x8D\xBD\x8F\x8D\x8B\x83\x94\xB7\x8A\x85\x87\x83\x9F\xB1\x8C\x84\xAA\xC3\xAE" + 0x08FC3E6C).s, cvar.visual_lines_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*visual_lines_color_ct[2]*/XorStr<0x2F, 25, 0x9343B675>("\x59\x59\x42\x47\x52\x58\x6A\x5A\x5E\x56\x5C\x49\x64\x5F\x52\x52\x50\x32\x1E\x21\x37\x1F\x77\x1B" + 0x9343B675).s, cvar.visual_lines_color_ct[2], 0.0);
+	Sakura::Cvar::New(/*visual_lines_color_ct[3]*/XorStr<0x02, 25, 0xDEE32D13>("\x74\x6A\x77\x70\x67\x6B\x57\x65\x63\x65\x69\x7E\x51\x6C\x7F\x7D\x7D\x61\x4B\x76\x62\x4C\x2B\x44" + 0xDEE32D13).s, cvar.visual_lines_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*visual_hud_clear*/XorStr<0xCF, 17, 0x38C73E1A>("\xB9\xB9\xA2\xA7\xB2\xB8\x8A\xBE\xA2\xBC\x86\xB9\xB7\xB9\xBC\xAC" + 0x38C73E1A).s, cvar.visual_hud_clear, 0.0);
+	Sakura::Cvar::New(/*visual_bullet_trace*/XorStr<0xA2, 20, 0x0A69E9A9>("\xD4\xCA\xD7\xD0\xC7\xCB\xF7\xCB\xDF\xC7\xC0\xC8\xDA\xF0\xC4\xC3\xD3\xD0\xD1" + 0x0A69E9A9).s, cvar.visual_bullet_trace, 0.0);
+	Sakura::Cvar::New(/*visual_bullet_trace_local*/XorStr<0x52, 26, 0x8A05692E>("\x24\x3A\x27\x20\x37\x3B\x07\x3B\x2F\x37\x30\x38\x2A\x00\x14\x13\x03\x00\x01\x3A\x0A\x08\x0B\x08\x06" + 0x8A05692E).s, cvar.visual_bullet_trace_local, 0.0);
+	Sakura::Cvar::New(/*visual_bullet_trace_local_thickness*/XorStr<0xA2, 36, 0x83AAA6C8>("\xD4\xCA\xD7\xD0\xC7\xCB\xF7\xCB\xDF\xC7\xC0\xC8\xDA\xF0\xC4\xC3\xD3\xD0\xD1\xEA\xDA\xD8\xDB\xD8\xD6\xE4\xC8\xD5\xD7\xDC\xAB\xAF\xA7\xB0\xB7" + 0x83AAA6C8).s, cvar.visual_bullet_trace_local_thickness, 0.4);
+	Sakura::Cvar::New(/*visual_bullet_trace_local_liveness*/XorStr<0xBA, 35, 0x66444948>("\xCC\xD2\xCF\xC8\xDF\xD3\x9F\xA3\xB7\xAF\xA8\xA0\xB2\x98\xBC\xBB\xAB\xA8\xA9\x92\xA2\xA0\xB3\xB0\xBE\x8C\xB8\xBC\xA0\xB2\xB6\xBC\xA9\xA8" + 0x66444948).s, cvar.visual_bullet_trace_local_liveness, 0.3);
+	Sakura::Cvar::New(/*visual_bullet_trace_local_color[0]*/XorStr<0xDA, 35, 0x49E7187F>("\xAC\xB2\xAF\xA8\xBF\xB3\xBF\x83\x97\x8F\x88\x80\x92\xB8\x9C\x9B\x8B\x88\x89\xB2\x82\x80\x93\x90\x9E\xAC\x97\x9A\x9A\x98\x8A\xA2\xCA\xA6" + 0x49E7187F).s, cvar.visual_bullet_trace_local_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_bullet_trace_local_color[1]*/XorStr<0x19, 35, 0x61A64353>("\x6F\x73\x68\x69\x7C\x72\x40\x42\x54\x4E\x4F\x41\x51\x79\x53\x5A\x48\x49\x4E\x73\x41\x41\x4C\x51\x5D\x6D\x50\x5B\x59\x59\x45\x63\x08\x67" + 0x61A64353).s, cvar.visual_bullet_trace_local_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_bullet_trace_local_color[2]*/XorStr<0x3B, 35, 0xFDB06F3E>("\x4D\x55\x4E\x4B\x5E\x2C\x1E\x20\x36\x28\x29\x23\x33\x17\x3D\x38\x2A\x2F\x28\x11\x23\x3F\x32\x33\x3F\x0B\x36\x39\x3B\x37\x2B\x01\x69\x01" + 0xFDB06F3E).s, cvar.visual_bullet_trace_local_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_bullet_trace_local_color[3]*/XorStr<0x2C, 35, 0x11FAAA8A>("\x5A\x44\x5D\x5A\x51\x5D\x6D\x51\x41\x59\x5A\x52\x4C\x66\x4E\x49\x5D\x5E\x5B\x60\x2C\x2E\x21\x22\x28\x1A\x25\x28\x24\x26\x38\x10\x7F\x10" + 0x11FAAA8A).s, cvar.visual_bullet_trace_local_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_line_of_sight*/XorStr<0x8C, 21, 0x63A8222C>("\xFA\xE4\xFD\xFA\xF1\xFD\xCD\xFF\xFD\xFB\xF3\xC8\xF7\xFF\xC5\xE8\xF5\xFA\xF6\xEB" + 0x63A8222C).s, cvar.visual_line_of_sight, 0.0);
+	Sakura::Cvar::New(/*visual_line_of_sight_color[0]*/XorStr<0x66, 30, 0x605089A2>("\x10\x0E\x1B\x1C\x0B\x07\x33\x01\x07\x01\x15\x2E\x1D\x15\x2B\x06\x1F\x10\x10\x0D\x25\x18\x13\x11\x11\x0D\xDB\xB1\xDF" + 0x605089A2).s, cvar.visual_line_of_sight_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_line_of_sight_color[1]*/XorStr<0xCA, 30, 0x54C9DE3C>("\xBC\xA2\xBF\xB8\xAF\xA3\x8F\xBD\xBB\xBD\xB1\x8A\xB9\xB1\x87\xAA\xB3\xBC\xB4\xA9\x81\xBC\x8F\x8D\x8D\x91\xBF\xD4\xBB" + 0x54C9DE3C).s, cvar.visual_line_of_sight_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_line_of_sight_color[2]*/XorStr<0x12, 30, 0x37738C34>("\x64\x7A\x67\x60\x77\x7B\x47\x75\x73\x75\x79\x42\x71\x79\x7F\x52\x4B\x44\x4C\x51\x79\x44\x47\x45\x45\x59\x77\x1F\x73" + 0x37738C34).s, cvar.visual_line_of_sight_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_line_of_sight_color[3]*/XorStr<0xD1, 30, 0x1919DEB3>("\xA7\xBB\xA0\xA1\xB4\xBA\x88\xB4\xB0\xB4\xBE\x83\xB2\xB8\x80\x93\x88\x85\x8B\x90\xBA\x85\x88\x84\x86\x98\xB0\xDF\xB0" + 0x1919DEB3).s, cvar.visual_line_of_sight_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_line_of_sight_distance*/XorStr<0xEA, 30, 0x13EA6A8D>("\x9C\x82\x9F\x98\x8F\x83\xAF\x9D\x9B\x9D\x91\xAA\x99\x91\xA7\x8A\x93\x9C\x94\x89\xA1\x9B\x69\x72\x76\x62\x6A\x66\x63" + 0x13EA6A8D).s, cvar.visual_line_of_sight_distance, 20.0);
+	Sakura::Cvar::New(/*visual_menu_color[0]*/XorStr<0x11, 21, 0xA024E9E8>("\x67\x7B\x60\x61\x74\x7A\x48\x75\x7C\x74\x6E\x43\x7E\x71\x73\x4F\x53\x79\x13\x79" + 0xA024E9E8).s, cvar.visual_menu_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color[1]*/XorStr<0xDB, 21, 0x3F62115B>("\xAD\xB5\xAE\xAB\xBE\x8C\xBE\x8F\x86\x8A\x90\xB9\x84\x87\x85\x85\x99\xB7\xDC\xB3" + 0x3F62115B).s, cvar.visual_menu_color[1], 0.07);
+	Sakura::Cvar::New(/*visual_menu_color[2]*/XorStr<0xDD, 21, 0x0495D522>("\xAB\xB7\xAC\x95\x80\x8E\xBC\x89\x80\x88\x92\xB7\x8A\x85\x87\x83\x9F\xB5\xDD\xAD" + 0x0495D522).s, cvar.visual_menu_color[2], 0.57);
+	Sakura::Cvar::New(/*visual_menu_color[3]*/XorStr<0xD9, 21, 0x7EBEEC0B>("\xAF\xB3\xA8\xA9\xBC\xB2\x80\x8D\x84\x8C\x96\xBB\x86\x89\x8B\x87\x9B\xB1\xD8\xB1" + 0x7EBEEC0B).s, cvar.visual_menu_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_header[0]*/XorStr<0x59, 28, 0xC2444B89>("\x2F\x33\x28\x29\x3C\x32\x00\x0D\x04\x0C\x16\x3B\x06\x09\x0B\x07\x1B\x35\x03\x09\x0C\x0A\x0A\x02\x2A\x42\x2E" + 0xC2444B89).s, cvar.visual_menu_color_header[0], 0.0745);
+	Sakura::Cvar::New(/*visual_menu_color_header[1]*/XorStr<0xDE, 28, 0x3F282727>("\xA8\xB6\x93\x94\x83\x8F\xBB\x88\x83\x89\x9D\xB6\x89\x84\x80\x82\x9C\xB0\x98\x94\x93\x97\x91\x87\xAD\xC6\xA5" + 0x3F282727).s, cvar.visual_menu_color_header[1], 0.0862);
+	Sakura::Cvar::New(/*visual_menu_color_header[2]*/XorStr<0x65, 28, 0xC14EAE81>("\x13\x0F\x14\x1D\x08\x06\x34\x01\x08\x00\x1A\x2F\x12\x1D\x1F\x1B\x07\x29\x1F\x1D\x18\x1E\x1E\x0E\x26\x4C\x22" + 0xC14EAE81).s, cvar.visual_menu_color_header[2], 0.1019);
+	Sakura::Cvar::New(/*visual_menu_color_header[3]*/XorStr<0x41, 28, 0x01674FBE>("\x37\x2B\x30\x31\x24\x2A\x18\x25\x2C\x24\x3E\x13\x2E\x21\x23\x3F\x23\x0D\x3B\x31\x34\x32\x32\x2A\x02\x69\x06" + 0x01674FBE).s, cvar.visual_menu_color_header[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_items[0]*/XorStr<0x9B, 27, 0x818D3B2F>("\xED\xF5\xEE\xEB\xFE\xCC\xFE\xCF\xC6\xCA\xD0\xF9\xC4\xC7\xC5\xC5\xD9\xF3\xC4\xDA\xCA\xDD\xC2\xE9\x83\xE9" + 0x818D3B2F).s, cvar.visual_menu_color_items[0], 0.0980);
+	Sakura::Cvar::New(/*visual_menu_color_items[1]*/XorStr<0x1A, 27, 0x3F252882>("\x6C\x72\x6F\x68\x7F\x73\x7F\x4C\x47\x4D\x51\x7A\x45\x48\x44\x46\x58\x74\x45\x59\x4B\x42\x43\x6A\x03\x6E" + 0x3F252882).s, cvar.visual_menu_color_items[1], 0.1176);
+	Sakura::Cvar::New(/*visual_menu_color_items[2]*/XorStr<0xA2, 27, 0xC3043CAA>("\xD4\xCA\xD7\xD0\xC7\xCB\xF7\xC4\xCF\xC5\xD9\xF2\xCD\xC0\xDC\xDE\xC0\xEC\xDD\xC1\xD3\xDA\xCB\xE2\x88\xE6" + 0xC3043CAA).s, cvar.visual_menu_color_items[2], 0.1372);
+	Sakura::Cvar::New(/*visual_menu_color_items[3]*/XorStr<0x96, 27, 0x0C14E302>("\xE0\xFE\xEB\xEC\xFB\xF7\xC3\xF0\xFB\xF1\xD5\xFE\xC1\xCC\xC8\xCA\xD4\xF8\xC1\xDD\xCF\xC6\xDF\xF6\x9D\xF2" + 0x0C14E302).s, cvar.visual_menu_color_items[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_footer[0]*/XorStr<0x1D, 28, 0x70594D85>("\x6B\x77\x6C\x55\x40\x4E\x7C\x49\x40\x48\x52\x77\x4A\x45\x47\x43\x5F\x71\x49\x5F\x5E\x46\x56\x46\x6E\x06\x6A" + 0x70594D85).s, cvar.visual_menu_color_footer[0], 0.1764);
+	Sakura::Cvar::New(/*visual_menu_color_footer[1]*/XorStr<0x74, 28, 0xB2755F42>("\x02\x1C\x05\x02\x19\x15\x25\x16\x19\x13\x0B\x20\xE3\xEE\xEE\xEC\xF6\xDA\xE0\xE8\xE7\xFD\xEF\xF9\xD7\xBC\xD3" + 0xB2755F42).s, cvar.visual_menu_color_footer[1], 0.1960);
+	Sakura::Cvar::New(/*visual_menu_color_footer[2]*/XorStr<0x33, 28, 0x3682C6BD>("\x45\x5D\x46\x43\x56\x54\x66\x57\x5E\x52\x48\x61\x5C\x2F\x2D\x2D\x31\x1B\x23\x29\x28\x3C\x2C\x38\x10\x7E\x10" + 0x3682C6BD).s, cvar.visual_menu_color_footer[2], 0.2156);
+	Sakura::Cvar::New(/*visual_menu_color_footer[3]*/XorStr<0x66, 28, 0x684CA546>("\x10\x0E\x1B\x1C\x0B\x07\x33\x00\x0B\x01\x05\x2E\x11\x1C\x18\x1A\x04\x28\x1E\x16\x15\x0F\x19\x0F\x25\x4C\xDD" + 0x684CA546).s, cvar.visual_menu_color_footer[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_widgets[0]*/XorStr<0xA7, 29, 0x27685D40>("\xD1\xC1\xDA\xDF\xCA\xC0\xF2\xC3\xCA\xDE\xC4\xED\xD0\xDB\xD9\xD9\xC5\xE7\xCE\xD3\xDF\xDB\xD8\xCA\xCC\x9B\xF1\x9F" + 0x27685D40).s, cvar.visual_menu_color_widgets[0], 0.1176);
+	Sakura::Cvar::New(/*visual_menu_color_widgets[1]*/XorStr<0xF1, 29, 0xF6545FB8>("\x87\x9B\x80\x81\x94\x9A\xA8\x95\x9C\x94\x8E\xA3\x9E\x91\x93\x6F\x73\x5D\x74\x6D\x61\x61\x62\x7C\x7A\x51\x3A\x51" + 0xF6545FB8).s, cvar.visual_menu_color_widgets[1], 0.1372);
+	Sakura::Cvar::New(/*visual_menu_color_widgets[2]*/XorStr<0x04, 29, 0x2D4BD966>("\x72\x6C\x75\x72\x69\x65\x55\x66\x69\x63\x7B\x50\x73\x7E\x7E\x7C\x66\x4A\x61\x7E\x7C\x7E\x7F\x6F\x6F\x46\x2C\x42" + 0x2D4BD966).s, cvar.visual_menu_color_widgets[2], 0.1568);
+	Sakura::Cvar::New(/*visual_menu_color_widgets[3]*/XorStr<0x66, 29, 0x1767FB78>("\x10\x0E\x1B\x1C\x0B\x07\x33\x00\x0B\x01\x05\x2E\x11\x1C\x18\x1A\x04\x28\x0F\x10\x1E\x1C\x19\x09\x0D\x24\xB3\xDC" + 0x1767FB78).s, cvar.visual_menu_color_widgets[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_tab_selected[0]*/XorStr<0xB4, 34, 0x0626E1C1>("\xC2\xDC\xC5\xC2\xD9\xD5\xE5\xD6\xD9\xD3\xCB\xE0\xA3\xAE\xAE\xAC\xB6\x9A\xB2\xA6\xAA\x96\xB9\xAE\xA0\xA8\xAD\xBB\xB5\xB5\x89\xE3\x89" + 0x0626E1C1).s, cvar.visual_menu_color_tab_selected[0], 0.0980);
+	Sakura::Cvar::New(/*visual_menu_color_tab_selected[1]*/XorStr<0xB7, 34, 0xF609B3EA>("\xC1\xD1\xCA\xCF\xDA\xD0\xE2\xD3\xDA\xAE\xB4\x9D\xA0\xAB\xA9\xA9\xB5\x97\xBD\xAB\xA9\x93\xBE\xAB\xA3\xB5\xB2\xA6\xB6\xB0\x8E\xE7\x8A" + 0xF609B3EA).s, cvar.visual_menu_color_tab_selected[1], 0.1176);
+	Sakura::Cvar::New(/*visual_menu_color_tab_selected[2]*/XorStr<0xDA, 34, 0x9F75DF9C>("\xAC\xB2\xAF\xA8\xBF\xB3\xBF\x8C\x87\x8D\x91\xBA\x85\x88\x84\x86\x98\xB4\x98\x8C\x8C\xB0\x83\x94\x9E\x96\x97\x81\x93\x93\xA3\xCB\xA7" + 0x9F75DF9C).s, cvar.visual_menu_color_tab_selected[2], 0.1372);
+	Sakura::Cvar::New(/*visual_menu_color_tab_selected[3]*/XorStr<0x55, 34, 0x994E2A95>("\x23\x3F\x24\x2D\x38\x36\x04\x31\x38\x30\x2A\x3F\x02\x0D\x0F\x0B\x17\x39\x13\x09\x0B\x35\x18\x09\x01\x0B\x0C\x04\x14\x16\x28\x47\x28" + 0x994E2A95).s, cvar.visual_menu_color_tab_selected[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_subtab_selected[0]*/XorStr<0xCB, 37, 0x50E1738C>("\xBD\xA5\xBE\xBB\xAE\xBC\x8E\xBF\xB6\xBA\xA0\x89\xB4\xB7\xB5\xB5\xA9\x83\xAE\xAB\xBD\x94\x80\x80\xBC\x97\x80\x8A\x82\x8B\x9D\x8F\x8F\xB7\xDD\xB3" + 0x50E1738C).s, cvar.visual_menu_color_subtab_selected[0], 0.1176);
+	Sakura::Cvar::New(/*visual_menu_color_subtab_selected[1]*/XorStr<0x8D, 37, 0x7A0D5FD3>("\xFB\xE7\xFC\xE5\xF0\xFE\xCC\xF9\xF0\xF8\xE2\xC7\xFA\xF5\xF7\xF3\xEF\xC1\xEC\xD5\xC3\xD6\xC2\xC6\xFA\xD5\xC2\xC4\xCC\xC9\xDF\xC9\xC9\xF5\x9E\xED" + 0x7A0D5FD3).s, cvar.visual_menu_color_subtab_selected[1], 0.1372);
+	Sakura::Cvar::New(/*visual_menu_color_subtab_selected[2]*/XorStr<0x59, 37, 0x7C08453E>("\x2F\x33\x28\x29\x3C\x32\x00\x0D\x04\x0C\x16\x3B\x06\x09\x0B\x07\x1B\x35\x18\x19\x0F\x1A\x0E\x12\x2E\x01\x16\x18\x10\x15\x03\x1D\x1D\x21\x49\x21" + 0x7C08453E).s, cvar.visual_menu_color_subtab_selected[2], 0.1568);
+	Sakura::Cvar::New(/*visual_menu_color_subtab_selected[3]*/XorStr<0xA3, 37, 0x5FDAC600>("\xD5\xCD\xD6\xD3\xC6\xC4\xF6\xC7\xCE\xC2\xD8\xF1\xCC\xDF\xDD\xDD\xC1\xEB\xC6\xC3\xD5\xCC\xD8\xD8\xE4\xCF\xD8\xD2\xDA\xA3\xB5\xA7\xA7\x9F\xF6\x9B" + 0x5FDAC600).s, cvar.visual_menu_color_subtab_selected[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_logo[0]*/XorStr<0x69, 26, 0xA464B2A5>("\x1F\x03\x18\x19\x0C\x02\x30\x1D\x14\x1C\x06\x2B\x16\x19\x1B\x17\x0B\x25\x17\x13\x1A\x11\x24\xB0\xDC" + 0xA464B2A5).s, cvar.visual_menu_color_logo[0], 1.f);
+	Sakura::Cvar::New(/*visual_menu_color_logo[1]*/XorStr<0x5D, 26, 0x1DB9AB71>("\x2B\x37\x2C\x15\x00\x0E\x3C\x09\x00\x08\x12\x37\x0A\x05\x07\x03\x1F\x31\x03\x1F\x16\x1D\x28\x45\x28" + 0x1DB9AB71).s, cvar.visual_menu_color_logo[1], 0.0784f);
+	Sakura::Cvar::New(/*visual_menu_color_logo[2]*/XorStr<0x18, 26, 0x7206A054>("\x6E\x70\x69\x6E\x7D\x71\x41\x72\x45\x4F\x57\x7C\x47\x4A\x4A\x48\x5A\x76\x46\x44\x4B\x42\x75\x1D\x6D" + 0x7206A054).s, cvar.visual_menu_color_logo[2], 0.5764f);
+	Sakura::Cvar::New(/*visual_menu_color_logo[3]*/XorStr<0xE4, 26, 0x20E53D06>("\x92\x8C\x95\x92\x89\x85\xB5\x86\x89\x83\x9B\xB0\x93\x9E\x9E\x9C\x86\xAA\x9A\x98\x9F\x96\xA1\xC8\xA1" + 0x20E53D06).s, cvar.visual_menu_color_logo[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_color_footer_text[0]*/XorStr<0xFF, 33, 0xFFA42A84>("\x89\x69\x72\x77\x62\x68\x5A\x6B\x62\x66\x7C\x55\x68\x63\x61\x61\x7D\x4F\x77\x7D\x7C\x60\x70\x64\x48\x6C\x7C\x62\x6F\x47\x2D\x43" + 0xFFA42A84).s, cvar.visual_menu_color_footer_text[0], 0.9803f);
+	Sakura::Cvar::New(/*visual_menu_color_footer_text[1]*/XorStr<0x93, 33, 0x15C4F971>("\xE5\xFD\xE6\xE3\xF6\xF4\xC6\xF7\xFE\xF2\xE8\xC1\xFC\xCF\xCD\xCD\xD1\xFB\xC3\xC9\xC8\xDC\xCC\xD8\xF4\xD8\xC8\xD6\xDB\xEB\x80\xEF" + 0x15C4F971).s, cvar.visual_menu_color_footer_text[1], 0.9803f);
+	Sakura::Cvar::New(/*visual_menu_color_footer_text[2]*/XorStr<0x78, 33, 0x932BA122>("\x0E\x10\x09\x0E\x1D\x11\x21\x12\xE5\xEF\xF7\xDC\xE7\xEA\xEA\xE8\xFA\xD6\xEC\xE4\xE3\xF9\xEB\xFD\xCF\xE5\xF7\xEB\xE0\xCE\xA4\xCA" + 0x932BA122).s, cvar.visual_menu_color_footer_text[2], 0.9803f);
+	Sakura::Cvar::New(/*visual_menu_color_footer_text[3]*/XorStr<0xE2, 33, 0x2717B7BB>("\x94\x8A\x97\x90\x87\x8B\xB7\x84\x8F\x85\x99\xB2\x8D\x80\x9C\x9E\x80\xAC\x92\x9A\x99\x83\x9D\x8B\xA5\x8F\x99\x85\x8A\xA4\x33\x5C" + 0x2717B7BB).s, cvar.visual_menu_color_footer_text[3], 1.0);
+	Sakura::Cvar::New(/*visual_menu_raining*/XorStr<0xC9, 20, 0x95863EDC>("\xBF\xA3\xB8\xB9\xAC\xA2\x90\xBD\xB4\xBC\xA6\x8B\xA7\xB7\xBE\xB6\xB0\xB4\xBC" + 0x95863EDC).s, cvar.visual_menu_raining, 0.0);
+	Sakura::Cvar::New(/*visual_menu_raining_count*/XorStr<0x56, 26, 0xC2D0CEBC>("\x20\x3E\x2B\x2C\x3B\x37\x03\x30\x3B\x31\x15\x3E\x10\x02\x0D\x0B\x0F\x09\x0F\x36\x09\x04\x19\x03\x1A" + 0xC2D0CEBC).s, cvar.visual_menu_raining_count, 100.0);
+	Sakura::Cvar::New(/*visual_menu_raining_type*/XorStr<0x5F, 25, 0xF9D4970C>("\x29\x09\x12\x17\x02\x08\x3A\x0B\x02\x06\x1C\x35\x19\x0D\x04\x00\x06\x1E\x16\x2D\x07\x0D\x05\x13" + 0xF9D4970C).s, cvar.visual_menu_raining_type, 0.0);
+	Sakura::Cvar::New(/*visual_menu_raining_speed_multipler*/XorStr<0xD4, 36, 0xC62CAAF6>("\xA2\xBC\xA5\xA2\xB9\xB5\x85\xB6\xB9\xB3\xAB\x80\x92\x80\x8B\x8D\x8D\x8B\x81\xB8\x9B\x99\x8F\x8E\x88\xB2\x83\x9A\x9C\x85\x9B\x83\x98\x90\x84" + 0xC62CAAF6).s, cvar.visual_menu_raining_speed_multipler, 1.0);
+	Sakura::Cvar::New(/*visual_menu_bg_opacity*/XorStr<0x75, 23, 0x9A118204>("\x03\x1F\x04\x0D\x18\x16\x24\x11\x18\x10\x0A\xDF\xE3\xE5\xDC\xEB\xF5\xE7\xE4\xE1\xFD\xF3" + 0x9A118204).s, cvar.visual_menu_bg_opacity, 0.1);
+	Sakura::Cvar::New(/*visual_fog*/XorStr<0xB6, 11, 0xEF59930F>("\xC0\xDE\xCB\xCC\xDB\xD7\xE3\xDB\xD1\xD8" + 0xEF59930F).s, cvar.visual_fog, 0.0);
+	Sakura::Cvar::New(/*visual_fog_density*/XorStr<0x9B, 19, 0x3BA546F3>("\xED\xF5\xEE\xEB\xFE\xCC\xFE\xC4\xCC\xC3\xFA\xC2\xC2\xC6\xDA\xC3\xDF\xD5" + 0x3BA546F3).s, cvar.visual_fog_density, 5.0);
+	Sakura::Cvar::New(/*visual_fog_color[0]*/XorStr<0x88, 20, 0x7AAFBF2F>("\xFE\xE0\xF9\xFE\xED\xE1\xD1\xE9\xFF\xF6\xCD\xF0\xFB\xF9\xF9\xE5\xC3\xA9\xC7" + 0x7AAFBF2F).s, cvar.visual_fog_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_fog_color[1]*/XorStr<0x60, 20, 0x6594F431>("\x16\x08\x11\x16\x05\x09\x39\x01\x07\x0E\x35\x08\x03\x01\x01\x1D\x2B\x40\x2F" + 0x6594F431).s, cvar.visual_fog_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_fog_color[2]*/XorStr<0x6B, 20, 0xE11EE6E6>("\x1D\x05\x1E\x1B\x0E\x1C\x2E\x14\x1C\x13\x2A\x15\x18\x14\x16\x08\x20\x4E\x20" + 0xE11EE6E6).s, cvar.visual_fog_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_fog_color[3]*/XorStr<0x4A, 20, 0x253B7A55>("\x3C\x22\x3F\x38\x2F\x23\x0F\x37\x3D\x34\x0B\x36\x39\x3B\x37\x2B\x01\x68\x01" + 0x253B7A55).s, cvar.visual_fog_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_nosmoke*/XorStr<0x17, 15, 0xD28A4851>("\x61\x71\x6A\x6F\x7A\x70\x42\x70\x70\x53\x4C\x4D\x48\x41" + 0xD28A4851).s, cvar.visual_nosmoke, 0.0);
+	Sakura::Cvar::New(/*visual_box_world_color[0]*/XorStr<0xF7, 26, 0xF0BC6781>("\x81\x91\x8A\x8F\x9A\x90\xA2\x9C\x90\x78\x5E\x75\x6C\x76\x69\x62\x58\x6B\x66\x66\x64\x7E\x56\x3E\x52" + 0xF0BC6781).s, cvar.visual_box_world_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_box_world_color[1]*/XorStr<0x8A, 26, 0x13D913D6>("\xFC\xE2\xFF\xF8\xEF\xE3\xCF\xF3\xFD\xEB\xCB\xE2\xF9\xE5\xF4\xFD\xC5\xF8\xF3\xF1\xF1\xED\xFB\x90\xFF" + 0x13D913D6).s, cvar.visual_box_world_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_box_world_color[2]*/XorStr<0xE5, 26, 0xB6E5A2E6>("\x93\x8F\x94\x9D\x88\x86\xB4\x8E\x82\x96\xB0\x87\x9E\x80\x9F\x90\xAA\x95\x98\x94\x96\x88\xA0\xCE\xA0" + 0xB6E5A2E6).s, cvar.visual_box_world_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_box_world_color[3]*/XorStr<0x20, 26, 0x12A3D497>("\x56\x48\x51\x56\x45\x49\x79\x45\x47\x51\x75\x5C\x43\x5F\x42\x4B\x6F\x52\x5D\x5F\x5B\x47\x6D\x04\x65" + 0x12A3D497).s, cvar.visual_box_world_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_box_world_type*/XorStr<0xDE, 22, 0x7764AC0F>("\xA8\xB6\x93\x94\x83\x8F\xBB\x87\x89\x9F\xB7\x9E\x85\x99\x80\x89\xB1\x9B\x89\x81\x97" + 0x7764AC0F).s, cvar.visual_box_world_type, 0.0);
+	Sakura::Cvar::New(/*visual_box_world_fill*/XorStr<0xC0, 22, 0x240C56D4>("\xB6\xA8\xB1\xB6\xA5\xA9\x99\xA5\xA7\xB1\x95\xBC\xA3\xBF\xA2\xAB\x8F\xB7\xBB\xBF\xB8" + 0x240C56D4).s, cvar.visual_box_world_fill, 0.0);
+	Sakura::Cvar::New(/*visual_player_glow*/XorStr<0xE1, 19, 0x04E8100D>("\x97\x8B\x90\x91\x84\x8A\xB8\x98\x85\x8B\x92\x89\x9F\xB1\x88\x9C\x9E\x85" + 0x04E8100D).s, cvar.visual_player_glow, 0.0);
+	Sakura::Cvar::New(/*visual_player_glow_thickness*/XorStr<0xAB, 29, 0x55320406>("\xDD\xC5\xDE\xDB\xCE\xDC\xEE\xC2\xDF\xD5\xCC\xD3\xC5\xE7\xDE\xD6\xD4\xCB\xE2\xCA\xD7\xA9\xA2\xA9\xAD\xA1\xB6\xB5" + 0x55320406).s, cvar.visual_player_glow_thickness, 12.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_ct[0]*/XorStr<0xA1, 31, 0xB167A50C>("\xD7\xCB\xD0\xD1\xC4\xCA\xF8\xD8\xC5\xCB\xD2\xC9\xDF\xF1\xC8\xDC\xDE\xC5\xEC\xD7\xDA\xDA\xD8\xCA\xE6\xD9\xCF\xE7\x8D\xE3" + 0xB167A50C).s, cvar.visual_player_glow_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_ct[1]*/XorStr<0x1F, 31, 0x22841834>("\x69\x49\x52\x57\x42\x48\x7A\x56\x4B\x49\x50\x4F\x59\x73\x4A\x42\x40\x47\x6E\x51\x5C\x58\x5A\x44\x68\x5B\x4D\x61\x0A\x61" + 0x22841834).s, cvar.visual_player_glow_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_ct[2]*/XorStr<0xF3, 31, 0xCEA8EDE2>("\x85\x9D\x86\x83\x96\x94\xA6\x8A\x97\x9D\x84\x9B\x8D\x5F\x66\x6E\x6C\x73\x5A\x65\x68\x64\x66\x78\x54\x6F\x79\x55\x3D\x4D" + 0xCEA8EDE2).s, cvar.visual_player_glow_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_ct[3]*/XorStr<0x7F, 31, 0x86E155E4>("\x09\xE9\xF2\xF7\xE2\xE8\xDA\xF6\xEB\xE9\xF0\xEF\xF9\xD3\xEA\xE2\xE0\xE7\xCE\xF1\xFC\xF8\xFA\xE4\xC8\xFB\xED\xC1\xA8\xC1" + 0x86E155E4).s, cvar.visual_player_glow_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_tt[0]*/XorStr<0x3A, 31, 0x04139D6E>("\x4C\x52\x4F\x48\x5F\x53\x1F\x31\x2E\x22\x3D\x20\x34\x18\x2F\x25\x25\x3C\x13\x2E\x21\x23\x3F\x23\x0D\x27\x20\x0E\x66\x0A" + 0x04139D6E).s, cvar.visual_player_glow_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_tt[1]*/XorStr<0xAB, 31, 0x4F8FBA1D>("\xDD\xC5\xDE\xDB\xCE\xDC\xEE\xC2\xDF\xD5\xCC\xD3\xC5\xE7\xDE\xD6\xD4\xCB\xE2\xDD\xD0\xAC\xAE\xB0\x9C\xB0\xB1\x9D\xF6\x95" + 0x4F8FBA1D).s, cvar.visual_player_glow_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_tt[2]*/XorStr<0xF7, 31, 0x7142512E>("\x81\x91\x8A\x8F\x9A\x90\xA2\x8E\x93\x61\x78\x67\x71\x5B\x62\x6A\x68\x7F\x56\x69\x64\x60\x62\x7C\x50\x64\x65\x49\x21\x49" + 0x7142512E).s, cvar.visual_player_glow_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*visual_player_glow_color_tt[3]*/XorStr<0xD0, 31, 0xEAE5036A>("\xA6\xB8\xA1\xA6\xB5\xB9\x89\xA7\xB4\xB8\xA3\xBE\xAE\x82\xB9\xB3\x8F\x96\xBD\x80\x8B\x89\x89\x95\xB7\x9D\x9E\xB0\xDF\xB0" + 0xEAE5036A).s, cvar.visual_player_glow_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*visual_viewmodel_glow*/XorStr<0x50, 22, 0x90235EA1>("\x26\x38\x21\x26\x35\x39\x09\x21\x31\x3C\x2D\x36\x33\x39\x3B\x33\x3F\x06\x0E\x0C\x13" + 0x90235EA1).s, cvar.visual_viewmodel_glow, 0.0);
+	Sakura::Cvar::New(/*visual_viewmodel_glow_thickness*/XorStr<0x33, 32, 0xBCB0D0D6>("\x45\x5D\x46\x43\x56\x54\x66\x4C\x52\x59\x4A\x53\x50\x24\x24\x2E\x1C\x23\x29\x29\x30\x17\x3D\x22\x22\x2F\x26\x20\x2A\x23\x22" + 0xBCB0D0D6).s, cvar.visual_viewmodel_glow_thickness, 1.0);
+	Sakura::Cvar::New(/*visual_viewmodel_glow_color[0]*/XorStr<0xD3, 31, 0x20E98B8B>("\xA5\xBD\xA6\xA3\xB6\xB4\x86\xAC\xB2\xB9\xAA\xB3\xB0\x84\x84\x8E\xBC\x83\x89\x89\x90\xB7\x8A\x85\x87\x83\x9F\xB5\xDF\xAD" + 0x20E98B8B).s, cvar.visual_viewmodel_glow_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_viewmodel_glow_color[1]*/XorStr<0x5E, 31, 0x2BC705BE>("\x28\x36\x13\x14\x03\x0F\x3B\x13\x0F\x02\x1F\x04\x05\x0F\x09\x01\x31\x08\x1C\x1E\x05\x2C\x17\x1A\x1A\x18\x0A\x22\x4B\x26" + 0x2BC705BE).s, cvar.visual_viewmodel_glow_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_viewmodel_glow_color[2]*/XorStr<0xBF, 31, 0x37EE55D6>("\xC9\xA9\xB2\xB7\xA2\xA8\x9A\xB0\xAE\xAD\xBE\xA7\xA4\xA8\xA8\xA2\x90\xB7\xBD\xBD\xA4\x8B\xB6\xB9\xBB\xB7\xAB\x81\xE9\x81" + 0x37EE55D6).s, cvar.visual_viewmodel_glow_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_viewmodel_glow_color[3]*/XorStr<0xDD, 31, 0x87799F3E>("\xAB\xB7\xAC\x95\x80\x8E\xBC\x92\x8C\x83\x90\x85\x86\x8E\x8E\x80\xB2\x89\x83\x9F\x86\xAD\x90\x9B\x99\x99\x85\xA3\xCA\xA7" + 0x87799F3E).s, cvar.visual_viewmodel_glow_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_dont_render_players*/XorStr<0xCF, 27, 0x9E74C0E9>("\xB9\xB9\xA2\xA7\xB2\xB8\x8A\xB2\xB8\xB6\xAD\x85\xA9\xB9\xB3\xBA\xBA\x92\xBE\x92\x8F\x85\x9C\x83\x95\x9B" + 0x9E74C0E9).s, cvar.visual_dont_render_players, 0.0);
+	Sakura::Cvar::New(/*visual_remove_scope*/XorStr<0x12, 20, 0xC8B9E988>("\x64\x7A\x67\x60\x77\x7B\x47\x6B\x7F\x76\x73\x6B\x7B\x40\x53\x42\x4D\x53\x41" + 0xC8B9E988).s, cvar.visual_remove_scope, 0.0);
+	Sakura::Cvar::New(/*visual_remove_scope_width*/XorStr<0x83, 26, 0x53F1B3CA>("\xF5\xED\xF6\xF3\xE6\xE4\xD6\xF8\xEE\xE1\xE2\xF8\xEA\xCF\xE2\xF1\xFC\xE4\xF0\xC9\xE0\xF1\xFD\xEE\xF3" + 0x53F1B3CA).s, cvar.visual_remove_scope_width, 40.0);
+	Sakura::Cvar::New(/*visual_remove_scope_margin*/XorStr<0x8C, 27, 0x574004E8>("\xFA\xE4\xFD\xFA\xF1\xFD\xCD\xE1\xF1\xF8\xF9\xE1\xFD\xC6\xE9\xF8\xF3\xED\xFB\xC0\xCD\xC0\xD0\xC4\xCD\xCB" + 0x574004E8).s, cvar.visual_remove_scope_margin, 2.0);
+	Sakura::Cvar::New(/*visual_remove_scope_color[0]*/XorStr<0xD4, 29, 0x311B9CD0>("\xA2\xBC\xA5\xA2\xB9\xB5\x85\xA9\xB9\xB0\xB1\xA9\x85\xBE\x91\x80\x8B\x95\x83\xB8\x8B\x86\x86\x84\x9E\xB6\xDE\xB2" + 0x311B9CD0).s, cvar.visual_remove_scope_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_remove_scope_color[1]*/XorStr<0x62, 29, 0x5C73FC43>("\x14\x0A\x17\x10\x07\x0B\x37\x1B\x0F\x06\x03\x1B\x0B\x30\x03\x12\x1D\x03\x11\x2A\x15\x18\x14\x16\x08\x20\x4D\x20" + 0x5C73FC43).s, cvar.visual_remove_scope_color[1], 0.0);
+	Sakura::Cvar::New(/*visual_remove_scope_color[2]*/XorStr<0x81, 29, 0x7640D036>("\xF7\xEB\xF0\xF1\xE4\xEA\xD8\xFA\xEC\xE7\xE4\xFA\xE8\xD1\xFC\xF3\xFE\xE2\xF6\xCB\xF6\xF9\xFB\xF7\xEB\xC1\xA9\xC1" + 0x7640D036).s, cvar.visual_remove_scope_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_remove_scope_color[3]*/XorStr<0x69, 29, 0xD8F41761>("\x1F\x03\x18\x19\x0C\x02\x30\x02\x14\x1F\x1C\x02\x10\x29\x04\x1B\x16\x0A\x1E\x23\x1E\x11\x13\xEF\xF3\xD9\xB0\xD9" + 0xD8F41761).s, cvar.visual_remove_scope_color[3], 0.35);
+	Sakura::Cvar::New(/*visual_fakelag_history_local*/XorStr<0x93, 29, 0x8B942DF7>("\xE5\xFD\xE6\xE3\xF6\xF4\xC6\xFC\xFA\xF7\xF8\xF2\xFE\xC7\xFE\xCA\xCA\xD7\xD1\xC9\xD5\xD1\xF6\xC6\xC4\xCF\xCC\xC2" + 0x8B942DF7).s, cvar.visual_fakelag_history_local, 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_light*/XorStr<0x00, 35, 0xDF93C81B>("\x76\x68\x71\x76\x65\x69\x59\x61\x69\x62\x6F\x67\x6D\x6A\x51\x67\x79\x62\x66\x7C\x66\x6C\x49\x7B\x77\x7A\x7B\x77\x43\x71\x77\x78\x48\x55" + 0xDF93C81B).s, cvar.visual_fakelag_history_local_light, 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_chams*/XorStr<0x91, 35, 0xD95A4D1C>("\xE7\xFB\xE0\xE1\xF4\xFA\xC8\xFE\xF8\xF1\xFE\xF0\xFC\xF9\xC0\xC8\xC8\xD1\xD7\xCB\xD7\xDF\xF8\xC4\xC6\xC9\xCA\xC0\xF2\xCD\xC7\xD1\xDC\xC1" + 0xD95A4D1C).s, cvar.visual_fakelag_history_local_chams, 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_wireframe*/XorStr<0x70, 39, 0x7A98B0B8>("\x06\x18\x01\x06\x15\x19\x29\x11\x19\x12\x1F\x17\x1D\x1A\x21\x17\xE9\xF2\xF6\xEC\xF6\xFC\xD9\xEB\xE7\xEA\xEB\xE7\xD3\xFA\xE7\xFD\xF5\xF7\xE0\xF2\xF9\xF0" + 0x7A98B0B8).s, cvar.visual_fakelag_history_local_wireframe, 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_wireframe_mode*/XorStr<0xD7, 44, 0x1546C1A3>("\xA1\xB1\xAA\xAF\xBA\xB0\x82\xB8\xBE\x8B\x84\x8E\x82\x83\xBA\x8E\x8E\x9B\x9D\x85\x99\x95\xB2\x82\x80\x93\x90\x9E\xAC\x83\x9C\x84\x92\x9E\x8B\x9B\x96\x99\xA2\x93\x90\x64\x64" + 0x1546C1A3).s, cvar.visual_fakelag_history_local_wireframe_mode, 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_light_color[0]*/XorStr<0x30, 44, 0xD676FADA>("\x46\x58\x41\x46\x55\x59\x69\x51\x59\x52\x5F\x57\x5D\x5A\x61\x57\x29\x32\x36\x2C\x36\x3C\x19\x2B\x27\x2A\x2B\x27\x13\x21\x27\x28\x38\x25\x0D\x30\x3B\x39\x39\x25\x03\x69\x07" + 0xD676FADA).s, cvar.visual_fakelag_history_local_light_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_light_color[1]*/XorStr<0x90, 44, 0xB2E07346>("\xE6\xF8\xE1\xE6\xF5\xF9\xC9\xF1\xF9\xF2\xFF\xF7\xFD\xFA\xC1\xF7\xC9\xD2\xD6\xCC\xD6\xDC\xF9\xCB\xC7\xCA\xCB\xC7\xF3\xC1\xC7\xC8\xD8\xC5\xED\xD0\xDB\xD9\xD9\xC5\xE3\x88\xE7" + 0xB2E07346).s, cvar.visual_fakelag_history_local_light_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_light_color[2]*/XorStr<0x43, 44, 0x072B1F82>("\x35\x2D\x36\x33\x26\x24\x16\x2C\x2A\x27\x28\x22\x2E\x37\x0E\x3A\x3A\x27\x21\x39\x25\x21\x06\x36\x34\x3F\x3C\x32\x00\x0C\x08\x05\x0B\x10\x3A\x05\x08\x04\x06\x18\x30\x5E\x30" + 0x072B1F82).s, cvar.visual_fakelag_history_local_light_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_light_color[3]*/XorStr<0xB3, 44, 0xD61AE67E>("\xC5\xDD\xC6\xC3\xD6\xD4\xE6\xDC\xDA\xD7\xD8\xD2\xDE\xA7\x9E\xAA\xAA\xB7\xB1\xA9\xB5\xB1\x96\xA6\xA4\xAF\xAC\xA2\x90\xBC\xB8\xB5\xBB\xA0\x8A\xB5\xB8\xB4\xB6\xA8\x80\xEF\x80" + 0xD61AE67E).s, cvar.visual_fakelag_history_local_light_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_chams_color[0]*/XorStr<0x09, 44, 0x106F9926>("\x7F\x63\x78\x79\x6C\x62\x50\x76\x70\x79\x76\x78\x74\x71\x48\x70\x70\x69\x6F\x73\x6F\x67\x40\x4C\x4E\x41\x42\x48\x7A\x45\x4F\x49\x44\x59\x74\x4F\x42\x42\x40\x42\x6A\x02\x6E" + 0x106F9926).s, cvar.visual_fakelag_history_local_chams_color[0], 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_chams_color[1]*/XorStr<0xBE, 44, 0x72EC8096>("\xC8\xD6\xB3\xB4\xA3\xAF\x9B\xA3\xA7\xAC\xAD\xA5\xAB\xAC\x93\xA5\xA7\xBC\xA4\xBE\xA0\xAA\x8B\xB9\xB9\xB4\xB9\xB5\x85\xB8\xB4\xBC\xB3\xAC\xBF\x82\x8D\x8F\x8B\x97\xBD\xD6\xB5" + 0x72EC8096).s, cvar.visual_fakelag_history_local_chams_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_chams_color[2]*/XorStr<0x5F, 44, 0x5877BF20>("\x29\x09\x12\x17\x02\x08\x3A\x00\x06\x03\x0C\x06\x0A\x0B\x32\x06\x06\x03\x05\x1D\x01\x0D\x2A\x1A\x18\x1B\x18\x16\x24\x1F\x15\x1F\x12\xF3\xDE\xE1\xEC\xE8\xEA\xF4\xDC\xBA\xD4" + 0x5877BF20).s, cvar.visual_fakelag_history_local_chams_color[2], 0.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_chams_color[3]*/XorStr<0x02, 44, 0xBE83E15C>("\x74\x6A\x77\x70\x67\x6B\x57\x6F\x6B\x60\x69\x61\x6F\x68\x4F\x79\x7B\x60\x60\x7A\x64\x6E\x47\x75\x75\x78\x7D\x71\x41\x7C\x48\x40\x4F\x50\x7B\x46\x49\x4B\x47\x5B\x71\x18\x71" + 0xBE83E15C).s, cvar.visual_fakelag_history_local_chams_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_deathmark_enable*/XorStr<0x32, 24, 0x67A69268>("\x44\x5A\x47\x40\x57\x5B\x67\x5D\x5F\x5A\x48\x55\x53\x5E\x32\x2A\x1D\x26\x2A\x24\x24\x2B\x2D" + 0x67A69268).s, cvar.visual_deathmark_enable, 0.0);
+	Sakura::Cvar::New(/*visual_deathmark_seconds*/XorStr<0x99, 25, 0x384EA999>("\xEF\xF3\xE8\xE9\xFC\xF2\xC0\xC4\xC4\xC3\xD7\xCC\xC8\xC7\xD5\xC3\xF6\xD9\xCE\xCF\xC2\xC0\xCB\xC3" + 0x384EA999).s, cvar.visual_deathmark_seconds, 5.0);
+	Sakura::Cvar::New(/*visual_deathmark_glow*/XorStr<0xBC, 22, 0x00047843>("\xCA\xD4\xCD\xCA\xA1\xAD\x9D\xA7\xA1\xA4\xB2\xAF\xA5\xA8\xB8\xA0\x93\xAA\xA2\xA0\xA7" + 0x00047843).s, cvar.visual_deathmark_glow, 0.0);
+	Sakura::Cvar::New(/*visual_deathmark_transparency*/XorStr<0x09, 30, 0xC9193C85>("\x7F\x63\x78\x79\x6C\x62\x50\x74\x74\x73\x67\x7C\x78\x77\x65\x73\x46\x6E\x69\x7D\x73\x6D\x6F\x41\x53\x47\x4D\x47\x5C" + 0xC9193C85).s, cvar.visual_deathmark_transparency, 128.0);
+	Sakura::Cvar::New(/*visual_deathmark_color[0]*/XorStr<0x9A, 26, 0xC96F5E6F>("\xEC\xF2\xEF\xE8\xFF\xF3\xFF\xC5\xC7\xC2\xD0\xCD\xCB\xC6\xDA\xC2\xF5\xC8\xC3\xC1\xC1\xDD\xEB\x81\xEF" + 0xC96F5E6F).s, cvar.visual_deathmark_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_deathmark_color[1]*/XorStr<0xDC, 26, 0x542C3000>("\xAA\xB4\xAD\xAA\x81\x8D\xBD\x87\x81\x84\x92\x8F\x85\x88\x98\x80\xB3\x8E\x81\x83\x9F\x83\xA9\xC2\xA9" + 0x542C3000).s, cvar.visual_deathmark_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_deathmark_color[2]*/XorStr<0x91, 26, 0x5F1F120B>("\xE7\xFB\xE0\xE1\xF4\xFA\xC8\xFC\xFC\xFB\xEF\xF4\xF0\xFF\xED\xCB\xFE\xC1\xCC\xC8\xCA\xD4\xFC\x9A\xF4" + 0x5F1F120B).s, cvar.visual_deathmark_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_deathmark_color[3]*/XorStr<0xA4, 26, 0xB5623B37>("\xD2\xCC\xD5\xD2\xC9\xC5\xF5\xCF\xC9\xCC\xDA\xC7\xDD\xD0\xC0\xD8\xEB\xD6\xD9\xDB\xD7\xCB\xE1\x88\xE1" + 0xB5623B37).s, cvar.visual_deathmark_color[3], 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight*/XorStr<0xEF, 27, 0x0F07E37C>("\x99\x99\x82\x87\x92\x98\xAA\x86\x9B\x99\x80\x9F\x89\xA3\x99\x87\x91\x61\x6C\x6B\x60\x68\x6C\x61\x6F\x7C" + 0x0F07E37C).s, cvar.visual_player_dynamiclight, 0.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_radius*/XorStr<0xE9, 34, 0xEAFE6D99>("\x9F\x83\x98\x99\x8C\x82\xB0\x80\x9D\x93\x8A\x91\x87\xA9\x93\x81\x97\x9B\x96\x95\x9E\x92\x96\x67\x69\x76\x5C\x76\x64\x62\x6E\x7D\x7A" + 0xEAFE6D99).s, cvar.visual_player_dynamiclight_radius, 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_fading*/XorStr<0x6C, 34, 0x32EDF016>("\x1A\x04\x1D\x1A\x11\x1D\x2D\x03\x18\x14\x0F\x12\x0A\x26\x1E\x02\x12\x1C\x13\x16\xE3\xED\xEB\xE4\xEC\xF1\xD9\xE1\xE9\xED\xE3\xE5\xEB" + 0x32EDF016).s, cvar.visual_player_dynamiclight_fading, 0.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_fading_speed*/XorStr<0x8C, 40, 0x847E944D>("\xFA\xE4\xFD\xFA\xF1\xFD\xCD\xE3\xF8\xF4\xEF\xF2\xEA\xC6\xFE\xE2\xF2\xFC\xF3\xF6\xC3\xCD\xCB\xC4\xCC\xD1\xF9\xC1\xC9\xCD\xC3\xC5\xCB\xF2\xDD\xDF\xD5\xD4\xD6" + 0x847E944D).s, cvar.visual_player_dynamiclight_fading_speed, 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_tt[0]*/XorStr<0x2F, 39, 0x887FD3E6>("\x59\x59\x42\x47\x52\x58\x6A\x46\x5B\x59\x40\x5F\x49\x63\x59\x47\x51\x21\x2C\x2B\x20\x28\x2C\x21\x2F\x3C\x16\x29\x24\x20\x22\x3C\x10\x24\x25\x09\x63\x09" + 0x887FD3E6).s, cvar.visual_player_dynamiclight_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_tt[1]*/XorStr<0x4E, 39, 0x9EE7299D>("\x38\x26\x23\x24\x33\x3F\x0B\x25\x3A\x36\x21\x3C\x28\x04\x38\x24\x30\x3E\x0D\x08\x01\x0F\x0D\x02\x0E\x13\x37\x0A\x05\x07\x03\x1F\x31\x1B\x04\x2A\x43\x2E" + 0x9EE7299D).s, cvar.visual_player_dynamiclight_color_tt[1], 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_tt[2]*/XorStr<0xCF, 39, 0xA47394B2>("\xB9\xB9\xA2\xA7\xB2\xB8\x8A\xA6\xBB\xB9\xA0\xBF\xA9\x83\xB9\xA7\xB1\x81\x8C\x8B\x80\x88\x8C\x81\x8F\x9C\xB6\x89\x84\x80\x82\x9C\xB0\x84\x85\xA9\xC1\xA9" + 0xA47394B2).s, cvar.visual_player_dynamiclight_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_tt[3]*/XorStr<0xC4, 39, 0xC90C0DE0>("\xB2\xAC\xB5\xB2\xA9\xA5\x95\xBB\xA0\xAC\xB7\xAA\xA2\x8E\xB6\xAA\xBA\xB4\xBB\xBE\xBB\xB5\xB3\xBC\xB4\xA9\x81\xBC\x8F\x8D\x8D\x91\xBB\x91\x92\xBC\xDB\xB4" + 0xC90C0DE0).s, cvar.visual_player_dynamiclight_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_ct[0]*/XorStr<0x75, 39, 0x5B69627A>("\x03\x1F\x04\x0D\x18\x16\x24\x0C\x11\x1F\x06\xE5\xF3\xDD\xE7\xFD\xEB\xE7\xEA\xE1\xEA\xE6\xE2\xEB\xE5\xFA\xD0\xF3\xFE\xFE\xFC\xE6\xCA\xF5\xE3\xC3\xA9\xC7" + 0x5B69627A).s, cvar.visual_player_dynamiclight_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_ct[1]*/XorStr<0x0B, 39, 0x73214FD8>("\x7D\x65\x7E\x7B\x6E\x7C\x4E\x62\x7F\x75\x6C\x73\x65\x47\x7D\x63\x75\x7D\x70\x77\x7C\x4C\x48\x45\x4B\x50\x7A\x45\x48\x44\x46\x58\x74\x4F\x59\x75\x1E\x6D" + 0x73214FD8).s, cvar.visual_player_dynamiclight_color_ct[1], 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_ct[2]*/XorStr<0xA9, 39, 0x83BE83A4>("\xDF\xC3\xD8\xD9\xCC\xC2\xF0\xC0\xDD\xD3\xCA\xD1\xC7\xE9\xD3\xC1\xD7\xDB\xD6\xD5\xDE\xD2\xD6\xA7\xA9\xB6\x9C\xA7\xAA\xAA\xA8\xBA\x96\xA9\xBF\x97\xFF\x93" + 0x83BE83A4).s, cvar.visual_player_dynamiclight_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*visual_player_dynamiclight_color_ct[3]*/XorStr<0xA9, 39, 0x7C99C93B>("\xDF\xC3\xD8\xD9\xCC\xC2\xF0\xC0\xDD\xD3\xCA\xD1\xC7\xE9\xD3\xC1\xD7\xDB\xD6\xD5\xDE\xD2\xD6\xA7\xA9\xB6\x9C\xA7\xAA\xAA\xA8\xBA\x96\xA9\xBF\x97\xFE\x93" + 0x7C99C93B).s, cvar.visual_player_dynamiclight_color_ct[3], 1.0);
+	
+	Sakura::Cvar::New(/*skeleton_player_bone*/XorStr<0xFF, 21, 0xFF097867>("\x8C\x6B\x64\x6E\x66\x70\x6A\x68\x58\x78\x65\x6B\x72\x69\x7F\x51\x6D\x7F\x7F\x77" + 0xFF097867).s, cvar.skeleton_player_bone, 0.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_tt[0]*/XorStr<0xA5, 33, 0x86B3B1A6>("\xD6\xCD\xC2\xC4\xCC\xDE\xC4\xC2\xF2\xDE\xC3\xD1\xC8\xD7\xC1\xEB\xD7\xD9\xD9\xDD\xE6\xD9\xD4\xD0\xD2\xCC\xE0\xB4\xB5\x99\xF3\x99" + 0x86B3B1A6).s, cvar.skeleton_player_bone_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_tt[1]*/XorStr<0x3C, 33, 0xF3CDF3BA>("\x4F\x56\x5B\x53\x25\x35\x2D\x2D\x1B\x35\x2A\x26\x31\x2C\x38\x14\x2E\x22\x20\x2A\x0F\x32\x3D\x3F\x3B\x27\x09\x23\x2C\x02\x6B\x06" + 0xF3CDF3BA).s, cvar.skeleton_player_bone_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_tt[2]*/XorStr<0xEA, 33, 0x919F6574>("\x99\x80\x89\x81\x8B\x9B\x9F\x9F\xAD\x83\x98\x94\x8F\x92\x8A\xA6\x98\x94\x92\x98\xA1\x9C\x6F\x6D\x6D\x71\x5B\x71\x72\x5C\x3A\x54" + 0x919F6574).s, cvar.skeleton_player_bone_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_tt[3]*/XorStr<0x22, 33, 0x332728A2>("\x51\x48\x41\x49\x43\x53\x47\x47\x75\x5B\x40\x4C\x57\x4A\x42\x6E\x50\x5C\x5A\x50\x69\x54\x57\x55\x55\x49\x63\x49\x4A\x64\x73\x1C" + 0x332728A2).s, cvar.skeleton_player_bone_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_ct[0]*/XorStr<0x5B, 33, 0x7EAC31FF>("\x28\x37\x38\x32\x3A\x14\x0E\x0C\x3C\x14\x09\x07\x1E\x0D\x1B\x35\x09\x03\x03\x0B\x30\x13\x1E\x1E\x1C\x06\x2A\x15\x03\x23\x49\x27" + 0x7EAC31FF).s, cvar.skeleton_player_bone_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_ct[1]*/XorStr<0x34, 33, 0xF86E0499>("\x47\x5E\x53\x5B\x5D\x4D\x55\x55\x63\x4D\x52\x5E\x39\x24\x30\x1C\x26\x2A\x28\x22\x17\x2A\x25\x27\x23\x3F\x11\x2C\x24\x0A\x63\x0E" + 0xF86E0499).s, cvar.skeleton_player_bone_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_ct[2]*/XorStr<0x11, 33, 0xAFE9A518>("\x62\x79\x76\x78\x70\x62\x78\x76\x46\x6A\x77\x7D\x64\x7B\x6D\x7F\x43\x4D\x4D\x41\x7A\x45\x48\x44\x46\x58\x74\x4F\x59\x75\x1D\x6D" + 0xAFE9A518).s, cvar.skeleton_player_bone_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_bone_color_ct[3]*/XorStr<0x23, 33, 0x658BA33B>("\x50\x4F\x40\x4A\x42\x5C\x46\x44\x74\x5C\x41\x4F\x56\x55\x43\x6D\x51\x5B\x5B\x53\x68\x5B\x56\x56\x54\x4E\x62\x5D\x4B\x1B\x72\x1F" + 0x658BA33B).s, cvar.skeleton_player_bone_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox*/XorStr<0x01, 23, 0x1720E72C>("\x72\x69\x66\x68\x60\x72\x68\x66\x56\x7A\x67\x6D\x74\x6B\x7D\x4F\x79\x7B\x67\x76\x7A\x6E" + 0x1720E72C).s, cvar.skeleton_player_hitbox, 0.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_tt[0]*/XorStr<0x84, 35, 0x02EEE8B5>("\xF7\xEE\xE3\xEB\xED\xFD\xE5\xE5\xD3\xFD\xE2\xEE\xE9\xF4\xE0\xCC\xFC\xFC\xE2\xF5\xF7\xE1\xC5\xF8\xF3\xF1\xF1\xED\xFF\xD5\xD6\xF8\x94\xF8" + 0x02EEE8B5).s, cvar.skeleton_player_hitbox_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_tt[1]*/XorStr<0x23, 35, 0xD80A1009>("\x50\x4F\x40\x4A\x42\x5C\x46\x44\x74\x5C\x41\x4F\x56\x55\x43\x6D\x5B\x5D\x41\x54\x58\x40\x66\x59\x54\x50\x52\x4C\x60\x34\x35\x19\x72\x19" + 0xD80A1009).s, cvar.skeleton_player_hitbox_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_tt[2]*/XorStr<0xC7, 35, 0xFAEC1AFA>("\xB4\xA3\xAC\xA6\xAE\xB8\xA2\xA0\x90\xA0\xBD\xB3\xAA\xB1\xA7\x89\xBF\xB1\xAD\xB8\xB4\xA4\x82\xBD\xB0\x8C\x8E\x90\xBC\x90\x91\xBD\xD5\xB5" + 0xFAEC1AFA).s, cvar.skeleton_player_hitbox_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_tt[3]*/XorStr<0x6E, 35, 0xFDA76AD6>("\x1D\x04\x15\x1D\x17\x07\x1B\x1B\x29\x07\x14\x18\x03\x1E\x0E\x22\x16\x16\xF4\xE3\xED\xFB\xDB\xE6\xE9\xEB\xE7\xFB\xD5\xFF\xF8\xD6\xBD\xD2" + 0xFDA76AD6).s, cvar.skeleton_player_hitbox_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_ct[0]*/XorStr<0x44, 35, 0xFE5A9CC9>("\x37\x2E\x23\x2B\x2D\x3D\x25\x25\x13\x3D\x22\x2E\x29\x34\x20\x0C\x3C\x3C\x22\x35\x37\x21\x05\x38\x33\x31\x31\x2D\x3F\x02\x16\x38\x54\x38" + 0xFE5A9CC9).s, cvar.skeleton_player_hitbox_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_ct[1]*/XorStr<0x30, 35, 0xB7820A14>("\x43\x5A\x57\x5F\x51\x41\x59\x59\x67\x49\x56\x5A\x45\x58\x4C\x60\x28\x28\x36\x21\x2B\x3D\x19\x24\x27\x25\x25\x39\x13\x2E\x3A\x14\x61\x0C" + 0xB7820A14).s, cvar.skeleton_player_hitbox_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_ct[2]*/XorStr<0x51, 35, 0x901F9E2F>("\x22\x39\x36\x38\x30\x22\x38\x36\x06\x2A\x37\x3D\x24\x3B\x2D\x3F\x09\x0B\x17\x06\x0A\x1E\x38\x0B\x06\x06\x04\x1E\x32\x0D\x1B\x2B\x43\x2F" + 0x901F9E2F).s, cvar.skeleton_player_hitbox_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*skeleton_player_hitbox_color_ct[3]*/XorStr<0xAB, 35, 0xF5CF1C4C>("\xD8\xC7\xC8\xC2\xCA\xC4\xDE\xDC\xEC\xC4\xD9\xD7\xCE\xDD\xCB\xE5\xD3\xD5\xC9\xDC\xD0\xB8\x9E\xA1\xAC\xA8\xAA\xB4\x98\xAB\xBD\x91\xF8\x91" + 0xF5CF1C4C).s, cvar.skeleton_player_hitbox_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*skeleton_view_model_hitbox*/XorStr<0x5F, 27, 0x74884DDB>("\x2C\x0B\x04\x0E\x06\x10\x0A\x08\x38\x1E\x00\x0F\x1C\x33\x00\x01\x0B\x15\x1D\x2D\x1B\x1D\x01\x14\x18\x00" + 0x74884DDB).s, cvar.skeleton_view_model_hitbox, 0.0);
+	Sakura::Cvar::New(/*skeleton_view_model_hitbox_color[0]*/XorStr<0x84, 36, 0xFDE31210>("\xF7\xEE\xE3\xEB\xED\xFD\xE5\xE5\xD3\xFB\xE7\xEA\xE7\xCE\xFF\xFC\xF0\xF0\xFA\xC8\xF0\xF0\xEE\xF9\xF3\xE5\xC1\xFC\xCF\xCD\xCD\xD1\xFF\x95\xFB" + 0xFDE31210).s, cvar.skeleton_view_model_hitbox_color[0], 0.0);
+	Sakura::Cvar::New(/*skeleton_view_model_hitbox_color[1]*/XorStr<0xE5, 36, 0x2CC4CB4F>("\x96\x8D\x82\x84\x8C\x9E\x84\x82\xB2\x98\x86\x95\x86\xAD\x9E\x9B\x91\x93\x9B\xA7\x91\x93\x8F\x9E\x92\x86\xA0\x63\x6E\x6E\x6C\x76\x5E\x37\x5A" + 0x2CC4CB4F).s, cvar.skeleton_view_model_hitbox_color[1], 1.0);
+	Sakura::Cvar::New(/*skeleton_view_model_hitbox_color[2]*/XorStr<0xA3, 36, 0x18668F30>("\xD0\xCF\xC0\xCA\xC2\xDC\xC6\xC4\xF4\xDA\xC4\xCB\xD8\xEF\xDC\xDD\xD7\xD1\xD9\xE9\xDF\xD1\xCD\xD8\xD4\xC4\xE2\xDD\xD0\xAC\xAE\xB0\x98\xF6\x98" + 0x18668F30).s, cvar.skeleton_view_model_hitbox_color[2], 0.0);
+	Sakura::Cvar::New(/*skeleton_view_model_hitbox_color[3]*/XorStr<0x53, 36, 0x3180169F>("\x20\x3F\x30\x3A\x32\x2C\x36\x34\x04\x2A\x34\x3B\x28\x3F\x0C\x0D\x07\x01\x09\x39\x0F\x01\x1D\x08\x04\x14\x32\x0D\x00\x1C\x1E\x00\x28\x47\x28" + 0x3180169F).s, cvar.skeleton_view_model_hitbox_color[3], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_bone*/XorStr<0xE3, 20, 0x6A2E7BBF>("\x90\x8F\x80\x8A\x82\x9C\x86\x84\xB4\x9B\x82\x9C\x83\x94\xAE\x90\x9C\x9A\x90" + 0x6A2E7BBF).s, cvar.skeleton_world_bone, 0.0);
+	Sakura::Cvar::New(/*skeleton_world_bone_color[0]*/XorStr<0x81, 29, 0x3D41D2C1>("\xF2\xE9\xE6\xE8\xE0\xF2\xE8\xE6\xD6\xFD\xE4\xFE\xE1\xEA\xD0\xF2\xFE\xFC\xF6\xCB\xF6\xF9\xFB\xF7\xEB\xC1\xAB\xC1" + 0x3D41D2C1).s, cvar.skeleton_world_bone_color[0], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_bone_color[1]*/XorStr<0xB2, 29, 0x1CD47FCD>("\xC1\xD8\xD1\xD9\xD3\xC3\xD7\xD7\xE5\xCC\xD3\xCF\xD2\xDB\x9F\xA3\xAD\xAD\xA1\x9A\xA5\xA8\xA4\xA6\xB8\x90\xFD\x90" + 0x1CD47FCD).s, cvar.skeleton_world_bone_color[1], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_bone_color[2]*/XorStr<0xAC, 29, 0xD1E63643>("\xDF\xC6\xCB\xC3\xD5\xC5\xDD\xDD\xEB\xC2\xD9\xC5\xD4\xDD\xE5\xD9\xD3\xD3\xDB\xE0\xA3\xAE\xAE\xAC\xB6\x9E\xF4\x9A" + 0xD1E63643).s, cvar.skeleton_world_bone_color[2], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_bone_color[3]*/XorStr<0x50, 29, 0xB84AF747>("\x23\x3A\x37\x3F\x31\x21\x39\x39\x07\x2E\x35\x29\x30\x39\x01\x3D\x0F\x0F\x07\x3C\x07\x0A\x0A\x08\x1A\x32\x59\x36" + 0xB84AF747).s, cvar.skeleton_world_bone_color[3], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_hitbox*/XorStr<0xB2, 22, 0x5E1BCD4C>("\xC1\xD8\xD1\xD9\xD3\xC3\xD7\xD7\xE5\xCC\xD3\xCF\xD2\xDB\x9F\xA9\xAB\xB7\xA6\xAA\xBE" + 0x5E1BCD4C).s, cvar.skeleton_world_hitbox, 0.0);
+	Sakura::Cvar::New(/*skeleton_world_hitbox_color[0]*/XorStr<0x6E, 31, 0xC076422A>("\x1D\x04\x15\x1D\x17\x07\x1B\x1B\x29\x00\x17\x0B\x16\x1F\x23\x15\x17\x0B\xE2\xEE\xFA\xDC\xE7\xEA\xEA\xE8\xFA\xD2\xBA\xD6" + 0xC076422A).s, cvar.skeleton_world_hitbox_color[0], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_hitbox_color[1]*/XorStr<0x2C, 31, 0x29CEE6B1>("\x5F\x46\x4B\x43\x55\x45\x5D\x5D\x6B\x42\x59\x45\x54\x5D\x65\x53\x55\x49\x5C\x50\x38\x1E\x21\x2C\x28\x2A\x34\x1C\x79\x14" + 0x29CEE6B1).s, cvar.skeleton_world_hitbox_color[1], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_hitbox_color[2]*/XorStr<0x3B, 31, 0xFEF8BD85>("\x48\x57\x58\x52\x5A\x34\x2E\x2C\x1C\x33\x2A\x34\x2B\x2C\x16\x22\x22\x38\x2F\x21\x37\x0F\x32\x3D\x3F\x3B\x27\x0D\x65\x05" + 0xFEF8BD85).s, cvar.skeleton_world_hitbox_color[2], 1.0);
+	Sakura::Cvar::New(/*skeleton_world_hitbox_color[3]*/XorStr<0xCD, 31, 0x3BC984DC>("\xBE\xA5\xAA\xBC\xB4\xA6\xBC\xBA\x8A\xA1\xB8\xAA\xB5\xBE\x84\xB4\xB4\xAA\xBD\x8F\x99\xBD\x80\x8B\x89\x89\x95\xB3\xDA\xB7" + 0x3BC984DC).s, cvar.skeleton_world_hitbox_color[3], 1.0);
+	
+	Sakura::Cvar::New(/*gui_key*/XorStr<0x01, 8, 0xE345E870>("\x66\x77\x6A\x5B\x6E\x63\x7E" + 0xE345E870).s, cvar.gui_key, -1.0);
+	Sakura::Cvar::New(/*radio_kill_sound*/XorStr<0xC7, 17, 0x3EFE40D7>("\xB5\xA9\xAD\xA3\xA4\x93\xA6\xA7\xA3\xBC\x8E\xA1\xBC\xA1\xBB\xB2" + 0x3EFE40D7).s, cvar.radio_kill_sound, 0.0);
+	Sakura::Cvar::New(/*radio_kill_volume*/XorStr<0xA8, 18, 0xCC225892>("\xDA\xC8\xCE\xC2\xC3\xF2\xC5\xC6\xDC\xDD\xED\xC5\xDB\xD9\xC3\xDA\xDD" + 0xCC225892).s, cvar.radio_kill_volume, 15.0);
+	Sakura::Cvar::New(/*afk_anti*/XorStr<0x0C, 9, 0xEDB54B79>("\x6D\x6B\x65\x50\x71\x7F\x66\x7A" + 0xEDB54B79).s, cvar.afk_anti, 0.0);
+	Sakura::Cvar::New(/*afk_time*/XorStr<0xAB, 9, 0xBBC33A7D>("\xCA\xCA\xC6\xF1\xDB\xD9\xDC\xD7" + 0xBBC33A7D).s, cvar.afk_time, 90.0);
+	Sakura::Cvar::New(/*afk_yaw*/XorStr<0xE0, 8, 0xC32C7260>("\x81\x87\x89\xBC\x9D\x84\x91" + 0xC32C7260).s, cvar.afk_yaw, 5.0);
+	Sakura::Cvar::New(/*steamid*/XorStr<0x11, 8, 0xA68A9879>("\x62\x66\x76\x75\x78\x7F\x73" + 0xA68A9879).s, cvar.steamid, 0.0);
+	Sakura::Cvar::New(/*id1*/XorStr<0x95, 4, 0x419B7A47>("\xFC\xF2\xA6" + 0x419B7A47).s, cvar.id1, 1.0);
+	Sakura::Cvar::New(/*id2*/XorStr<0x25, 4, 0x9D63515C>("\x4C\x42\x15" + 0x9D63515C).s, cvar.id2, 2.0);
+	Sakura::Cvar::New(/*id3*/XorStr<0x80, 4, 0xAB673B8C>("\xE9\xE5\xB1" + 0xAB673B8C).s, cvar.id3, 3.0);
+	Sakura::Cvar::New(/*id4*/XorStr<0xEE, 4, 0x13D5E86F>("\x87\x8B\xC4" + 0x13D5E86F).s, cvar.id4, 4.0);
+	Sakura::Cvar::New(/*id5*/XorStr<0x46, 4, 0x9AE08B72>("\x2F\x23\x7D" + 0x9AE08B72).s, cvar.id5, 5.0);
+	Sakura::Cvar::New(/*id6*/XorStr<0x63, 4, 0xCE9FBCCB>("\x0A\x00\x53" + 0xCE9FBCCB).s, cvar.id6, 6.0);
+	Sakura::Cvar::New(/*id7*/XorStr<0x65, 4, 0x2C2EE284>("\x0C\x02\x50" + 0x2C2EE284).s, cvar.id7, 7.0);
+	
+	Sakura::Cvar::New(/*radar*/XorStr<0x19, 6, 0x4E2147D9>("\x6B\x7B\x7F\x7D\x6F" + 0x4E2147D9).s, cvar.radar, 0.0);
+	Sakura::Cvar::New(/*radar_zoom*/XorStr<0x4C, 11, 0xDD3ECA33>("\x3E\x2C\x2A\x2E\x22\x0E\x28\x3C\x3B\x38" + 0xDD3ECA33).s, cvar.radar_zoom, 5.0);
+	Sakura::Cvar::New(/*radar_point_size*/XorStr<0x6C, 17, 0x9B7408BB>("\x1E\x0C\x0A\x0E\x02\x2E\x02\x1C\x1D\x1B\x02\x28\x0B\x10\x00\x1E" + 0x9B7408BB).s, cvar.radar_point_size, 5.0);
 
-	INITCVAR(legit_autoscope, 0.0);
-	INITCVAR(legit_team, 0.0);
-	INITCVAR(legit_key, -1.0);
-	INITCVAR(legit_draw_aim, 1.0);
-
-	INITCVAR(menu_legit_global_section, 0.0);
-	INITCVAR(menu_legit_sub_section, 0.0);
-	INITCVAR(menu_rage_global_section, 0.0);
-	INITCVAR(menu_rage_sub_section, 0.0);
-
-	INITCVAR(knifebot_active, 0.0);
-	INITCVAR(knifebot_attack, 1.0);
-	INITCVAR(knifebot_attack_distance, 72.0);
-	INITCVAR(knifebot_attack2_distance, 64.0);
-	INITCVAR(knifebot_silent, 0.0);
-	INITCVAR(knifebot_perfect_silent, 0.0);
-	INITCVAR(knifebot_fov, 45.0);
-	INITCVAR(knifebot_team, 0.0);
-	INITCVAR(knifebot_draw_aim, 1.0);
-	INITCVAR(knifebot_hitbox, 11.0);
-
-	INITCVAR(bypass_trace_rage, 1.0);
-	INITCVAR(bypass_trace_legit, 1.0);
-	INITCVAR(bypass_trace_trigger, 1.0);
-	INITCVAR(bypass_trace_knife, 1.0);
-
-	INITCVAR(aa_pitch, 0.0);
-	INITCVAR(aa_edge, 0.0);
-	INITCVAR(aa_yaw, 0.0);
-	INITCVAR(aa_yaw_static, 0.0);
-	INITCVAR(aa_yaw_while_running, 0.0);
-	INITCVAR(aa_yaw_jitter_custom, 0.0);
-	INITCVAR(aa_yaw_jitter_angle, 0.0);
-	INITCVAR(aa_yaw_jitter_much, 0.0);
-	INITCVAR(aa_yaw_sideway, 0.0);
-	INITCVAR(aa_yaw_sideway_key, -1.0);
-	INITCVAR(aa_roll, 0.0);
-	INITCVAR(aa_roll_active, 0.0);
-	INITCVAR(aa_roll_static, 0.0);
-	INITCVAR(aa_roll_while_running, 0.0);
-
-	INITCVAR(fakelag_active, 0.0);
-	INITCVAR(fakelag_while_shooting, 0.0);
-	INITCVAR(fakelag_move, 2.0);
-	INITCVAR(fakelag_type, 2.0);
-	INITCVAR(fakelag_limit, 0.0);
-	INITCVAR(fakelag_variance, 0.0);
-
-	INITCVAR(speedhack_active, 0.0);
-	INITCVAR(speedhack_speed, 64.0);
-
-	INITCVAR(antiss_active, 0.0);
-
-	INITCVAR(misc_wav_speed, 1.0);
-	INITCVAR(misc_thirdperson_key, -1.0);
-	INITCVAR(misc_namestealer, 0.0);
-	INITCVAR(misc_namestealer_time, 250.0);
-	INITCVAR(misc_namestealer_playerlist, 0.0);
-	INITCVAR(misc_namestealer_specs, 0.0);
-	INITCVAR(misc_chatspammer, 0.0);
-	INITCVAR(misc_chatspammer_time, 250.0);
-	INITCVAR(misc_fire_sounds, 0.0);
-	INITCVAR(misc_fire_sounds_volume, 0.2);
-	INITCVAR(misc_fire_sounds_pitch, 100.0);
-	INITCVAR(misc_block_motd, 0.0);
-	INITCVAR(misc_skipframes, 0.0);
-
-	INITCVAR(misc_fakelatency, 0.0);
-	INITCVAR(misc_fakelatency_amount, 50.0);
-	INITCVAR(misc_backtrack_chams, 0.0);
-	INITCVAR(misc_backtrack_wireframe, 0.0);
-	INITCVAR(misc_backtrack_wireframe_mode, 0.0);
-	INITCVAR(misc_backtrack_chams_color[0], 1.0);
-	INITCVAR(misc_backtrack_chams_color[1], 1.0);
-	INITCVAR(misc_backtrack_chams_color[2], 1.0);
-	INITCVAR(misc_backtrack_chams_color[3], 1.0);
-	INITCVAR(misc_backtrack_light, 0.0);
-	INITCVAR(misc_backtrack_light_color[0], 1.0);
-	INITCVAR(misc_backtrack_light_color[1], 1.0);
-	INITCVAR(misc_backtrack_light_color[2], 1.0);
-	INITCVAR(misc_backtrack_light_color[3], 1.0);
-
-	INITCVAR(misc_auto_config_save, 1.0);
-
-	INITCVAR(notifications_enable, 0.0);
-	INITCVAR(notifications_text_only, 0.0);
-	INITCVAR(notifications_fade, 200.0);
-
-	INITCVAR(kz_strafe_psilent, 0.0);
-	INITCVAR(kz_strafe, 0.0);
-	INITCVAR(kz_fast_run, 0.0);
-	INITCVAR(kz_ground_strafe, 0.0);
-	INITCVAR(kz_bhop, 0.0);
-	INITCVAR(kz_bhop_double, 0.0);
-	INITCVAR(kz_bhop_triple, 0.0);
-	INITCVAR(kz_jump_bug, 0.0);
-	INITCVAR(kz_jump_bug_auto, 0.0);
-	INITCVAR(kz_show_kz, 0.0);
-	INITCVAR(kz_display_time, 10.0);
-	INITCVAR(kz_strafe_key, -1.0);
-	INITCVAR(kz_fastrun_key, -1.0);
-	INITCVAR(kz_ground_strafe_key, -1.0);
-	INITCVAR(kz_bhop_key, -1.0);
-	INITCVAR(kz_jumpbug_key, -1.0);
-	INITCVAR(kz_strafe_toggle_key, -1.0);
-	INITCVAR(kz_sgs, 0.0);
-	INITCVAR(kz_sgs_ground_origin, 1.0);
-	INITCVAR(kz_bgs, 0.0);
-
-	INITCVAR(route_activate, 0.0);
-	INITCVAR(route_mode, 1.0);
-	INITCVAR(route_auto, 0.0);
-	INITCVAR(route_jump, 1.0);
-	INITCVAR(route_jump_step, 2.0);
-	INITCVAR(route_direction, 1.0);
-	INITCVAR(route_direction_step, 4.0);
-	INITCVAR(route_draw_visual, 0.0);
-	INITCVAR(route_draw, 1.0);
-	INITCVAR(route_rush_key, -1.0);
-	INITCVAR(route_line_color[0], 1.0);
-	INITCVAR(route_line_color[1], 1.0);
-	INITCVAR(route_line_color[2], 1.0);
-	INITCVAR(route_line_color[3], 1.0);
-	INITCVAR(route_point_color[0], 1.0);
-	INITCVAR(route_point_color[1], 1.0);
-	INITCVAR(route_point_color[2], 1.0);
-	INITCVAR(route_point_color[3], 1.0);
-
-	INITCVAR(visual_model_hitbox, 0.0);
-	INITCVAR(visual_name, 0.0);
-	INITCVAR(visual_name_world, 0.0);
-	INITCVAR(visual_model, 0.0);
-	INITCVAR(visual_model_world, 0.0);
-	INITCVAR(visual_weapon, 0.0);
-	INITCVAR(visual_reload_bar, 0.0);
-	INITCVAR(visual_box, 0.0);
-	INITCVAR(visual_box_color_ct[0], 0.0);
-	INITCVAR(visual_box_color_ct[1], 0.0);
-	INITCVAR(visual_box_color_ct[2], 1.0);
-	INITCVAR(visual_box_color_ct[3], 1.0);
-	INITCVAR(visual_box_color_tt[0], 1.0);
-	INITCVAR(visual_box_color_tt[1], 0.0);
-	INITCVAR(visual_box_color_tt[2], 0.0);
-	INITCVAR(visual_box_color_tt[3], 1.0);
-	INITCVAR(visual_box_draw, 0.0);
-	INITCVAR(visual_box_world, 0.0);
-	INITCVAR(visual_box_type, 0.0);
-	INITCVAR(visual_box_fill, 0.0);
-	INITCVAR(visual_health, 0.0);
-	INITCVAR(visual_visual_team, 0.0);
-	INITCVAR(visual_sound_steps, 0.0);
-	INITCVAR(visual_sound_steps_segments, 15.0);
-	INITCVAR(visual_sound_steps_segment_thickness, 1.0);
-	INITCVAR(visual_sound_steps_radius, 13.0);
-	INITCVAR(visual_sound_steps_color[0], 0.0);
-	INITCVAR(visual_sound_steps_color[1], 1.0);
-	INITCVAR(visual_sound_steps_color[2], 0.0);
-	INITCVAR(visual_sound_steps_color[3], 1.0);
-	INITCVAR(visual_sound_steps_color_tt[0], 1.0);
-	INITCVAR(visual_sound_steps_color_tt[1], 0.0);
-	INITCVAR(visual_sound_steps_color_tt[2], 0.0);
-	INITCVAR(visual_sound_steps_color_tt[3], 1.0);
-	INITCVAR(visual_sound_steps_color_ct[0], 0.0);
-	INITCVAR(visual_sound_steps_color_ct[1], 0.0);
-	INITCVAR(visual_sound_steps_color_ct[2], 1.0);
-	INITCVAR(visual_sound_steps_color_ct[3], 1.0);
-	INITCVAR(visual_idhook_only, 0.0);
-	INITCVAR(visual_noflash_enable, 0.0);
-	INITCVAR(visual_chase_cam, 0.0);
-	INITCVAR(visual_chase_back, 100.0);
-	INITCVAR(visual_chase_up, 16.0);
-	INITCVAR(visual_grenade_trajectory, 0.0);
-	INITCVAR(visual_grenade_trajectory_point_color[0], 1.0);
-	INITCVAR(visual_grenade_trajectory_point_color[1], 1.0);
-	INITCVAR(visual_grenade_trajectory_point_color[2], 1.0);
-	INITCVAR(visual_grenade_trajectory_point_color[3], 1.0);
-	INITCVAR(visual_grenade_trajectory_line_color[0], 1.0);
-	INITCVAR(visual_grenade_trajectory_line_color[1], 1.0);
-	INITCVAR(visual_grenade_trajectory_line_color[2], 0.0);
-	INITCVAR(visual_grenade_trajectory_line_color[3], 1.0);
-	INITCVAR(visual_crosshair, 0.0);
-	INITCVAR(visual_crosshair_color[0], 0.0);
-	INITCVAR(visual_crosshair_color[1], 1.0);
-	INITCVAR(visual_crosshair_color[2], 0.0);
-	INITCVAR(visual_crosshair_color[3], 1.0);
-	INITCVAR(visual_vip, 0.0);
-	INITCVAR(visual_weapon_local, 0.0);
-	INITCVAR(visual_lightmap, 0.0);
-	INITCVAR(visual_lightmap_color[0], 1.0);
-	INITCVAR(visual_lightmap_color[1], 1.0);
-	INITCVAR(visual_lightmap_color[2], 1.0);
-	INITCVAR(visual_sky, 0.0);
-	INITCVAR(visual_skins_player, 0.0);
-	INITCVAR(visual_skins_player_weapon, 0.0);
-	INITCVAR(visual_skins_player_backweapon, 0.0);
-	INITCVAR(visual_skins_backpack, 0.0);
-	INITCVAR(visual_skins_thighpack, 0.0);
-	INITCVAR(visual_skins_viewmodel, 0.0);
-	INITCVAR(visual_skins_viewmodel_color[0], 1.0);
-	INITCVAR(visual_skins_viewmodel_color[1], 1.0);
-	INITCVAR(visual_skins_viewmodel_color[2], 0.5);
-	INITCVAR(visual_skins_viewmodel_color[3], 1.0);
-	INITCVAR(visual_skins_viewmodel_hands, 0.0);
-	INITCVAR(visual_skins_viewmodel_nohands, 0.0);
-	INITCVAR(visual_skins_world, 0.0);
-	INITCVAR(visual_skins_bullet_shell, 0.0);
-	INITCVAR(visual_skins_wall, 0.0);
-	INITCVAR(visual_skins_chicken, 0.0);
-	INITCVAR(visual_viewmodel_fov, 0.0);
-	INITCVAR(visual_lambert, 0.0);
-	INITCVAR(visual_lambert_color_tt[0], 1.0);
-	INITCVAR(visual_lambert_color_tt[1], 0.0);
-	INITCVAR(visual_lambert_color_tt[2], 0.0);
-	INITCVAR(visual_lambert_color_tt[3], 1.0);
-	INITCVAR(visual_lambert_color_ct[0], 0.0);
-	INITCVAR(visual_lambert_color_ct[1], 0.0);
-	INITCVAR(visual_lambert_color_ct[2], 1.0);
-	INITCVAR(visual_lambert_color_ct[3], 1.0);
-	INITCVAR(visual_lambert_local, 0.0);
-	INITCVAR(visual_lambert_color_local[0], 0.0);
-	INITCVAR(visual_lambert_color_local[1], 1.0);
-	INITCVAR(visual_lambert_color_local[2], 0.0);
-	INITCVAR(visual_lambert_color_local[3], 1.0);
-	INITCVAR(visual_lambert_world, 0.0);
-	INITCVAR(visual_lambert_world_color[0], 1.0);
-	INITCVAR(visual_lambert_world_color[1], 1.0);
-	INITCVAR(visual_lambert_world_color[2], 1.0);
-	INITCVAR(visual_lambert_world_color[3], 1.0);
-	INITCVAR(visual_lambert_viewmodel, 0.0);
-	INITCVAR(visual_lambert_viewmodel_color[0], 0.0);
-	INITCVAR(visual_lambert_viewmodel_color[1], 1.0);
-	INITCVAR(visual_lambert_viewmodel_color[2], 0.0);
-	INITCVAR(visual_lambert_viewmodel_color[3], 1.0);
-	INITCVAR(visual_tg_type, 0.0);
-
-	INITCVAR(visual_draw_fov, 0.0);
-	INITCVAR(visual_draw_fov_color[0], 1.0);
-	INITCVAR(visual_draw_fov_color[1], 1.0);
-	INITCVAR(visual_draw_fov_color[2], 1.0);
-	INITCVAR(visual_draw_fov_color[3], 1.0);
-
-	INITCVAR(visual_noflash_color[0], 0.0);
-	INITCVAR(visual_noflash_color[1], 0.0);
-	INITCVAR(visual_noflash_color[2], 1.0);
-	INITCVAR(visual_noflash_color[3], 0.5);
-	INITCVAR(visual_lines, 0.0);
-	INITCVAR(visual_lines_thickness, 1.0);
-	INITCVAR(visual_lines_color_tt[0], 1.0);
-	INITCVAR(visual_lines_color_tt[1], 0.0);
-	INITCVAR(visual_lines_color_tt[2], 0.0);
-	INITCVAR(visual_lines_color_tt[3], 1.0);
-	INITCVAR(visual_lines_color_ct[0], 1.0);
-	INITCVAR(visual_lines_color_ct[1], 0.0);
-	INITCVAR(visual_lines_color_ct[2], 0.0);
-	INITCVAR(visual_lines_color_ct[3], 1.0);
-	INITCVAR(visual_hud_clear, 0.0);
-	INITCVAR(visual_bullet_trace, 0.0);
-	INITCVAR(visual_bullet_trace_local, 0.0);
-	INITCVAR(visual_bullet_trace_local_thickness, 0.4);
-	INITCVAR(visual_bullet_trace_local_liveness, 0.3);
-	INITCVAR(visual_bullet_trace_local_color[0], 0.0);
-	INITCVAR(visual_bullet_trace_local_color[1], 1.0);
-	INITCVAR(visual_bullet_trace_local_color[2], 0.0);
-	INITCVAR(visual_bullet_trace_local_color[3], 1.0);
-	INITCVAR(visual_line_of_sight, 0.0);
-	INITCVAR(visual_line_of_sight_color[0], 1.0);
-	INITCVAR(visual_line_of_sight_color[1], 1.0);
-	INITCVAR(visual_line_of_sight_color[2], 0.0);
-	INITCVAR(visual_line_of_sight_color[3], 1.0);
-	INITCVAR(visual_line_of_sight_distance, 20.0);
-	INITCVAR(visual_menu_color[0], 1.0);
-	INITCVAR(visual_menu_color[1], 0.07);
-	INITCVAR(visual_menu_color[2], 0.57);
-	INITCVAR(visual_menu_color[3], 1.0);
-	INITCVAR(visual_menu_color_header[0], 0.0745);
-	INITCVAR(visual_menu_color_header[1], 0.0862);
-	INITCVAR(visual_menu_color_header[2], 0.1019);
-	INITCVAR(visual_menu_color_header[3], 1.0);
-	INITCVAR(visual_menu_color_items[0], 0.0980);
-	INITCVAR(visual_menu_color_items[1], 0.1176);
-	INITCVAR(visual_menu_color_items[2], 0.1372);
-	INITCVAR(visual_menu_color_items[3], 1.0);
-	INITCVAR(visual_menu_color_footer[0], 0.1764);
-	INITCVAR(visual_menu_color_footer[1], 0.1960);
-	INITCVAR(visual_menu_color_footer[2], 0.2156);
-	INITCVAR(visual_menu_color_footer[3], 1.0);
-	INITCVAR(visual_menu_color_widgets[0], 0.1176);
-	INITCVAR(visual_menu_color_widgets[1], 0.1372);
-	INITCVAR(visual_menu_color_widgets[2], 0.1568);
-	INITCVAR(visual_menu_color_widgets[3], 1.0);
-	INITCVAR(visual_menu_color_tab_selected[0], 0.0980);
-	INITCVAR(visual_menu_color_tab_selected[1], 0.1176);
-	INITCVAR(visual_menu_color_tab_selected[2], 0.1372);
-	INITCVAR(visual_menu_color_tab_selected[3], 1.0);
-	INITCVAR(visual_menu_color_subtab_selected[0], 0.1176);
-	INITCVAR(visual_menu_color_subtab_selected[1], 0.1372);
-	INITCVAR(visual_menu_color_subtab_selected[2], 0.1568);
-	INITCVAR(visual_menu_color_subtab_selected[3], 1.0);
-	INITCVAR(visual_menu_color_logo[0], 1.f);
-	INITCVAR(visual_menu_color_logo[1], 0.0784f);
-	INITCVAR(visual_menu_color_logo[2], 0.5764f);
-	INITCVAR(visual_menu_color_logo[3], 1.0);
-	INITCVAR(visual_menu_color_footer_text[0], 0.9803f);
-	INITCVAR(visual_menu_color_footer_text[1], 0.9803f);
-	INITCVAR(visual_menu_color_footer_text[2], 0.9803f);
-	INITCVAR(visual_menu_color_footer_text[3], 1.0);
-	INITCVAR(visual_menu_raining, 0.0);
-	INITCVAR(visual_menu_raining_count, 100.0);
-	INITCVAR(visual_menu_raining_type, 0.0);
-	INITCVAR(visual_menu_raining_speed_multipler, 1.0);
-	INITCVAR(visual_menu_bg_opacity, 0.1);
-	INITCVAR(visual_fog, 0.0);
-	INITCVAR(visual_fog_density, 5.0);
-	INITCVAR(visual_fog_color[0], 1.0);
-	INITCVAR(visual_fog_color[1], 1.0);
-	INITCVAR(visual_fog_color[2], 1.0);
-	INITCVAR(visual_fog_color[3], 1.0);
-	INITCVAR(visual_nosmoke, 0.0);
-	INITCVAR(visual_box_world_color[0], 1.0);
-	INITCVAR(visual_box_world_color[1], 1.0);
-	INITCVAR(visual_box_world_color[2], 1.0);
-	INITCVAR(visual_box_world_color[3], 1.0);
-	INITCVAR(visual_box_world_type, 0.0);
-	INITCVAR(visual_box_world_fill, 0.0);
-	INITCVAR(visual_player_glow, 0.0);
-	INITCVAR(visual_player_glow_thickness, 12.0);
-	INITCVAR(visual_player_glow_color_ct[0], 0.0);
-	INITCVAR(visual_player_glow_color_ct[1], 0.0);
-	INITCVAR(visual_player_glow_color_ct[2], 1.0);
-	INITCVAR(visual_player_glow_color_ct[3], 1.0);
-	INITCVAR(visual_player_glow_color_tt[0], 1.0);
-	INITCVAR(visual_player_glow_color_tt[1], 0.0);
-	INITCVAR(visual_player_glow_color_tt[2], 0.0);
-	INITCVAR(visual_player_glow_color_tt[3], 1.0);
-	INITCVAR(visual_viewmodel_glow, 0.0);
-	INITCVAR(visual_viewmodel_glow_thickness, 1.0);
-	INITCVAR(visual_viewmodel_glow_color[0], 1.0);
-	INITCVAR(visual_viewmodel_glow_color[1], 1.0);
-	INITCVAR(visual_viewmodel_glow_color[2], 1.0);
-	INITCVAR(visual_viewmodel_glow_color[3], 1.0);
-	INITCVAR(visual_dont_render_players, 0.0);
-	INITCVAR(visual_remove_scope, 0.0);
-	INITCVAR(visual_remove_scope_width, 40.0);
-	INITCVAR(visual_remove_scope_margin, 2.0);
-	INITCVAR(visual_remove_scope_color[0], 0.0);
-	INITCVAR(visual_remove_scope_color[1], 0.0);
-	INITCVAR(visual_remove_scope_color[2], 0.0);
-	INITCVAR(visual_remove_scope_color[3], 0.35);
-	INITCVAR(visual_fakelag_history_local, 0.0);
-	INITCVAR(visual_fakelag_history_local_light, 0.0);
-	INITCVAR(visual_fakelag_history_local_chams, 0.0);
-	INITCVAR(visual_fakelag_history_local_wireframe, 0.0);
-	INITCVAR(visual_fakelag_history_local_wireframe_mode, 0.0);
-	INITCVAR(visual_fakelag_history_local_light_color[0], 0.0);
-	INITCVAR(visual_fakelag_history_local_light_color[1], 1.0);
-	INITCVAR(visual_fakelag_history_local_light_color[2], 0.0);
-	INITCVAR(visual_fakelag_history_local_light_color[3], 1.0);
-	INITCVAR(visual_fakelag_history_local_chams_color[0], 0.0);
-	INITCVAR(visual_fakelag_history_local_chams_color[1], 1.0);
-	INITCVAR(visual_fakelag_history_local_chams_color[2], 0.0);
-	INITCVAR(visual_fakelag_history_local_chams_color[3], 1.0);
-	INITCVAR(visual_deathmark_enable, 0.0);
-	INITCVAR(visual_deathmark_seconds, 5.0);
-	INITCVAR(visual_deathmark_glow, 0.0);
-	INITCVAR(visual_deathmark_transparency, 128.0);
-	INITCVAR(visual_deathmark_color[0], 1.0);
-	INITCVAR(visual_deathmark_color[1], 1.0);
-	INITCVAR(visual_deathmark_color[2], 1.0);
-	INITCVAR(visual_deathmark_color[3], 1.0);
-
-	INITCVAR(visual_player_dynamiclight, 0.0);
-	INITCVAR(visual_player_dynamiclight_radius, 1.0);
-	INITCVAR(visual_player_dynamiclight_fading, 0.0);
-	INITCVAR(visual_player_dynamiclight_fading_speed, 1.0);
-	INITCVAR(visual_player_dynamiclight_color_tt[0], 1.0);
-	INITCVAR(visual_player_dynamiclight_color_tt[1], 1.0);
-	INITCVAR(visual_player_dynamiclight_color_tt[2], 0.0);
-	INITCVAR(visual_player_dynamiclight_color_tt[3], 1.0);
-	INITCVAR(visual_player_dynamiclight_color_ct[0], 0.0);
-	INITCVAR(visual_player_dynamiclight_color_ct[1], 1.0);
-	INITCVAR(visual_player_dynamiclight_color_ct[2], 1.0);
-	INITCVAR(visual_player_dynamiclight_color_ct[3], 1.0);
-
-	/*INITCVAR(visual_hud, 0.0);
-	INITCVAR(visual_hud_color[0], 0.0);
-	INITCVAR(visual_hud_color[1], 1.0);
-	INITCVAR(visual_hud_color[2], 0.0);
-	INITCVAR(visual_hud_color[3], 1.0);*/
-
-	INITCVAR(skeleton_player_bone, 0.0);
-	INITCVAR(skeleton_player_bone_color_tt[0], 1.0);
-	INITCVAR(skeleton_player_bone_color_tt[1], 0.0);
-	INITCVAR(skeleton_player_bone_color_tt[2], 0.0);
-	INITCVAR(skeleton_player_bone_color_tt[3], 1.0);
-	INITCVAR(skeleton_player_bone_color_ct[0], 0.0);
-	INITCVAR(skeleton_player_bone_color_ct[1], 0.0);
-	INITCVAR(skeleton_player_bone_color_ct[2], 1.0);
-	INITCVAR(skeleton_player_bone_color_ct[3], 1.0);
-	INITCVAR(skeleton_player_hitbox, 0.0);
-	INITCVAR(skeleton_player_hitbox_color_tt[0], 1.0);
-	INITCVAR(skeleton_player_hitbox_color_tt[1], 0.0);
-	INITCVAR(skeleton_player_hitbox_color_tt[2], 0.0);
-	INITCVAR(skeleton_player_hitbox_color_tt[3], 1.0);
-	INITCVAR(skeleton_player_hitbox_color_ct[0], 0.0);
-	INITCVAR(skeleton_player_hitbox_color_ct[1], 0.0);
-	INITCVAR(skeleton_player_hitbox_color_ct[2], 1.0);
-	INITCVAR(skeleton_player_hitbox_color_ct[3], 1.0);
-	INITCVAR(skeleton_view_model_hitbox, 0.0);
-	INITCVAR(skeleton_view_model_hitbox_color[0], 0.0);
-	INITCVAR(skeleton_view_model_hitbox_color[1], 1.0);
-	INITCVAR(skeleton_view_model_hitbox_color[2], 0.0);
-	INITCVAR(skeleton_view_model_hitbox_color[3], 1.0);
-	INITCVAR(skeleton_world_bone, 0.0);
-	INITCVAR(skeleton_world_bone_color[0], 1.0);
-	INITCVAR(skeleton_world_bone_color[1], 1.0);
-	INITCVAR(skeleton_world_bone_color[2], 1.0);
-	INITCVAR(skeleton_world_bone_color[3], 1.0);
-	INITCVAR(skeleton_world_hitbox, 0.0);
-	INITCVAR(skeleton_world_hitbox_color[0], 1.0);
-	INITCVAR(skeleton_world_hitbox_color[1], 1.0);
-	INITCVAR(skeleton_world_hitbox_color[2], 1.0);
-	INITCVAR(skeleton_world_hitbox_color[3], 1.0);
-
-	INITCVAR(gui_key, -1.0);
-
-	INITCVAR(radio_kill_sound, 0.0);
-	INITCVAR(radio_kill_volume, 15.0);
-
-	INITCVAR(afk_anti, 0.0);
-	INITCVAR(afk_time, 90.0);
-	INITCVAR(afk_yaw, 5.0);
-
-	INITCVAR(steamid, 0.0); 
-	INITCVAR(id1, 1.0);
-	INITCVAR(id2, 2.0);
-	INITCVAR(id3, 3.0);
-	INITCVAR(id4, 4.0);
-	INITCVAR(id5, 5.0);
-	INITCVAR(id6, 6.0);
-	INITCVAR(id7, 7.0);
-
-	INITCVAR(radar, 0.0);
-	INITCVAR(radar_zoom, 5.0);
-	INITCVAR(radar_point_size, 5.0);
-	INITCVAR(radar_pos_x, 100.0);
-	INITCVAR(radar_pos_y, 100.0);
-	INITCVAR(radar_size_x, 150.0);
-	INITCVAR(radar_size_y, 150.0);
-	INITCVAR(visual_local_glow, 0.0);
-	INITCVAR(visual_local_glow_thickness, 12.0);
-	INITCVAR(visual_local_glow_color[0], 1.0);
-	INITCVAR(visual_local_glow_color[1], 1.0);
-	INITCVAR(visual_local_glow_color[2], 1.0);
-	INITCVAR(visual_local_glow_color[3], 1.0);
-	INITCVAR(chams_local, 0.0);
-	INITCVAR(chams_local_wireframe, 0.0);
-	INITCVAR(chams_local_wireframe_mode, 0.0);
-	INITCVAR(chams_local_color[0], 1.0);
-	INITCVAR(chams_local_color[1], 1.0);
-	INITCVAR(chams_local_color[2], 1.0);
-	INITCVAR(chams_local_color[3], 1.0);
-	INITCVAR(chams_view_model, 0.0);
-	INITCVAR(chams_view_model_wireframe, 0.0);
-	INITCVAR(chams_view_model_wireframe_mode, 0.0);
-	INITCVAR(chams_player, 0.0);
-	INITCVAR(chams_player_wireframe, 0.0);
-	INITCVAR(chams_player_wireframe_mode, 0.0);
-	INITCVAR(chams_player_color_tt[0], 1.0);
-	INITCVAR(chams_player_color_tt[1], 0.0);
-	INITCVAR(chams_player_color_tt[2], 0.0);
-	INITCVAR(chams_player_color_tt[3], 1.0);
-	INITCVAR(chams_player_color_ct[0], 0.0);
-	INITCVAR(chams_player_color_ct[1], 0.0);
-	INITCVAR(chams_player_color_ct[2], 1.0);
-	INITCVAR(chams_player_color_ct[3], 1.0);
-	INITCVAR(chams_player_wall, 0.0);
-	INITCVAR(chams_player_wall_color_tt[0], 1.0);
-	INITCVAR(chams_player_wall_color_tt[1], 0.0);
-	INITCVAR(chams_player_wall_color_tt[2], 1.0);
-	INITCVAR(chams_player_wall_color_tt[3], 1.0);
-	INITCVAR(chams_player_wall_color_ct[0], 0.0);
-	INITCVAR(chams_player_wall_color_ct[1], 1.0);
-	INITCVAR(chams_player_wall_color_ct[2], 1.0);
-	INITCVAR(chams_player_wall_color_ct[3], 1.0);
-	INITCVAR(chams_world, 0.0);
-	INITCVAR(chams_world_color[0], 1.0);
-	INITCVAR(chams_world_color[1], 1.0);
-	INITCVAR(chams_world_color[2], 1.0);
-	INITCVAR(chams_world_color[3], 1.0);
-	INITCVAR(chams_world_wireframe, 0.0);
-	INITCVAR(chams_world_wireframe_mode, 0.0);
-	INITCVAR(chams_world_wall, 0.0);
-	INITCVAR(chams_world_wall_color[0], 1.0);
-	INITCVAR(chams_world_wall_color[1], 1.0);
-	INITCVAR(chams_world_wall_color[2], 1.0);
-	INITCVAR(chams_world_wall_color[3], 1.0);
-
-	INITCVAR(rainbow_player_light_tt, 0.0);
-	INITCVAR(rainbow_player_light_ct, 0.0);
-	INITCVAR(rainbow_viewmodel, 0.0);
-	INITCVAR(rainbow_viewmodel_glow, 0.0);
-	INITCVAR(rainbow_viewmodel_light, 0.0);
-	INITCVAR(rainbow_viewmodel_hitbox, 0.0);
-	INITCVAR(rainbow_snaplines_tt, 0.0);
-	INITCVAR(rainbow_snaplines_ct, 0.0);
-	INITCVAR(rainbow_menu, 0.0);
-	INITCVAR(rainbow_lambert_local, 0.0);
-	INITCVAR(rainbow_chams_local, 0.0);
-	INITCVAR(rainbow_chams_local_fake, 0.0);
-	INITCVAR(rainbow_glow_player_tt, 0.0);
-	INITCVAR(rainbow_glow_player_ct, 0.0);
-	INITCVAR(rainbow_chams_player_ct, 0.0);
-	INITCVAR(rainbow_chams_player_tt, 0.0);
-	INITCVAR(rainbow_chams_world, 0.0);
-	INITCVAR(rainbow_grenade_trajectory_line, 0.0);
-	INITCVAR(rainbow_grenade_trajectory_point, 0.0);
-	INITCVAR(rainbow_route_line, 0.0);
-	INITCVAR(rainbow_route_point, 0.0);
-	INITCVAR(rainbow_local_history, 0.0);
-	INITCVAR(rainbow_backtrack_light, 0.0);
-	INITCVAR(rainbow_backtrack_chams, 0.0);
-	INITCVAR(rainbow_world_light, 0.0);
-	INITCVAR(rainbow_deathmark_glow, 0.0);
-	INITCVAR(rainbow_skeleton_tt, 0.0);
-	INITCVAR(rainbow_skeleton_ct, 0.0);
-	INITCVAR(rainbow_box_tt, 0.0);
-	INITCVAR(rainbow_box_ct, 0.0);
-	INITCVAR(rainbow_world_box, 0.0);
-	INITCVAR(rainbow_world_bone, 0.0);
-	INITCVAR(rainbow_world_hitbox, 0.0);
-	INITCVAR(rainbow_world_maplight, 0.0);
-	INITCVAR(rainbow_local_glow, 0.0);
-
-	/*for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
-	{
-		auto& script = Sakura::Lua::scripts[i];
-
-		if (!script.HasCallback(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_SAVE_CONFIG))
-			continue;
-
-		auto& callbacks = script.GetCallbacks(Sakura::Lua::SAKURA_CALLBACK_TYPE::SAKURA_CALLBACK_AT_SAVE_CONFIG);
-		for (const auto& callback : callbacks)
-		{
-			try
-			{
-				callback();
-			}
-			catch (luabridge::LuaException const& error)
-			{
-				LogToFile("Error has occured in the lua: %s", error.what());
-				script.RemoveAllCallbacks();
-			}
-		}
-	}*/
+	Sakura::Cvar::New(/*visual_local_glow*/XorStr<0x7A, 18, 0xC4753937>("\x0C\x12\x0F\x08\x1F\x13\xDF\xED\xED\xE0\xE5\xE9\xD9\xE0\xE4\xE6\xFD" + 0xC4753937).s, cvar.visual_local_glow, 0.0);
+	Sakura::Cvar::New(/*visual_local_glow_thickness*/XorStr<0x1D, 28, 0x9E6A00FF>("\x6B\x77\x6C\x55\x40\x4E\x7C\x48\x4A\x45\x46\x44\x76\x4D\x47\x43\x5A\x71\x5B\x58\x58\x51\x58\x5A\x50\x45\x44" + 0x9E6A00FF).s, cvar.visual_local_glow_thickness, 12.0);
+	Sakura::Cvar::New(/*visual_local_glow_color[0]*/XorStr<0x08, 27, 0x15A6D476>("\x7E\x60\x79\x7E\x6D\x61\x51\x63\x7F\x72\x73\x7F\x4B\x72\x7A\x78\x6F\x46\x79\x74\x70\x72\x6C\x44\x10\x7C" + 0x15A6D476).s, cvar.visual_local_glow_color[0], 1.0);
+	Sakura::Cvar::New(/*visual_local_glow_color[1]*/XorStr<0xC4, 27, 0xE54B0BD7>("\xB2\xAC\xB5\xB2\xA9\xA5\x95\xA7\xA3\xAE\xAF\xA3\x8F\xB6\xBE\xBC\xA3\x8A\xB5\xB8\xB4\xB6\xA8\x80\xED\x80" + 0xE54B0BD7).s, cvar.visual_local_glow_color[1], 1.0);
+	Sakura::Cvar::New(/*visual_local_glow_color[2]*/XorStr<0x09, 27, 0x6913078F>("\x7F\x63\x78\x79\x6C\x62\x50\x7C\x7E\x71\x72\x78\x4A\x71\x7B\x77\x6E\x45\x78\x73\x71\x71\x6D\x7B\x13\x7F" + 0x6913078F).s, cvar.visual_local_glow_color[2], 1.0);
+	Sakura::Cvar::New(/*visual_local_glow_color[3]*/XorStr<0x79, 27, 0xD8CCCAB8>("\x0F\x13\x08\x09\x1C\x12\x20\xEC\xEE\xE1\xE2\xE8\xDA\xE1\xEB\xE7\xFE\xD5\xE8\xE3\xE1\xE1\xFD\xCB\xA2\xCF" + 0xD8CCCAB8).s, cvar.visual_local_glow_color[3], 1.0);
+	
+	Sakura::Cvar::New(/*chams_local*/XorStr<0xB3, 12, 0x5A09071A>("\xD0\xDC\xD4\xDB\xC4\xE7\xD5\xD5\xD8\xDD\xD1" + 0x5A09071A).s, cvar.chams_local, 0.0);
+	Sakura::Cvar::New(/*chams_local_wireframe*/XorStr<0x5C, 22, 0xBDC170B2>("\x3F\x35\x3F\x32\x13\x3E\x0E\x0C\x07\x04\x0A\x38\x1F\x00\x18\x0E\x0A\x1F\x0F\x02\x15" + 0xBDC170B2).s, cvar.chams_local_wireframe, 0.0);
+	Sakura::Cvar::New(/*chams_local_wireframe_mode*/XorStr<0xC3, 27, 0x4F807651>("\xA0\xAC\xA4\xAB\xB4\x97\xA5\xA5\xA8\xAD\xA1\x91\xB8\xB9\xA3\xB7\xB5\xA6\xB4\xBB\xB2\x87\xB4\xB5\xBF\xB9" + 0x4F807651).s, cvar.chams_local_wireframe_mode, 0.0);
+	Sakura::Cvar::New(/*chams_local_color[0]*/XorStr<0xC5, 21, 0x1C1733C2>("\xA6\xAE\xA6\xA5\xBA\x95\xA7\xA3\xAE\xAF\xA3\x8F\xB2\xBD\xBF\xBB\xA7\x8D\xE7\x85" + 0x1C1733C2).s, cvar.chams_local_color[0], 1.0);
+	Sakura::Cvar::New(/*chams_local_color[1]*/XorStr<0x70, 21, 0xB99F5BF1>("\x13\x19\x13\x1E\x07\x2A\x1A\x18\x1B\x18\x16\x24\x1F\x12\x12\x10\xF2\xDA\xB3\xDE" + 0xB99F5BF1).s, cvar.chams_local_color[1], 1.0);
+	Sakura::Cvar::New(/*chams_local_color[2]*/XorStr<0x6F, 21, 0xBAA96E6A>("\x0C\x18\x10\x1F\x00\x2B\x19\x19\x14\x19\x15\x25\x18\x13\x11\x11\x0D\xDB\xB3\xDF" + 0xBAA96E6A).s, cvar.chams_local_color[2], 1.0);
+	Sakura::Cvar::New(/*chams_local_color[3]*/XorStr<0x12, 21, 0x22CB7D07>("\x71\x7B\x75\x78\x65\x48\x74\x76\x79\x7A\x70\x42\x7D\x70\x4C\x4E\x50\x78\x17\x78" + 0x22CB7D07).s, cvar.chams_local_color[3], 1.0);
+	Sakura::Cvar::New(/*chams_view_model*/XorStr<0xFC, 17, 0x4DC477DA>("\x9F\x95\x9F\x92\x73\x5E\x74\x6A\x61\x72\x59\x6A\x67\x6D\x6F\x67" + 0x4DC477DA).s, cvar.chams_view_model, 0.0);
+	Sakura::Cvar::New(/*chams_view_model_wireframe*/XorStr<0x05, 27, 0x76CC0AAC>("\x66\x6E\x66\x65\x7A\x55\x7D\x65\x68\x79\x50\x7D\x7E\x76\x76\x78\x4A\x61\x7E\x6A\x7C\x7C\x69\x7D\x70\x7B" + 0x76CC0AAC).s, cvar.chams_view_model_wireframe, 0.0);
+	Sakura::Cvar::New(/*chams_view_model_wireframe_mode*/XorStr<0xDF, 32, 0xA9A61163>("\xBC\x88\x80\x8F\x90\xBB\x93\x8F\x82\x9F\xB6\x87\x84\x88\x88\x82\xB0\x87\x98\x80\x96\x92\x87\x97\x9A\x9D\xA6\x97\x94\x98\x98" + 0xA9A61163).s, cvar.chams_view_model_wireframe_mode, 0.0);
+	Sakura::Cvar::New(/*chams_player*/XorStr<0xE2, 13, 0x86CE1CE3>("\x81\x8B\x85\x88\x95\xB8\x98\x85\x8B\x92\x89\x9F" + 0x86CE1CE3).s, cvar.chams_player, 0.0);
+	Sakura::Cvar::New(/*chams_player_wireframe*/XorStr<0x49, 23, 0x259FBD38>("\x2A\x22\x2A\x21\x3E\x11\x3F\x3C\x30\x2B\x36\x26\x0A\x21\x3E\x2A\x3C\x3C\x29\x3D\x30\x3B" + 0x259FBD38).s, cvar.chams_player_wireframe, 0.0);
+	Sakura::Cvar::New(/*chams_player_wireframe_mode*/XorStr<0xBE, 28, 0xA5352868>("\xDD\xD7\xA1\xAC\xB1\x9C\xB4\xA9\xA7\xBE\xAD\xBB\x95\xBC\xA5\xBF\xAB\xA9\xA2\xB0\xBF\xB6\x8B\xB8\xB9\xB3\xBD" + 0xA5352868).s, cvar.chams_player_wireframe_mode, 0.0);
+	Sakura::Cvar::New(/*chams_player_color_tt[0]*/XorStr<0x8E, 25, 0xB596C54A>("\xED\xE7\xF1\xFC\xE1\xCC\xE4\xF9\xF7\xEE\xFD\xEB\xC5\xF8\xF3\xF1\xF1\xED\xFF\xD5\xD6\xF8\x94\xF8" + 0xB596C54A).s, cvar.chams_player_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*chams_player_color_tt[1]*/XorStr<0x8B, 25, 0xCDF952F9>("\xE8\xE4\xEC\xE3\xFC\xCF\xE1\xFE\xF2\xED\xF0\xE4\xC8\xFB\xF6\xF6\xF4\xEE\xC2\xEA\xEB\xFB\x90\xFF" + 0xCDF952F9).s, cvar.chams_player_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*chams_player_color_tt[2]*/XorStr<0x87, 25, 0x3DE58B21>("\xE4\xE0\xE8\xE7\xF8\xD3\xFD\xE2\xEE\xE9\xF4\xE0\xCC\xF7\xFA\xFA\xF8\xEA\xC6\xEE\xEF\xC7\xAF\xC3" + 0x3DE58B21).s, cvar.chams_player_color_tt[2], 0.0);
+	Sakura::Cvar::New(/*chams_player_color_tt[3]*/XorStr<0xD3, 25, 0xEF72B1B5>("\xB0\xBC\xB4\xBB\xA4\x87\xA9\xB6\xBA\xA5\xB8\xAC\x80\x83\x8E\x8E\x8C\x96\xBA\x92\x93\xB3\xDA\xB7" + 0xEF72B1B5).s, cvar.chams_player_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*chams_player_color_ct[0]*/XorStr<0x09, 25, 0xE513720B>("\x6A\x62\x6A\x61\x7E\x51\x7F\x7C\x70\x6B\x76\x66\x4A\x75\x78\x74\x76\x68\x44\x7F\x69\x45\x2F\x7D" + 0xE513720B).s, cvar.chams_player_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*chams_player_color_ct[1]*/XorStr<0x20, 25, 0xC074A212>("\x43\x49\x43\x4E\x57\x7A\x56\x4B\x49\x50\x4F\x59\x73\x4E\x41\x43\x5F\x43\x6D\x50\x40\x6E\x07\x6A" + 0xC074A212).s, cvar.chams_player_color_ct[1], 0.0);
+	Sakura::Cvar::New(/*chams_player_color_ct[2]*/XorStr<0xD9, 25, 0x6E877C41>("\xBA\xB2\xBA\xB1\xAE\x81\xAF\x8C\x80\x9B\x86\x96\xBA\x85\x88\x84\x86\x98\xB4\x8F\x99\xB5\xDD\xAD" + 0x6E877C41).s, cvar.chams_player_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*chams_player_color_ct[3]*/XorStr<0x68, 25, 0x42838F11>("\x0B\x01\x0B\x06\x1F\x32\x1E\x03\x11\x08\x17\x01\x2B\x16\x19\x1B\x17\x0B\x25\x18\x08\x26\x4D\x22" + 0x42838F11).s, cvar.chams_player_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*chams_player_wall*/XorStr<0xA7, 18, 0xE223DB8E>("\xC4\xC0\xC8\xC7\xD8\xF3\xDD\xC2\xCE\xC9\xD4\xC0\xEC\xC3\xD4\xDA\xDB" + 0xE223DB8E).s, cvar.chams_player_wall, 0.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_tt[0]*/XorStr<0x20, 30, 0x33683E09>("\x43\x49\x43\x4E\x57\x7A\x56\x4B\x49\x50\x4F\x59\x73\x5A\x4F\x43\x5C\x6E\x51\x5C\x58\x5A\x44\x68\x4C\x4D\x61\x0B\x61" + 0x33683E09).s, cvar.chams_player_wall_color_tt[0], 1.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_tt[1]*/XorStr<0x3D, 30, 0x208E3115>("\x5E\x56\x5E\x2D\x32\x1D\x33\x28\x24\x3F\x22\x3A\x16\x3D\x2A\x20\x21\x11\x2C\x3F\x3D\x3D\x21\x0B\x21\x22\x0C\x69\x04" + 0x208E3115).s, cvar.chams_player_wall_color_tt[1], 0.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_tt[2]*/XorStr<0x46, 30, 0x8A8D769F>("\x25\x2F\x29\x24\x39\x14\x3C\x21\x2F\x36\x35\x23\x0D\x24\x35\x39\x3A\x08\x3B\x36\x36\x34\x2E\x02\x2A\x2B\x3B\x53\x3F" + 0x8A8D769F).s, cvar.chams_player_wall_color_tt[2], 1.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_tt[3]*/XorStr<0x94, 30, 0xECE672AB>("\xF7\xFD\xF7\xFA\xEB\xC6\xEA\xF7\xFD\xE4\xFB\xED\xFF\xD6\xC3\xCF\xC8\xFA\xC5\xC8\xC4\xC6\xD8\xF4\xD8\xD9\xF5\x9C\xED" + 0xECE672AB).s, cvar.chams_player_wall_color_tt[3], 1.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_ct[0]*/XorStr<0x4D, 30, 0x1B8FCB0B>("\x2E\x26\x2E\x3D\x22\x0D\x23\x38\x34\x2F\x32\x2A\x06\x2D\x3A\x30\x31\x01\x3C\x0F\x0D\x0D\x11\x3B\x06\x12\x3C\x58\x34" + 0x1B8FCB0B).s, cvar.chams_player_wall_color_ct[0], 0.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_ct[1]*/XorStr<0xED, 30, 0x238AFBAA>("\x8E\x86\x8E\x9D\x82\xAD\x83\x98\x94\x8F\x92\x8A\xA6\x8D\x9A\x90\x91\xA1\x9C\x6F\x6D\x6D\x71\x5B\x66\x72\x5C\x39\x54" + 0x238AFBAA).s, cvar.chams_player_wall_color_ct[1], 1.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_ct[2]*/XorStr<0xDB, 30, 0xBD75ADDA>("\xB8\xB4\xBC\xB3\xAC\xBF\x91\x8E\x82\x9D\x80\x94\xB8\x9F\x88\x86\x87\xB3\x8E\x81\x83\x9F\x83\xAD\x90\x80\xAE\xC4\xAA" + 0xBD75ADDA).s, cvar.chams_player_wall_color_ct[2], 1.0);
+	Sakura::Cvar::New(/*chams_player_wall_color_ct[3]*/XorStr<0xF9, 30, 0x8DBA408D>("\x9A\x92\x9A\x91\x8E\xA1\x8F\x6C\x60\x7B\x66\x76\x5A\x71\x66\x64\x65\x55\x68\x63\x61\x61\x7D\x4F\x72\x66\x48\x27\x48" + 0x8DBA408D).s, cvar.chams_player_wall_color_ct[3], 1.0);
+	Sakura::Cvar::New(/*chams_world*/XorStr<0xA1, 12, 0xDC28A58F>("\xC2\xCA\xC2\xC9\xD6\xF9\xD0\xC7\xDB\xC6\xCF" + 0xDC28A58F).s, cvar.chams_world, 0.0);
+	Sakura::Cvar::New(/*chams_world_color[0]*/XorStr<0xE6, 21, 0x867996C6>("\x85\x8F\x89\x84\x99\xB4\x9B\x82\x9C\x83\x94\xAE\x91\x9C\x98\x9A\x84\xAC\xC8\xA4" + 0x867996C6).s, cvar.chams_world_color[0], 1.0);
+	Sakura::Cvar::New(/*chams_world_color[1]*/XorStr<0xD6, 21, 0x408B7F44>("\xB5\xBF\xB9\xB4\xA9\x84\xAB\xB2\xAC\xB3\x84\xBE\x81\x8C\x88\x8A\x94\xBC\xD9\xB4" + 0x408B7F44).s, cvar.chams_world_color[1], 1.0);
+	Sakura::Cvar::New(/*chams_world_color[2]*/XorStr<0x00, 21, 0x14C289AC>("\x63\x69\x63\x6E\x77\x5A\x71\x68\x7A\x65\x6E\x54\x6F\x62\x62\x60\x62\x4A\x20\x4E" + 0x14C289AC).s, cvar.chams_world_color[2], 1.0);
+	Sakura::Cvar::New(/*chams_world_color[3]*/XorStr<0x33, 21, 0x530F6EF9>("\x50\x5C\x54\x5B\x44\x67\x4E\x55\x49\x50\x59\x61\x5C\x2F\x2D\x2D\x31\x1F\x76\x1B" + 0x530F6EF9).s, cvar.chams_world_color[3], 1.0);
+	Sakura::Cvar::New(/*chams_world_wireframe*/XorStr<0xA2, 22, 0x1D218BD9>("\xC1\xCB\xC5\xC8\xD5\xF8\xDF\xC6\xD8\xC7\xC8\xF2\xD9\xC6\xC2\xD4\xD4\xC1\xD5\xD8\xD3" + 0x1D218BD9).s, cvar.chams_world_wireframe, 0.0);
+	Sakura::Cvar::New(/*chams_world_wireframe_mode*/XorStr<0x5A, 27, 0xA2970CAA>("\x39\x33\x3D\x30\x2D\x00\x17\x0E\x10\x0F\x00\x3A\x11\x0E\x1A\x0C\x0C\x19\x0D\x00\x0B\x30\x1D\x1E\x16\x16" + 0xA2970CAA).s, cvar.chams_world_wireframe_mode, 0.0);
+	Sakura::Cvar::New(/*chams_world_wall*/XorStr<0x0F, 17, 0x9938261E>("\x6C\x78\x70\x7F\x60\x4B\x62\x79\x65\x74\x7D\x45\x6C\x7D\x71\x72" + 0x9938261E).s, cvar.chams_world_wall, 0.0);
+	Sakura::Cvar::New(/*chams_world_wall_color[0]*/XorStr<0xC6, 26, 0x15214B79>("\xA5\xAF\xA9\xA4\xB9\x94\xBB\xA2\xBC\xA3\xB4\x8E\xA5\xB2\xB8\xB9\x89\xB4\xB7\xB5\xB5\xA9\x87\xED\x83" + 0x15214B79).s, cvar.chams_world_wall_color[0], 1.0);
+	Sakura::Cvar::New(/*chams_world_wall_color[1]*/XorStr<0xBB, 26, 0xFA8AE43F>("\xD8\xD4\xDC\xD3\xCC\x9F\xB6\xAD\xB1\xA8\xA1\x99\xB0\xA9\xA5\xA6\x94\xAF\xA2\xA2\xA0\xA2\x8A\xE3\x8E" + 0xFA8AE43F).s, cvar.chams_world_wall_color[1], 1.0);
+	Sakura::Cvar::New(/*chams_world_wall_color[2]*/XorStr<0x1A, 26, 0x562B4680>("\x79\x73\x7D\x70\x6D\x40\x57\x4E\x50\x4F\x40\x7A\x51\x46\x44\x45\x75\x48\x43\x41\x41\x5D\x6B\x03\x6F" + 0x562B4680).s, cvar.chams_world_wall_color[2], 1.0);
+	Sakura::Cvar::New(/*chams_world_wall_color[3]*/XorStr<0xA6, 26, 0x5535E9E6>("\xC5\xCF\xC9\xC4\xD9\xF4\xDB\xC2\xDC\xC3\xD4\xEE\xC5\xD2\xD8\xD9\xE9\xD4\xD7\xD5\xD5\xC9\xE7\x8E\xE3" + 0x5535E9E6).s, cvar.chams_world_wall_color[3], 1.0);
+	
+	Sakura::Cvar::New(/*rainbow_player_light_tt*/XorStr<0xAC, 24, 0x197A2DB1>("\xDE\xCC\xC7\xC1\xD2\xDE\xC5\xEC\xC4\xD9\xD7\xCE\xDD\xCB\xE5\xD7\xD5\xDA\xD6\xCB\x9F\xB5\xB6" + 0x197A2DB1).s, cvar.rainbow_player_light_tt, 0.0);
+	Sakura::Cvar::New(/*rainbow_player_light_ct*/XorStr<0x17, 24, 0x0CF9E6E3>("\x65\x79\x70\x74\x79\x73\x6A\x41\x6F\x4C\x40\x5B\x46\x56\x7A\x4A\x4E\x4F\x41\x5E\x74\x4F\x59" + 0x0CF9E6E3).s, cvar.rainbow_player_light_ct, 0.0);
+	Sakura::Cvar::New(/*rainbow_viewmodel*/XorStr<0x30, 18, 0x7355F629>("\x42\x50\x5B\x5D\x56\x5A\x41\x68\x4E\x50\x5F\x4C\x51\x52\x5A\x5A\x2C" + 0x7355F629).s, cvar.rainbow_viewmodel, 0.0);
+	Sakura::Cvar::New(/*rainbow_viewmodel_glow*/XorStr<0xC4, 23, 0xE61F25E3>("\xB6\xA4\xAF\xA9\xAA\xA6\xBD\x94\xBA\xA4\xAB\xB8\xBD\xBE\xB6\xB6\xB8\x8A\xB1\xBB\xB7\xAE" + 0xE61F25E3).s, cvar.rainbow_viewmodel_glow, 0.0);
+	Sakura::Cvar::New(/*rainbow_viewmodel_light*/XorStr<0x0D, 24, 0x492334F5>("\x7F\x6F\x66\x7E\x73\x7D\x64\x4B\x63\x7F\x72\x6F\x74\x75\x7F\x79\x71\x41\x73\x49\x46\x4A\x57" + 0x492334F5).s, cvar.rainbow_viewmodel_light, 0.0);
+	Sakura::Cvar::New(/*rainbow_viewmodel_hitbox*/XorStr<0x1F, 25, 0x86D87521>("\x6D\x41\x48\x4C\x41\x4B\x52\x79\x51\x41\x4C\x5D\x46\x43\x49\x4B\x43\x6F\x59\x5B\x47\x56\x5A\x4E" + 0x86D87521).s, cvar.rainbow_viewmodel_hitbox, 0.0);
+	Sakura::Cvar::New(/*rainbow_snaplines_tt*/XorStr<0x5B, 21, 0x5AE657B4>("\x29\x3D\x34\x30\x3D\x0F\x16\x3D\x10\x0A\x04\x16\x0B\x01\x07\x0F\x18\x33\x19\x1A" + 0x5AE657B4).s, cvar.rainbow_snaplines_tt, 0.0);
+	Sakura::Cvar::New(/*rainbow_snaplines_ct*/XorStr<0x83, 21, 0xBBD4007F>("\xF1\xE5\xEC\xE8\xE5\xE7\xFE\xD5\xF8\xE2\xEC\xFE\xE3\xF9\xFF\xF7\xE0\xCB\xF6\xE2" + 0xBBD4007F).s, cvar.rainbow_snaplines_ct, 0.0);
+	Sakura::Cvar::New(/*rainbow_menu*/XorStr<0x29, 13, 0x5F9C30B5>("\x5B\x4B\x42\x42\x4F\x41\x58\x6F\x5C\x57\x5D\x41" + 0x5F9C30B5).s, cvar.rainbow_menu, 0.0);
+	Sakura::Cvar::New(/*rainbow_lambert_local*/XorStr<0xCB, 22, 0xC2E1136A>("\xB9\xAD\xA4\xA0\xAD\xBF\xA6\x8D\xBF\xB5\xB8\xB4\xB2\xAA\xAD\x85\xB7\xB3\xBE\xBF\xB3" + 0xC2E1136A).s, cvar.rainbow_lambert_local, 0.0);
+	Sakura::Cvar::New(/*rainbow_chams_local*/XorStr<0xC6, 20, 0x61C2B252>("\xB4\xA6\xA1\xA7\xA8\xA4\xBB\x92\xAD\xA7\xB1\xBC\xA1\x8C\xB8\xBA\xB5\xB6\xB4" + 0x61C2B252).s, cvar.rainbow_chams_local, 0.0);
+	Sakura::Cvar::New(/*rainbow_chams_local_fake*/XorStr<0x50, 25, 0x565A6CD2>("\x22\x30\x3B\x3D\x36\x3A\x21\x08\x3B\x31\x3B\x36\x2F\x02\x32\x30\x03\x00\x0E\x3C\x02\x04\x0D\x02" + 0x565A6CD2).s, cvar.rainbow_chams_local_fake, 0.0);
+	Sakura::Cvar::New(/*rainbow_glow_player_tt*/XorStr<0x83, 23, 0x0ECAC85C>("\xF1\xE5\xEC\xE8\xE5\xE7\xFE\xD5\xEC\xE0\xE2\xF9\xD0\xE0\xFD\xF3\xEA\xF1\xE7\xC9\xE3\xEC" + 0x0ECAC85C).s, cvar.rainbow_glow_player_tt, 0.0);
+	Sakura::Cvar::New(/*rainbow_glow_player_ct*/XorStr<0xE8, 23, 0xA1C68E2C>("\x9A\x88\x83\x85\x8E\x82\x99\xB0\x97\x9D\x9D\x84\xAB\x85\x9A\x96\x81\x9C\x88\xA4\x9F\x89" + 0xA1C68E2C).s, cvar.rainbow_glow_player_ct, 0.0);
+	Sakura::Cvar::New(/*rainbow_chams_player_ct*/XorStr<0xD2, 24, 0xA3B830AB>("\xA0\xB2\xBD\xBB\xB4\xB8\xAF\x86\xB9\xB3\xBD\xB0\xAD\x80\x90\x8D\x83\x9A\x81\x97\xB9\x84\x9C" + 0xA3B830AB).s, cvar.rainbow_chams_player_ct, 0.0);
+	Sakura::Cvar::New(/*rainbow_chams_player_tt*/XorStr<0x1D, 24, 0x4DF1034B>("\x6F\x7F\x76\x4E\x43\x4D\x54\x7B\x46\x4E\x46\x45\x5A\x75\x5B\x40\x4C\x57\x4A\x42\x6E\x46\x47" + 0x4DF1034B).s, cvar.rainbow_chams_player_tt, 0.0);
+	Sakura::Cvar::New(/*rainbow_chams_world*/XorStr<0xAF, 20, 0xC3412E8B>("\xDD\xD1\xD8\xDC\xD1\xDB\xC2\xE9\xD4\xD0\xD8\xD7\xC8\xE3\xCA\xD1\xCD\xAC\xA5" + 0xC3412E8B).s, cvar.rainbow_chams_world, 0.0);
+	Sakura::Cvar::New(/*rainbow_grenade_trajectory_line*/XorStr<0xD5, 32, 0xB9C46F72>("\xA7\xB7\xBE\xB6\xBB\xB5\xAC\x83\xBA\xAC\xBA\x8E\x80\x86\x86\xBB\x91\x94\x86\x82\x8C\x89\x9F\x83\x9F\x97\xB0\x9C\x98\x9C\x96" + 0xB9C46F72).s, cvar.rainbow_grenade_trajectory_line, 0.0);
+	Sakura::Cvar::New(/*rainbow_grenade_trajectory_point*/XorStr<0xD1, 33, 0x803D9D6F>("\xA3\xB3\xBA\xBA\xB7\xB9\xA0\x87\xBE\xA8\xBE\xB2\xBC\xBA\xBA\xBF\x95\x90\x82\x8E\x80\x85\x93\x87\x9B\x93\xB4\x9C\x82\x87\x81\x84" + 0x803D9D6F).s, cvar.rainbow_grenade_trajectory_point, 0.0);
+	Sakura::Cvar::New(/*rainbow_route_line*/XorStr<0x0A, 19, 0xC6D0B5A4>("\x78\x6A\x65\x63\x6C\x60\x67\x4E\x60\x7C\x61\x61\x73\x48\x74\x70\x74\x7E" + 0xC6D0B5A4).s, cvar.rainbow_route_line, 0.0);
+	Sakura::Cvar::New(/*rainbow_route_point*/XorStr<0xA3, 20, 0x60B5A1FF>("\xD1\xC5\xCC\xC8\xC5\xC7\xDE\xF5\xD9\xC3\xD8\xDA\xCA\xEF\xC1\xDD\xDA\xDA\xC1" + 0x60B5A1FF).s, cvar.rainbow_route_point, 0.0);
+	Sakura::Cvar::New(/*rainbow_local_history*/XorStr<0x33, 22, 0x1A13A753>("\x41\x55\x5C\x58\x55\x57\x4E\x65\x57\x53\x5E\x5F\x53\x1F\x29\x2B\x30\x30\x2A\x34\x3E" + 0x1A13A753).s, cvar.rainbow_local_history, 0.0);
+	Sakura::Cvar::New(/*rainbow_backtrack_light*/XorStr<0x79, 24, 0x9C99EFA2>("\x0B\x1B\x12\x12\x1F\x11\x08\xDF\xE3\xE3\xE0\xEF\xF1\xF4\xE6\xEB\xE2\xD5\xE7\xE5\xEA\xE6\xFB" + 0x9C99EFA2).s, cvar.rainbow_backtrack_light, 0.0);
+	Sakura::Cvar::New(/*rainbow_backtrack_chams*/XorStr<0x3E, 24, 0x945BDD1F>("\x4C\x5E\x29\x2F\x20\x2C\x33\x1A\x24\x26\x2B\x22\x3E\x39\x2D\x2E\x25\x10\x33\x39\x33\x3E\x27" + 0x945BDD1F).s, cvar.rainbow_backtrack_chams, 0.0);
+	Sakura::Cvar::New(/*rainbow_world_light*/XorStr<0x2A, 20, 0xC6305B56>("\x58\x4A\x45\x43\x4C\x40\x47\x6E\x45\x5C\x46\x59\x52\x68\x54\x50\x5D\x53\x48" + 0xC6305B56).s, cvar.rainbow_world_light, 0.0);
+	Sakura::Cvar::New(/*rainbow_deathmark_glow*/XorStr<0xBD, 23, 0x1EDBD8A3>("\xCF\xDF\xD6\xAE\xA3\xAD\xB4\x9B\xA1\xA3\xA6\xBC\xA1\xA7\xAA\xBE\xA6\x91\xA8\xBC\xBE\xA5" + 0x1EDBD8A3).s, cvar.rainbow_deathmark_glow, 0.0);
+	Sakura::Cvar::New(/*rainbow_skeleton_tt*/XorStr<0x37, 20, 0x6AC76E17>("\x45\x59\x50\x54\x59\x53\x4A\x61\x4C\x2B\x24\x2E\x26\x30\x2A\x28\x18\x3C\x3D" + 0x6AC76E17).s, cvar.rainbow_skeleton_tt, 0.0);
+	Sakura::Cvar::New(/*rainbow_skeleton_ct*/XorStr<0xC1, 20, 0x6D86DD10>("\xB3\xA3\xAA\xAA\xA7\xA9\xB0\x97\xBA\xA1\xAE\xA0\xA8\xBA\xA0\xBE\x8E\xB1\xA7" + 0x6D86DD10).s, cvar.rainbow_skeleton_ct, 0.0);
+	Sakura::Cvar::New(/*rainbow_box_tt*/XorStr<0x23, 15, 0x0A336B14>("\x51\x45\x4C\x48\x45\x47\x5E\x75\x49\x43\x55\x71\x5B\x44" + 0x0A336B14).s, cvar.rainbow_box_tt, 0.0);
+	Sakura::Cvar::New(/*rainbow_box_ct*/XorStr<0x69, 15, 0x49898D60>("\x1B\x0B\x02\x02\x0F\x01\x18\x2F\x13\x1D\x0B\x2B\x16\x02" + 0x49898D60).s, cvar.rainbow_box_ct, 0.0);
+	Sakura::Cvar::New(/*rainbow_world_box*/XorStr<0xC1, 18, 0x68AE589A>("\xB3\xA3\xAA\xAA\xA7\xA9\xB0\x97\xBE\xA5\xB9\xA0\xA9\x91\xAD\xBF\xA9" + 0x68AE589A).s, cvar.rainbow_world_box, 0.0);
+	Sakura::Cvar::New(/*rainbow_world_bone*/XorStr<0xDC, 19, 0x44790CAB>("\xAE\xBC\xB7\xB1\x82\x8E\x95\xBC\x93\x8A\x94\x8B\x8C\xB6\x88\x84\x82\x88" + 0x44790CAB).s, cvar.rainbow_world_bone, 0.0);
+	Sakura::Cvar::New(/*rainbow_world_hitbox*/XorStr<0xA8, 21, 0x98751926>("\xDA\xC8\xC3\xC5\xCE\xC2\xD9\xF0\xC7\xDE\xC0\xDF\xD0\xEA\xDE\xDE\xCC\xDB\xD5\xC3" + 0x98751926).s, cvar.rainbow_world_hitbox, 0.0);
+	Sakura::Cvar::New(/*rainbow_world_maplight*/XorStr<0xF1, 23, 0x66E0F8D9>("\x83\x93\x9A\x9A\x97\x99\x80\xA7\x8E\x95\x89\x90\x99\xA1\x92\x61\x71\x6E\x6A\x63\x6D\x72" + 0x66E0F8D9).s, cvar.rainbow_world_maplight, 0.0);
+	Sakura::Cvar::New(/*rainbow_local_glow*/XorStr<0x89, 19, 0xB62A5F4A>("\xFB\xEB\xE2\xE2\xEF\xE1\xF8\xCF\xFD\xFD\xF0\xF5\xF9\xC9\xF0\xF4\xF6\xED" + 0xB62A5F4A).s, cvar.rainbow_local_glow, 0.0);
 }
 
 void SaveCvar()
 {
-	std::ofstream ofs(getHackDirFile(GetCurrentConfig().c_str()).c_str());
-	save_cvars(ofs);
+	std::ofstream ofs(Sakura::File::GetSakuraDir(Sakura::Config::GetCurrent().c_str()).c_str());
+	Sakura::Config::Save(ofs);
 	ofs.close();
 }
 
 void LoadCvar()
 {
 	cvar.init();
-	if (fileExists(getHackDirFile(GetCurrentConfig().c_str()).c_str()))
-		load_cvars();
+	if (Sakura::File::Exists(Sakura::File::GetSakuraDir(Sakura::Config::GetCurrent().c_str()).c_str()))
+		Sakura::Config::Load();
 }
