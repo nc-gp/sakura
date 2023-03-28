@@ -39,11 +39,11 @@ DWORD WINAPI Hook()
 
 	c_Offset.PatchInterpolation();
 
-	initDirectories();
+	Sakura::File::Init();
 
-	getDefaultConfig();
+	Sakura::Config::GetDefault();
 
-	getAllConfigs();
+	Sakura::Config::GetAll();
 
 	LoadCvar();
 

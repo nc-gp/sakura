@@ -459,17 +459,17 @@ void Sakura::Menu::Tabs::Misc::ChatSpammer()
 
 void Sakura::Menu::Tabs::Misc::Config()
 {
-	static int loadedConfig = selectedConfig;
+	static int loadedConfig = Sakura::Config::SelectedConfig;
 
 	ImGui::BeginChild(/*##mc1*/XorStr<0xD6, 6, 0xDEE8EC02>("\xF5\xF4\xB5\xBA\xEB" + 0xDEE8EC02).s, ImVec2(250, -1));
 	{
-		const char** items = new const char*[configs.size()];
+		const char** items = new const char*[Sakura::Config::List.size()];
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
 
-		for (size_t i = 0; i < configs.size(); i++) {
-			char* copy = new char[configs[i].size() + 1];
+		for (size_t i = 0; i < Sakura::Config::List.size(); i++) {
+			char* copy = new char[Sakura::Config::List[i].size() + 1];
 
-			std::strcpy(copy, configs[i].c_str());
+			std::strcpy(copy, Sakura::Config::List[i].c_str());
 
 			items[i] = copy;
 		}
@@ -480,15 +480,15 @@ void Sakura::Menu::Tabs::Misc::Config()
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)ImColor(0, 0, 0, 50));
 		ImGui::BeginListBox(/*##configslist*/XorStr<0x00, 14, 0x769FFB02>("\x23\x22\x61\x6C\x6A\x63\x6F\x60\x7B\x65\x63\x78\x78" + 0x769FFB02).s, ImVec2(250, -1));
 		{
-			for (int i = 0; i < configs.size(); i++)
+			for (int i = 0; i < Sakura::Config::List.size(); i++)
 			{
-				bool is_selected = (selectedConfig == i);
-				if (ImGui::Selectable(configs[i].c_str(), &is_selected))
+				bool is_selected = (Sakura::Config::SelectedConfig == i);
+				if (ImGui::Selectable(Sakura::Config::List[i].c_str(), &is_selected))
 				{
-					selectedConfig = i;
+					Sakura::Config::SelectedConfig = i;
 				}
 
-				if (defaultConfig == i)
+				if (Sakura::Config::DefaultConfig == i)
 				{
 					ImGui::SameLine();
 					ImGui::PushFont(Sakura::Menu::Fonts::icons);
@@ -516,7 +516,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 		ImGui::EndListBox();
 		ImGui::PopStyleColor(4);
 		// is this nessecary?
-		for (size_t i = 0; i < configs.size(); i++) {
+		for (size_t i = 0; i < Sakura::Config::List.size(); i++) {
 			delete[] items[i];  // deallocate the copies of the strings
 		}
 		delete[] items;
@@ -531,7 +531,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 		{
 			std::string e = /*.ini*/XorStr<0x08, 5, 0xF8110B7F>("\x26\x60\x64\x62" + 0xF8110B7F).s;
 			std::string temp = newconfig + e;
-			configs.push_back(temp);
+			Sakura::Config::List.push_back(temp);
 
 			Toast::Create({ 3, /*Created config %s*/XorStr<0xD0,18,0x49BAC5C2>("\x93\xA3\xB7\xB2\xA0\xB0\xB2\xF7\xBB\xB6\xB4\xBD\xB5\xBA\xFE\xFA\x93" + 0x49BAC5C2).s, temp.c_str() });
 		}
@@ -541,9 +541,8 @@ void Sakura::Menu::Tabs::Misc::Config()
 		if (Sakura::Menu::Widgets::Button(/*Load config*/XorStr<0xE3, 12, 0x042819E3>("\xAF\x8B\x84\x82\xC7\x8B\x86\x84\x8D\x85\x8A" + 0x042819E3).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			LoadCvar();
-			loadedConfig = selectedConfig;
-			Toast::Create({ 3, /*Loaded config %s*/XorStr<0xAC,17,0x6F567414>("\xE0\xC2\xCF\xCB\xD5\xD5\x92\xD0\xDB\xDB\xD0\xDE\xDF\x99\x9F\xC8" + 0x6F567414).s, configs[selectedConfig].c_str() });
-
+			loadedConfig = Sakura::Config::SelectedConfig;
+ 
 			if (cvar.gui_key < 0 || cvar.gui_key > 254)
 				cvar.gui_key = K_INS;
 		}
@@ -551,27 +550,27 @@ void Sakura::Menu::Tabs::Misc::Config()
 		if (Sakura::Menu::Widgets::Button(/*Save Config*/XorStr<0x8F, 12, 0x7F254F47>("\xDC\xF1\xE7\xF7\xB3\xD7\xFA\xF8\xF1\xF1\xFE" + 0x7F254F47).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			SaveCvar();
-			Toast::Create({ 3, /*Saved config %s*/XorStr<0x85,16,0x55B424ED>("\xD6\xE7\xF1\xED\xED\xAA\xE8\xE3\xE3\xE8\xE6\xF7\xB1\xB7\xE0" + 0x55B424ED).s, configs[selectedConfig].c_str() });
+			Toast::Create({ 3, /*Saved config %s*/XorStr<0x85,16,0x55B424ED>("\xD6\xE7\xF1\xED\xED\xAA\xE8\xE3\xE3\xE8\xE6\xF7\xB1\xB7\xE0" + 0x55B424ED).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str() });
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Reload Config*/XorStr<0xA1, 14, 0xAF8631AF>("\xF3\xC7\xCF\xCB\xC4\xC2\x87\xEB\xC6\xC4\xCD\xC5\xCA" + 0xAF8631AF).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			LoadCvar();
-			Toast::Create({ 3, /*Reloaded config %s*/XorStr<0xC8,19,0x69BECD03>("\x9A\xAC\xA6\xA4\xAD\xA9\xAB\xAB\xF0\xB2\xBD\xBD\xB2\xBC\xB1\xF7\xFD\xAA" + 0x69BECD03).s, configs[selectedConfig].c_str() });
+			Toast::Create({ 3, /*Reloaded config %s*/XorStr<0xC8,19,0x69BECD03>("\x9A\xAC\xA6\xA4\xAD\xA9\xAB\xAB\xF0\xB2\xBD\xBD\xB2\xBC\xB1\xF7\xFD\xAA" + 0x69BECD03).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str() });
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Make Config Default*/XorStr<0xFA, 20, 0x11A0245F>("\xB7\x9A\x97\x98\xDE\xBC\x6F\x6F\x64\x6A\x63\x25\x42\x62\x6E\x68\x7F\x67\x78" + 0x11A0245F).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
-			defaultConfig = selectedConfig;
-			saveDefaultConfig();
-			Toast::Create({ 3, /*Config %s is now default!*/XorStr<0xC6,26,0x1E02EDE2>("\x85\xA8\xA6\xAF\xA3\xAC\xEC\xE8\xBD\xEF\xB9\xA2\xF2\xBD\xBB\xA2\xF6\xB3\xBD\xBF\xBB\xAE\xB0\xA9\xFF" + 0x1E02EDE2).s, configs[selectedConfig].c_str() });
+			Sakura::Config::DefaultConfig = Sakura::Config::SelectedConfig;
+			Sakura::Config::SaveDefault();
+			Toast::Create({ 3, /*Config %s is now default!*/XorStr<0xC6,26,0x1E02EDE2>("\x85\xA8\xA6\xAF\xA3\xAC\xEC\xE8\xBD\xEF\xB9\xA2\xF2\xBD\xBB\xA2\xF6\xB3\xBD\xBF\xBB\xAE\xB0\xA9\xFF" + 0x1E02EDE2).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str() });
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Reload Lua*/XorStr<0x12, 11, 0x8D4E7E59>("\x40\x76\x78\x7A\x77\x73\x38\x55\x6F\x7A" + 0x8D4E7E59).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			Sakura::Lua::Reload();
 			Sakura::Sound::ReInit();
-			Toast::Create({ 3, /*Reloaded LUA*/XorStr<0xA8,13,0x688BFE62>("\xFA\xCC\xC6\xC4\xCD\xC9\xCB\xCB\x90\xFD\xE7\xF2" + 0x688BFE62).s, configs[selectedConfig].c_str() });
+			Toast::Create({ 3, /*Reloaded LUA*/XorStr<0xA8,13,0x688BFE62>("\xFA\xCC\xC6\xC4\xCD\xC9\xCB\xCB\x90\xFD\xE7\xF2" + 0x688BFE62).s });
 		}
 
 		ImGui::Spacing();
