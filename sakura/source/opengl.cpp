@@ -134,21 +134,14 @@ void HookOpenGL()
 	if (g_Studio.IsHardware() != 1)
 		c_Offset.Error(/*Please run game in OpenGL renderer mode*/XorStr<0xC7, 40, 0xBEF8CBD8>("\x97\xA4\xAC\xAB\xB8\xA9\xED\xBC\xBA\xBE\xF1\xB5\xB2\xB9\xB0\xF6\xBE\xB6\xF9\x95\xAB\xB9\xB3\x99\x93\xC0\x93\x87\x8D\x80\x80\x94\x82\x9A\xC9\x87\x84\x88\x88" + 0xBEF8CBD8).s);
 
-	HMODULE hmOpenGL = GetModuleHandle("opengl32.dll"); 
+	HMODULE hmOpenGL = GetModuleHandle(/*opengl32.dll*/XorStr<0x51, 13, 0xAE85D301>("\x3E\x22\x36\x3A\x32\x3A\x64\x6A\x77\x3E\x37\x30" + 0xAE85D301).s);
 	if (hmOpenGL)
 	{
-		// no smoke works.
-		// well its only for my intel hd graphics, i can guess its pointless to compile it with it and share
-		// -- thanks for bloodsharp
-		//pglBegin = (glBegin_t)DetourFunction((LPBYTE)(DWORD)GetModuleHandle("ig7icd32.dll") + 0x4306C0, (LPBYTE)&Hooked_glBegin);
-		//pglVertex3fv = (glVertex3fv_t)DetourFunction((PBYTE)(DWORD)GetModuleHandle("ig7icd32.dll") + 0x441540, (PBYTE)&Hooked_glVertex3fv);
-		//pglClear = (glClear_t)DetourFunction((PBYTE)(DWORD)GetModuleHandle("ig7icd32.dll") + 0x431580, (LPBYTE)&Hooked_glClear);
-
-		pglBegin = (glBegin_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, "glBegin"), (LPBYTE)&Hooked_glBegin);
-		pglVertex3fv = (glVertex3fv_t)DetourFunction((PBYTE)GetProcAddress(hmOpenGL, "glVertex3fv"), (PBYTE)&Hooked_glVertex3fv);
-		pwglSwapBuffers = (wglSwapBuffers_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, "wglSwapBuffers"), (LPBYTE)&Hooked_wglSwapBuffers);
-		pglClear = (glClear_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, "glClear"), (LPBYTE)&Hooked_glClear);
-		pglColor4f = (glColor4f_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, "glColor4f"), (LPBYTE)&Hooked_glColor4f);
+		pglBegin = (glBegin_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*glBegin*/XorStr<0xC7, 8, 0x5EB5E8CF>("\xA0\xA4\x8B\xAF\xAC\xA5\xA3" + 0x5EB5E8CF).s), (LPBYTE)&Hooked_glBegin);
+		pglVertex3fv = (glVertex3fv_t)DetourFunction((PBYTE)GetProcAddress(hmOpenGL, /*glVertex3fv*/XorStr<0xCE, 12, 0x2C9B6811>("\xA9\xA3\x86\xB4\xA0\xA7\xB1\xAD\xE5\xB1\xAE" + 0x2C9B6811).s), (PBYTE)&Hooked_glVertex3fv);
+		pwglSwapBuffers = (wglSwapBuffers_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*wglSwapBuffers*/XorStr<0xDD, 15, 0xE3ADB53A>("\xAA\xB9\xB3\xB3\x96\x83\x93\xA6\x90\x80\x81\x8D\x9B\x99" + 0xE3ADB53A).s), (LPBYTE)&Hooked_wglSwapBuffers);
+		pglClear = (glClear_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*glClear*/XorStr<0xC0, 8, 0xA3ECAB25>("\xA7\xAD\x81\xAF\xA1\xA4\xB4" + 0xA3ECAB25).s), (LPBYTE)&Hooked_glClear);
+		pglColor4f = (glColor4f_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*glColor4f*/XorStr<0x20, 10, 0x256769FD>("\x47\x4D\x61\x4C\x48\x4A\x54\x13\x4E" + 0x256769FD).s), (LPBYTE)&Hooked_glColor4f);
 		//pglReadPixels = (glReadPixels_t)DetourFunction((PBYTE)GetProcAddress(hmOpenGL, "glReadPixels"), (PBYTE)Hooked_glReadPixels);
 	}
 }

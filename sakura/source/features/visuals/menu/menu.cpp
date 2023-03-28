@@ -141,12 +141,12 @@ char* KeyEventChar(int Key)
 void Sakura::Menu::HudKeyBind(float& key, const char* keyname, ImVec2 size, bool old)
 {
 	char str[256];
-	char* buttonText;
+	char buttonText[256];
 	ImVec4 buttonColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	if (key == -2)
 	{
-		for (unsigned int i = 0; i < 255; i++)
+		for (size_t i = 0; i < 255; ++i)
 		{
 			if (keysmenu[i])
 			{
@@ -162,23 +162,23 @@ void Sakura::Menu::HudKeyBind(float& key, const char* keyname, ImVec2 size, bool
 
 	if (key == -1)
 	{
-		buttonText = "No key";
+		sprintf(buttonText, /*No key*/XorStr<0xEE, 7, 0x92F31899>("\xA0\x80\xD0\x9A\x97\x8A" + 0x92F31899).s);
 		buttonColor = ImVec4(1.0f, 0.3f, 0.3f, 1.0f);
 	}
 	else if (key == -2)
 	{
-		buttonText = "Press key";
+		sprintf(buttonText, /*Press key*/XorStr<0xE7, 10, 0x8231A863>("\xB7\x9A\x8C\x99\x98\xCC\x86\x8B\x96" + 0x8231A863).s);
 		buttonColor = ImVec4(1.0f, 1.0f, 0.3f, 1.0f);
 	}
 	else
 	{
-		buttonText = KeyEventChar(key);
+		sprintf(buttonText, /*%s*/XorStr<0xB6, 3, 0x1E897BEB>("\x93\xC4" + 0x1E897BEB).s, KeyEventChar(key));
 		buttonColor = ImVec4(0.3f, 1.0f, 0.3f, 1.0f);
 	}
 
 	ImGui::Text(keyname);
 	ImGui::PushStyleColor(ImGuiCol_Text, buttonColor);
-	sprintf(str, "[%s]##%s", buttonText, keyname);
+	sprintf(str, /*[%s]##%s*/XorStr<0x40, 9, 0xC020EFB0>("\x1B\x64\x31\x1E\x67\x66\x63\x34" + 0xC020EFB0).s, buttonText, keyname);
 
 	if (old)
 	{
@@ -202,62 +202,6 @@ void Sakura::Menu::HudKeyBind(float& key, const char* keyname, ImVec2 size, bool
 	}
 
 	ImGui::PopStyleColor();
-
-	/*bool clicked = false;
-	char str[256];
-
-	if (key == -2)
-	{
-		for (unsigned int i = 0; i < 255; i++)
-		{
-			if (keysmenu[i])
-			{
-				if (i == K_ESCAPE || i == cvar.gui_key)
-				{
-					key = -1;
-					break;
-				}
-				key = i;
-			}
-		}
-	}
-	
-	if (key == -1)
-	{
-		ImGui::Text(keyname);
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
-		sprintf(str, "[No key]##%s", keyname);
-
-		if (Sakura::Menu::Widgets::Button(str, ImVec2(ImGui::GetWindowSize().x - 6, 0)))
-			clicked = true;
-		ImGui::PopStyleColor();
-	}
-	else if (key == -2)
-	{
-		ImGui::Text(keyname);
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.3f, 1.0f));
-		sprintf(str, "[Press key]##%s", keyname);
-		if (Sakura::Menu::Widgets::Button(str, ImVec2(ImGui::GetWindowSize().x - 6, 0)))
-			clicked = true;
-		ImGui::PopStyleColor();
-	}
-	else
-	{
-		ImGui::Text(keyname);
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.3f, 1.0f, 0.3f, 1.0f));
-		sprintf(str, "[%s]##%s", KeyEventChar(key), keyname);
-		if (Sakura::Menu::Widgets::Button(str, ImVec2(ImGui::GetWindowSize().x - 6, 0)))
-			clicked = true;
-		ImGui::PopStyleColor();
-	}
-
-	if (clicked)
-	{
-		if (key == -1)
-			key = -2;
-		else
-			key = -1;
-	}*/
 }
 
 void Sakura::Menu::HudMenuBind(float& key)
@@ -268,7 +212,7 @@ void Sakura::Menu::HudMenuBind(float& key)
 		restorekey = key;
 	if (key == -1)
 	{
-		for (unsigned int i = 0; i < 255; i++)
+		for (size_t i = 0; i < 255; ++i)
 		{
 			if (keysmenu[i])
 			{
@@ -291,7 +235,7 @@ void Sakura::Menu::HudMenuBind(float& key)
 		ImGui::Text(/*Menu Key*/XorStr<0xE3, 9, 0x08372CD0>("\xAE\x81\x8B\x93\xC7\xA3\x8C\x93" + 0x08372CD0).s);
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.4f, 1.0f, 0.4f, 1.0f));
 		char str[256];
-		sprintf(str, "[%s]", KeyEventChar(key));
+		sprintf(str, /*[%s]*/XorStr<0x4A, 5, 0x7D8BC00E>("\x11\x6E\x3F\x10" + 0x7D8BC00E).s, KeyEventChar(key));
 		if (Sakura::Menu::Widgets::Button(str, ImVec2(ImGui::GetWindowSize().x - 6, 0)))
 			clicked = true;
 		ImGui::PopStyleColor();
@@ -1060,11 +1004,6 @@ void DrawMenuWindow()
 		}
 		ImGui::EndGroup();
 
-		static bool checkboxbool = false;
-		static int sliderint = 254;
-		static int comboint = 1;
-		static float coloredit[3] = { 0.f,0.f,0.f };
-
 		ImGui::SetCursorPos({ 170,60 });
 		ImGui::BeginGroup();
 		{
@@ -1088,6 +1027,4 @@ void DrawMenuWindow()
 	}
 	ImGui::End();
 	ImGui::PopStyleVar();
-
-	//ImGui::ShowDemoWindow();
 }

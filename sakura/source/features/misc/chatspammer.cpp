@@ -12,7 +12,7 @@ void Sakura::ChatSpammer::Logic()
 			return;
 
 		char chCommand[256];
-		sprintf(chCommand, "say \"%s\"", chatspam);
+		sprintf(chCommand, /*say "%s"*/XorStr<0xC3, 9, 0x3563E87F>("\xB0\xA5\xBC\xE6\xE5\xED\xBA\xE8" + 0x3563E87F).s, chatspam);
 		g_Engine.pfnClientCmd(chCommand);
 
 		timer = GetTickCount();

@@ -52,8 +52,8 @@ void Sakura::Player::Local::RunCommands()
 	static bool run = true;
 	if (run)
 	{
-		g_Engine.pfnClientCmd("setinfo revemu 1"); // for steam id changer, some server kicks if doesn't have it
-		g_Engine.pfnClientCmd("cl_showfps 1");
+		g_Engine.pfnClientCmd(/*setinfo revemu 1*/XorStr<0x23, 17, 0xBC7A175D>("\x50\x41\x51\x4F\x49\x4E\x46\x0A\x59\x49\x5B\x4B\x42\x45\x11\x03" + 0xBC7A175D).s); // for steam id changer, some server kicks if doesn't have it
+		g_Engine.pfnClientCmd(/*cl_showfps 1*/XorStr<0x3A, 13, 0xCF3B35C8>("\x59\x57\x63\x4E\x56\x50\x37\x27\x32\x30\x64\x74" + 0xCF3B35C8).s);
 		run = false;
 	}
 }

@@ -34,8 +34,8 @@ void Sakura::Light::Studio(alight_s* plight)
 	bool isPlayerFake	= ent && ent->player && Sakura::Player::IsAlive(ent->index) && ent == &g_Player[ent->index].playerHistory;
 	bool isLocalPlayer	= ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1 && ent != &g_Player[ent->index].playerHistory && ent != &g_Player[ent->index].playerDeathMark[0] && ent != &g_Player[ent->index].playerDeathMark[1];
 	bool isLocalFake	= ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1 && ent == &g_Player[ent->index].playerHistory;
-	bool ViewModel		= ent && ent == g_Engine.GetViewModel() && strstr(ent->model->name, "v_");
-	bool World			= ent && ent->model && strstr(ent->model->name, "/w_") && ent != g_Engine.GetViewModel();
+	bool ViewModel		= ent && ent == g_Engine.GetViewModel() && strstr(ent->model->name, /*v_*/XorStr<0x42, 3, 0xAED4A0FB>("\x34\x1C" + 0xAED4A0FB).s);
+	bool World			= ent && ent->model && strstr(ent->model->name, /*/w_*/XorStr<0xC8, 4, 0xF6F554A1>("\xE7\xBE\x95" + 0xF6F554A1).s) && ent != g_Engine.GetViewModel();
 
 	if (isLocalPlayer && cvar.visual_lambert_local)
 	{

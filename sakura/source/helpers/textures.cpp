@@ -9,7 +9,7 @@ void Sakura::Texture::Load(char* image, int index)
 {
 	char filename[256];
 	int width, height;
-	sprintf(filename, "%s%s", hackdir, image);
+	sprintf(filename, /*%s%s*/XorStr<0x38,5,0x2CF53EB1>("\x1D\x4A\x1F\x48" + 0x2CF53EB1).s, hackdir, image);
 
 	GLint last_texture;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
@@ -146,7 +146,7 @@ void Sakura::Texture::PM_InitTextureTypes(struct playermove_s *ppmove)
 	gcTextures = 0;
 	memset(buffer, 0, sizeof(buffer));
 
-	pMemFile = ppmove->COM_LoadFile("sound/materials.txt", 5, &fileSize);
+	pMemFile = ppmove->COM_LoadFile(/*sound/materials.txt*/XorStr<0xAF, 20, 0xF52E903C>("\xDC\xDF\xC4\xDC\xD7\x9B\xD8\xD7\xC3\xDD\xCB\xD3\xDA\xD0\xCE\x90\xCB\xB8\xB5" + 0xF52E903C).s, 5, &fileSize);
 	if (!pMemFile)
 		return;
 

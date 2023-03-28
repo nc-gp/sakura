@@ -1,26 +1,5 @@
 ﻿#include "../../client.h"
 
-//void Sakura::Name::Green()
-//{
-//	char chCommand[64];
-//	sprintf(chCommand, u8"name \"green name player\"");
-//	g_Engine.pfnClientCmd(chCommand);
-//}
-//
-//void Sakura::Name::Custom()
-//{
-//	char chCommand[64];
-//	sprintf(chCommand, u8"name \"%s ᲼\"", nickname);
-//	g_Engine.pfnClientCmd(chCommand);
-//}
-//
-//void Sakura::Name::Invisible()
-//{
-//	char chCommand[64];
-//	sprintf(chCommand, u8"name \" ᲼\"");
-//	g_Engine.pfnClientCmd(chCommand);
-//}
-
 void Sakura::Name::Stealer()
 {
 	static DWORD timer = GetTickCount();

@@ -118,17 +118,17 @@ void CalculateCrosshairSize()
 	}
 	else
 	{
-		if (strcmp(value, "0"))
+		if (strcmp(value, /*0*/XorStr<0xA7, 2, 0x0AEA113E>("\x97" + 0x0AEA113E).s))
 			size = -1;
 	}
 
-	if (!_stricmp(value, "auto"))
+	if (!_stricmp(value, /*auto*/XorStr<0x2C, 5, 0xE7498968>("\x4D\x58\x5A\x40" + 0xE7498968).s))
 		size = 0;
-	else if (!_stricmp(value, "small"))
+	else if (!_stricmp(value, /*small*/XorStr<0xA3, 6, 0x9243861C>("\xD0\xC9\xC4\xCA\xCB" + 0x9243861C).s))
 		size = 1;
-	else if (!_stricmp(value, "medium"))
+	else if (!_stricmp(value, /*medium*/XorStr<0x5E, 7, 0x201C1AFA>("\x33\x3A\x04\x08\x17\x0E" + 0x201C1AFA).s))
 		size = 2;
-	else if (!_stricmp(value, "large"))
+	else if (!_stricmp(value, /*large*/XorStr<0xBA, 6, 0xB7094970>("\xD6\xDA\xCE\xDA\xDB" + 0xB7094970).s))
 		size = 3;
 
 	if (size == -1)
@@ -273,8 +273,8 @@ void DrawCrossHair()
 		int init = false;
 		if (!init)
 		{
-			cl_dynamiccrosshair = g_Engine.pfnGetCvarPointer("cl_dynamiccrosshair");
-			cl_crosshair_size = g_Engine.pfnGetCvarPointer("cl_crosshair_size");
+			cl_dynamiccrosshair = g_Engine.pfnGetCvarPointer(/*cl_dynamiccrosshair*/XorStr<0x3B, 20, 0xB4365C5E>("\x58\x50\x62\x5A\x46\x2E\x20\x2F\x2A\x27\x26\x34\x28\x3B\x3A\x22\x2A\x25\x3F" + 0xB4365C5E).s);
+			cl_crosshair_size = g_Engine.pfnGetCvarPointer(/*cl_crosshair_size*/XorStr<0x6E, 18, 0x90D23F42>("\x0D\x03\x2F\x12\x00\x1C\x07\x06\x1E\x16\x11\x0B\x25\x08\x15\x07\x1B" + 0x90D23F42).s);
 			init = true;
 		}
 		if (iWeaponAccuracyFlags != 0 && cl_dynamiccrosshair && cl_dynamiccrosshair->value != 0.0)

@@ -8,6 +8,11 @@ model_s* m_MapSprites;
 float RadarAngle[3];
 float RadarOrg[3];
 
+int radarPosX = 0;
+int radarPosY = 0;
+int radarSizeX = 150;
+int radarSizeY = 150;
+
 void GetRadarAngle(ref_params_s* pparams)
 {
 	RadarAngle[0] = pparams->viewangles[0];
@@ -39,10 +44,10 @@ bool ParseOverview(char* overview_txt)
 		pfile = g_Engine.COM_ParseFile(pfile, token);
 		if (!pfile)
 			break;
-		if (!_stricmp(token, "global"))
+		if (!_stricmp(token, /*global*/XorStr<0x1F, 7, 0x42A3312E>("\x78\x4C\x4E\x40\x42\x48" + 0x42A3312E).s))
 		{
 			pfile = g_Engine.COM_ParseFile(pfile, token);
-			if (strcmp(token, "{"))
+			if (strcmp(token, /*{*/XorStr<0x9B, 2, 0xE15DD81B>("\xE0" + 0xE15DD81B).s))
 			{
 				MapLoaded = false;
 				return false;
@@ -50,14 +55,14 @@ bool ParseOverview(char* overview_txt)
 			pfile = g_Engine.COM_ParseFile(pfile, token);
 			if (!pfile)
 				break;
-			while (strcmp(token, "}"))
+			while (strcmp(token, /*}*/XorStr<0x97, 2, 0xEB6E3416>("\xEA" + 0xEB6E3416).s))
 			{
-				if (!_stricmp(token, "zoom"))
+				if (!_stricmp(token, /*zoom*/XorStr<0x5F, 5, 0x8A503250>("\x25\x0F\x0E\x0F" + 0x8A503250).s))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.zoom = (float)atof(token);
 				}
-				else if (!_stricmp(token, "origin"))
+				else if (!_stricmp(token, /*origin*/XorStr<0xC4, 7, 0x9A470B1C>("\xAB\xB7\xAF\xA0\xA1\xA7" + 0x9A470B1C).s))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.origin[0] = (float)atof(token);
@@ -66,7 +71,7 @@ bool ParseOverview(char* overview_txt)
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.origin[2] = (float)atof(token);
 				}
-				else if (!_stricmp(token, "rotated"))
+				else if (!_stricmp(token, /*rotated*/XorStr<0xED, 8, 0xB7F39BC9>("\x9F\x81\x9B\x91\x85\x97\x97" + 0xB7F39BC9).s))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.rotated = atoi(token);
@@ -74,23 +79,23 @@ bool ParseOverview(char* overview_txt)
 				pfile = g_Engine.COM_ParseFile(pfile, token);
 			}
 		}
-		else if (!_stricmp(token, "layer"))
+		else if (!_stricmp(token, /*layer*/XorStr<0x36, 6, 0xB998DD35>("\x5A\x56\x41\x5C\x48" + 0xB998DD35).s))
 		{
 			pfile = g_Engine.COM_ParseFile(pfile, token);
-			if (strcmp(token, "{"))
+			if (strcmp(token, /*{*/XorStr<0xD7, 2, 0x077E3948>("\xAC" + 0x077E3948).s))
 			{
 				MapLoaded = false;
 				return false;
 			}
 			pfile = g_Engine.COM_ParseFile(pfile, token);
-			while (strcmp(token, "}"))
+			while (strcmp(token, /*}*/XorStr<0x90, 2, 0xF2ABD442>("\xED" + 0xF2ABD442).s))
 			{
-				if (!_stricmp(token, "image"))
+				if (!_stricmp(token, /*image*/XorStr<0xA2, 6, 0x43204E60>("\xCB\xCE\xC5\xC2\xC3" + 0x43204E60).s))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					strcpy(m_OverviewData.layersImages[m_OverviewData.layers], token);
 				}
-				else if (!_stricmp(token, "height"))
+				else if (!_stricmp(token, /*height*/XorStr<0x53, 7, 0x539EB664>("\x3B\x31\x3C\x31\x3F\x2C" + 0x539EB664).s))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					float height = (float)atof(token);
@@ -113,9 +118,9 @@ void LoadOverview(char* levelname)
 		return;
 
 	if (levelname[0] == 0)
-		strcpy(levelname, "cs_miltia");
+		strcpy(levelname, /*cs_miltia*/XorStr<0xA5, 10, 0xAB4CA845>("\xC6\xD5\xF8\xC5\xC0\xC6\xDF\xC5\xCC" + 0xAB4CA845).s);
 
-	sprintf(overview_txt, "overviews/%s.txt", levelname);
+	sprintf(overview_txt, /*overviews/%s.txt*/XorStr<0x3E, 17, 0x4F2C5C0C>("\x51\x49\x25\x33\x34\x2A\x21\x32\x35\x68\x6D\x3A\x64\x3F\x34\x39" + 0x4F2C5C0C).s, levelname);
 
 	if (!ParseOverview(overview_txt))
 	{
@@ -415,16 +420,16 @@ void DrawOverview()
 {
 	if (cvar.radar)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(80.0f, 80.0f));
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(80.f, 80.f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 1.f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 2.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.f, 0.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.f, 0.f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0.f, 0.f));
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, cvar.radar_background_opacity / 100.f));
-		ImGui::SetNextWindowPos(ImVec2(cvar.radar_pos_x, cvar.radar_pos_y), ImGuiCond_Once);
-		ImGui::SetNextWindowSize(ImVec2(cvar.radar_size_x, cvar.radar_size_y), ImGuiCond_Once);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.f, 0.f, 0.f, 0.f));
+		ImGui::SetNextWindowPos(ImVec2(radarPosX, radarPosY), ImGuiCond_Once);
+		ImGui::SetNextWindowSize(ImVec2(radarSizeX, radarSizeY), ImGuiCond_Once);
 		ImGui::Begin(/*radaroverview*/XorStr<0xBE, 14, 0xFBE090F2>("\xCC\xDE\xA4\xA0\xB0\xAC\xB2\xA0\xB4\xB1\xA1\xAC\xBD" + 0xFBE090F2).s, NULL, ImGuiWindowFlags_NoTitleBar);
 		{
 			iX = ImGui::GetCursorScreenPos().x;
@@ -449,10 +454,10 @@ void DrawOverview()
 					checkw = ImGui::GetWindowSize().x;
 					checkh = ImGui::GetWindowSize().y;
 
-					cvar.radar_pos_x = (int)ImGui::GetWindowPos().x;
-					cvar.radar_pos_y = (int)ImGui::GetWindowPos().y;
-					cvar.radar_size_x = (int)ImGui::GetWindowSize().x;
-					cvar.radar_size_y = (int)ImGui::GetWindowSize().y;
+					radarPosX = (int)ImGui::GetWindowPos().x;
+					radarPosY = (int)ImGui::GetWindowPos().y;
+					radarSizeX = (int)ImGui::GetWindowSize().x;
+					radarSizeY = (int)ImGui::GetWindowSize().y;
 
 					SaveCvar();
 				}

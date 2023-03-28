@@ -20,7 +20,7 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 	if (!fOrigin)
 		return;
 
-	if (cvar.misc_fire_sounds && strstr(szSoundFile, "weapons"))
+	if (cvar.misc_fire_sounds && strstr(szSoundFile, /*weapons*/XorStr<0x38, 8, 0x1B96AECA>("\x4F\x5C\x5B\x4B\x53\x53\x4D" + 0x1B96AECA).s))
 	{
 		realDynamicSoundVolume = cvar.misc_fire_sounds_volume / 100.f;
 		iPitch = cvar.misc_fire_sounds_pitch;
@@ -95,7 +95,7 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 			{
 				if (script.GetState())
 				{
-					Sakura::Lua::Error("Error has occured in the lua script: %s", error.what());
+					Sakura::Lua::Error(/*Error has occured in the lua "Dynamic Sound" script: %s*/XorStr<0x4F, 56, 0x58589174>("\x0A\x22\x23\x3D\x21\x74\x3D\x37\x24\x78\x36\x39\x38\x29\x2F\x3B\x3B\x40\x08\x0C\x43\x10\x0D\x03\x47\x04\x1C\x0B\x4B\x4E\x29\x17\x01\x11\x1C\x1B\x10\x54\x26\x19\x02\x16\x1D\x58\x5B\x0F\x1E\x0C\x16\xF0\xF5\xB8\xA3\xA1\xF6" + 0x58589174).s, error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -152,10 +152,14 @@ void Sakura::Esp::DrawSoundIndex()
 		float vTop[2], vBot[2];
 		if (WorldToScreen(vPointTop, vTop) && WorldToScreen(vPointBot, vBot))
 		{
-			float h = IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), w = h, x = IM_ROUND(vTop[0]) - IM_ROUND(w / 2), y = IM_ROUND(vTop[1]), xo = IM_ROUND(vTop[0]);
+			float h = vTop[1] - vBot[1]; 
+			float w = h;
+			float x = vTop[0] - (w / 2);
+			float y = vTop[1];
+
 			Player::DrawBox(x, y, w, h, soundEspColor);
 			Player::DrawHealth(sound_index.index, x, y, h);
-			Player::DrawName(sound_index.index, xo, y);
+			Player::DrawName(sound_index.index, x + (w / 2), y);
 			Player::DrawVip(sound_index.index, x + w, y);
 		}
 	}
@@ -191,7 +195,12 @@ void Sakura::Esp::DrawSoundNoIndex()
 		float vTop[2], vBot[2];
 		if (WorldToScreen(vPointTop, vTop) && WorldToScreen(vPointBot, vBot))
 		{
-			Player::DrawBox(IM_ROUND(vTop[0]) - IM_ROUND((IM_ROUND(vBot[1]) - IM_ROUND(vTop[1])) / 2), IM_ROUND(vTop[1]), IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), IM_ROUND(vBot[1]) - IM_ROUND(vTop[1]), soundStepsColor);
+			float h = vTop[1] - vBot[1];
+			float w = h;
+			float x = vTop[0] - (w / 2);
+			float y = vTop[1];
+
+			Player::DrawBox(x, y, w, h, soundStepsColor);
 		}
 	}
 }

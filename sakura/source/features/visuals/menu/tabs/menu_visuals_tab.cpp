@@ -69,7 +69,7 @@ void Sakura::Menu::Tabs::Visuals::PlayerEsp()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild("##vp2", ImVec2(250, -1));
+	ImGui::BeginChild(/*##vp2*/XorStr<0xD4, 6, 0xA7365A95>("\xF7\xF6\xA0\xA7\xEA" + 0xA7365A95).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Snaplines Thickness*/XorStr<0x98, 20, 0xDB2F859B>("\xCB\xF7\xFB\xEB\xF0\xF4\xF0\xFA\xD3\x81\xF6\xCB\xCD\xC6\xCD\xC9\xCD\xDA\xD9" + 0xDB2F859B).s, &cvar.visual_lines_thickness, 1.f, 10.f, "%.0f");
@@ -443,9 +443,8 @@ void Sakura::Menu::Tabs::Visuals::Radar()
 	ImGui::BeginChild(/*##vr2*/XorStr<0xB8, 6, 0xD80C97D0>("\x9B\x9A\xCC\xC9\x8E" + 0xD80C97D0).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*Radar zoom*/XorStr<0x41, 11, 0x1B203E28>("\x13\x23\x27\x25\x37\x66\x3D\x27\x26\x27" + 0x1B203E28).s, &cvar.radar_zoom, 1, 10, "%.1f");
-		Sakura::Menu::Widgets::SliderFloat(/*Radar point size*/XorStr<0x5C, 17, 0x0A9E8068>("\x0E\x3C\x3A\x3E\x12\x41\x12\x0C\x0D\x0B\x12\x47\x1B\x00\x10\x0E" + 0x0A9E8068).s, &cvar.radar_point_size, 5, 25, "%.1f");
-		Sakura::Menu::Widgets::SliderFloat(/*Radar background opacity*/XorStr<0xF2, 25, 0x606CEFB3>("\xA0\x92\x90\x94\x84\xD7\x9A\x98\x99\x90\x9B\x8F\x91\x8A\x6E\x65\x22\x6C\x74\x64\x65\x6E\x7C\x70" + 0x606CEFB3).s, &cvar.radar_background_opacity, 0.f, 100.f, "%.1f%%");
+		Sakura::Menu::Widgets::SliderFloat(/*Zoom*/XorStr<0x31, 5, 0xAFDFD136>("\x6B\x5D\x5C\x59" + 0xAFDFD136).s, &cvar.radar_zoom, 1, 10, "%.1f");
+		Sakura::Menu::Widgets::SliderFloat(/*Point size*/XorStr<0x37, 11, 0xD74C12C2>("\x67\x57\x50\x54\x4F\x1C\x4E\x57\x45\x25" + 0xD74C12C2).s, &cvar.radar_point_size, 5, 25, "%.1f");
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();

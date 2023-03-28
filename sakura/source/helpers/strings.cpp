@@ -9,7 +9,7 @@ std::string Sakura::Strings::getfilename(std::string path)
 
 std::string Sakura::Strings::strip(std::string path)
 {
-	size_t dot = path.find("models/");
+	size_t dot = path.find(/*models/*/XorStr<0xF5, 8, 0x83174FF8>("\x98\x99\x93\x9D\x95\x89\xD4" + 0x83174FF8).s);
 	path.erase(path.begin(), path.begin() + dot + 1);
 	return path;
 }
