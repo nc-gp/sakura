@@ -36,9 +36,16 @@ void Toast::Render()
 
 		int label_size = ImGui::CalcTextSize(text.c_str(), NULL, true).x;
 
+		int remaining_time = currentToast->get_duration() - (GetTickCount() - currentToast->get_creation_time());
+		if (remaining_time < 0) remaining_time = 0;
+
+		int bg_width = remaining_time * (label_size + 12) / currentToast->get_duration();
+		if (bg_width > label_size + 12) bg_width = label_size + 12;
+
 		if (!cvar.notifications_text_only)
 		{
 			ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + label_size + 12, Screen.y + 16 }, ImColor(0.2f, 0.2f, 0.2f, opacity), 8);
+			ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + bg_width, Screen.y + 16 }, ImColor(1.f, 1.f, 1.f, opacity - 0.8f), 8);
 			ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + 4, Screen.y + 16 }, Sakura::Menu::GetMenuColor(opacity));
 		}
 		

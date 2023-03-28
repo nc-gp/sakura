@@ -1,5 +1,5 @@
-#ifndef _MODE_
-#define _MODE_
+#ifndef _TOAST_
+#define _TOAST_
 
 typedef int ToastPhase;
 
@@ -22,7 +22,11 @@ private:
 public:
 	auto get_title() -> std::string { return this->text; }
 
+	auto get_duration() -> int { return this->seconds; }
+
 	auto get_elapsed_time() { return GetTickCount() - this->creationTime; }
+
+	auto get_creation_time() -> uint64_t { return this->creationTime; }
 
 	auto get_phase() -> const ToastPhase
 	{
