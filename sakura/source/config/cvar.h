@@ -243,6 +243,7 @@ public:
 	float visual_vip;
 
 	float visual_weapon_local;
+	float visual_weapon_noanim;
 
 	float visual_lightmap;
 	float visual_lightmap_color[4];

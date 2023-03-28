@@ -192,6 +192,9 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 	if (Sakura::Player::Local::InGame() && Sakura::Player::Local::IsAlive())
 	{
 		Backtrack::FakeLatency();
+
+		if (cvar.visual_weapon_noanim)
+			g_Engine.pfnWeaponAnim(0, 0);
 	}
 
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)

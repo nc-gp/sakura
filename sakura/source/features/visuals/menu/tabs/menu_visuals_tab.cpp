@@ -313,6 +313,7 @@ void Sakura::Menu::Tabs::Visuals::LocalWeapon()
 		Sakura::Menu::Widgets::Checkbox(/*Chams Wireframe*/XorStr<0xC0, 16, 0xD8820FFE>("\x83\xA9\xA3\xAE\xB7\xE5\x91\xAE\xBA\xAC\xAC\xB9\xAD\xA0\xAB" + 0xD8820FFE).s, &cvar.chams_view_model_wireframe);
 		Sakura::Menu::Widgets::Checkbox(/*Glow*/XorStr<0x23, 5, 0x3193B743>("\x64\x48\x4A\x51" + 0x3193B743).s, &cvar.visual_viewmodel_glow);
 		Sakura::Menu::Widgets::Checkbox(/*HitBox*/XorStr<0xE8, 7, 0xBA112B65>("\xA0\x80\x9E\xA9\x83\x95" + 0xBA112B65).s, &cvar.skeleton_view_model_hitbox);
+		Sakura::Menu::Widgets::Checkbox(/*No animation*/XorStr<0xED, 13, 0xFA014232>("\xA3\x81\xCF\x91\x9F\x9B\x9E\x95\x81\x9F\x98\x96" + 0xFA014232).s, &cvar.visual_weapon_noanim);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

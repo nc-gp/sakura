@@ -475,6 +475,7 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*visual_crosshair_color[3]*/XorStr<0x60, 26, 0x0A1CDFB5>("\x16\x08\x11\x16\x05\x09\x39\x04\x1A\x06\x19\x18\x04\x0C\x07\x1D\x2F\x12\x1D\x1F\x1B\x07\x2D\x44\x25" + 0x0A1CDFB5).s, cvar.visual_crosshair_color[3], 1.0);
 	Sakura::Cvar::New(/*visual_vip*/XorStr<0x25, 11, 0xDFF5BC98>("\x53\x4F\x54\x5D\x48\x46\x74\x5A\x44\x5E" + 0xDFF5BC98).s, cvar.visual_vip, 0.0);
 	Sakura::Cvar::New(/*visual_weapon_local*/XorStr<0x97, 20, 0x69CF9F97>("\xE1\xF1\xEA\xEF\xFA\xF0\xC2\xE9\xFA\xC1\xD1\xCD\xCD\xFB\xC9\xC9\xC4\xC9\xC5" + 0x69CF9F97).s, cvar.visual_weapon_local, 0.0);
+	Sakura::Cvar::New(/*visual_weapon_noanim*/XorStr<0xD2, 21, 0xF242C24E>("\xA4\xBA\xA7\xA0\xB7\xBB\x87\xAE\xBF\xBA\xAC\xB2\xB0\x80\x8E\x8E\x83\x8D\x8D\x88" + 0xF242C24E).s, cvar.visual_weapon_noanim, 0.0);
 	Sakura::Cvar::New(/*visual_lightmap*/XorStr<0xFA, 16, 0xF1B79C1F>("\x8C\x92\x8F\x88\x9F\x93\x5F\x6D\x6B\x64\x6C\x71\x6B\x66\x78" + 0xF1B79C1F).s, cvar.visual_lightmap, 0.0);
 	Sakura::Cvar::New(/*visual_lightmap_color[0]*/XorStr<0x1F, 25, 0x1418C445>("\x69\x49\x52\x57\x42\x48\x7A\x4A\x4E\x4F\x41\x5E\x46\x4D\x5D\x71\x4C\x5F\x5D\x5D\x41\x6F\x05\x6B" + 0x1418C445).s, cvar.visual_lightmap_color[0], 1.0);
 	Sakura::Cvar::New(/*visual_lightmap_color[1]*/XorStr<0xC8, 25, 0xD84765D4>("\xBE\xA0\xB9\xBE\xAD\xA1\x91\xA3\xB9\xB6\xBA\xA7\xB9\xB4\xA6\x88\xBB\xB6\xB6\xB4\xAE\x86\xEF\x82" + 0xD84765D4).s, cvar.visual_lightmap_color[1], 1.0);
