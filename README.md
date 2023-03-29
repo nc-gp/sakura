@@ -65,7 +65,7 @@ $ git clone https://github.com/rbl-dot/sakura
 
 ## Support
 
-Consider making pull requests with your own changes to the code or/and make issues. This will help alot!
+Consider making pull requests with your own changes to the code or/and make issues or consider donating. This will help alot!
 
 ## License
 
