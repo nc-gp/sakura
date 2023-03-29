@@ -12,16 +12,16 @@ void Rect(Vector2D Pos, Vector2D Size, ImU32 color)
 void Corners(Vector2D Pos, Vector2D Size, ImU32 color)
 {
 	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x, Pos.y }, { Pos.x + (Size.x / 4), Pos.y }, color);
-	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x, Pos.y }, { Pos.x, Pos.y + (Size.y / 4) }, color);
+	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x, Pos.y }, { Pos.x, Pos.y + (Size.x / 4) }, color);
 
 	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x, Pos.y + Size.y }, { Pos.x + (Size.x / 4), Pos.y + Size.y }, color);
-	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x, Pos.y + Size.y }, { Pos.x, Pos.y + Size.y - (Size.y / 4) }, color);
+	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x, Pos.y + Size.y }, { Pos.x, Pos.y + Size.y - (Size.x / 4) }, color);
 
 	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y }, { Pos.x + Size.x - (Size.x / 4), Pos.y }, color);
-	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y }, { Pos.x + Size.x, Pos.y + (Size.y / 4) }, color);
+	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y }, { Pos.x + Size.x, Pos.y + (Size.x / 4) }, color);
 
 	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y + Size.y }, { Pos.x + Size.x - (Size.x / 4), Pos.y + Size.y }, color);
-	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y + Size.y }, { Pos.x + Size.x, Pos.y + Size.y - (Size.y / 4) }, color);
+	ImGui::GetCurrentWindow()->DrawList->AddLine({ Pos.x + Size.x, Pos.y + Size.y }, { Pos.x + Size.x, Pos.y + Size.y - (Size.x / 4) }, color);
 }
 
 void Coal(Vector2D Pos, Vector2D Size, ImU32 color)
