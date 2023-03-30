@@ -33,7 +33,7 @@ void Sakura::ScreenShot::Run()
 
 	SkippedFrames++;
 
-	if (SkippedFrames > 10)
+	if (SkippedFrames > 4)
 	{
 		DrawVisuals = true;
 		SkippedFrames = 0;
