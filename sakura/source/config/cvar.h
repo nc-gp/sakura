@@ -155,7 +155,11 @@ public:
 	float notifications_enable;
 	float notifications_fade;
 	float notifications_text_only;
-	//float notifications_kills;
+	float notifications_x;
+	float notifications_y;
+	float notifications_text_color[4];
+	float notifications_bg_color[4];
+	float notifications_bg_time_color[4];
 
 	float kz_strafe;
 	float kz_strafe_psilent;

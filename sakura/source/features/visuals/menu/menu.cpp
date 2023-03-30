@@ -476,8 +476,13 @@ void DrawCategoryButtons()
 
 		ImGui::Spacing();
 
-		if (Sakura::Menu::Widgets::SubTab(/*Menu*/XorStr<0x28, 5, 0x065EA3AD>("\x65\x4C\x44\x5E" + 0x065EA3AD).s, ImVec2(150, 25), colorstab == 4 ? true : false))
+		if (Sakura::Menu::Widgets::SubTab(/*Notification*/XorStr<0x24, 13, 0x575A7563>("\x6A\x4A\x52\x4E\x4E\x40\x49\x4A\x58\x44\x41\x41" + 0x575A7563).s, ImVec2(150, 25), colorstab == 4 ? true : false))
 			colorstab = 4;
+
+		ImGui::Spacing();
+
+		if (Sakura::Menu::Widgets::SubTab(/*Menu*/XorStr<0x28, 5, 0x065EA3AD>("\x65\x4C\x44\x5E" + 0x065EA3AD).s, ImVec2(150, 25), colorstab == 5 ? true : false))
+			colorstab = 5;
 		break;
 	}
 }
@@ -737,6 +742,9 @@ void DrawTab()
 			Sakura::Menu::Tabs::Colors::Route();
 			break;
 		case 4:
+			Sakura::Menu::Tabs::Colors::Notification();
+			break;
+		case 5:
 			Sakura::Menu::Tabs::Colors::Menu();
 			break;
 		}

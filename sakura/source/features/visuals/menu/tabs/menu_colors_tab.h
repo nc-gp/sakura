@@ -29,6 +29,7 @@ namespace Sakura
 				void LocalBulletTrace();
 				void LocalOther();
 				void Route();
+				void Notification();
 				void Menu();
 			};
 		};

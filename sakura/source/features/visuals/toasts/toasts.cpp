@@ -18,8 +18,13 @@ void Toast::Render()
 		return;
 
 	ImVec2 Screen;
-	Screen.x = 5;
-	Screen.y = 5;
+	Screen.x = cvar.notifications_x;
+	Screen.y = cvar.notifications_y;
+
+	ImDrawList* toastDraw = ImGui::GetCurrentWindow()->DrawList;
+
+	ImVec2 ds = ImGui::GetIO().DisplaySize;
+	float center_x = ds.x / 2;
 
 	for (unsigned i = toasts.size(); i-- > 0;)
 	{
@@ -42,14 +47,24 @@ void Toast::Render()
 		int bg_width = remaining_time * (label_size + 12) / currentToast->get_duration();
 		if (bg_width > label_size + 12) bg_width = label_size + 12;
 
+		if (cvar.notifications_x < center_x - label_size / 2) {
+			Screen.x = cvar.notifications_x;
+		}
+		else if (cvar.notifications_x > center_x + label_size / 2) {
+			Screen.x = cvar.notifications_x - label_size - 12;
+		}
+		else {
+			Screen.x = center_x - label_size / 2;
+		}
+
 		if (!cvar.notifications_text_only)
 		{
-			ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + label_size + 12, Screen.y + 16 }, ImColor(0.2f, 0.2f, 0.2f, opacity), 8);
-			ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + bg_width, Screen.y + 16 }, ImColor(1.f, 1.f, 1.f, opacity - 0.8f), 8);
-			ImGui::GetCurrentWindow()->DrawList->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + 4, Screen.y + 16 }, Sakura::Menu::GetMenuColor(opacity));
+			toastDraw->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + label_size + 12, Screen.y + 16 }, ImColor(cvar.notifications_bg_color[0], cvar.notifications_bg_color[1], cvar.notifications_bg_color[2], opacity), 8);
+			toastDraw->AddRectFilled({ Screen.x, Screen.y }, { Screen.x + bg_width, Screen.y + 16 }, ImColor(cvar.notifications_bg_time_color[0], cvar.notifications_bg_time_color[1], cvar.notifications_bg_time_color[2], opacity - 0.8f), 8);
+			toastDraw->AddLine({ Screen.x + 4, Screen.y + 16 }, { Screen.x + label_size + 12 - 4, Screen.y + 16 }, Sakura::Menu::GetMenuColor(opacity), 1.5f);
 		}
 		
-		ImGui::GetCurrentWindow()->DrawList->AddText({ Screen.x + 7, Screen.y + 1 }, ImColor(1.f, 1.f, 1.f, opacity), text.c_str());
+		toastDraw->AddText({ Screen.x + 7, Screen.y + 1 }, ImColor(cvar.notifications_text_color[0], cvar.notifications_text_color[1], cvar.notifications_text_color[2], opacity), text.c_str());
 
 		Screen.y += 20;
 	}

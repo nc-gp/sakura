@@ -396,10 +396,12 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 
 void Sakura::Menu::Tabs::Misc::Notify()
 {
+	ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+
 	ImGui::BeginChild(/*##maa1*/XorStr<0xF7, 7, 0x45925D59>("\xD4\xDB\x94\x9B\x9A\xCD" + 0x45925D59).s, ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x16, 7, 0x2FA43D44>("\x53\x79\x79\x7B\x76\x7E" + 0x2FA43D44).s, &cvar.notifications_enable);
-		Sakura::Menu::Widgets::Checkbox(/*Text only*/XorStr<0xD2, 10, 0x4AB2CE92>("\x86\xB6\xAC\xA1\xF6\xB8\xB6\xB5\xA3" + 0x4AB2CE92).s, &cvar.notifications_text_only);
+		Sakura::Menu::Widgets::Checkbox(/*No background*/XorStr<0xF3, 14, 0xD8625AF8>("\xBD\x9B\xD5\x94\x96\x9B\x92\x9D\x89\x93\x88\x90\x9B" + 0xD8625AF8).s, &cvar.notifications_text_only);
 
 		ImGui::Spacing();
 		ImGui::Spacing();
@@ -412,6 +414,15 @@ void Sakura::Menu::Tabs::Misc::Notify()
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Fade time*/XorStr<0x15, 10, 0xB6BC7FC0>("\x53\x77\x73\x7D\x39\x6E\x72\x71\x78" + 0xB6BC7FC0).s, &cvar.notifications_fade, 50.f, 500.f, "%.0fms");
+		Sakura::Menu::Widgets::SliderFloat(/*X Position*/XorStr<0x18, 11, 0x9EB0AA61>("\x40\x39\x4A\x74\x6F\x74\x6A\x76\x4F\x4F" + 0x9EB0AA61).s, &cvar.notifications_x, 0.f, windowSize.x, "%.0f");
+		Sakura::Menu::Widgets::SliderFloat(/*Y Position*/XorStr<0x00, 11, 0x70F14FD2>("\x59\x21\x52\x6C\x77\x6C\x72\x6E\x67\x67" + 0x70F14FD2).s, &cvar.notifications_y, 0.f, windowSize.y, "%.0f");
+		
+		if (Sakura::Menu::Widgets::Button(/*Center*/XorStr<0x25, 7, 0x3269A9E9>("\x66\x43\x49\x5C\x4C\x58" + 0x3269A9E9).s, { ImGui::GetWindowSize().x - 6, 0 }))
+		{
+			cvar.notifications_x = windowSize.x / 2;
+			cvar.notifications_y = windowSize.y / 2;
+		}
+
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();

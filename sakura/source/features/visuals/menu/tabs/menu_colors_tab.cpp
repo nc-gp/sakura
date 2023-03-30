@@ -515,6 +515,22 @@ void Sakura::Menu::Tabs::Colors::Route()
 	ImGui::EndChild();
 }
 
+void Sakura::Menu::Tabs::Colors::Notification()
+{
+	ImGui::BeginChild(/*##vlc1*/XorStr<0x6F, 7, 0xEBBB8C24>("\x4C\x53\x07\x1E\x10\x45" + 0xEBBB8C24).s, ImVec2(250, -1));
+	{
+		Sakura::Menu::Widgets::ColorEdit(/*Background*/XorStr<0x36, 11, 0xE9D69822>("\x74\x56\x5B\x52\x5D\x49\x53\x48\x50\x5B" + 0xE9D69822).s, (float*)cvar.notifications_bg_color, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Time background*/XorStr<0xEA, 16, 0x9ED588DB>("\xBE\x82\x81\x88\xCE\x8D\x91\x92\x99\x94\x86\x9A\x83\x99\x9C" + 0x9ED588DB).s, (float*)cvar.notifications_bg_time_color, pickerFlags);
+	}
+	ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::BeginChild(/*##vlc2*/XorStr<0xED, 7, 0x379E7315>("\xCE\xCD\x99\x9C\x92\xC0" + 0x379E7315).s, ImVec2(250, -1));
+	{
+		Sakura::Menu::Widgets::ColorEdit(/*Text*/XorStr<0x0C, 5, 0x8DD2D691>("\x58\x68\x76\x7B" + 0x8DD2D691).s, (float*)cvar.notifications_text_color, pickerFlags);
+	}
+	ImGui::EndChild();
+}
+
 void Sakura::Menu::Tabs::Colors::Menu()
 {
 	ImGui::BeginChild(/*##vlc1*/XorStr<0x6F, 7, 0xEBBB8C24>("\x4C\x53\x07\x1E\x10\x45" + 0xEBBB8C24).s, ImVec2(250, -1));
