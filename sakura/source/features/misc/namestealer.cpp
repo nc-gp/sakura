@@ -9,7 +9,7 @@ void Sakura::Name::Stealer()
 	if (cvar.misc_namestealer && nameStealerTimeInSeconds > 0 && Sakura::Player::Local::IsAlive())
 	{
 		char chCommand[64];
-		char cNames[MAX_CLIENTS][MAX_PLAYER_NAME_LENGTH];
+		std::array<std::string, MAX_CLIENTS> cNames;
 		int iCount = 0;
 
 		hud_player_info_t pInfo;
@@ -17,7 +17,7 @@ void Sakura::Name::Stealer()
 		if (GetTickCount() - timer < nameStealerTimeInSeconds)
 			return;
 
-		for (int i = 1; i <= g_Engine.GetMaxClients(); i++)
+		for (size_t i = 1; i <= g_Engine.GetMaxClients(); ++i)
 		{
 			if (i == pmove->player_index + 1)
 				continue;
@@ -30,19 +30,19 @@ void Sakura::Name::Stealer()
 			if (strlen(pInfo.name) <= 1)
 				continue;
 
-			if (cvar.misc_namestealer_specs && (g_Player[i].iTeam != 1 || g_Player[i].iTeam != 2))
+			if (cvar.misc_namestealer_specs && (g_Player[i].iTeam != TEAM_TT && g_Player[i].iTeam != TEAM_CT))
 				continue;
 
 			if (IdHook::FirstKillPlayer[i] == 2 && cvar.misc_namestealer_playerlist)
 				continue;
 
-			strcpy_s(cNames[iCount++], pInfo.name);
+			cNames[iCount++] = pInfo.name;
 		}
 
 		if (iCount > 0)
 		{
 			unsigned int n = rand() % iCount;
-			sprintf(chCommand, u8"name \"%s ᲼\"", cNames[n]);
+			sprintf(chCommand, u8"name \"%s ᲼\"", cNames[n].c_str());
 			g_Engine.pfnClientCmd(chCommand);
 		}
 
