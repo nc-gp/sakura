@@ -24,6 +24,6 @@ void IdHook::AddPlayer(int i)
 
 void IdHook::ClearPlayer()
 {
-	for (unsigned int i = 0; i < 33; i++)
+	for (size_t i = 0; i < 33; ++i)
 		FirstKillPlayer[i] = IDHOOK_PLAYER_NONE;
 }
