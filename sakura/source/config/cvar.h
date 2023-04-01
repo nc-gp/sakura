@@ -48,6 +48,8 @@ public:
 		float fov;
 		float speed_in_attack;
 		float hitbox;
+		float flash_check;
+		float flash_check_percentage;
 
 		float trigger_active;
 		float trigger_wall;
