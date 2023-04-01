@@ -290,6 +290,7 @@ void CVARlist::init()
 		Sakura::Cvar::New(str, cvar.rage[i].rage_hitbox, 11.0);
 	}
 
+	Sakura::Cvar::New(/*legit_trigger_only_zoom*/XorStr<0xBC,24,0x9BA0A594>("\xD0\xD8\xD9\xD6\xB4\x9E\xB6\xB1\xAD\xA2\xA1\xA2\xBA\x96\xA5\xA5\xA0\xB4\x91\xB5\xBF\xBE\xBF" + 0x9BA0A594).s, cvar.legit_trigger_only_zoom);
 	Sakura::Cvar::New(/*legit_trigger_team*/XorStr<0x2A, 19, 0x27C4E8E1>("\x46\x4E\x4B\x44\x5A\x70\x44\x43\x5B\x54\x53\x50\x44\x68\x4C\x5C\x5B\x56" + 0x27C4E8E1).s, cvar.legit_trigger_team);
 	Sakura::Cvar::New(/*legit_trigger_key*/XorStr<0x8C, 18, 0x94E227D3>("\xE0\xE8\xE9\xE6\xE4\xCE\xE6\xE1\xFD\xF2\xF1\xF2\xEA\xC6\xF1\xFE\xE5" + 0x94E227D3).s, cvar.legit_trigger_key, -1.0);
 	Sakura::Cvar::New(/*legit_trigger_draw_aim*/XorStr<0xDB, 23, 0x2469A2A5>("\xB7\xB9\xBA\xB7\xAB\xBF\x95\x90\x8A\x83\x82\x83\x95\xB7\x8D\x98\x8A\x9B\xB2\x8F\x86\x9D" + 0x2469A2A5).s, cvar.legit_trigger_draw_aim, 1.0);
