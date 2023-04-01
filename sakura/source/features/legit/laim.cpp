@@ -83,6 +83,10 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 	if (!IsCurWeaponGun() || g_Local.weapon.m_iInReload || g_Local.weapon.m_iClip < 1 || g_Local.weapon.m_flNextAttack > 0.0)
 		return;
 
+	if (cvar.legit[g_Local.weapon.m_iWeaponID].flash_check &&
+		Sakura::Fade::Percentage > cvar.legit[g_Local.weapon.m_iWeaponID].flash_check_percentage)
+		return;
+
 	float flFOV = cvar.legit[g_Local.weapon.m_iWeaponID].fov;
 
 	if (!flFOV)
@@ -360,7 +364,7 @@ void Sakura::Aimbot::Legit::Draw()
 			continue;
 
 		float CalcAnglesMin[2], CalcAnglesMax[2];
-		for (unsigned int i = 0; i < 12; ++i)
+		for (size_t i = 0; i < 12; ++i)
 		{
 			if (WorldToScreen(Aim.PlayerAimHitbox[iHitboxLegit].HitboxMulti[SkeletonHitboxMatrix[i][0]], CalcAnglesMin) && WorldToScreen(Aim.PlayerAimHitbox[iHitboxLegit].HitboxMulti[SkeletonHitboxMatrix[i][1]], CalcAnglesMax))
 				ImGui::GetCurrentWindow()->DrawList->AddLine({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, { IM_ROUND(CalcAnglesMax[0]), IM_ROUND(CalcAnglesMax[1]) }, Sakura::Colors::Green());
