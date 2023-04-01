@@ -88,6 +88,11 @@ namespace Sakura
 			void CreateBeamPoint(Vector start, Vector end, const ImColor color = ImColor(255, 255, 255, 255), const float life = 0.001f, const float width = 0.9f, const float amplitude = 0, const float speed = 2, const int startFrame = 0, const float framerate = 0);
 
 			DWORD GetTime();
+
+			std::string GetCommandString(const char* command);
+			int GetCommandInt(const char* command);
+			float GetCommandFloat(const char* command);
+			void ExecuteCommand(const char* command, const char* value);
 		};
 
 		namespace LocalPlayer
@@ -107,8 +112,6 @@ namespace Sakura
 			void SetViewAngles(Vector angles);
 			Vector GetOrigin();
 			Vector GetEyePosition();
-			std::string GetWeaponName();
-			int GetWeaponID();
 
 			bool IsCurWeaponKnife();
 			bool IsCurWeaponPistol();
@@ -119,26 +122,27 @@ namespace Sakura
 			bool IsCurWeaponMachineGun();
 			bool IsCurWeaponSubMachineGun();
 
-			std::string GetCommandString(const char* command);
-			int GetCommandInt(const char* command);
-			float GetCommandFloat(const char* command);
-			void ExecuteCommand(const char* command, const char* value);
-
 			void FixMoveStart(usercmd_s* cmd);
 			void FixMoveEnd(usercmd_s* cmd);
 		};
 
 		namespace Player
 		{
-			int GetTeam(int index);
-			int GetHealth(int index);
-			int GetDistance(int index);
-			int GetPing(int index);
-			float GetActualDistance(int index);
-			bool IsAlive(int index);
-			Vector GetOrigin(int index);
-			std::string GetName(int index);
-			std::string GetModelName(int index);
+			int GetTeam(const int index);
+			int GetHealth(const int index);
+			int GetDistance(const int index);
+			int GetPing(const int index);
+			float GetActualDistance(const int index);
+			bool IsAlive(const int index);
+			Vector GetOrigin(const int index);
+			std::string GetName(const int index);
+			std::string GetModelName(const int index);
+		};
+
+		namespace Log
+		{
+			void File(const char* text);
+			void Console(const char* text);
 		};
 
 		namespace Notify
@@ -148,7 +152,6 @@ namespace Sakura
 
 		namespace ImGui
 		{
-			void Menu(const char* szTitle, luabridge::LuaRef lfFunction);
 			void Window(const char* szTitle, ImGuiWindowFlags flags, luabridge::LuaRef lfFunction);
 			void Text(const char* szText);
 			bool Button(const char* szText);

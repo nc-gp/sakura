@@ -3,6 +3,8 @@
 
 extern uintptr_t m_dwInitPoint;
 
+typedef struct CBasePlayerWeapon CBasePlayerWeapon_t;
+
 struct CBasePlayerWeapon
 {
 	bool m_bDelayFire;
@@ -190,5 +192,7 @@ int CurDamage(void);
 float CurWallPierce(void);
 float CurDistance(void);
 void DrawWeaponName();
+
+CBasePlayerWeapon GetWeapon();
 
 #endif

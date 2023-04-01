@@ -214,81 +214,35 @@ bool Sakura::Lua::LocalPlayer::IsCurWeaponSubMachineGun()
 	return ::IsCurWeaponSubMachineGun();
 }
 
-void Sakura::Lua::LocalPlayer::ExecuteCommand(const char* command, const char* value)
+void Sakura::Lua::Game::ExecuteCommand(const char* command, const char* value)
 {
 	char fullCommand[64];
 	sprintf(fullCommand, "%s \"%s\"", command, value);
 	g_Engine.pfnClientCmd(fullCommand);
 }
 
-std::string Sakura::Lua::LocalPlayer::GetCommandString(const char* command)
+std::string Sakura::Lua::Game::GetCommandString(const char* command)
 {
 	char fullCommand[64];
 	sprintf(fullCommand, "%s", command);
 	return g_Engine.pfnGetCvarString(fullCommand);
 }
 
-float Sakura::Lua::LocalPlayer::GetCommandFloat(const char* command)
+float Sakura::Lua::Game::GetCommandFloat(const char* command)
 {
 	char fullCommand[64];
 	sprintf(fullCommand, "%s", command);
 	return g_Engine.pfnGetCvarFloat(fullCommand);
 }
 
-int Sakura::Lua::LocalPlayer::GetCommandInt(const char* command)
+int Sakura::Lua::Game::GetCommandInt(const char* command)
 {
 	char fullCommand[64];
 	sprintf(fullCommand, "%s", command);
 	return static_cast<int>(g_Engine.pfnGetCvarFloat(fullCommand));
 }
 
-std::string Sakura::Lua::LocalPlayer::GetWeaponName()
-{
-	if (Sakura::Player::Local::IsAlive())
-	{
-		switch (g_Local.weapon.m_iWeaponID)
-		{
-		case WEAPON_P228:		return "P228"; break;
-		case WEAPON_SCOUT:		return "Scout"; break;
-		case WEAPON_XM1014:		return "XM1014"; break;
-		case WEAPON_MAC10:		return "Mac10"; break;
-		case WEAPON_AUG:		return "Aug"; break;
-		case WEAPON_ELITE:		return "Elite"; break;
-		case WEAPON_FIVESEVEN:	return "Five-seven"; break;
-		case WEAPON_UMP45:		return "Ump45"; break;
-		case WEAPON_SG550:		return "SG550"; break;
-		case WEAPON_GALIL:		return "Galil"; break;
-		case WEAPON_FAMAS:		return "Famas"; break;
-		case WEAPON_USP:		return "Usp"; break;
-		case WEAPON_GLOCK18:	return "Glock-18"; break;
-		case WEAPON_AWP:		return "AWP"; break;
-		case WEAPON_MP5N:		return "MP5"; break;
-		case WEAPON_M249:		return "M249"; break;
-		case WEAPON_M3:			return "M3"; break;
-		case WEAPON_M4A1:		return "M4a1"; break;
-		case WEAPON_TMP:		return "Tmp"; break;
-		case WEAPON_G3SG1:		return "G3SG1"; break;
-		case WEAPON_DEAGLE:		return "Deagle"; break;
-		case WEAPON_SG552:		return "SG552"; break;
-		case WEAPON_AK47:		return "AK-47"; break;
-		case WEAPON_P90:		return "P90"; break;
-		case WEAPON_HEGRENADE:	return "HE Grenade"; break;
-		case WEAPON_SMOKEGRENADE: return"SG Grenade"; break;
-		case WEAPON_FLASHBANG:	return "Flashbang"; break;
-		case WEAPON_KNIFE:		return "Knife"; break;
-		default:				return "Unknown"; break;
-		}
-	}
-
-	return "Unknown";
-}
-
-int Sakura::Lua::LocalPlayer::GetWeaponID()
-{
-	return g_Local.weapon.m_iWeaponID;
-}
-
-int Sakura::Lua::Player::GetTeam(int index)
+int Sakura::Lua::Player::GetTeam(const int index)
 {
 	if (index < 1 || index >= 32)
 		return 0;
@@ -296,7 +250,7 @@ int Sakura::Lua::Player::GetTeam(int index)
 	return g_Player[index].iTeam;
 }
 
-Vector Sakura::Lua::Player::GetOrigin(int index)
+Vector Sakura::Lua::Player::GetOrigin(const int index)
 {
 	if (index < 1 || index >= 32)
 		return Vector(9999, 0, 0);
@@ -305,7 +259,7 @@ Vector Sakura::Lua::Player::GetOrigin(int index)
 	return player->origin;
 }
 
-int Sakura::Lua::Player::GetHealth(int index)
+int Sakura::Lua::Player::GetHealth(const int index)
 {
 	if (index < 1 || index >= 32)
 		return 0;
@@ -313,7 +267,7 @@ int Sakura::Lua::Player::GetHealth(int index)
 	return g_Player[index].iHealth;
 }
 
-std::string Sakura::Lua::Player::GetName(int index)
+std::string Sakura::Lua::Player::GetName(const int index)
 {
 	if (index < 1 || index >= 32)
 		return "Unknown";
@@ -322,7 +276,7 @@ std::string Sakura::Lua::Player::GetName(int index)
 	return player->name;
 }
 
-std::string Sakura::Lua::Player::GetModelName(int index)
+std::string Sakura::Lua::Player::GetModelName(const int index)
 {
 	if (index < 1 || index >= 32)
 		return "Unknown";
@@ -330,7 +284,7 @@ std::string Sakura::Lua::Player::GetModelName(int index)
 	return PlayerEsp[index].model;
 }
 
-int Sakura::Lua::Player::GetDistance(int index)
+int Sakura::Lua::Player::GetDistance(const int index)
 {
 	if (index < 1 || index >= 32)
 		return 0;
@@ -342,7 +296,7 @@ int Sakura::Lua::Player::GetDistance(int index)
 	return iDistance;
 }
 
-float Sakura::Lua::Player::GetActualDistance(int index)
+float Sakura::Lua::Player::GetActualDistance(const int index)
 {
 	if (index < 1 || index >= 32)
 		return 0;
@@ -353,7 +307,7 @@ float Sakura::Lua::Player::GetActualDistance(int index)
 	return vDifference.Length();
 }
 
-int Sakura::Lua::Player::GetPing(int index)
+int Sakura::Lua::Player::GetPing(const int index)
 {
 	if (index < 1 || index >= 32)
 		return 0;
@@ -362,7 +316,7 @@ int Sakura::Lua::Player::GetPing(int index)
 	return player->ping;
 }
 
-bool Sakura::Lua::Player::IsAlive(int index)
+bool Sakura::Lua::Player::IsAlive(const int index)
 {
 	if (index < 1 || index >= 32)
 		return 0;
@@ -472,6 +426,16 @@ void Sakura::Lua::ImGui::Drawings::AddText(ImVec2& position, ImColor& color, con
 void Sakura::Lua::ImGui::Drawings::AddRectFilled(ImVec2& start, ImVec2& end, ImColor& color, float rounding, int corners)
 {
 	::ImGui::GetWindowDrawList()->AddRectFilled(start, end, color, rounding, corners);
+}
+
+void Sakura::Lua::Log::File(const char* text)
+{
+	::Sakura::Log::File(text);
+}
+
+void Sakura::Lua::Log::Console(const char* text)
+{
+	::Sakura::Log::Console(text);
 }
 
 //void Sakura::Lua::Settings::SaveInt(const std::string name, int value)
@@ -640,6 +604,32 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addProperty("impact_position", &usercmd_s::impact_position)
 		.endClass()
 
+		.beginClass<CBasePlayerWeapon>("player_weapon")
+			.addProperty("fire_delay", &CBasePlayerWeapon::m_bDelayFire)
+			.addProperty("weapon_state", &CBasePlayerWeapon::m_iWeaponState)
+			.addProperty("flags", &CBasePlayerWeapon::m_iFlags)
+			.addProperty("clip", &CBasePlayerWeapon::m_iClip)
+			.addProperty("id", &CBasePlayerWeapon::m_iWeaponID)
+			.addProperty("in_reload", &CBasePlayerWeapon::m_iInReload)
+			.addProperty("penetration", &CBasePlayerWeapon::iPenetration)
+			.addProperty("bullet_type", &CBasePlayerWeapon::iBulletType)
+			.addProperty("damage_1", &CBasePlayerWeapon::iDamage1)
+			.addProperty("damage_2", &CBasePlayerWeapon::iDamage2)
+			.addProperty("shots_fired", &CBasePlayerWeapon::m_iShotsFired)
+			.addProperty("user3", &CBasePlayerWeapon::iuser3)
+			.addProperty("prevtime", &CBasePlayerWeapon::prevtime)
+			.addProperty("curtime", &CBasePlayerWeapon::curtime)
+			.addProperty("decrease_shots_fired", &CBasePlayerWeapon::m_flDecreaseShotsFired)
+			.addProperty("accuracy", &CBasePlayerWeapon::m_flAccuracy)
+			.addProperty("spread", &CBasePlayerWeapon::m_flSpread)
+			.addProperty("next_primary_attack", &CBasePlayerWeapon::m_flNextPrimaryAttack)
+			.addProperty("next_secondary_attack", &CBasePlayerWeapon::m_flNextSecondaryAttack)
+			.addProperty("next_attack", &CBasePlayerWeapon::m_flNextAttack)
+			.addProperty("penetration_distance", &CBasePlayerWeapon::flPenetrationDistance)
+			.addProperty("wall_pierce_1", &CBasePlayerWeapon::flWallPierce1)
+			.addProperty("wall_pierce_2", &CBasePlayerWeapon::flWallPierce2)
+		.endClass()
+
 		.beginNamespace("Hooks")
 			.addFunction("Register", &Sakura::Lua::Hooks::RegisterCallBack)
 		.endNamespace()
@@ -654,10 +644,14 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
 			.addFunction("CreateBeamPoint", &Sakura::Lua::Game::CreateBeamPoint)
 			.addFunction("ChangeNextSoundVolume", &Sakura::Lua::DynamicSound::ChangeNextSoundVolume)
+
+			.addFunction("GetCommandString", &Sakura::Lua::Game::GetCommandString)
+			.addFunction("GetCommandFloat", &Sakura::Lua::Game::GetCommandFloat)
+			.addFunction("GetCommandInt", &Sakura::Lua::Game::GetCommandInt)
+			.addFunction("ExecuteCommand", &Sakura::Lua::Game::ExecuteCommand)
 		.endNamespace()
 
 		.beginNamespace("ImGui")
-			//.addFunction("Menu", &Sakura::Lua::ImGui::Menu)
 			.addFunction("Window", &Sakura::Lua::ImGui::Window)
 			.addFunction("Text", &Sakura::Lua::ImGui::Text)
 			.addFunction("Button", &Sakura::Lua::ImGui::Button)
@@ -705,12 +699,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("IsCurWeaponMachineGun", &Sakura::Lua::LocalPlayer::IsCurWeaponMachineGun)
 			.addFunction("IsCurWeaponSubMachineGun", &Sakura::Lua::LocalPlayer::IsCurWeaponSubMachineGun)
 
-			.addFunction("GetWeaponName", &Sakura::Lua::LocalPlayer::GetWeaponName)
-			.addFunction("GetWeaponID", &Sakura::Lua::LocalPlayer::GetWeaponID)
-			.addFunction("GetCommandString", &Sakura::Lua::LocalPlayer::GetCommandString)
-			.addFunction("GetCommandFloat", &Sakura::Lua::LocalPlayer::GetCommandFloat)
-			.addFunction("GetCommandInt", &Sakura::Lua::LocalPlayer::GetCommandInt)
-			.addFunction("ExecuteCommand", &Sakura::Lua::LocalPlayer::ExecuteCommand)
+			.addFunction("GetWeapon", &GetWeapon)
 
 			.addFunction("FixMoveStart", &Sakura::Lua::LocalPlayer::FixMoveStart)
 			.addFunction("FixMoveEnd", &Sakura::Lua::LocalPlayer::FixMoveEnd)
@@ -737,6 +726,11 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("LoadFloat", &Sakura::Lua::Settings::LoadFloat)
 			.addFunction("LoadBool", &Sakura::Lua::Settings::LoadBool)
 		.endNamespace()*/
+
+		.beginNamespace("Log")
+			.addFunction("File", &Sakura::Lua::Log::File)
+			.addFunction("Console", &Sakura::Lua::Log::Console)
+		.endNamespace()
 
 		.beginNamespace("Notify")
 			.addFunction("Create", &Sakura::Lua::Notify::Create)

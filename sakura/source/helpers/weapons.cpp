@@ -1506,3 +1506,8 @@ bool CanAttack(void)
     else
         return false;
 }
+
+CBasePlayerWeapon GetWeapon()
+{
+    return g_Local.weapon;
+}
