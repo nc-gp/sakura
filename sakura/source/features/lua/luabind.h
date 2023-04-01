@@ -92,7 +92,7 @@ namespace Sakura
 			std::string GetCommandString(const char* command);
 			int GetCommandInt(const char* command);
 			float GetCommandFloat(const char* command);
-			void ExecuteCommand(const char* command, const char* value);
+			void ExecuteCommand(const char* command);
 		};
 
 		namespace LocalPlayer
@@ -112,6 +112,7 @@ namespace Sakura
 			void SetViewAngles(Vector angles);
 			Vector GetOrigin();
 			Vector GetEyePosition();
+			screenfade_t GetScreenFade();
 
 			bool IsCurWeaponKnife();
 			bool IsCurWeaponPistol();

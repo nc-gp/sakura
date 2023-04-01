@@ -214,32 +214,37 @@ bool Sakura::Lua::LocalPlayer::IsCurWeaponSubMachineGun()
 	return ::IsCurWeaponSubMachineGun();
 }
 
-void Sakura::Lua::Game::ExecuteCommand(const char* command, const char* value)
+screenfade_t Sakura::Lua::LocalPlayer::GetScreenFade()
 {
-	char fullCommand[64];
-	sprintf(fullCommand, "%s \"%s\"", command, value);
-	g_Engine.pfnClientCmd(fullCommand);
+	return Sakura::Fade::Screen;
+}
+
+void Sakura::Lua::Game::ExecuteCommand(const char* command)
+{
+	char _command[64];
+	sprintf(_command, "%s", command);
+	g_Engine.pfnClientCmd(_command);
 }
 
 std::string Sakura::Lua::Game::GetCommandString(const char* command)
 {
-	char fullCommand[64];
-	sprintf(fullCommand, "%s", command);
-	return g_Engine.pfnGetCvarString(fullCommand);
+	char _command[64];
+	sprintf(_command, "%s", command);
+	return g_Engine.pfnGetCvarString(_command);
 }
 
 float Sakura::Lua::Game::GetCommandFloat(const char* command)
 {
-	char fullCommand[64];
-	sprintf(fullCommand, "%s", command);
-	return g_Engine.pfnGetCvarFloat(fullCommand);
+	char _command[64];
+	sprintf(_command, "%s", command);
+	return g_Engine.pfnGetCvarFloat(_command);
 }
 
 int Sakura::Lua::Game::GetCommandInt(const char* command)
 {
-	char fullCommand[64];
-	sprintf(fullCommand, "%s", command);
-	return static_cast<int>(g_Engine.pfnGetCvarFloat(fullCommand));
+	char _command[64];
+	sprintf(_command, "%s", command);
+	return static_cast<int>(g_Engine.pfnGetCvarFloat(_command));
 }
 
 int Sakura::Lua::Player::GetTeam(const int index)
@@ -437,7 +442,7 @@ void Sakura::Lua::Log::Console(const char* text)
 {
 	::Sakura::Log::Console(text);
 }
-
+//s
 //void Sakura::Lua::Settings::SaveInt(const std::string name, int value)
 //{
 //	LogToFile("Saving int from lua: %i", value);
@@ -630,6 +635,17 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addProperty("wall_pierce_2", &CBasePlayerWeapon::flWallPierce2)
 		.endClass()
 
+		.beginClass<screenfade_t>("screen_fade")
+			.addProperty("speed", &screenfade_t::fadeSpeed)
+			.addProperty("end", &screenfade_t::fadeEnd)
+			.addProperty("total_end", &screenfade_t::fadeTotalEnd)
+			.addProperty("reset", &screenfade_t::fadeReset)
+			.addProperty("r", &screenfade_t::fader)
+			.addProperty("g", &screenfade_t::fadeg)
+			.addProperty("b", &screenfade_t::fadeb)
+			.addProperty("flags", &screenfade_t::fadeFlags)
+		.endClass()
+					
 		.beginNamespace("Hooks")
 			.addFunction("Register", &Sakura::Lua::Hooks::RegisterCallBack)
 		.endNamespace()
@@ -700,6 +716,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("IsCurWeaponSubMachineGun", &Sakura::Lua::LocalPlayer::IsCurWeaponSubMachineGun)
 
 			.addFunction("GetWeapon", &GetWeapon)
+			.addFunction("GetScreenFade", &Sakura::Lua::LocalPlayer::GetScreenFade)
 
 			.addFunction("FixMoveStart", &Sakura::Lua::LocalPlayer::FixMoveStart)
 			.addFunction("FixMoveEnd", &Sakura::Lua::LocalPlayer::FixMoveEnd)
