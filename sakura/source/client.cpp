@@ -301,7 +301,7 @@ void HUD_Frame(double time)
 	SetSkins();
 	Sakura::ScreenShot::Run();
 	Sakura::Sky::ChangeTexture();
-	Sakura::Fade::RemoveFlashFade();
+	Sakura::Fade::Logic();
 	Sakura::Map::Light();
 	Sakura::Fog::Draw();
 

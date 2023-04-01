@@ -5,9 +5,12 @@ namespace Sakura
 {
 	namespace Fade
 	{
+		extern float Percentage;
 		extern screenfade_t Screen;
 
-		void RemoveFlashFade();
+		void Update();
+		void Remove();
+		void Logic();
 	};
 };
 
