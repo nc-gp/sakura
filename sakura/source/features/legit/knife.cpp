@@ -100,6 +100,7 @@ void Sakura::Knifebot::Knife(usercmd_s* cmd)
 
 			if (cvar.knifebot_perfect_silent)
 			{
+				MakeAngle(aimAngles, cmd);
 				bSendpacket(false);
 				isPerfectSilentOrSilent = true;
 			}
