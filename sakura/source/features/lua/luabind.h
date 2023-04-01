@@ -88,6 +88,7 @@ namespace Sakura
 			void CreateBeamPoint(Vector start, Vector end, const ImColor color = ImColor(255, 255, 255, 255), const float life = 0.001f, const float width = 0.9f, const float amplitude = 0, const float speed = 2, const int startFrame = 0, const float framerate = 0);
 
 			DWORD GetTime();
+			float GetClientTime();
 
 			std::string GetCommandString(const char* command);
 			int GetCommandInt(const char* command);
@@ -101,19 +102,20 @@ namespace Sakura
 			int GetTeam();
 			int GetFlags();
 			int GetHealth();
-			bool CheckFlag(const int flag);
 			int GetButtons();
-			bool CheckButton(const usercmd_s* cmd, const int button);
-			void PressButton(usercmd_s* cmd, const int button);
-			void ReleaseButton(usercmd_s* cmd, const int button);
-			bool IsAlive();
-			bool IsScoped();
+			int GetFlashPercentage();
+
 			Vector GetViewAngles();
-			void SetViewAngles(Vector angles);
 			Vector GetOrigin();
 			Vector GetEyePosition();
+
 			screenfade_t GetScreenFade();
 
+			bool IsAlive();
+			bool IsScoped();
+			bool IsFlashed();
+			bool CheckFlag(const int flag);
+			bool CheckButton(const usercmd_s* cmd, const int button);
 			bool IsCurWeaponKnife();
 			bool IsCurWeaponPistol();
 			bool IsCurWeaponNade();
@@ -123,6 +125,9 @@ namespace Sakura
 			bool IsCurWeaponMachineGun();
 			bool IsCurWeaponSubMachineGun();
 
+			void PressButton(usercmd_s* cmd, const int button);
+			void ReleaseButton(usercmd_s* cmd, const int button);
+			void SetViewAngles(const Vector angles);
 			void FixMoveStart(usercmd_s* cmd);
 			void FixMoveEnd(usercmd_s* cmd);
 		};

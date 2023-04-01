@@ -89,6 +89,11 @@ DWORD Sakura::Lua::Game::GetTime()
 	return GetTickCount();
 }
 
+float Sakura::Lua::Game::GetClientTime()
+{
+	return g_Engine.GetClientTime();
+}
+
 int Sakura::Lua::LocalPlayer::GetIndex()
 {
 	return pmove->player_index + 1;
@@ -212,6 +217,19 @@ bool Sakura::Lua::LocalPlayer::IsCurWeaponMachineGun()
 bool Sakura::Lua::LocalPlayer::IsCurWeaponSubMachineGun()
 {
 	return ::IsCurWeaponSubMachineGun();
+}
+
+bool Sakura::Lua::LocalPlayer::IsFlashed()
+{
+	if (Sakura::Fade::Percentage > 0)
+		return true;
+
+	return false;
+}
+
+int Sakura::Lua::LocalPlayer::GetFlashPercentage()
+{
+	return static_cast<int>(Sakura::Fade::Percentage);
 }
 
 screenfade_t Sakura::Lua::LocalPlayer::GetScreenFade()
@@ -637,12 +655,13 @@ bool Sakura::Lua::Init(lua_State* L)
 
 		.beginClass<screenfade_t>("screen_fade")
 			.addProperty("speed", &screenfade_t::fadeSpeed)
-			.addProperty("end", &screenfade_t::fadeEnd)
+			.addProperty("_end", &screenfade_t::fadeEnd)
 			.addProperty("total_end", &screenfade_t::fadeTotalEnd)
 			.addProperty("reset", &screenfade_t::fadeReset)
 			.addProperty("r", &screenfade_t::fader)
 			.addProperty("g", &screenfade_t::fadeg)
 			.addProperty("b", &screenfade_t::fadeb)
+			.addProperty("a", &screenfade_t::fadealpha)
 			.addProperty("flags", &screenfade_t::fadeFlags)
 		.endClass()
 					
@@ -657,6 +676,7 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("LoadSound", &Sakura::Lua::Game::InitSound)
 			.addFunction("PlaySound", &Sakura::Lua::Game::SoundPlay)
 			.addFunction("GetTime", &Sakura::Lua::Game::GetTime)
+			.addFunction("GetClientTime", &Sakura::Lua::Game::GetClientTime)
 			.addFunction("CreateVisibleEntity", &Sakura::Lua::Game::CreateVisibleEntity)
 			.addFunction("CreateBeamPoint", &Sakura::Lua::Game::CreateBeamPoint)
 			.addFunction("ChangeNextSoundVolume", &Sakura::Lua::DynamicSound::ChangeNextSoundVolume)
@@ -700,11 +720,13 @@ bool Sakura::Lua::Init(lua_State* L)
 			.addFunction("ReleaseButton", &Sakura::Lua::LocalPlayer::ReleaseButton)
 			.addFunction("GetOrigin", &Sakura::Lua::LocalPlayer::GetOrigin)
 			.addFunction("GetHealth", &Sakura::Lua::LocalPlayer::GetHealth)
+			.addFunction("GetFlashPercentage", &Sakura::Lua::LocalPlayer::GetFlashPercentage)
 			.addFunction("GetViewAngles", &Sakura::Lua::LocalPlayer::GetViewAngles)
 			.addFunction("SetViewAngles", &Sakura::Lua::LocalPlayer::SetViewAngles)
 			.addFunction("IsAlive", &Sakura::Lua::LocalPlayer::IsAlive)
 			.addFunction("IsScoped", &Sakura::Lua::LocalPlayer::IsScoped)
 			.addFunction("IsInGame", &Sakura::Player::Local::InGame)
+			.addFunction("IsFlashed", &Sakura::Lua::LocalPlayer::IsFlashed)
 
 			.addFunction("IsCurWeaponKnife", &Sakura::Lua::LocalPlayer::IsCurWeaponKnife)
 			.addFunction("IsCurWeaponPistol", &Sakura::Lua::LocalPlayer::IsCurWeaponPistol)
