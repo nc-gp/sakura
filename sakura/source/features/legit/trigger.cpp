@@ -78,8 +78,6 @@ void Sakura::Triggerbot::SelectTarget(usercmd_s* cmd, playeraim_t Aim, float& m_
 
 void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 {
-	float m_flBestFOV = 180;
-
 	if (!cvar.legit[g_Local.weapon.m_iWeaponID].trigger_active || !IsCurWeaponGun())
 		return;
 
@@ -89,7 +87,9 @@ void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 	if (cvar.legit_trigger_only_zoom && IsCurWeaponSniper() && !g_Local.bScoped)
 		return;
 
-	float flAccuracy = cvar.legit[g_Local.weapon.m_iWeaponID].trigger_accuracy;
+	float m_flBestFOV = 180;
+
+	const float flAccuracy = cvar.legit[g_Local.weapon.m_iWeaponID].trigger_accuracy;
 
 	Vector vecSpreadDir, vecForward, vecRight, vecUp, vecRandom;
 
@@ -119,6 +119,7 @@ void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 		vecSpreadDir = vecForward;
 		vecSpreadDir.Normalize();
 	}
+
 	static DWORD delay = 0;
 	static int tickcount = 0;
 
@@ -153,11 +154,14 @@ void Sakura::Triggerbot::Trigger(usercmd_s* cmd)
 		}
 	}
 
-	if (cmd->buttons & IN_ATTACK)tickcount++;
-	static int random = rand() % (int)cvar.legit[g_Local.weapon.m_iWeaponID].trigger_random_max + 1;
+	if (cmd->buttons & IN_ATTACK)
+		tickcount++;
+
+	int max_random = (int)cvar.legit[g_Local.weapon.m_iWeaponID].trigger_random_max + 1;
+	static int random = rand() % max_random;
+
 	if (tickcount >= (!cvar.legit[g_Local.weapon.m_iWeaponID].trigger_shot_type ? cvar.legit[g_Local.weapon.m_iWeaponID].trigger_shot_count : random))
 	{
-		random = rand() % (int)cvar.legit[g_Local.weapon.m_iWeaponID].trigger_random_max + 1;
 		delay = GetTickCount();
 		tickcount = 0;
 	}
