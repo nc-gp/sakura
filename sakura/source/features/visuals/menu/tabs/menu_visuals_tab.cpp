@@ -401,6 +401,7 @@ void Sakura::Menu::Tabs::Visuals::LocalAdditions()
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Draw FOV*/XorStr<0x2F, 9, 0x8667E736>("\x6B\x42\x50\x45\x13\x72\x7A\x60" + 0x8667E736).s, &cvar.visual_draw_fov);
 		Sakura::Menu::Widgets::Checkbox(/*Crosshair*/XorStr<0x77, 10, 0x8F5AD958>("\x34\x0A\x16\x09\x08\x14\x1C\x17\x0D" + 0x8F5AD958).s, &cvar.visual_crosshair);
+		Sakura::Menu::Widgets::Checkbox(/*Colored hud*/XorStr<0x4C, 12, 0x6C50BE97>("\x0F\x22\x22\x20\x22\x34\x36\x73\x3C\x20\x32" + 0x6C50BE97).s, &cvar.visual_hud);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

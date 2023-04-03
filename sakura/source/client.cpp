@@ -460,17 +460,23 @@ static void HUD_TempEntUpdate(double frametime, double client_time, double cl_gr
 	g_Client.HUD_TempEntUpdate(frametime, client_time, cl_gravity, ppTempEntFree, ppTempEntActive, Callback_AddVisibleEntity, Callback_TempEntPlaySound);
 }
 
-//void pfnSPRSet(HSPRITE hPic, int r, int g, int b)
-//{
-//	if (cvar.visual_hud && Sakura::ScreenShot::IsVisuals() && hPic)
-//	{
-//		r = cvar.visual_hud_color[0];
-//		g = cvar.visual_hud_color[1];
-//		b = cvar.visual_hud_color[2];
-//	}
-//
-//	g_pEngine->pfnSPR_Set(hPic, r, g, b);
-//}
+void pfnSPRSet(HSPRITE hPic, int r, int g, int b)
+{
+	int rn = r;
+	int gn = g;
+	int bn = b;
+
+	if (cvar.visual_hud && Sakura::ScreenShot::IsVisuals())
+	{
+		ImRGBA color = Sakura::Colors::GetCustomizedColor(cvar.visual_hud_color, cvar.rainbow_hud);
+
+		rn = (int)(color.r * 255);
+		gn = (int)(color.g * 255);
+		bn = (int)(color.b * 255);
+	}
+
+	g_Engine.pfnSPR_Set(hPic, rn, gn, bn);
+}
 
 void HookClientFunctions()
 {
@@ -489,7 +495,7 @@ void HookClientFunctions()
 	g_pClient->HUD_TempEntUpdate = HUD_TempEntUpdate;
 
 	g_pEngine->pfnVGUI2DrawCharacterAdd = pfnDrawUnicodeCharacter;
-	/*g_pEngine->pfnSPR_Set = pfnSPRSet;*/
+	g_pEngine->pfnSPR_Set = pfnSPRSet;
 
 	g_pClient->HUD_AddEntity = HUD_AddEntity;
 }

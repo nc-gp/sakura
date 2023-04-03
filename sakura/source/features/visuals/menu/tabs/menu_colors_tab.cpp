@@ -491,7 +491,9 @@ void Sakura::Menu::Tabs::Colors::LocalOther()
 	{
 		Sakura::Menu::Widgets::ColorEdit(/*Crosshair*/XorStr<0xB7, 10, 0x4F0DEACD>("\xF4\xCA\xD6\xC9\xC8\xD4\xDC\xD7\xCD" + 0x4F0DEACD).s, (float*)cvar.visual_crosshair_color, pickerFlags);
 		Sakura::Menu::Widgets::ColorEdit(/*FOV*/XorStr<0x90, 4, 0x4F4E320A>("\xD6\xDE\xC4" + 0x4F4E320A).s, (float*)cvar.visual_draw_fov_color, pickerFlags);
-		//Sakura::Menu::Widgets::ColorEdit(/*Hud*/XorStr<0x74, 4, 0x516254A4>("\x3C\x00\x12" + 0x516254A4).s, (float*)cvar.visual_hud_color, pickerFlags);
+		Sakura::Menu::Widgets::Checkbox(/*##vmlr*/XorStr<0xC6, 7, 0x95F6DC11>("\xE5\xE4\xBE\xA4\xA6\xB9" + 0x95F6DC11).s, &cvar.rainbow_hud);
+		ImGui::SameLine();
+		Sakura::Menu::Widgets::ColorEdit(/*Hud*/XorStr<0x74, 4, 0x516254A4>("\x3C\x00\x12" + 0x516254A4).s, (float*)cvar.visual_hud_color, pickerFlags);
 	}
 	ImGui::EndChild();
 }
