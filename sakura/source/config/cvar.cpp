@@ -206,6 +206,8 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*rage_always_fire*/XorStr<0x67, 17, 0x9FDB52D7>("\x15\x09\x0E\x0F\x34\x0D\x01\x19\x0E\x09\x02\x2D\x15\x1D\x07\x13" + 0x9FDB52D7).s, cvar.rage_always_fire);
 	Sakura::Cvar::New(/*rage_draw_aim*/XorStr<0x25, 14, 0xB25C2945>("\x57\x47\x40\x4D\x76\x4E\x59\x4D\x5A\x71\x4E\x59\x5C" + 0xB25C2945).s, cvar.rage_draw_aim, 1.0);
 	Sakura::Cvar::New(/*rage_no_spread*/XorStr<0xFF, 15, 0x555F94DF>("\x8D\x61\x66\x67\x5C\x6A\x6A\x59\x74\x78\x7B\x6F\x6A\x68" + 0x555F94DF).s, cvar.rage_no_spread);
+	Sakura::Cvar::New(/*rage_no_spread_visual*/XorStr<0x9E, 22, 0x0975DA86>("\xEC\xFE\xC7\xC4\xFD\xCD\xCB\xFA\xD5\xD7\xDA\xCC\xCB\xCF\xF3\xDB\xC7\xDC\xC5\xD0\xDE" + 0x0975DA86).s, cvar.rage_no_spread_visual);
+	Sakura::Cvar::New(/*rage_no_spread_visual_strength*/XorStr<0x24, 31, 0x471F05E3>("\x56\x44\x41\x42\x77\x47\x45\x74\x5F\x5D\x5C\x4A\x51\x55\x6D\x45\x5D\x46\x43\x56\x54\x66\x49\x4F\x4E\x58\x50\x58\x34\x29" + 0x471F05E3).s, cvar.rage_no_spread_visual_strength, 1.0);
 	Sakura::Cvar::New(/*rage_no_recoil*/XorStr<0x20, 15, 0x9F1770B9>("\x52\x40\x45\x46\x7B\x4B\x49\x78\x5A\x4C\x49\x44\x45\x41" + 0x9F1770B9).s, cvar.rage_no_recoil);
 	Sakura::Cvar::New(/*rage_tapping_mode*/XorStr<0x81, 18, 0x720770F4>("\xF3\xE3\xE4\xE1\xDA\xF2\xE6\xF8\xF9\xE3\xE5\xEB\xD2\xE3\xE0\xF4\xF4" + 0x720770F4).s, cvar.rage_tapping_mode);
 	Sakura::Cvar::New(/*rage_antiaim_active*/XorStr<0x3D, 20, 0xC3B43A24>("\x4F\x5F\x58\x25\x1E\x23\x2D\x30\x2C\x27\x2E\x25\x16\x2B\x28\x38\x24\x38\x2A" + 0xC3B43A24).s, cvar.rage_antiaim_active);

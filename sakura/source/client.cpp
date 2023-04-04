@@ -323,6 +323,13 @@ void PreV_CalcRefdef(ref_params_s* pparams)
 	g_Local.vPrevForward = pparams->forward;
 	g_Local.iPrevHealth = pparams->health;
 	V_CalcRefdefRecoil(pparams);
+
+	if(cvar.rage_active && cvar.rage_no_spread && cvar.rage_no_spread_visual && IsCurWeaponGun())
+	{
+		pparams->punchangle[0] += g_Local.vNoSpreadAngle[0] * cvar.rage_no_spread_visual_strength;
+		pparams->punchangle[1] += g_Local.vNoSpreadAngle[1] * cvar.rage_no_spread_visual_strength;
+		pparams->punchangle[2] += g_Local.vNoSpreadAngle[2] * cvar.rage_no_spread_visual_strength;
+	}
 }
 
 void PostV_CalcRefdef(ref_params_s* pparams)

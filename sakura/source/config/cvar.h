@@ -21,6 +21,8 @@ public:
 	float rage_always_fire;
 	float rage_draw_aim;
 	float rage_no_spread;
+	float rage_no_spread_visual;
+	float rage_no_spread_visual_strength;
 	float rage_no_recoil;
 	float rage_tapping_mode;
 
