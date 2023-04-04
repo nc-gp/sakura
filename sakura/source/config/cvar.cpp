@@ -349,6 +349,7 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*speedhack_speed*/XorStr<0x84, 16, 0x2C289A3B>("\xF7\xF5\xE3\xE2\xEC\xE1\xEB\xE8\xE7\xD2\xFD\xFF\xF5\xF4\xF6" + 0x2C289A3B).s, cvar.speedhack_speed, 64.0);
 	
 	Sakura::Cvar::New(/*antiss_active*/XorStr<0xF2, 14, 0x11071B71>("\x93\x9D\x80\x9C\x85\x84\xA7\x98\x99\x8F\x95\x8B\x9B" + 0x11071B71).s, cvar.antiss_active);
+	Sakura::Cvar::New(/*antiss_minmodels*/XorStr<0x33, 17, 0x56D6B7A2>("\x52\x5A\x41\x5F\x44\x4B\x66\x57\x52\x52\x50\x51\x5B\x25\x2D\x31" + 0x56D6B7A2).s, cvar.antiss_minmodels);
 	
 	Sakura::Cvar::New(/*misc_wav_speed*/XorStr<0x85, 15, 0x3251B5FF>("\xE8\xEF\xF4\xEB\xD6\xFD\xEA\xFA\xD2\xFD\xFF\xF5\xF4\xF6" + 0x3251B5FF).s, cvar.misc_wav_speed, 1.0);
 	Sakura::Cvar::New(/*misc_thirdperson_key*/XorStr<0xA7, 21, 0xE03DCD4E>("\xCA\xC1\xDA\xC9\xF4\xD8\xC5\xC7\xDD\xD4\xC1\xD7\xC1\xC7\xDA\xD8\xE8\xD3\xDC\xC3" + 0xE03DCD4E).s, cvar.misc_thirdperson_key, -1.0);

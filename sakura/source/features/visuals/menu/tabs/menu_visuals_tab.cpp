@@ -383,6 +383,7 @@ void Sakura::Menu::Tabs::Visuals::LocalAntiScreenshot()
 	ImGui::BeginChild(/*##vo1*/XorStr<0x28, 6, 0x6C8DDCCA>("\x0B\x0A\x5C\x44\x1D" + 0x6C8DDCCA).s, ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Enable anti screenshot*/XorStr<0xAF, 23, 0x1DC967D3>("\xEA\xDE\xD0\xD0\xDF\xD1\x95\xD7\xD9\xCC\xD0\x9A\xC8\xDF\xCF\xDB\xDA\xAE\xB2\xAA\xAC\xB0" + 0x1DC967D3).s, &cvar.antiss_active);
+		Sakura::Menu::Widgets::Checkbox(/*Minmodels command*/XorStr<0x27, 18, 0xFD60BF42>("\x6A\x41\x47\x47\x44\x48\x48\x42\x5C\x10\x52\x5D\x5E\x59\x54\x58\x53" + 0xFD60BF42).s, &cvar.antiss_minmodels);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

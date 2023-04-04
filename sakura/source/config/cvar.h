@@ -129,6 +129,7 @@ public:
 	float speedhack_speed;
 
 	float antiss_active;
+	float antiss_minmodels;
 
 	float misc_wav_speed;
 	float misc_thirdperson_key;
