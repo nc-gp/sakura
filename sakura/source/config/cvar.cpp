@@ -191,6 +191,7 @@ void CVARlist::init()
 {
 	char str[256];
 
+	Sakura::Cvar::New(/*rage_active*/XorStr<0xF6, 12, 0xD8E05FBB>("\x84\x96\x9F\x9C\xA5\x9A\x9F\x89\x97\x89\x65" + 0xD8E05FBB).s, cvar.rage_active);
 	Sakura::Cvar::New(/*rage_wall*/XorStr<0x5A, 10, 0x2048D9AB>("\x28\x3A\x3B\x38\x01\x28\x01\x0D\x0E" + 0x2048D9AB).s, cvar.rage_wall);
 	Sakura::Cvar::New(/*rage_fov*/XorStr<0x91, 9, 0xB38E9923>("\xE3\xF3\xF4\xF1\xCA\xF0\xF8\xEE" + 0xB38E9923).s, cvar.rage_fov, 45.0);
 	Sakura::Cvar::New(/*rage_target_selection*/XorStr<0x6C, 22, 0x6947E2E4>("\x1E\x0C\x09\x0A\x2F\x05\x13\x01\x13\x10\x02\x28\x0B\x1C\x16\x1E\x1F\x09\x17\x10\xEE" + 0x6947E2E4).s, cvar.rage_target_selection);
