@@ -326,9 +326,9 @@ void PreV_CalcRefdef(ref_params_s* pparams)
 
 	if(cvar.rage_active && cvar.rage_no_spread && cvar.rage_no_spread_visual && IsCurWeaponGun())
 	{
-		pparams->punchangle[0] += g_Local.vNoSpreadAngle[0] * cvar.rage_no_spread_visual_strength;
-		pparams->punchangle[1] += g_Local.vNoSpreadAngle[1] * cvar.rage_no_spread_visual_strength;
-		pparams->punchangle[2] += g_Local.vNoSpreadAngle[2] * cvar.rage_no_spread_visual_strength;
+		pparams->punchangle[0] += g_Local.vNoSpreadAngle[0] * 2;
+		pparams->punchangle[1] += g_Local.vNoSpreadAngle[1] * 2;
+		pparams->punchangle[2] += g_Local.vNoSpreadAngle[2] * 2;
 	}
 }
 
@@ -339,7 +339,7 @@ void PostV_CalcRefdef(ref_params_s* pparams)
 	GetRadarAngle(pparams);
 	ViewModelFov(pparams);
 	//ViewModels();
-	ThirdPerson(pparams);
+	Sakura::Thirdperson::Logic(pparams);
 }
 
 void V_CalcRefdef(ref_params_s* pparams)

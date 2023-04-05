@@ -1,6 +1,6 @@
 #include "../../../client.h"
 
-void ThirdPerson(ref_params_s* pparams)
+void Sakura::Thirdperson::Logic(ref_params_s* pparams)
 {
 	if (!cvar.visual_chase_cam)
 		return;
@@ -21,5 +21,7 @@ void ThirdPerson(ref_params_s* pparams)
 	pmtrace_t trace;
 	g_Engine.pEventAPI->EV_SetTraceHull(2);
 	g_Engine.pEventAPI->EV_PlayerTrace(tracestart, tracestart + r + u + b, PM_TRACELINE_PHYSENTSONLY, -1, &trace);
-	if (trace.fraction != 1.0f) VectorCopy(trace.endpos, pparams->vieworg);
+	
+	if (trace.fraction != 1.0f)
+		VectorCopy(trace.endpos, pparams->vieworg);
 }
