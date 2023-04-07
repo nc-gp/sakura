@@ -116,9 +116,9 @@ void Sakura::Texture::PM_SortTextures()
 	// Bubble sort, yuck, but this only occurs at startup and it's only 512 elements...
 	int i, j;
 
-	for (i = 0; i < gcTextures; i++)
+	for (i = 0; i < gcTextures; ++i)
 	{
-		for (j = i + 1; j < gcTextures; j++)
+		for (j = i + 1; j < gcTextures; ++j)
 		{
 			if (_stricmp(grgszTextureName[i], grgszTextureName[j]) > 0)
 			{
