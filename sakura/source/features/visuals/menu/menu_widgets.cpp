@@ -114,8 +114,6 @@ bool Sakura::Menu::Widgets::Tab(const char* icon, const char* label, const ImVec
 	window->DrawList->AddText(ImVec2(bb.Min.x + 35, bb.Min.y + 19), ImColor(255 / 255.f, 255 / 255.f, 255 / 255.f, Sakura::Menu::currentAlphaFade / 255.f), label);
 	ImGui::PopFont();
 
-	//window->DrawList->AddText(ImVec2(bb.Min.x + 35, bb.Min.y + 26), ImColor(100 / 255.f, 100 / 255.f, 100 / 255.f, 255.f / 255.f), desc);
-
 	ImGui::PushFont(Sakura::Menu::Fonts::icons);
 	window->DrawList->AddText(ImVec2(bb.Min.x + 5, bb.Min.y + size_arg.y / 2 - ImGui::CalcTextSize(icon).y / 2), GetMenuColor(Sakura::Menu::currentAlphaFade / 255.f), icon);
 	ImGui::PopFont();
@@ -151,7 +149,7 @@ bool Sakura::Menu::Widgets::SubTab(const char* label, const ImVec2& size_arg, co
 	float t = selected ? 1.0f : 0.0f;
 
 	float ANIM_SPEED = (ImGui::GetIO().Framerate / 4.f) * (1.f / ImGui::GetIO().Framerate);
-	if (g.LastActiveId == g.CurrentWindow->GetID(label))// && g.LastActiveIdTimer < ANIM_SPEED)
+	if (g.LastActiveId == g.CurrentWindow->GetID(label))
 	{
 		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
 		t = selected ? (t_anim) : (1.0f - t_anim);
@@ -274,9 +272,6 @@ bool Sakura::Menu::Widgets::Checkbox(const char* label, float* v)
 	ImU32 col_bg2 = ImGui::GetColorU32(ImLerp(ImVec4(190 / 255.f, 190 / 255.f, 190 / 255.f, 0.f), ImVec4(GetMenuColor()), t));
 	ImU32 col_bg3 = ImGui::GetColorU32(ImLerp(ImVec4(190 / 255.f, 190 / 255.f, 190 / 255.f, 0.f), ImVec4(1.f, 1.f, 1.f, 1.f), t));
 
-	//col_bg2 = ImGui::GetColorU32(ImLerp(ImVec4(190 / 255.f, 190 / 255.f, 190 / 255.f, 0.f), ImVec4(GetMenuColor()), t));
-	//col_bg3 = ImGui::GetColorU32(ImLerp(ImVec4(190 / 255.f, 190 / 255.f, 190 / 255.f, 0.f), ImVec4(1.f, 1.f, 1.f, 1.f), t));
-
 	window->DrawList->AddRect(check_bb.Min, check_bb.Max, col_bg, 4.f, 15, 2.f);
 	window->DrawList->AddRectFilled(check_bb.Min, check_bb.Max, col_bg2, 4.f);
 
@@ -313,7 +308,7 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 	// Default format string when passing NULL
 	if (format == NULL)
 		format = ImGui::DataTypeGetInfo(data_type)->PrintFmt;
-	else if (data_type == ImGuiDataType_S32 && strcmp(format, "%d") != 0) // (FIXME-LEGACY: Patch old "%.0f" format string to use "%d", read function more details.)
+	else if (data_type == ImGuiDataType_S32 && strcmp(format, "%d") != 0)
 		format = Sakura::Menu::Widgets::Helpers::PatchFormatStringFloatToInt(format);
 
 	// Tabbing or CTRL-clicking on Slider turns it into an input box
@@ -347,7 +342,6 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 		return ImGui::TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
 	}
 
-	//const ImU32 frame_col = ImGui::GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : g.HoveredId == id ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
 	ImGui::RenderNavHighlight(frame_bb, id);
 	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 0,frame_bb.Min.y + 7 + 10 }, ImVec2{ frame_bb.Max.x - 12,frame_bb.Max.y - 3 }, ImColor(19, 22, 26, Sakura::Menu::currentAlphaFade), 6.f);
 
@@ -359,7 +353,7 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 	float t = hovered ? 1.0f : 0.0f;
 
 	float ANIM_SPEED = (ImGui::GetIO().Framerate / 8.f) * (1.f / ImGui::GetIO().Framerate);
-	if (g.LastActiveId == g.CurrentWindow->GetID(label))// && g.LastActiveIdTimer < ANIM_SPEED)
+	if (g.LastActiveId == g.CurrentWindow->GetID(label))
 	{
 		float t_anim = ImSaturate(g.LastActiveIdTimer / ANIM_SPEED);
 		t = hovered ? (t_anim) : (1.0f - t_anim);
@@ -424,12 +418,10 @@ bool Sakura::Menu::Widgets::Button(const char* label, const ImVec2& size_arg, Im
 
 	ImU32 col;
 	// Render
-	// change that lol
 	if (hovered)
 		col = GetMenuColor();
 	else
 		col = ImColor(120, 120, 120, 120);
-	//const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
 
 	window->DrawList->AddRect(bb.Min, bb.Max, col, 4, 15, 2);
 	if (held) window->DrawList->AddRectFilled(bb.Min, bb.Max, col, 4, 15);
@@ -531,7 +523,7 @@ bool Sakura::Menu::Widgets::BeginCombo(const char* label, const char* preview_va
 	}
 
 	char name[16];
-	ImFormatString(name, IM_ARRAYSIZE(name), "##Combo_%02d", g.BeginPopupStack.Size); // Recycle windows based on depth
+	ImFormatString(name, IM_ARRAYSIZE(name), /*##Combo_%02d*/XorStr<0x3F, 13, 0x6EB02304>("\x1C\x63\x02\x2D\x2E\x26\x2A\x19\x62\x78\x7B\x2E" + 0x6EB02304).s, g.BeginPopupStack.Size); // Recycle windows based on depth
 
 	// Peak into expected window size so we can position it
 	if (ImGuiWindow* popup_window = ImGui::FindWindowByName(name))
