@@ -22,7 +22,9 @@ namespace Sakura
 	{
 		extern std::deque<viewmodel_t> ViewModel;
 		extern std::deque<viewmodeltexture_t> ViewModelTexture;
+
 		void Remove();
+		void InitTextures();
 	};
 };
 
