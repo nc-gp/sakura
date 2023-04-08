@@ -11,7 +11,7 @@ void Sakura::Menu::Tabs::Legit::Aimbot()
 			Sakura::Menu::Widgets::Checkbox(/*Bypass Trace*/XorStr<0xD3, 13, 0xBB095411>("\x91\xAD\xA5\xB7\xA4\xAB\xF9\x8E\xA9\xBD\xBE\xBB" + 0xBB095411).s, &cvar.bypass_trace_legit);
 			Sakura::Menu::Widgets::Checkbox(/*Draw Aim*/XorStr<0x5E, 9, 0x1E924871>("\x1A\x2D\x01\x16\x42\x22\x0D\x08" + 0x1E924871).s, &cvar.legit_draw_aim);
 			Sakura::Menu::Widgets::Checkbox(/*Humanize*/XorStr<0x94, 9, 0xA4B54BE2>("\xDC\xE0\xFB\xF6\xF6\xF0\xE0\xFE" + 0xA4B54BE2).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].humanize);
-			Sakura::Menu::Widgets::Checkbox(/*Flash check*/XorStr<0x62, 12, 0x107DCB86>("\x24\x0F\x05\x16\x0E\x47\x0B\x01\x0F\x08\x07" + 0x107DCB86).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].flash_check);
+			Sakura::Menu::Widgets::Checkbox(/*Flash check*/XorStr<0x62, 12, 0x107DCB86>("\x24\x0F\x05\x16\x0E\x47\x0B\x01\x0F\x08\x07" + 0x107DCB86).s, &cvar.legit_flashcheck);
 
 			if (cvar.menu_legit_global_section == 1)
 			{
@@ -32,8 +32,11 @@ void Sakura::Menu::Tabs::Legit::Aimbot()
 			Sakura::Menu::Widgets::SliderFloat(/*Block Attack After Kill*/XorStr<0xF1, 24, 0x7207467C>("\xB3\x9E\x9C\x97\x9E\xD6\xB6\x8C\x8D\x9B\x98\x97\xDD\xBF\x99\x74\x64\x70\x23\x4F\x6C\x6A\x6B" + 0x7207467C).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].block_attack_after_kill, 0.f, 1000.f, "%.0fms");
 			Sakura::Menu::Widgets::SliderFloat(/*Reaction Time*/XorStr<0x9D, 14, 0x8550E407>("\xCF\xFB\xFE\xC3\xD5\xCB\xCC\xCA\x85\xF2\xCE\xC5\xCC" + 0x8550E407).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].reaction_time, 0.f, 1000.f, "%.0fms");
 			Sakura::Menu::Widgets::SliderFloat(/*Speed Scale FOV*/XorStr<0xD1, 16, 0x6778C188>("\x82\xA2\xB6\xB1\xB1\xF6\x84\xBB\xB8\xB6\xBE\xFC\x9B\x91\x89" + 0x6778C188).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].speed_scale_fov, 0.f, 100.f, "%.0f%%");
-			Sakura::Menu::Widgets::SliderFloat(/*Flash check*/XorStr<0x6D, 12, 0xBD2F26CF>("\x2B\x02\x0E\x03\x19\x52\x10\x1C\x10\x15\x1C" + 0xBD2F26CF).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].flash_check_percentage, 0.f, 100.f, "%.0f%%");
+			Sakura::Menu::Widgets::SliderFloat(/*Flash check*/XorStr<0x6D, 12, 0xBD2F26CF>("\x2B\x02\x0E\x03\x19\x52\x10\x1C\x10\x15\x1C" + 0xBD2F26CF).s, &cvar.legit_flashcheck_percentage, 0.f, 100.f, "%.0f%%");
 			
+			//if (cvar.menu_legit_sub_section == 0 || cvar.menu_legit_sub_section == 1)
+			//	Sakura::Menu::Widgets::SliderFloat(/*Fast switch delay*/XorStr<0x17, 18, 0x325EB1C2>("\x51\x79\x6A\x6E\x3B\x6F\x6A\x77\x6B\x43\x49\x02\x47\x41\x49\x47\x5E" + 0x325EB1C2).s, &cvar.misc_fastswitch_delay, 0, 200, "%.0fms");
+
 			Sakura::Menu::Widgets::Combo(/*Hitbox*/XorStr<0x95, 7, 0xE0EB7681>("\xDD\xFF\xE3\xFA\xF6\xE2" + 0xE0EB7681).s,
 				&cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].hitbox,
 				/*Belt\0Left thigh\0Left tibia\0Left foot\0Right thigh\0Right tibia\0Right foot\0Stomach\0Lower chest\0Upper chest\0Neck\0Head\0Left shoulder\0Left elbow\0Left arm\0Left hand\0Right shoulder\0Right elbow\0Right arm\0Right hand\0*/XorStr<0x0D, 207, 0x025EDD2D>("\x4F\x6B\x63\x64\x11\x5E\x76\x72\x61\x36\x63\x70\x70\x7D\x73\x1C\x51\x7B\x79\x54\x01\x56\x4A\x46\x4C\x47\x27\x64\x4C\x4C\x5F\x0C\x4B\x41\x40\x44\x31\x60\x5A\x53\x5D\x42\x17\x4C\x51\x53\x5C\x54\x3D\x6C\x56\x27\x29\x36\x63\x30\x2C\x24\x2E\x29\x49\x18\x22\x2B\x25\x3A\x6F\x36\x3E\x3D\x27\x54\x06\x22\x38\x35\x38\x39\x33\x5C\x11\x31\x28\x05\x13\x42\x00\x0C\x00\x15\x13\x68\x3C\x1A\x1B\x09\x1F\x4E\x0C\x18\x14\x01\x07\x74\x3B\x13\x14\x13\x79\x32\x1E\x1D\x19\x7E\x33\xE5\xE7\xF6\xA3\xF7\xED\xE9\xF2\xE4\xED\xEF\xF9\x8C\xC1\xEB\xE9\xE4\xB1\xF7\xFF\xF6\xFA\xE1\x97\xD4\xFC\xFC\xEF\xBC\xFC\xEC\xF2\xA0\xED\xC7\xC5\xD0\x85\xCE\xC6\xC6\xCD\xAA\xF9\xC5\xCA\xC6\xDB\x90\xC2\xDA\xDC\xC1\xD9\xD2\xD2\xCA\xB9\xE8\xD2\xDB\xD5\xCA\x9F\xA5\xAD\xA0\xAC\xB3\xC5\x94\xAE\xAF\xA1\xBE\xEB\xAD\xBF\xA3\xCF\x82\xB8\xB5\xBB\xA0\xF5\xBE\xB6\xB6\xBD\xDA" + 0x025EDD2D).s);

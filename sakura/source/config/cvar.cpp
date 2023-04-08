@@ -276,10 +276,6 @@ void CVARlist::init()
 		Sakura::Cvar::New(str, cvar.legit[i].trigger_random_max, 3.0);
 		sprintf(str, /*legit[%d].trigger_hitbox*/XorStr<0x0B, 25, 0x24913136>("\x67\x69\x6A\x67\x7B\x4B\x34\x76\x4E\x3A\x61\x64\x7E\x7F\x7E\x7F\x69\x43\x75\x77\x6B\x42\x4E\x5A" + 0x24913136).s, i);
 		Sakura::Cvar::New(str, cvar.legit[i].trigger_hitbox, 11.0);
-		sprintf(str, /*legit[%d].flash_check*/XorStr<0x51, 22, 0xB5A1CEB7>("\x3D\x37\x34\x3D\x21\x0D\x72\x3C\x04\x74\x3D\x30\x3C\x2D\x37\x3F\x02\x0A\x06\x07\x0E" + 0xB5A1CEB7).s, i);
-		Sakura::Cvar::New(str, cvar.legit[i].flash_check);
-		sprintf(str, /*legit[%d].flash_check_percentage*/XorStr<0x2C, 33, 0xA3522B74>("\x40\x48\x49\x46\x44\x6A\x17\x57\x69\x1B\x50\x5B\x59\x4A\x52\x64\x5F\x55\x5B\x5C\x2B\x1E\x32\x26\x36\x26\x23\x29\x3C\x28\x2D\x2E" + 0xA3522B74).s, i);
-		Sakura::Cvar::New(str, cvar.legit[i].flash_check_percentage, 50.0);
 
 		sprintf(str, /*rage[%d].rage_delay_shot*/XorStr<0x00, 25, 0x851B77BB>("\x72\x60\x65\x66\x5F\x20\x62\x5A\x26\x7B\x6B\x6C\x69\x52\x6A\x6A\x7C\x70\x6B\x4C\x67\x7D\x79\x63" + 0x851B77BB).s, i);
 		Sakura::Cvar::New(str, cvar.rage[i].rage_delay_shot);
@@ -301,7 +297,9 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*legit_team*/XorStr<0x28, 11, 0x39F07C81>("\x44\x4C\x4D\x42\x58\x72\x5A\x4A\x51\x5C" + 0x39F07C81).s, cvar.legit_team);
 	Sakura::Cvar::New(/*legit_key*/XorStr<0xF9, 10, 0xBF4F9A99>("\x95\x9F\x9C\x95\x89\xA1\x94\x65\x78" + 0xBF4F9A99).s, cvar.legit_key, -1.0);
 	Sakura::Cvar::New(/*legit_draw_aim*/XorStr<0xCC, 15, 0x097ADCCB>("\xA0\xA8\xA9\xA6\xA4\x8E\xB6\xA1\xB5\xA2\x89\xB6\xB1\xB4" + 0x097ADCCB).s, cvar.legit_draw_aim, 1.0);
-	
+	Sakura::Cvar::New(/*legit_flashcheck*/XorStr<0x6D, 17, 0xE658430F>("\x01\x0B\x08\x19\x05\x2D\x15\x18\x14\x05\x1F\x1B\x11\x1F\x18\x17" + 0xE658430F).s, cvar.legit_flashcheck);
+	Sakura::Cvar::New(/*legit_flashcheck_percentage*/XorStr<0x2E, 28, 0xFE81BE6D>("\x42\x4A\x57\x58\x46\x6C\x52\x59\x57\x44\x50\x5A\x52\x5E\x5F\x56\x61\x4F\x25\x33\x21\x26\x2A\x31\x27\x20\x2D" + 0xFE81BE6D).s, cvar.legit_flashcheck_percentage, 50.0);
+
 	Sakura::Cvar::New(/*menu_legit_global_section*/XorStr<0xF4, 26, 0x74D430B3>("\x99\x90\x98\x82\xA7\x95\x9F\x9C\x95\x89\xA1\x98\x6C\x6E\x60\x62\x68\x5A\x75\x62\x6B\x7D\x63\x64\x62" + 0x74D430B3).s, cvar.menu_legit_global_section);
 	Sakura::Cvar::New(/*menu_legit_sub_section*/XorStr<0xA5, 23, 0x1DB4ACA9>("\xC8\xC3\xC9\xDD\xF6\xC6\xCE\xCB\xC4\xDA\xF0\xC3\xC4\xD0\xEC\xC7\xD0\xD5\xC3\xD1\xD6\xD4" + 0x1DB4ACA9).s, cvar.menu_legit_sub_section);
 	Sakura::Cvar::New(/*menu_rage_global_section*/XorStr<0x40, 25, 0x411AA136>("\x2D\x24\x2C\x36\x1B\x37\x27\x20\x2D\x16\x2D\x27\x23\x2F\x2F\x23\x0F\x22\x37\x30\x20\x3C\x39\x39" + 0x411AA136).s, cvar.menu_rage_global_section);
@@ -379,6 +377,7 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*misc_backtrack_light_color[2]*/XorStr<0x1B, 30, 0x66B2408B>("\x76\x75\x6E\x7D\x40\x42\x40\x41\x48\x50\x57\x47\x44\x43\x76\x46\x42\x4B\x45\x5A\x70\x53\x5E\x5E\x5C\x46\x6E\x04\x6A" + 0x66B2408B).s, cvar.misc_backtrack_light_color[2], 1.0);
 	Sakura::Cvar::New(/*misc_backtrack_light_color[3]*/XorStr<0x66, 30, 0x34421600>("\x0B\x0E\x1B\x0A\x35\x09\x0D\x0E\x05\x1B\x02\x10\x11\x18\x2B\x19\x1F\x10\x10\x0D\x25\x18\x13\x11\x11\x0D\xDB\xB2\xDF" + 0x34421600).s, cvar.misc_backtrack_light_color[3], 1.0);
 	Sakura::Cvar::New(/*misc_fastswitch*/XorStr<0x45, 16, 0x72D77738>("\x28\x2F\x34\x2B\x16\x2C\x2A\x3F\x39\x3D\x38\x39\x25\x31\x3B" + 0x72D77738).s, cvar.misc_fastswitch);
+	//Sakura::Cvar::New(/*misc_fastswitch_delay*/XorStr<0xE7, 22, 0xCC31DDBD>("\x8A\x81\x9A\x89\xB4\x8A\x8C\x9D\x9B\x83\x86\x9B\x87\x97\x9D\xA9\x93\x9D\x95\x9B\x82" + 0xCC31DDBD).s, cvar.misc_fastswitch_delay, 100.0);
 	
 	Sakura::Cvar::New(/*misc_auto_config_save*/XorStr<0x1F, 22, 0xBC724E62>("\x72\x49\x52\x41\x7C\x45\x50\x52\x48\x77\x4A\x45\x45\x4A\x44\x49\x70\x43\x50\x44\x56" + 0xBC724E62).s, cvar.misc_auto_config_save, 1.0);
 	

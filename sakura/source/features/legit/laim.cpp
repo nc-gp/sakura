@@ -83,8 +83,8 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 	if (!IsCurWeaponGun() || g_Local.weapon.m_iInReload || g_Local.weapon.m_iClip < 1 || g_Local.weapon.m_flNextAttack > 0.0)
 		return;
 
-	if (cvar.legit[g_Local.weapon.m_iWeaponID].flash_check &&
-		Sakura::Fade::Percentage > cvar.legit[g_Local.weapon.m_iWeaponID].flash_check_percentage)
+	if (cvar.legit_flashcheck &&
+		Sakura::Fade::Percentage > cvar.legit_flashcheck_percentage)
 		return;
 
 	float flFOV = cvar.legit[g_Local.weapon.m_iWeaponID].fov;

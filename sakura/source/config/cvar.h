@@ -50,8 +50,6 @@ public:
 		float fov;
 		float speed_in_attack;
 		float hitbox;
-		float flash_check;
-		float flash_check_percentage;
 
 		float trigger_active;
 		float trigger_wall;
@@ -81,6 +79,9 @@ public:
 	float legit_key;
 	float legit_team;
 	float legit_draw_aim;
+
+	float legit_flashcheck;
+	float legit_flashcheck_percentage;
 
 	float menu_legit_global_section;
 	float menu_legit_sub_section;
@@ -158,6 +159,7 @@ public:
 	float misc_default_config;
 
 	float misc_fastswitch;
+	//float misc_fastswitch_delay;
 
 	float notifications_enable;
 	float notifications_fade;
