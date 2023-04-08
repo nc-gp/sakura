@@ -14,7 +14,12 @@ void Sakura::Menu::Tabs::Legit::Aimbot()
 			Sakura::Menu::Widgets::Checkbox(/*Flash check*/XorStr<0x62, 12, 0x107DCB86>("\x24\x0F\x05\x16\x0E\x47\x0B\x01\x0F\x08\x07" + 0x107DCB86).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].flash_check);
 
 			if (cvar.menu_legit_global_section == 1)
+			{
 				Sakura::Menu::Widgets::Checkbox(/*Fast zoom*/XorStr<0xFC, 10, 0xA831F29D>("\xBA\x9C\x8D\x8B\x20\x7B\x6D\x6C\x69" + 0xA831F29D).s, &cvar.legit_fastzoom);
+
+				if (cvar.menu_legit_sub_section == 0 || cvar.menu_legit_sub_section == 1)
+					Sakura::Menu::Widgets::Checkbox(/*Fast switch*/XorStr<0x2B, 12, 0x76A78DA1>("\x6D\x4D\x5E\x5A\x0F\x43\x46\x5B\x47\x57\x5D" + 0x76A78DA1).s, &cvar.misc_fastswitch);
+			}
 		}
 		ImGui::EndChild();
 		ImGui::SameLine();

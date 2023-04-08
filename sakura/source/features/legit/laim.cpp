@@ -335,6 +335,12 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 					cmd->buttons |= IN_ATTACK2;
 
 				cmd->buttons |= IN_ATTACK;
+
+				if (cvar.misc_fastswitch && g_Local.bScoped && (g_Local.weapon.m_iWeaponID == WEAPON_AWP || g_Local.weapon.m_iWeaponID == WEAPON_SCOUT))
+				{
+					g_Engine.pfnClientCmd(/*lastinv*/XorStr<0xDB, 8, 0x8D579E19>("\xB7\xBD\xAE\xAA\xB6\x8E\x97" + 0x8D579E19).s);
+					g_Engine.pfnClientCmd(/*lastinv*/XorStr<0xDB, 8, 0x8D579E19>("\xB7\xBD\xAE\xAA\xB6\x8E\x97" + 0x8D579E19).s);
+				}
 			}
 			else if (Attacking)
 			{
@@ -342,7 +348,9 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 			}
 
 			if (!g_Local.vPunchangle.IsZero2D())
+			{
 				dwBlockAttack = GetTickCount();
+			}
 		}
 	}
 	else

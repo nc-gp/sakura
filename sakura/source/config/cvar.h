@@ -157,6 +157,8 @@ public:
 	float misc_auto_config_save;
 	float misc_default_config;
 
+	float misc_fastswitch;
+
 	float notifications_enable;
 	float notifications_fade;
 	float notifications_text_only;

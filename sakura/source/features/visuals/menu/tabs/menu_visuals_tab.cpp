@@ -227,20 +227,8 @@ void Sakura::Menu::Tabs::Visuals::LocalCharacter()
 	ImGui::BeginChild(/*##lc1*/XorStr<0xAB, 6, 0x4A991F98>("\x88\x8F\xC1\xCD\x9E" + 0x4A991F98).s, ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Light*/XorStr<0x4F, 6, 0x868C92FA>("\x03\x39\x36\x3A\x27" + 0x868C92FA).s, &cvar.visual_lambert_local);
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-
 		Sakura::Menu::Widgets::Checkbox(/*Chams Wireframe*/XorStr<0xBC, 16, 0x8C29C6A1>("\xFF\xD5\xDF\xD2\xB3\xE1\x95\xAA\xB6\xA0\xA0\xB5\xA9\xA4\xAF" + 0x8C29C6A1).s, &cvar.chams_local_wireframe);
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-
 		Sakura::Menu::Widgets::Checkbox(/*Glow*/XorStr<0x0A, 5, 0x5885979E>("\x4D\x67\x63\x7A" + 0x5885979E).s, &cvar.visual_local_glow);
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-
 		Sakura::Menu::Widgets::Checkbox(/*Third person*/XorStr<0x27, 13, 0xC6CD6DD1>("\x73\x40\x40\x58\x4F\x0C\x5D\x4B\x5D\x43\x5E\x5C" + 0xC6CD6DD1).s, &cvar.visual_chase_cam);
 	}
 	ImGui::EndChild();
@@ -250,16 +238,9 @@ void Sakura::Menu::Tabs::Visuals::LocalCharacter()
 		ImGui::PushItemWidth(itemWidth);
 
 		Sakura::Menu::Widgets::SliderFloat(/*Glow thickness*/XorStr<0xA0, 15, 0x5370D2F5>("\xE7\xCD\xCD\xD4\x84\xD1\xCE\xCE\xCB\xC2\xC4\xCE\xDF\xDE" + 0x5370D2F5).s, &cvar.visual_local_glow_thickness, 4.f, 64.f, "%.0f");
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-
 		Sakura::Menu::Widgets::SliderFloat(/*Third person Back*/XorStr<0x0F, 18, 0x8F5B31DA>("\x5B\x78\x78\x60\x77\x34\x65\x73\x65\x6B\x76\x74\x3B\x5E\x7C\x7D\x74" + 0x8F5B31DA).s, &cvar.visual_chase_back, 25.f, 125.f, "%.0f");
 		Sakura::Menu::Widgets::SliderFloat(/*Third person Up*/XorStr<0xE9, 16, 0xD5255C85>("\xBD\x82\x82\x9E\x89\xCE\x9F\x95\x83\x81\x9C\x9A\xD5\xA3\x87" + 0xD5255C85).s, &cvar.visual_chase_up, 0.f, 100.f, "%.0f");
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-
+		
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0x8C, 6, 0x83AE6DD1>("\xCF\xE5\xEF\xE2\xE3" + 0x83AE6DD1).s,
 			&cvar.chams_local,
