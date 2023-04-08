@@ -29,7 +29,7 @@
 
 * Modern menu interface: Sakura features a sleek, user-friendly menu that is easy to navigate.
 * Customizable menu colors
-* Rich and dynamic LUA scripting: Built on top of the powerful LUA scripting language, which allows for complex and dynamic interactions.
+* Rich and dynamic LUA scripting: Built on top of the powerful LUA scripting language, which allows for complex and dynamic interactions. [Link](https://sakura-9.gitbook.io/sakura/)
 
 ## How To Use
 
@@ -50,10 +50,6 @@ $ git clone https://github.com/rbl-dot/sakura
 * Fix bugs.
 * Improve lua functions.
 * Add save/load functions for lua.
-* Flash check for legit aimbot.
-* Rewrite code for rest files.
-* Update readme.
-* Github lua wiki.
 
 ## Credits
 
