@@ -642,8 +642,7 @@ void Sakura::Menu::Tabs::Visuals::Removals()
 	ImGui::BeginChild(/*##vo2*/XorStr<0x52, 6, 0x5A6A72D7>("\x71\x70\x22\x3A\x64" + 0x5A6A72D7).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
-		Sakura::Menu::Widgets::SliderFloat(/*No Scope Lines Width*/XorStr<0x1C, 21, 0xE852EEE8>("\x52\x72\x3E\x4C\x43\x4E\x52\x46\x04\x69\x4F\x49\x4D\x5A\x0A\x7C\x45\x49\x5A\x47" + 0xE852EEE8).s, &cvar.visual_remove_scope_width, 0.f, 200.f, "%.0f");
-		Sakura::Menu::Widgets::SliderFloat(/*No Scope Lines Margin*/XorStr<0xB4, 22, 0xFDACB4CA>("\xFA\xDA\x96\xE4\xDB\xD6\xCA\xDE\x9C\xF1\xD7\xD1\xA5\xB2\xE2\x8E\xA5\xB7\xA1\xAE\xA6" + 0xFDACB4CA).s, &cvar.visual_remove_scope_margin, 0.f, 30.f, "%.0f");
+
 		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();

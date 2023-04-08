@@ -353,9 +353,6 @@ public:
 	float visual_dont_render_players;
 
 	float visual_remove_scope;
-	float visual_remove_scope_width;
-	float visual_remove_scope_margin;
-	float visual_remove_scope_color[4];
 
 	float visual_fakelag_history_local;
 	float visual_fakelag_history_local_light;

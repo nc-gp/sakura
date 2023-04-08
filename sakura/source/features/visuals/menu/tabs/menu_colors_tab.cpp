@@ -483,7 +483,6 @@ void Sakura::Menu::Tabs::Colors::LocalOther()
 	ImGui::BeginChild(/*##vlc1*/XorStr<0x2D, 7, 0x6FFB9A5E>("\x0E\x0D\x59\x5C\x52\x03" + 0x6FFB9A5E).s, ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::ColorEdit(/*No Flash*/XorStr<0xAB, 9, 0x5CDB91B9>("\xE5\xC3\x8D\xE8\xC3\xD1\xC2\xDA" + 0x5CDB91B9).s, (float*)cvar.visual_noflash_color, pickerFlags);
-		Sakura::Menu::Widgets::ColorEdit(/*No scope*/XorStr<0xC4, 9, 0x68A62592>("\x8A\xAA\xE6\xB4\xAB\xA6\xBA\xAE" + 0x68A62592).s, (float*)cvar.visual_remove_scope_color, pickerFlags);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
