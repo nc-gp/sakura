@@ -971,6 +971,7 @@ void DrawMenuWindow()
 	auto flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
 	
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::SetNextWindowSize({ 720, 490 });
 	ImGui::Begin(/*##menu*/XorStr<0x9A, 7, 0x2A9A8C6C>("\xB9\xB8\xF1\xF8\xF0\xEA" + 0x2A9A8C6C).s, nullptr, flags);
 	{
@@ -1024,7 +1025,9 @@ void DrawMenuWindow()
 				ImGui::SetCursorPos({ 10,10 });
 				ImGui::BeginGroup();
 				{
+					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 3, 3 });
 					DrawTab();
+					ImGui::PopStyleVar();
 				}
 				ImGui::EndGroup();
 				ImGui::PopFont();
@@ -1034,5 +1037,5 @@ void DrawMenuWindow()
 		ImGui::EndGroup();
 	}
 	ImGui::End();
-	ImGui::PopStyleVar();
+	ImGui::PopStyleVar(2);
 }

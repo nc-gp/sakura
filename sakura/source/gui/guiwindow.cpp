@@ -25,6 +25,7 @@ void DrawFullScreenWindow()
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_Always);
 	ImGui::Begin(/*FullScreen*/XorStr<0x11, 11, 0xA379A5DD>("\x57\x67\x7F\x78\x46\x75\x65\x7D\x7C\x74" + 0xA379A5DD).s, reinterpret_cast<bool*>(true), ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
@@ -65,13 +66,13 @@ void DrawFullScreenWindow()
 
 		AntiAim::DrawArrows();
 		DrawCrossHair();
-		Sakura::Scope::Remove();
+		Sakura::Scope::Draw();
 		Sakura::FOVS::Aimbot();
 		Sakura::FOVS::Spread();
 		Toast::Render();
 	}
 	ImGui::End();
-	ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(3);
 	ImGui::PopStyleColor();
 	ImGui::PopFont();
 }
