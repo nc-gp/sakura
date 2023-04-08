@@ -332,6 +332,8 @@ public:
 	float visual_menu_raining_type;
 	float visual_menu_raining_speed_multipler;
 	float visual_menu_bg_opacity;
+	float visual_menu_combo_bg_color[4];
+	float visual_menu_slider_bg_color[4];
 
 	float visual_fog;
 	float visual_fog_density;

@@ -44,7 +44,7 @@ int ServerName(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	char* m_szServerName = READ_STRING();
-	sprintf(sServerName, "%s\0", m_szServerName);
+	sprintf(sServerName, /*%s\0*/XorStr<0x29, 4, 0x248C859F>("\x0C\x59\x2B" + 0x248C859F).s, m_szServerName);
 	return Sakura::Message::User::pServerName(pszName, iSize, pbuf);
 }
 

@@ -82,6 +82,8 @@ DWORD WINAPI Hook()
 
 	Sakura::Message::User::Init();
 
+	Sakura::Hands::InitTextures();
+
 	HookOpenGL();
 
 	Sakura::Lua::Reload();

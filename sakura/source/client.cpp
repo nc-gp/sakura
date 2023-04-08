@@ -102,13 +102,13 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 		if (keystrafetoggle && down)
 		{
 			Strafe = !Strafe;
-			Toast::Create({ 3, "Strafe %s", Strafe ? "activated" : "deactivated"});
+			Toast::Create({ 3, /*Strafe %s*/XorStr<0xBB,10,0xB6AE3E40>("\xE8\xC8\xCF\xDF\xD9\xA5\xE1\xE7\xB0" + 0xB6AE3E40).s, Strafe ? /*activated*/XorStr<0xE0,10,0x0EEE144D>("\x81\x82\x96\x8A\x92\x84\x92\x82\x8C" + 0x0EEE144D).s : /*deactivated*/XorStr<0x81,12,0x76BE5F91>("\xE5\xE7\xE2\xE7\xF1\xEF\xF1\xE9\xFD\xEF\xEF" + 0x76BE5F91).s });
 		}
 
 		if (thirdpersonkey && down)
 		{
 			cvar.visual_chase_cam = !cvar.visual_chase_cam;
-			Toast::Create({ 3, "Third person %s", cvar.visual_chase_cam ? "activated" : "deactivated" });
+			Toast::Create({ 3, /*Third person %s*/XorStr<0x05,16,0xCA8AF3BD>("\x51\x6E\x6E\x7A\x6D\x2A\x7B\x69\x7F\x7D\x60\x7E\x31\x37\x60" + 0xCA8AF3BD).s, cvar.visual_chase_cam ? /*activated*/XorStr<0x75,10,0x3159CF1E>("\x14\x15\x03\x11\x0F\x1B\x0F\x19\x19" + 0x3159CF1E).s : /*deactivated*/XorStr<0x05,12,0xA5CA1816>("\x61\x63\x66\x6B\x7D\x63\x7D\x6D\x79\x6B\x6B" + 0xA5CA1816).s });
 		}
 
 		if (keyaayawsideways && down)
@@ -154,7 +154,7 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 		if (keylegittrigger && down)
 		{
 			Sakura::Triggerbot::TriggerKeyStatus = !Sakura::Triggerbot::TriggerKeyStatus;
-			Toast::Create({ 3, "Trigger %s", Sakura::Triggerbot::TriggerKeyStatus ? "activated" : "deactivated" });
+			Toast::Create({ 3, /*Trigger %s*/XorStr<0xC6,11,0x6905F391>("\x92\xB5\xA1\xAE\xAD\xAE\xBE\xED\xEB\xBC" + 0x6905F391).s, Sakura::Triggerbot::TriggerKeyStatus ? /*activated*/XorStr<0xBF,10,0x1DD2FDC1>("\xDE\xA3\xB5\xAB\xB5\xA5\xB1\xA3\xA3" + 0x1DD2FDC1).s : /*deactivated*/XorStr<0x8B,12,0xC5A086FF>("\xEF\xE9\xEC\xED\xFB\xF9\xE7\xF3\xE7\xF1\xF1" + 0xC5A086FF).s });
 		}
 		
 		if ((keystrafe || keyfast || keygstrafe || keybhop || keyjump || keyrage || keylegittrigger || keylegit || keyrush) && down)

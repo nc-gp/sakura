@@ -343,7 +343,7 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 	}
 
 	ImGui::RenderNavHighlight(frame_bb, id);
-	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 0,frame_bb.Min.y + 7 + 10 }, ImVec2{ frame_bb.Max.x - 12,frame_bb.Max.y - 3 }, ImColor(19, 22, 26, Sakura::Menu::currentAlphaFade), 6.f);
+	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 0,frame_bb.Min.y + 7 + 10 }, ImVec2{ frame_bb.Max.x - 12,frame_bb.Max.y - 3 }, ImColor((int)(cvar.visual_menu_slider_bg_color[0] * 255), (int)(cvar.visual_menu_slider_bg_color[1] * 255), (int)(cvar.visual_menu_slider_bg_color[2] * 255), Sakura::Menu::currentAlphaFade), 6.f);
 
 	ImRect grab_bb;
 	const bool value_changed = ImGui::SliderBehavior(frame_bb, id, data_type, p_data, p_min, p_max, format/*, power*/, ImGuiSliderFlags_None, &grab_bb);
@@ -423,7 +423,7 @@ bool Sakura::Menu::Widgets::Button(const char* label, const ImVec2& size_arg, Im
 	else
 		col = ImColor(120, 120, 120, 120);
 
-	window->DrawList->AddRect(bb.Min, bb.Max, col, 4, 15, 2);
+	window->DrawList->AddRectFilled(bb.Min, bb.Max, col, 4, 15);
 	if (held) window->DrawList->AddRectFilled(bb.Min, bb.Max, col, 4, 15);
 	ImGui::RenderTextClipped({ bb.Min.x + style.FramePadding.x, bb.Min.y + style.FramePadding.y }, { bb.Max.x - style.FramePadding.x,  bb.Max.y - style.FramePadding.y }, label, NULL, &label_size, style.ButtonTextAlign, &bb);
 
@@ -481,12 +481,12 @@ bool Sakura::Menu::Widgets::BeginCombo(const char* label, const char* preview_va
 	ImU32 col_bg2;
 	//ImU32 col_bg3;
 
-	col_bg = ImGui::GetColorU32(ImVec4(120 / 255.f, 120 / 255.f, 120 / 255.f, 120 / 255.f));
+	col_bg = ImGui::GetColorU32(ImVec4(cvar.visual_menu_combo_bg_color[0], cvar.visual_menu_combo_bg_color[1], cvar.visual_menu_combo_bg_color[2], 120 / 255.f));
 	col_bg2 = ImGui::GetColorU32((ImVec4)GetMenuColor(0.65f));
 
-	window->DrawList->AddRect({ frame_bb.Min.x,frame_bb.Min.y + 10 }, frame_bb.Max, col_bg, 3.f, 15, 2.f);
+	window->DrawList->AddRectFilled({ frame_bb.Min.x, frame_bb.Min.y + 10 }, frame_bb.Max, col_bg, 3.f, 15);
 	if (hovered)
-		window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 1,frame_bb.Min.y + 11 }, ImVec2{ frame_bb.Max.x - 1,frame_bb.Max.y - 1 }, col_bg2, 3.f);
+		window->DrawList->AddRectFilled({ frame_bb.Min.x, frame_bb.Min.y + 10 }, frame_bb.Max, col_bg2, 3.f);
 
 	if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
 		ImGui::RenderTextClipped({ frame_bb.Min.x + style.FramePadding.x,frame_bb.Min.y + style.FramePadding.y + 10 }, value_bb.Max, preview_value, NULL, NULL, ImVec2(0.0f, 0.0f));

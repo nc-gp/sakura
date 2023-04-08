@@ -553,6 +553,8 @@ void Sakura::Menu::Tabs::Colors::Menu()
 		Sakura::Menu::Widgets::ColorEdit(/*Widgets background*/XorStr<0x27, 19, 0xA13329FE>("\x70\x41\x4D\x4D\x4E\x58\x5E\x0E\x4D\x51\x52\x59\x54\x46\x5A\x43\x59\x5C" + 0xA13329FE).s, (float*)cvar.visual_menu_color_widgets, pickerFlags);
 		Sakura::Menu::Widgets::ColorEdit(/*Selected tab background*/XorStr<0x96, 24, 0xC177A2DE>("\xC5\xF2\xF4\xFC\xF9\xEF\xF9\xF9\xBE\xEB\xC1\xC3\x82\xC1\xC5\xC6\xCD\xC0\xDA\xC6\xDF\xC5\xC8" + 0xC177A2DE).s, (float*)cvar.visual_menu_color_tab_selected, pickerFlags);
 		Sakura::Menu::Widgets::ColorEdit(/*Selected subtab background*/XorStr<0x0A, 27, 0x348EA17B>("\x59\x6E\x60\x68\x6D\x7B\x75\x75\x32\x60\x61\x77\x62\x76\x7A\x39\x78\x7A\x7F\x76\x79\x6D\x4F\x54\x4C\x47" + 0x348EA17B).s, (float*)cvar.visual_menu_color_subtab_selected, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Combo background*/XorStr<0x2C, 17, 0x66ACF5BA>("\x6F\x42\x43\x4D\x5F\x11\x50\x52\x57\x5E\x51\x45\x57\x4C\x54\x5F" + 0x66ACF5BA).s, (float*)cvar.visual_menu_combo_bg_color, pickerFlags);
+		Sakura::Menu::Widgets::ColorEdit(/*Slider background*/XorStr<0x18, 18, 0x7363B53A>("\x4B\x75\x73\x7F\x79\x6F\x3E\x7D\x41\x42\x49\x44\x56\x4A\x53\x49\x4C" + 0x7363B53A).s, (float*)cvar.visual_menu_slider_bg_color, pickerFlags);
 	}
 	ImGui::EndChild();
 }

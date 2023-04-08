@@ -4,7 +4,6 @@ glBegin_t pglBegin = NULL;
 wglSwapBuffers_t pwglSwapBuffers = NULL;
 glClear_t pglClear = NULL;
 glColor4f_t pglColor4f = NULL;
-//glReadPixels_t pglReadPixels = NULL;
 glVertex3fv_t pglVertex3fv = NULL;
 
 bool bSmoke = false;
@@ -55,26 +54,6 @@ void APIENTRY Hooked_glClear(GLbitfield mask)
 
 	pglClear(mask);
 }
-
-//void APIENTRY Hooked_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* pixels)
-//{
-//	/*if (ScreenFirst || !cvar.snapshot_memory)
-//	{
-//		dwSize = (width * height) * 3;
-//		BufferScreen = (PBYTE)malloc(dwSize);
-//		pglReadPixels(x, y, width, height, format, type, pixels);
-//		memcpy(BufferScreen, pixels, dwSize);
-//		DrawVisuals = true;
-//		ScreenFirst = false;
-//	}
-//	memcpy(pixels, BufferScreen, dwSize);*/
-//
-//	/*GLuint uiImageSize = width * height * 3;
-//	if (Sakura::ScreenShot::BufferScreen.size() && Sakura::ScreenShot::BufferScreen.size() <= uiImageSize)
-//		memcpy(pixels, Sakura::ScreenShot::BufferScreen.data(), uiImageSize);
-//	else
-//		memset(pixels, 0, uiImageSize);*/
-//}
 
 void APIENTRY Hooked_glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
@@ -142,6 +121,5 @@ void HookOpenGL()
 		pwglSwapBuffers = (wglSwapBuffers_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*wglSwapBuffers*/XorStr<0xDD, 15, 0xE3ADB53A>("\xAA\xB9\xB3\xB3\x96\x83\x93\xA6\x90\x80\x81\x8D\x9B\x99" + 0xE3ADB53A).s), (LPBYTE)&Hooked_wglSwapBuffers);
 		pglClear = (glClear_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*glClear*/XorStr<0xC0, 8, 0xA3ECAB25>("\xA7\xAD\x81\xAF\xA1\xA4\xB4" + 0xA3ECAB25).s), (LPBYTE)&Hooked_glClear);
 		pglColor4f = (glColor4f_t)DetourFunction((LPBYTE)GetProcAddress(hmOpenGL, /*glColor4f*/XorStr<0x20, 10, 0x256769FD>("\x47\x4D\x61\x4C\x48\x4A\x54\x13\x4E" + 0x256769FD).s), (LPBYTE)&Hooked_glColor4f);
-		//pglReadPixels = (glReadPixels_t)DetourFunction((PBYTE)GetProcAddress(hmOpenGL, "glReadPixels"), (PBYTE)Hooked_glReadPixels);
 	}
 }
