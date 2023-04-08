@@ -343,7 +343,7 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 	}
 
 	ImGui::RenderNavHighlight(frame_bb, id);
-	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 0,frame_bb.Min.y + 7 + 10 }, ImVec2{ frame_bb.Max.x - 12,frame_bb.Max.y - 3 }, ImColor((int)(cvar.visual_menu_slider_bg_color[0] * 255), (int)(cvar.visual_menu_slider_bg_color[1] * 255), (int)(cvar.visual_menu_slider_bg_color[2] * 255), Sakura::Menu::currentAlphaFade), 6.f);
+	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x,frame_bb.Min.y + 7 + 10 }, ImVec2{ frame_bb.Max.x,frame_bb.Max.y - 3 }, ImColor((int)(cvar.visual_menu_slider_bg_color[0] * 255), (int)(cvar.visual_menu_slider_bg_color[1] * 255), (int)(cvar.visual_menu_slider_bg_color[2] * 255), Sakura::Menu::currentAlphaFade), 6.f);
 
 	ImRect grab_bb;
 	const bool value_changed = ImGui::SliderBehavior(frame_bb, id, data_type, p_data, p_min, p_max, format/*, power*/, ImGuiSliderFlags_None, &grab_bb);
@@ -364,7 +364,7 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 	col_bg = ImGui::GetColorU32(ImLerp((ImVec4)GetMenuColor(0.65f), GetMenuColor(Sakura::Menu::currentAlphaFade / 255.f), t));
 
 	// Render grab
-	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x + 0,frame_bb.Min.y + 7 + 10 }, ImVec2{ grab_bb.Min.x,grab_bb.Max.y - 1 }, col_bg, 6.f);
+	window->DrawList->AddRectFilled(ImVec2{ frame_bb.Min.x,frame_bb.Min.y + 7 + 10 }, ImVec2{ grab_bb.Min.x + 12,grab_bb.Max.y - 1 }, col_bg, 6.f);
 
 	// Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
 	char value_buf[64];
@@ -373,9 +373,8 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 	if (label_size.x > 0.0f)
 		ImGui::RenderText(ImVec2(frame_bb.Min.x, frame_bb.Min.y + 1), label);
 
-
 	if (label_size.x > 0.0f)
-		ImGui::RenderText(ImVec2(frame_bb.Max.x - ImGui::CalcTextSize(value_buf).x - 12, frame_bb.Min.y + 1), value_buf);
+		ImGui::RenderText(ImVec2(frame_bb.Max.x - ImGui::CalcTextSize(value_buf).x, frame_bb.Min.y + 1), value_buf);
 
 	return value_changed;
 }

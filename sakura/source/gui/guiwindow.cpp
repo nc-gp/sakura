@@ -21,7 +21,6 @@ void ScreenToWorld(float* screen, float* world)
 
 void DrawFullScreenWindow()
 {
-	ImGui::PushFont(Sakura::Menu::Fonts::defaultFont);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
@@ -69,10 +68,12 @@ void DrawFullScreenWindow()
 		Sakura::Scope::Draw();
 		Sakura::FOVS::Aimbot();
 		Sakura::FOVS::Spread();
+
+		ImGui::PushFont(Sakura::Menu::Fonts::defaultFont);
 		Toast::Render();
+		ImGui::PopFont();
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(3);
 	ImGui::PopStyleColor();
-	ImGui::PopFont();
 }

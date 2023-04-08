@@ -21,23 +21,9 @@ ImFont* Sakura::Menu::Fonts::weaponsFont = nullptr;
 char nickname[32];
 char chatspam[128];
 
-const char* menu_texts[] = {
-	"Hello there",
-	"WP GG",
-	"Missing something?",
-	"Config issue",
-	"Loooooooooool",
-	"<3",
-	"Be calm",
-	"Soooooooooooo",
-	"It was bad idea",
-	"Get backtracked",
-	":(",
-	":)",
-	"Thanks to b#"
-};
-
-int perviousText = -1;
+constexpr int MAX_RANDOM_TEXTS = 15;
+int perviousTextIndex = -1;
+char text[64];
 
 ImColor Sakura::Menu::GetMenuColor(float alpha)
 {
@@ -49,11 +35,32 @@ ImColor Sakura::Menu::GetMenuColor(float alpha)
 
 const char* getRandomText()
 {
-	if (perviousText >= 0)
-		return menu_texts[perviousText];
+	if (perviousTextIndex >= 0)
+		return text;
 
-	perviousText = rand() % IM_ARRAYSIZE(menu_texts);
-	return menu_texts[perviousText];
+	perviousTextIndex = rand() % MAX_RANDOM_TEXTS;
+
+	switch (perviousTextIndex)
+	{
+	case 0: sprintf(text, /*What's up?*/XorStr<0xF9, 11, 0x1C441265>("\xAE\x92\x9A\x88\xDA\x8D\xDF\x75\x71\x3D" + 0x1C441265).s); break;
+	case 1: sprintf(text, /*Nice one!*/XorStr<0xB9, 10, 0x3FB9EF51>("\xF7\xD3\xD8\xD9\x9D\xD1\xD1\xA5\xE0" + 0x3FB9EF51).s); break;
+	case 2: sprintf(text, /*Error found.*/XorStr<0x55, 13, 0x13CCD2CC>("\x10\x24\x25\x37\x2B\x7A\x3D\x33\x28\x30\x3B\x4E" + 0x13CCD2CC).s); break;
+	case 3: sprintf(text, /*Feeling down :(*/XorStr<0xE9, 16, 0x6B37C31B>("\xAF\x8F\x8E\x80\x84\x80\x88\xD0\x95\x9D\x84\x9A\xD5\xCC\xDF" + 0x6B37C31B).s); break;
+	case 4: sprintf(text, /*Looking back is a good idea.*/XorStr<0x35, 29, 0xAB321096>("\x79\x59\x58\x53\x50\x54\x5C\x1C\x5F\x5F\x5C\x2B\x61\x2B\x30\x64\x24\x66\x20\x27\x26\x2E\x6B\x25\x29\x2B\x2E\x7E" + 0xAB321096).s); break;
+	case 5: sprintf(text, /*That was a mistake.*/XorStr<0x47, 20, 0x833FB605>("\x13\x20\x28\x3E\x6B\x3B\x2C\x3D\x6F\x31\x71\x3F\x3A\x27\x21\x37\x3C\x3D\x77" + 0x833FB605).s); break;
+	case 6: sprintf(text, /*Feeling lucky?*/XorStr<0x8A, 15, 0x2FFEDC26>("\xCC\xEE\xE9\xE1\xE7\xE1\xF7\xB1\xFE\xE6\xF7\xFE\xEF\xA8" + 0x2FFEDC26).s); break;
+	case 7: sprintf(text, /*Keep it up!*/XorStr<0xA2, 12, 0x0B619C17>("\xE9\xC6\xC1\xD5\x86\xCE\xDC\x89\xDF\xDB\x8D" + 0x0B619C17).s); break;
+	case 8: sprintf(text, /*Success awaits.*/XorStr<0x24, 16, 0x045E8347>("\x77\x50\x45\x44\x4D\x5A\x59\x0B\x4D\x5A\x4F\x46\x44\x42\x1C" + 0x045E8347).s); break;
+	case 9: sprintf(text, /*Welcome back!*/XorStr<0x54, 14, 0xECB000A6>("\x03\x30\x3A\x34\x37\x34\x3F\x7B\x3E\x3C\x3D\x34\x41" + 0xECB000A6).s); break;
+	case 10: sprintf(text, /*Sending love <3*/XorStr<0xAE, 16, 0x22DF9EAE>("\xFD\xCA\xDE\xD5\xDB\xDD\xD3\x95\xDA\xD8\xCE\xDC\x9A\x87\x8F" + 0x22DF9EAE).s); break;
+	case 11: sprintf(text, /*Backtracking is key.*/XorStr<0xE3, 21, 0xD56E4389>("\xA1\x85\x86\x8D\x93\x9A\x88\x89\x80\x85\x83\x89\xCF\x99\x82\xD2\x98\x91\x8C\xD8" + 0xD56E4389).s); break;
+	case 12: sprintf(text, /*Config updated.*/XorStr<0xF1, 16, 0x146A8965>("\xB2\x9D\x9D\x92\x9C\x91\xD7\x8D\x89\x9E\x9A\x88\x98\x9A\xD1" + 0x146A8965).s); break;
+	case 13: sprintf(text, /*Ready to roll?*/XorStr<0x6D, 15, 0x29556B48>("\x3F\x0B\x0E\x14\x08\x52\x07\x1B\x55\x04\x18\x14\x15\x45" + 0x29556B48).s); break;
+	case 14: sprintf(text, /*So intriguing!*/XorStr<0x18, 15, 0x8790E5AB>("\x4B\x76\x3A\x72\x72\x69\x6C\x76\x47\x54\x4B\x4D\x43\x04" + 0x8790E5AB).s); break;
+	case 15: sprintf(text, /*Hilarious!*/XorStr<0x21, 11, 0xB4B8BD11>("\x69\x4B\x4F\x45\x57\x4F\x48\x5D\x5A\x0B" + 0xB4B8BD11).s); break;
+	}
+
+	return text;
 }
 
 char* KeyEventChar(int Key)
@@ -772,7 +779,7 @@ void DrawMenuWindow()
 
 	if (!bShowMenu && alpha == 0)
 	{
-		perviousText = -1;
+		perviousTextIndex = -1;
 		return;
 	}
 
@@ -983,7 +990,7 @@ void DrawMenuWindow()
 		draw->AddRectFilled({ pos.x, pos.y + 470 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_footer[0] * 255), (int)(cvar.visual_menu_color_footer[1] * 255), (int)(cvar.visual_menu_color_footer[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Bot);
 
 		draw->AddText({ pos.x + 10, pos.y + 470 + 10 - ImGui::CalcTextSize(text).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), text);
-		draw->AddText({ pos.x + 710 - ImGui::CalcTextSize(SAKURA_VERSION).x, pos.y + 470 + 10 - ImGui::CalcTextSize(SAKURA_VERSION).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), SAKURA_VERSION);
+		draw->AddText({ pos.x + 710 - ImGui::CalcTextSize(/*v1.1 @ 2023*/XorStr<0x42,12,0xA4F6D168>("\x34\x72\x6A\x74\x66\x07\x68\x7B\x7A\x79\x7F" + 0xA4F6D168).s).x, pos.y + 470 + 10 - ImGui::CalcTextSize(/*v1.1 @ 2023*/XorStr<0x42,12,0xA4F6D168>("\x34\x72\x6A\x74\x66\x07\x68\x7B\x7A\x79\x7F" + 0xA4F6D168).s).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), /*v1.1 @ 2023*/XorStr<0x42, 12, 0xA4F6D168>("\x34\x72\x6A\x74\x66\x07\x68\x7B\x7A\x79\x7F" + 0xA4F6D168).s);
 
 		ImGui::PushFont(Sakura::Menu::Fonts::icons);
 		ImGui::SetCursorPos({ 20,25 - ImGui::CalcTextSize(/*P*/XorStr<0x6A, 2, 0x100FA605>("\x3A" + 0x100FA605).s).y / 2 });
@@ -1035,6 +1042,8 @@ void DrawMenuWindow()
 			ImGui::EndChild();
 		}
 		ImGui::EndGroup();
+
+		draw->AddRect({ pos.x, pos.y }, { pos.x + 720, pos.y + 490 }, Sakura::Menu::GetMenuColor(alpha), 6.f);
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(2);
