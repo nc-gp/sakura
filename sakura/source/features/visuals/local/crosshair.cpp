@@ -15,7 +15,7 @@ void MakeAngle(float* angle)
 	if (g_Local.weapon.m_iShotsFired > m_iAmmoLastCheck)
 	{
 		Tickcount2 = GetTickCount();
-		for (unsigned int i = 0; i < 4; i++)
+		for (size_t i = 0; i < 4; ++i)
 			angles[i] += 90;
 	}
 	m_iAmmoLastCheck = g_Local.weapon.m_iShotsFired;
@@ -24,7 +24,7 @@ void MakeAngle(float* angle)
 	{
 		if (GetTickCount() - Tickcount > 0)
 		{
-			for (unsigned int i = 0; i < 4; i++)
+			for (size_t i = 0; i < 4; ++i)
 			{
 				if (angle[i] < angles[i])
 					angle[i] += 15;
@@ -34,7 +34,7 @@ void MakeAngle(float* angle)
 	}
 	else
 	{
-		for (unsigned int i = 0; i < 4; i++)
+		for (size_t i = 0; i < 4; ++i)
 			angle[i] = angles2[i];
 	}
 }
@@ -369,11 +369,11 @@ void DrawCrossHair()
 		ImRGBA crosshairColor = Sakura::Colors::GetCustomizedColor(cvar.visual_crosshair_color);
 
 		MakeAngle(angle);
-		for (unsigned int i = 0; i < 4; i++)
+		for (size_t i = 0; i < 4; ++i)
 		{
 			//float ColorHSV[3];
 			//ImGui::ColorConvertRGBtoHSV(color_red, color_green, color_blue, ColorHSV[0], ColorHSV[1], ColorHSV[2]);
-			for (unsigned int x = 0; x < iBarSize; x++)
+			for (size_t x = 0; x < iBarSize; ++x)
 			{
 				//ColorHSV[0] += 1.0f / iBarSize;
 				//if (ColorHSV[0] > 1.0f) ColorHSV[0] -= 1.0f;

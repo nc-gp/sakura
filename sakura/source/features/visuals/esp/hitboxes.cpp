@@ -127,7 +127,7 @@ void WorldHitboxes(cl_entity_s* ent)
 		if (!strstr(ent->model->name, /*w_grenade1.mdl*/XorStr<0x76, 15, 0xED43ACDC>("\x01\x28\x1F\x0B\x1F\x15\x1D\x19\x1B\x4E\xAE\xEC\xE6\xEF" + 0xED43ACDC).s) &&
 			!strstr(ent->model->name, /*molotov_fire_floor.mdl*/XorStr<0x58, 23, 0xCC374F6C>("\x35\x36\x36\x34\x28\x32\x28\x00\x06\x08\x10\x06\x3B\x03\x0A\x08\x07\x1B\x44\x06\x08\x01" + 0xCC374F6C).s) &&
 			strstr(ent->model->name, /*/w_*/XorStr<0xD9, 4, 0xF7AC51D8>("\xF6\xAD\x84" + 0xF7AC51D8).s) &&
-			ent != g_Engine.GetViewModel())
+			ent != g_Local.ViewModel)
 		{
 			if (cvar.skeleton_world_bone)
 			{
@@ -196,7 +196,7 @@ void WorldHitboxes(cl_entity_s* ent)
 			}
 			WorldEsp.push_back(Esp);
 		}
-		if (ent == g_Engine.GetViewModel())
+		if (ent == g_Local.ViewModel)
 		{
 			bool Visuals = Sakura::ScreenShot::IsVisuals();
 

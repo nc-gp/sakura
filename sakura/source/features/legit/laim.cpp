@@ -193,161 +193,160 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 
 	if (iTargetLegit)
 	{
-		cl_entity_s* vm = g_Engine.GetViewModel();
-		if (g_Engine.GetViewModel()->curstate.sequence == 0 && vm && cvar.legit_autoscope && IsCurWeaponSniper() && !g_Local.bScoped)
-			cmd->buttons |= IN_ATTACK2;
-		else
+		bool bAttack = false;
+		bool bBlock = false;
+
+		QAngle QMyAngles, QNewAngles, QSmoothAngles, QAimAngles;
+
+		g_Engine.GetViewAngles(QMyAngles);
+
+		Vector vEye = pmove->origin + pmove->view_ofs;
+
+		VectorAngles(vAimOriginLegit - vEye, QAimAngles);
+
+		if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_enable && CanAttack())
 		{
-			bool bAttack = false;
-			bool bBlock = false;
+			QAngle QAnglePerfectSilent = QAimAngles;
 
-			QAngle QMyAngles, QNewAngles, QSmoothAngles, QAimAngles;
+			QAnglePerfectSilent += g_Local.vPunchangle;
 
-			g_Engine.GetViewAngles(QMyAngles);
+			QAnglePerfectSilent.Normalize();
 
-			Vector vEye = pmove->origin + pmove->view_ofs;
+			if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_spread)
+				GetSpreadOffset(g_Local.weapon.random_seed, 1, QAnglePerfectSilent, QAnglePerfectSilent);
 
-			VectorAngles(vAimOriginLegit - vEye, QAimAngles);
+			Vector vecPsilentFOV;
+			QAnglePerfectSilent.AngleVectors(&vecPsilentFOV, NULL, NULL);
+			vecPsilentFOV.Normalize();
 
-			if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_enable && CanAttack())
+			Vector vDistance(vAimOriginLegit - vEye);
+			float fov = Sakura::Aimbot::AngleBetween(vecPsilentFOV, vDistance);
+
+			if (fov <= cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_fov && cmd->buttons & IN_ATTACK)
 			{
-				QAngle QAnglePerfectSilent = QAimAngles;
+				//if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot)
+				//	cmd->buttons |= IN_ATTACK;
 
-				QAnglePerfectSilent += g_Local.vPunchangle;
+				dwBlockAttack = GetTickCount();
 
-				QAnglePerfectSilent.Normalize();
+				MakeAngle(QAnglePerfectSilent, cmd);
+				bSendpacket(false);
 
-				if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_spread)
-					GetSpreadOffset(g_Local.weapon.random_seed, 1, QAnglePerfectSilent, QAnglePerfectSilent);
-
-				Vector vecPsilentFOV;
-				QAnglePerfectSilent.AngleVectors(&vecPsilentFOV, NULL, NULL);
-				vecPsilentFOV.Normalize();
-
-				Vector vDistance(vAimOriginLegit - vEye);
-				float fov = Sakura::Aimbot::AngleBetween(vecPsilentFOV, vDistance);
-
-				if (fov <= cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_fov && cmd->buttons & IN_ATTACK)
-				{
-					//if (cvar.legit[g_Local.weapon.m_iWeaponID].perfect_silent_autoshoot)
-					//	cmd->buttons |= IN_ATTACK;
-
-					dwBlockAttack = GetTickCount();
-
-					MakeAngle(QAnglePerfectSilent, cmd);
-					bSendpacket(false);
-
-					return;
-				}
+				return;
 			}
+		}
 
-			QNewAngles[0] = QAimAngles[0] - g_Local.vPunchangle[0] * flRecoilCompensationPitch;
-			QNewAngles[1] = QAimAngles[1] - g_Local.vPunchangle[1] * flRecoilCompensationYaw;
-			QNewAngles[2] = 0;
+		QNewAngles[0] = QAimAngles[0] - g_Local.vPunchangle[0] * flRecoilCompensationPitch;
+		QNewAngles[1] = QAimAngles[1] - g_Local.vPunchangle[1] * flRecoilCompensationYaw;
+		QNewAngles[2] = 0;
 
-			QNewAngles.Normalize();
+		QNewAngles.Normalize();
 
-			SmoothAngles(QMyAngles, QNewAngles, QSmoothAngles, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
+		SmoothAngles(QMyAngles, QNewAngles, QSmoothAngles, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
 
-			if (flAccuracy > 0)
+		if (flAccuracy > 0)
+		{
+			// why you want to block attack while player is doing full auto with recoil active
+			bBlock = false;
+
+			QAngle QAngleAccuracy = QAimAngles;
+
+			Vector vecSpreadDir;
+
+			if (flAccuracy == 1)
 			{
-				// why you want to block attack while player is doing full auto with recoil active
-				bBlock = false;
+				QSmoothAngles.AngleVectors(&vecSpreadDir, NULL, NULL);
 
-				QAngle QAngleAccuracy = QAimAngles;
+				vecSpreadDir.Normalize();
+			}
+			else if (flAccuracy == 2) //Recoil
+			{
+				Vector vecRandom, vecForward;
 
-				Vector vecSpreadDir;
+				SmoothAngles(QMyAngles, QAimAngles, QAngleAccuracy, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
 
-				if (flAccuracy == 1)
+				QAngleAccuracy[0] += g_Local.vPunchangle[0];
+				QAngleAccuracy[1] += g_Local.vPunchangle[1];
+				QAngleAccuracy[2] = NULL;
+
+				QAngleAccuracy.Normalize();
+
+				QAngleAccuracy.AngleVectors(&vecForward, NULL, NULL);
+
+				vecSpreadDir = vecForward;
+
+				vecSpreadDir.Normalize();
+			}
+			else //Recoil / Spread
+			{
+				Vector vecRandom, vecRight, vecUp, vecForward;
+
+				SmoothAngles(QMyAngles, QAimAngles, QAngleAccuracy, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
+
+				QAngleAccuracy[0] += g_Local.vPunchangle[0];
+				QAngleAccuracy[1] += g_Local.vPunchangle[1];
+				QAngleAccuracy[2] = NULL;
+
+				QAngleAccuracy.Normalize();
+
+				QAngleAccuracy.AngleVectors(&vecForward, &vecRight, &vecRight);
+
+				GetSpreadXY(g_Local.weapon.random_seed, 1, vecRandom);
+
+				vecSpreadDir = vecForward + (vecRight * vecRandom[0]) + (vecUp * vecRandom[1]);
+
+				vecSpreadDir.Normalize();
+			}
+			for (playeraim_t Aim : PlayerAim)
+			{
+				if (Aim.index != iTargetLegit)
+					continue;
+
+				for (size_t i = 0; i < 12; ++i)
 				{
-					QSmoothAngles.AngleVectors(&vecSpreadDir, NULL, NULL);
-
-					vecSpreadDir.Normalize();
-				}
-				else if (flAccuracy == 2) //Recoil
-				{
-					Vector vecRandom, vecForward;
-
-					SmoothAngles(QMyAngles, QAimAngles, QAngleAccuracy, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
-
-					QAngleAccuracy[0] += g_Local.vPunchangle[0];
-					QAngleAccuracy[1] += g_Local.vPunchangle[1];
-					QAngleAccuracy[2] = NULL;
-
-					QAngleAccuracy.Normalize();
-
-					QAngleAccuracy.AngleVectors(&vecForward, NULL, NULL);
-
-					vecSpreadDir = vecForward;
-
-					vecSpreadDir.Normalize();
-				}
-				else //Recoil / Spread
-				{
-					Vector vecRandom, vecRight, vecUp, vecForward;
-
-					SmoothAngles(QMyAngles, QAimAngles, QAngleAccuracy, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
-
-					QAngleAccuracy[0] += g_Local.vPunchangle[0];
-					QAngleAccuracy[1] += g_Local.vPunchangle[1];
-					QAngleAccuracy[2] = NULL;
-
-					QAngleAccuracy.Normalize();
-
-					QAngleAccuracy.AngleVectors(&vecForward, &vecRight, &vecRight);
-
-					GetSpreadXY(g_Local.weapon.random_seed, 1, vecRandom);
-
-					vecSpreadDir = vecForward + (vecRight * vecRandom[0]) + (vecUp * vecRandom[1]);
-
-					vecSpreadDir.Normalize();
-				}
-				for (playeraim_t Aim : PlayerAim)
-				{
-					if (Aim.index != iTargetLegit)
-						continue;
-
-					for (size_t i = 0; i < 12; ++i)
+					if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
 					{
-						if (Sakura::Aimbot::IsBoxIntersectingRay(Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxMulti[SkeletonHitboxMatrix[i][0]], Aim.PlayerAimHitbox[cvar.legit[g_Local.weapon.m_iWeaponID].hitbox].HitboxMulti[SkeletonHitboxMatrix[i][1]], vEye, vecSpreadDir))
-						{
-							bBlock = false;
-							break;
-						}
+						bBlock = false;
+						break;
 					}
 				}
 			}
+		}
 
-			if (Attacking)
-				bAttack = true;
-			else if (cvar.legit[g_Local.weapon.m_iWeaponID].speed)
+		if (Attacking)
+			bAttack = true;
+		else if (cvar.legit[g_Local.weapon.m_iWeaponID].speed)
+		{
+			bAttack = true;
+			bBlock = true;
+		}
+
+		if (bAttack)
+		{
+			QSmoothAngles.Normalize();
+
+			MakeAngle(QSmoothAngles, cmd);
+			cmd->viewangles = QSmoothAngles;
+			g_Engine.SetViewAngles(QSmoothAngles);
+
+			if (!bBlock)
 			{
-				bAttack = true;
-				bBlock = true;
+				if (g_Local.ViewModel && g_Local.ViewModel->curstate.sequence == 0 && cvar.legit_fastzoom && !g_Local.bScoped && IsCurWeaponSniper())
+					cmd->buttons |= IN_ATTACK2;
+
+				cmd->buttons |= IN_ATTACK;
+			}
+			else if (Attacking)
+			{
+				cmd->buttons &= ~IN_ATTACK;
 			}
 
-			if (bAttack)
-			{
-				QSmoothAngles.Normalize();
-
-				MakeAngle(QSmoothAngles, cmd);
-				cmd->viewangles = QSmoothAngles;
-				g_Engine.SetViewAngles(QSmoothAngles);
-
-				if (!bBlock)
-					cmd->buttons |= IN_ATTACK;
-				else if (Attacking)
-					cmd->buttons &= ~IN_ATTACK;
-
-				if (!g_Local.vPunchangle.IsZero2D())
-					dwBlockAttack = GetTickCount();
-			}
+			if (!g_Local.vPunchangle.IsZero2D())
+				dwBlockAttack = GetTickCount();
 		}
 	}
 	else
 	{
-		//if (g_Engine.GetViewModel()->curstate.sequence == 0 && cvar.legit_autoscope && IsCurWeaponSniper() && !g_Local.bScoped)
-		//	cmd->buttons |= IN_ATTACK2;
 		if (flBlockAttackAfterKill > 0 && GetTickCount() - dwBlockAttack < flBlockAttackAfterKill && Attacking)
 			cmd->buttons &= ~IN_ATTACK;
 	}

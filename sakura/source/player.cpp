@@ -41,6 +41,7 @@ void Sakura::Player::Local::Update(const float frametime, const usercmd_s* cmd)
 
 	pmtrace_t* trace = g_Engine.PM_TraceLine(pmove->origin, localPlayerOrigin, 1, (pmove->flags & FL_DUCKING) ? 1 : 0, -1);
 
+	g_Local.ViewModel = g_Engine.GetViewModel();
 	g_Local.flHeightorigin = abs(trace->endpos.z - pmove->origin.z);
 	g_Local.flGroundangle = acos(trace->plane.normal[2]) / M_PI * 180;
 	g_Local.m_flFrameTime = frametime;

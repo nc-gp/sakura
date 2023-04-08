@@ -125,8 +125,8 @@ void Sakura::Chams::Studio()
 	bool isPlayerFake	= ent && ent->player && Sakura::Player::IsAlive(ent->index) && ent == &g_Player[ent->index].playerHistory;
 	bool isLocalFake	= ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1 && ent == &g_Player[ent->index].playerHistory;
 	bool isLocalPlayer	= ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1 && ent != &g_Player[ent->index].playerHistory && ent != &g_Player[ent->index].playerDeathMark[0] && ent != &g_Player[ent->index].playerDeathMark[1];
-	bool ViewModel		= ent && ent == g_Engine.GetViewModel() && strstr(ent->model->name, /*v_*/XorStr<0xF2, 3, 0x41EB60EE>("\x84\xAC" + 0x41EB60EE).s);
-	bool World			= ent && ent->model && strstr(ent->model->name, /*/w_*/XorStr<0xC1, 4, 0x46E892EF>("\xEE\xB5\x9C" + 0x46E892EF).s) && ent != g_Engine.GetViewModel();
+	bool ViewModel		= ent && ent == g_Local.ViewModel && strstr(ent->model->name, /*v_*/XorStr<0xF2, 3, 0x41EB60EE>("\x84\xAC" + 0x41EB60EE).s);
+	bool World			= ent && ent->model && strstr(ent->model->name, /*/w_*/XorStr<0xC1, 4, 0x46E892EF>("\xEE\xB5\x9C" + 0x46E892EF).s) && ent != g_Local.ViewModel;
 
 	if (Player && !(cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF))
 	{

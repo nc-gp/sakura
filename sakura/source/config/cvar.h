@@ -77,7 +77,7 @@ public:
 	float legit_trigger_key;
 	float legit_trigger_draw_aim; 
 
-	float legit_autoscope;
+	float legit_fastzoom;
 	float legit_key;
 	float legit_team;
 	float legit_draw_aim;

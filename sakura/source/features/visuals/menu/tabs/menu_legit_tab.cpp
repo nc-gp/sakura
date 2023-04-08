@@ -7,15 +7,14 @@ void Sakura::Menu::Tabs::Legit::Aimbot()
 		ImGui::BeginChild(/*##la1*/XorStr<0xBF, 6, 0xFC6D3994>("\x9C\xE3\xAD\xA3\xF2" + 0xFC6D3994).s, ImVec2(250, -1));
 		{
 			Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x1D, 7, 0x7FF1244B>("\x58\x70\x7E\x42\x4D\x47" + 0x7FF1244B).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].active);
-
-			if(cvar.menu_legit_global_section == 1)
-				Sakura::Menu::Widgets::Checkbox(/*Auto Scope*/XorStr<0x8E, 11, 0xF3794D7F>("\xCF\xFA\xE4\xFE\xB2\xC0\xF7\xFA\xE6\xF2" + 0xF3794D7F).s, &cvar.legit_autoscope);
-			
 			Sakura::Menu::Widgets::Checkbox(/*Aim Team*/XorStr<0x0D, 9, 0x6FE3A79B>("\x4C\x67\x62\x30\x45\x77\x72\x79" + 0x6FE3A79B).s, &cvar.legit_team);
 			Sakura::Menu::Widgets::Checkbox(/*Bypass Trace*/XorStr<0xD3, 13, 0xBB095411>("\x91\xAD\xA5\xB7\xA4\xAB\xF9\x8E\xA9\xBD\xBE\xBB" + 0xBB095411).s, &cvar.bypass_trace_legit);
 			Sakura::Menu::Widgets::Checkbox(/*Draw Aim*/XorStr<0x5E, 9, 0x1E924871>("\x1A\x2D\x01\x16\x42\x22\x0D\x08" + 0x1E924871).s, &cvar.legit_draw_aim);
 			Sakura::Menu::Widgets::Checkbox(/*Humanize*/XorStr<0x94, 9, 0xA4B54BE2>("\xDC\xE0\xFB\xF6\xF6\xF0\xE0\xFE" + 0xA4B54BE2).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].humanize);
 			Sakura::Menu::Widgets::Checkbox(/*Flash check*/XorStr<0x62, 12, 0x107DCB86>("\x24\x0F\x05\x16\x0E\x47\x0B\x01\x0F\x08\x07" + 0x107DCB86).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].flash_check);
+
+			if (cvar.menu_legit_global_section == 1)
+				Sakura::Menu::Widgets::Checkbox(/*Fast zoom*/XorStr<0xFC, 10, 0xA831F29D>("\xBA\x9C\x8D\x8B\x20\x7B\x6D\x6C\x69" + 0xA831F29D).s, &cvar.legit_fastzoom);
 		}
 		ImGui::EndChild();
 		ImGui::SameLine();

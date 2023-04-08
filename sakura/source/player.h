@@ -27,6 +27,8 @@ public:
 	Vector vNoRecoilAngle;
 	Vector vPunchangle;
 
+	cl_entity_s* ViewModel;
+
 	CBasePlayerWeapon weapon;
 };
 extern PlayerInfoLocal g_Local;

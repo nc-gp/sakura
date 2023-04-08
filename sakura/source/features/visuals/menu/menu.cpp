@@ -923,6 +923,7 @@ void DrawMenuWindow()
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, (ImVec4)Sakura::Menu::GetMenuColor(0.39f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.5f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, (ImVec4)Sakura::Menu::GetMenuColor(0.8f));
+		ImGui::SetNextWindowPos(ImVec2(40, 20), ImGuiCond_Once);
 		ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 		ImGui::Begin(/*Sakura - Lua Scripts*/XorStr<0xBB, 21, 0x73438C7B>("\xE8\xDD\xD6\xCB\xCD\xA1\xE1\xEF\xE3\x88\xB0\xA7\xE7\x9B\xAA\xB8\xA2\xBC\xB9\xBD" + 0x73438C7B).s, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		
@@ -979,6 +980,7 @@ void DrawMenuWindow()
 	
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
+	ImGui::SetNextWindowPos(ImVec2(40, 40), ImGuiCond_Once);
 	ImGui::SetNextWindowSize({ 720, 490 });
 	ImGui::Begin(/*##menu*/XorStr<0x9A, 7, 0x2A9A8C6C>("\xB9\xB8\xF1\xF8\xF0\xEA" + 0x2A9A8C6C).s, nullptr, flags);
 	{

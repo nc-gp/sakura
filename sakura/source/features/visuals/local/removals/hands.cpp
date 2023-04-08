@@ -5,12 +5,10 @@ std::deque<viewmodeltexture_t> Sakura::Hands::ViewModelTexture;
 
 void Sakura::Hands::Remove()
 {
-	cl_entity_t* ent = g_Engine.GetViewModel();
-
-	if (!ent || !ent->model)
+	if (!g_Local.ViewModel || !g_Local.ViewModel->model)
 		return;
 
-	studiohdr_t* pStudioHeader = (studiohdr_t*)g_Studio.Mod_Extradata(ent->model);
+	studiohdr_t* pStudioHeader = (studiohdr_t*)g_Studio.Mod_Extradata(g_Local.ViewModel->model);
 
 	if (!pStudioHeader)
 		return;
@@ -42,7 +40,7 @@ void Sakura::Hands::Remove()
 							{
 								if (!strcmp(meshes.name, ptexture[pskinref[pmesh[j].skinref]].name) &&
 									meshes.meshindex == j && meshes.numbodyparts == k && meshes.nummodels == i &&
-									!strcmp(meshes.modelname, ent->model->name))
+									!strcmp(meshes.modelname, g_Local.ViewModel->model->name))
 								{
 									saved = true;
 									break;
@@ -57,7 +55,7 @@ void Sakura::Hands::Remove()
 								meshes.pmesh = pmesh[j];
 								meshes.numbodyparts = k;
 								meshes.nummodels = i;
-								strcpy(meshes.modelname, ent->model->name);
+								strcpy(meshes.modelname, g_Local.ViewModel->model->name);
 								ViewModel.push_back(meshes);
 							}
 
@@ -79,7 +77,7 @@ void Sakura::Hands::Remove()
 	{
 		for (int i = ViewModel.size() - 1; i >= 0; i--)
 		{
-			if (!strcmp(ViewModel[i].modelname, ent->model->name))
+			if (!strcmp(ViewModel[i].modelname, g_Local.ViewModel->model->name))
 			{
 				short* pskinref = (short*)((byte*)pStudioHeader + pStudioHeader->skinindex);
 				mstudiotexture_t* ptexture = (mstudiotexture_t*)((byte*)pStudioHeader + pStudioHeader->textureindex);
