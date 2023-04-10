@@ -244,6 +244,41 @@ void Sakura::Aimbot::Legit::Aim(usercmd_s* cmd)
 
 		SmoothAngles(QMyAngles, QNewAngles, QSmoothAngles, flSpeed, bSpeedSpiral, flSpeedSpiralX, flSpeedSpiralY);
 
+		if (cvar.legit_demochecker_bypass)
+		{
+			const auto prev_frameid = (client_state->validsequence - 1) % IM_ARRAYSIZE(client_state->commands);
+
+			QAngle QPreviousAngles(client_state->commands[prev_frameid].cmd.viewangles), QPreviousAngles2, QPreviousAngles3(cmd->viewangles);
+
+			g_Engine.GetViewAngles(QPreviousAngles2);
+
+			QPreviousAngles.Normalize();
+			QPreviousAngles2.Normalize();
+			QPreviousAngles3.Normalize();
+
+			QAngle QDelta = QPreviousAngles.Delta360(QSmoothAngles);
+			QAngle QDelta2 = QPreviousAngles2.Delta360(QSmoothAngles);
+			QAngle QDelta3 = QPreviousAngles3.Delta360(QSmoothAngles);
+
+			if (QDelta.x > 0.000001 && 0.007 > QDelta.x)
+				QSmoothAngles.x = QPreviousAngles.x;
+
+			if (QDelta.y > 0.0 && QDelta.y < 0.000013)
+				QSmoothAngles.y = QPreviousAngles.y;
+
+			if (QDelta2.x > 0.000001 && 0.007 > QDelta2.x)
+				QSmoothAngles.x = QPreviousAngles2.x;
+
+			if (QDelta2.y > 0.0 && QDelta2.y < 0.000013)
+				QSmoothAngles.y = QPreviousAngles2.y;
+
+			if (QDelta3.x > 0.000001 && 0.007 > QDelta3.x)
+				QSmoothAngles.x = QPreviousAngles3.x;
+
+			if (QDelta3.y > 0.0 && QDelta3.y < 0.000013)
+				QSmoothAngles.y = QPreviousAngles3.y;
+		}
+
 		if (flAccuracy > 0)
 		{
 			// why you want to block attack while player is doing full auto with recoil active

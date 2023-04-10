@@ -54,7 +54,6 @@ void Sakura::Menu::Tabs::Misc::Keybindings()
 		HudKeyBind(cvar.legit_key, /*Legit Fire Key*/XorStr<0xE6, 15, 0xBD74EBCF>("\xAA\x82\x8F\x80\x9E\xCB\xAA\x84\x9C\x8A\xD0\xBA\x97\x8A" + 0xBD74EBCF).s, { ImGui::GetWindowSize().x - 6, 0 });
 		HudKeyBind(cvar.legit_trigger_key, /*Triggerbot Key*/XorStr<0x06, 15, 0xD8A750A4>("\x52\x75\x61\x6E\x6D\x6E\x7E\x6F\x61\x7B\x30\x5A\x77\x6A" + 0xD8A750A4).s, { ImGui::GetWindowSize().x - 6, 0 });
 		HudKeyBind(cvar.rage_auto_fire_key, /*Rage Auto Fire Key*/XorStr<0xE2, 19, 0x4452C61C>("\xB0\x82\x83\x80\xC6\xA6\x9D\x9D\x85\xCB\xAA\x84\x9C\x8A\xD0\xBA\x97\x8A" + 0x4452C61C).s, { ImGui::GetWindowSize().x - 6, 0 });
-		HudKeyBind(cvar.aa_yaw_sideway_key, /*AA Sideway Key*/XorStr<0xDE, 15, 0x9C71292C>("\x9F\x9E\xC0\xB2\x8B\x87\x81\x92\x87\x9E\xC8\xA2\x8F\x92" + 0x9C71292C).s, { ImGui::GetWindowSize().x - 6, 0 });
 	}
 	ImGui::EndChild();
 }

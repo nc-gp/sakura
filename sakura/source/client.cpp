@@ -41,7 +41,6 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 	//preset keys bind
 	bool keystrafetoggle	= keynum == cvar.kz_strafe_toggle_key;
 	bool thirdpersonkey		= keynum == cvar.misc_thirdperson_key;
-	bool keyaayawsideways	= keynum == cvar.aa_yaw_sideway_key && cvar.aa_yaw_sideway;
 	bool keyrush			= cvar.speedhack_active && keynum == cvar.route_rush_key;
 	bool keystrafe			= cvar.kz_strafe && keynum == cvar.kz_strafe_key;
 	bool keyfast			= cvar.kz_fast_run && keynum == cvar.kz_fastrun_key;
@@ -109,11 +108,6 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 		{
 			cvar.visual_chase_cam = !cvar.visual_chase_cam;
 			Toast::Create({ 3, /*Third person %s*/XorStr<0x05,16,0xCA8AF3BD>("\x51\x6E\x6E\x7A\x6D\x2A\x7B\x69\x7F\x7D\x60\x7E\x31\x37\x60" + 0xCA8AF3BD).s, cvar.visual_chase_cam ? /*activated*/XorStr<0x75,10,0x3159CF1E>("\x14\x15\x03\x11\x0F\x1B\x0F\x19\x19" + 0x3159CF1E).s : /*deactivated*/XorStr<0x05,12,0xA5CA1816>("\x61\x63\x66\x6B\x7D\x63\x7D\x6D\x79\x6B\x6B" + 0xA5CA1816).s });
-		}
-
-		if (keyaayawsideways && down)
-		{
-			yawSideway = !yawSideway;
 		}
 
 		if (keyrush)

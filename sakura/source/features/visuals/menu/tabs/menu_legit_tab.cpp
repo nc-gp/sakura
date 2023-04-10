@@ -12,6 +12,7 @@ void Sakura::Menu::Tabs::Legit::Aimbot()
 			Sakura::Menu::Widgets::Checkbox(/*Draw Aim*/XorStr<0x5E, 9, 0x1E924871>("\x1A\x2D\x01\x16\x42\x22\x0D\x08" + 0x1E924871).s, &cvar.legit_draw_aim);
 			Sakura::Menu::Widgets::Checkbox(/*Humanize*/XorStr<0x94, 9, 0xA4B54BE2>("\xDC\xE0\xFB\xF6\xF6\xF0\xE0\xFE" + 0xA4B54BE2).s, &cvar.legit[Sakura::Menu::CheckWeapon(cvar.menu_legit_global_section, cvar.menu_legit_sub_section)].humanize);
 			Sakura::Menu::Widgets::Checkbox(/*Flash check*/XorStr<0x62, 12, 0x107DCB86>("\x24\x0F\x05\x16\x0E\x47\x0B\x01\x0F\x08\x07" + 0x107DCB86).s, &cvar.legit_flashcheck);
+			Sakura::Menu::Widgets::Checkbox("Demochecker bypass", &cvar.legit_demochecker_bypass);
 
 			if (cvar.menu_legit_global_section == 1)
 			{

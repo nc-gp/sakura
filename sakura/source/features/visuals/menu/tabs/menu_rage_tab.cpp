@@ -77,7 +77,6 @@ void Sakura::Menu::Tabs::Rage::AntiAim()
 		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x8A, 7, 0x868C46E6>("\xCF\xE5\xED\xEF\xE2\xEA" + 0x868C46E6).s, &cvar.rage_antiaim_active);
 		Sakura::Menu::Widgets::Checkbox(/*Roll*/XorStr<0x1A, 5, 0xF69E2798>("\x48\x74\x70\x71" + 0xF69E2798).s, &cvar.aa_roll_active);
 		Sakura::Menu::Widgets::Checkbox(/*Custom Jitter Yaw*/XorStr<0x10, 18, 0xFF5A05F6>("\x53\x64\x61\x67\x7B\x78\x36\x5D\x71\x6D\x6E\x7E\x6E\x3D\x47\x7E\x57" + 0xFF5A05F6).s, &cvar.aa_yaw_jitter_custom);
-		Sakura::Menu::Widgets::Checkbox(/*Change sideway left/right on key*/XorStr<0x67, 33, 0x550B78FF>("\x24\x00\x08\x04\x0C\x09\x4D\x1D\x06\x14\x14\x05\x12\x0D\x55\x1A\x12\x1E\x0D\x55\x09\x15\x1A\x16\x0B\xA0\xEE\xEC\xA3\xEF\xE0\xFF" + 0x550B78FF).s, &cvar.aa_yaw_sideway);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();

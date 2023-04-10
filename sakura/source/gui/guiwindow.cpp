@@ -63,7 +63,6 @@ void DrawFullScreenWindow()
 			}
 		}
 
-		AntiAim::DrawArrows();
 		DrawCrossHair();
 		Sakura::Scope::Draw();
 		Sakura::FOVS::Aimbot();

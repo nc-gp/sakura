@@ -83,6 +83,8 @@ public:
 	float legit_flashcheck;
 	float legit_flashcheck_percentage;
 
+	float legit_demochecker_bypass;
+
 	float menu_legit_global_section;
 	float menu_legit_sub_section;
 	float menu_rage_global_section;
@@ -112,8 +114,6 @@ public:
 	float aa_yaw_jitter_custom;
 	float aa_yaw_jitter_angle;
 	float aa_yaw_jitter_much;
-	float aa_yaw_sideway;
-	float aa_yaw_sideway_key;
 	float aa_roll_active;
 	float aa_roll;
 	float aa_roll_static;
