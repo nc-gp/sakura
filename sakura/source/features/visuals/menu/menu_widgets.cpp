@@ -319,11 +319,11 @@ bool Sakura::Menu::Widgets::SliderScalar(const char* label, ImGuiDataType data_t
 		// Tabbing or CTRL-clicking on Slider turns it into an input box
 		const bool input_requested_by_tabbing =  (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_FocusedByTabbing) != 0;
 		const bool clicked = hovered && ImGui::IsMouseClicked(0, id);
-		const bool make_active = (input_requested_by_tabbing || clicked || g.NavActivateId == id || g.NavActivateInputId == id);
+		const bool make_active = (input_requested_by_tabbing || clicked || g.NavActivateId == id);
 		if (make_active && clicked)
 			ImGui::SetKeyOwner(ImGuiKey_MouseLeft, id);
 		if (make_active)
-			if (input_requested_by_tabbing || (clicked && g.IO.KeyCtrl) || g.NavActivateInputId == id)
+			if (input_requested_by_tabbing || (clicked && g.IO.KeyCtrl) || (g.NavActivateId == id && (g.NavActivateFlags & ImGuiActivateFlags_PreferInput)))
 				temp_input_is_active = true;
 
 		if (make_active && !temp_input_is_active)
