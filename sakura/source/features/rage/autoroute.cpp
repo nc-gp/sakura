@@ -487,12 +487,12 @@ void AutoRoute::LoadRoute(char* sfilename)
 		int len = strlen(levelname);
 		if (len > 4)levelname[len - 4] = (char)0;
 		sprintf(tfilename, /*assets/routes/%s.route*/XorStr<0x48, 23, 0xDAB84B3F>("\x29\x3A\x39\x2E\x38\x3E\x61\x3D\x3F\x24\x26\x36\x27\x7A\x73\x24\x76\x2B\x35\x2E\x28\x38" + 0xDAB84B3F).s, levelname);
-		sprintf(filename, /*%s%s*/XorStr<0x99, 5, 0xC6A234F4>("\xBC\xE9\xBE\xEF" + 0xC6A234F4).s, hackdir, tfilename);
+		sprintf(filename, /*%s%s*/XorStr<0x99, 5, 0xC6A234F4>("\xBC\xE9\xBE\xEF" + 0xC6A234F4).s, Sakura::CheatDir, tfilename);
 	}
 	else
 	{
 		sprintf(tfilename, /*assets/routes/%s.route*/XorStr<0x1F, 23, 0x2803FF48>("\x7E\x53\x52\x47\x57\x57\x0A\x54\x48\x5D\x5D\x4F\x58\x03\x08\x5D\x01\x42\x5E\x47\x47\x51" + 0x2803FF48).s, sfilename);
-		sprintf(filename, /*%s%s*/XorStr<0x3C, 5, 0x15A832CE>("\x19\x4E\x1B\x4C" + 0x15A832CE).s, hackdir, tfilename);
+		sprintf(filename, /*%s%s*/XorStr<0x3C, 5, 0x15A832CE>("\x19\x4E\x1B\x4C" + 0x15A832CE).s, Sakura::CheatDir, tfilename);
 	}
 	ZeroMemory(route_line, sizeof(route_line));
 	std::ifstream ifs(filename);
@@ -525,7 +525,7 @@ void AutoRoute::SaveRoute()
 	int len = strlen(levelname);
 	if (len > 4)levelname[len - 4] = (char)0;
 	sprintf(tfilename, /*assets/routes/%s.route*/XorStr<0x9B, 23, 0xCCBE0DFA>("\xFA\xEF\xEE\xFB\xEB\xD3\x8E\xD0\xCC\xD1\xD1\xC3\xD4\x87\x8C\xD9\x85\xDE\xC2\xDB\xDB\xD5" + 0xCCBE0DFA).s, levelname);
-	sprintf(filename, /*%s%s*/XorStr<0x8A, 5, 0x37B452DC>("\xAF\xF8\xA9\xFE" + 0x37B452DC).s, hackdir, tfilename);
+	sprintf(filename, /*%s%s*/XorStr<0x8A, 5, 0x37B452DC>("\xAF\xF8\xA9\xFE" + 0x37B452DC).s, Sakura::CheatDir, tfilename);
 	char routepoint[256];
 	remove(filename);
 	std::ofstream ofs(filename, std::ios::binary | std::ios::app);
