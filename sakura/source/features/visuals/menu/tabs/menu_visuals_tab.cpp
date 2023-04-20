@@ -99,6 +99,11 @@ void Sakura::Menu::Tabs::Visuals::PlayerChams()
 	{
 		ImGui::PushItemWidth(itemWidth);
 		
+		if (cvar.chams_player_wireframe_mode)
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe point size*/XorStr<0xCE, 21, 0x1F241978>("\x99\xA6\xA2\xB4\xB4\xA1\xB5\xB8\xB3\xF7\xA8\xB6\xB3\xB5\xA8\xFD\xAD\xB6\x9A\x84" + 0x1F241978).s, &cvar.chams_player_wireframe_point_size, 1.f, 5.f, "%.1f");
+		else
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe line width*/XorStr<0xA2, 21, 0xBBA95C48>("\xF5\xCA\xD6\xC0\xC0\xD5\xC9\xC4\xCF\x8B\xC0\xC4\xC0\xCA\x90\xC6\xDB\xD7\xC0\xDD" + 0xBBA95C48).s, &cvar.chams_player_wireframe_line_width, 1.f, 5.f, "%.1f");
+
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0x38, 6, 0x94E296D3>("\x7B\x51\x5B\x56\x4F" + 0x94E296D3).s,
 			&cvar.chams_player,
@@ -241,6 +246,11 @@ void Sakura::Menu::Tabs::Visuals::LocalCharacter()
 		Sakura::Menu::Widgets::SliderFloat(/*Third person Back*/XorStr<0x0F, 18, 0x8F5B31DA>("\x5B\x78\x78\x60\x77\x34\x65\x73\x65\x6B\x76\x74\x3B\x5E\x7C\x7D\x74" + 0x8F5B31DA).s, &cvar.visual_chase_back, 25.f, 125.f, "%.0f");
 		Sakura::Menu::Widgets::SliderFloat(/*Third person Up*/XorStr<0xE9, 16, 0xD5255C85>("\xBD\x82\x82\x9E\x89\xCE\x9F\x95\x83\x81\x9C\x9A\xD5\xA3\x87" + 0xD5255C85).s, &cvar.visual_chase_up, 0.f, 100.f, "%.0f");
 		
+		if (cvar.chams_local_wireframe_mode)
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe point size*/XorStr<0xCE, 21, 0x1F241978>("\x99\xA6\xA2\xB4\xB4\xA1\xB5\xB8\xB3\xF7\xA8\xB6\xB3\xB5\xA8\xFD\xAD\xB6\x9A\x84" + 0x1F241978).s, &cvar.chams_local_wireframe_point_size, 1.f, 5.f, "%.0f");
+		else
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe line width*/XorStr<0xA2, 21, 0xBBA95C48>("\xF5\xCA\xD6\xC0\xC0\xD5\xC9\xC4\xCF\x8B\xC0\xC4\xC0\xCA\x90\xC6\xDB\xD7\xC0\xDD" + 0xBBA95C48).s, &cvar.chams_local_wireframe_line_width, 1.f, 5.f, "%.0f");
+
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0x8C, 6, 0x83AE6DD1>("\xCF\xE5\xEF\xE2\xE3" + 0x83AE6DD1).s,
 			&cvar.chams_local,
@@ -268,9 +278,13 @@ void Sakura::Menu::Tabs::Visuals::LocalRealPosition()
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##lrp2*/XorStr<0x05, 7, 0x82E6D19E>("\x26\x25\x6B\x7A\x79\x38" + 0x82E6D19E).s, ImVec2(250, -1));
 	{
-		
 		ImGui::PushItemWidth(itemWidth);
 		
+		if (cvar.visual_fakelag_history_local_wireframe_mode)
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe point size*/XorStr<0xCE, 21, 0x1F241978>("\x99\xA6\xA2\xB4\xB4\xA1\xB5\xB8\xB3\xF7\xA8\xB6\xB3\xB5\xA8\xFD\xAD\xB6\x9A\x84" + 0x1F241978).s, &cvar.visual_fakelag_history_local_wireframe_point_size, 1.f, 5.f, "%.1f");
+		else
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe line width*/XorStr<0xA2, 21, 0xBBA95C48>("\xF5\xCA\xD6\xC0\xC0\xD5\xC9\xC4\xCF\x8B\xC0\xC4\xC0\xCA\x90\xC6\xDB\xD7\xC0\xDD" + 0xBBA95C48).s, &cvar.visual_fakelag_history_local_wireframe_line_width, 1.f, 5.f, "%.1f");
+
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0x0C, 6, 0x7D8CFF9A>("\x4F\x65\x6F\x62\x63" + 0x7D8CFF9A).s,
 			&cvar.visual_fakelag_history_local_chams,
@@ -304,6 +318,11 @@ void Sakura::Menu::Tabs::Visuals::LocalWeapon()
 		Sakura::Menu::Widgets::SliderFloat(/*Field of View*/XorStr<0x24, 14, 0xC200355D>("\x62\x4C\x43\x4B\x4C\x09\x45\x4D\x0C\x7B\x47\x4A\x47" + 0xC200355D).s, &cvar.visual_viewmodel_fov, 0, 50, "%.0f");
 		Sakura::Menu::Widgets::SliderFloat(/*Glow Thickness*/XorStr<0x37, 15, 0x678F377D>("\x70\x54\x56\x4D\x1B\x68\x55\x57\x5C\x2B\x2F\x27\x30\x37" + 0x678F377D).s, &cvar.visual_viewmodel_glow_thickness, 1, 8, "%.0f");
 		
+		if (cvar.chams_view_model_wireframe_mode)
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe point size*/XorStr<0xCE, 21, 0x1F241978>("\x99\xA6\xA2\xB4\xB4\xA1\xB5\xB8\xB3\xF7\xA8\xB6\xB3\xB5\xA8\xFD\xAD\xB6\x9A\x84" + 0x1F241978).s, &cvar.chams_view_model_wireframe_point_size, 1.f, 5.f, "%.1f");
+		else
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe line width*/XorStr<0xA2, 21, 0xBBA95C48>("\xF5\xCA\xD6\xC0\xC0\xD5\xC9\xC4\xCF\x8B\xC0\xC4\xC0\xCA\x90\xC6\xDB\xD7\xC0\xDD" + 0xBBA95C48).s, &cvar.chams_view_model_wireframe_line_width, 1.f, 5.f, "%.1f");
+
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0xB6, 6, 0xDFE5A85D>("\xF5\xDF\xD9\xD4\xC9" + 0xDFE5A85D).s,
 			&cvar.chams_view_model,
@@ -506,9 +525,7 @@ void Sakura::Menu::Tabs::Visuals::WorldLight()
 	ImGui::SameLine();
 	ImGui::BeginChild(/*##wl2*/XorStr<0x75, 6, 0x063BDE62>("\x56\x55\x00\x14\x4B" + 0x063BDE62).s, ImVec2(250, -1));
 	{
-		ImGui::PushItemWidth(itemWidth);
 
-		ImGui::PopItemWidth();
 	}
 	ImGui::EndChild();
 }
@@ -525,6 +542,11 @@ void Sakura::Menu::Tabs::Visuals::WorldChams()
 	ImGui::BeginChild(/*##wc2*/XorStr<0xE7, 6, 0x44EBCF2F>("\xC4\xCB\x9E\x89\xD9" + 0x44EBCF2F).s, ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
+
+		if (cvar.chams_world_wireframe_mode)
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe point size*/XorStr<0xCE, 21, 0x1F241978>("\x99\xA6\xA2\xB4\xB4\xA1\xB5\xB8\xB3\xF7\xA8\xB6\xB3\xB5\xA8\xFD\xAD\xB6\x9A\x84" + 0x1F241978).s, &cvar.chams_world_wireframe_point_size, 1.f, 5.f, "%.1f");
+		else
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe line width*/XorStr<0xA2, 21, 0xBBA95C48>("\xF5\xCA\xD6\xC0\xC0\xD5\xC9\xC4\xCF\x8B\xC0\xC4\xC0\xCA\x90\xC6\xDB\xD7\xC0\xDD" + 0xBBA95C48).s, &cvar.chams_world_wireframe_line_width, 1.f, 5.f, "%.1f");
 
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0xDB, 6, 0xA544FA6B>("\x98\xB4\xBC\xB3\xAC" + 0xA544FA6B).s,

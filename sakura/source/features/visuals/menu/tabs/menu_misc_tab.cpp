@@ -73,6 +73,11 @@ void Sakura::Menu::Tabs::Misc::Backtrack()
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Latency*/XorStr<0xF3, 8, 0xF7594FCB>("\xBF\x95\x81\x93\x99\x9B\x80" + 0xF7594FCB).s, &cvar.misc_fakelatency_amount, 0, 500, "+%.0fms");
 		
+		if (cvar.misc_backtrack_wireframe_mode)
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe point size*/XorStr<0xCE, 21, 0x1F241978>("\x99\xA6\xA2\xB4\xB4\xA1\xB5\xB8\xB3\xF7\xA8\xB6\xB3\xB5\xA8\xFD\xAD\xB6\x9A\x84" + 0x1F241978).s, &cvar.misc_backtrack_wireframe_point_size, 1.f, 5.f, "%.1f");
+		else
+			Sakura::Menu::Widgets::SliderFloat(/*Wireframe line width*/XorStr<0xA2, 21, 0xBBA95C48>("\xF5\xCA\xD6\xC0\xC0\xD5\xC9\xC4\xCF\x8B\xC0\xC4\xC0\xCA\x90\xC6\xDB\xD7\xC0\xDD" + 0xBBA95C48).s, &cvar.misc_backtrack_wireframe_line_width, 1.f, 5.f, "%.1f");
+
 		Sakura::Menu::Widgets::Combo(
 			/*Chams*/XorStr<0x31, 6, 0xB8BE549B>("\x72\x5A\x52\x59\x46" + 0xB8BE549B).s,
 			&cvar.misc_backtrack_chams,
@@ -581,6 +586,11 @@ void Sakura::Menu::Tabs::Misc::Config()
 			Sakura::Lua::Reload();
 			Sakura::Sound::ReInit();
 			Toast::Create({ 3, /*Reloaded LUA*/XorStr<0xA8,13,0x688BFE62>("\xFA\xCC\xC6\xC4\xCD\xC9\xCB\xCB\x90\xFD\xE7\xF2" + 0x688BFE62).s });
+		}
+
+		if (Sakura::Menu::Widgets::Button(/*Unload*/XorStr<0xAA, 7, 0x40BBB444>("\xFF\xC5\xC0\xC2\xCF\xCB" + 0x40BBB444).s, { ImGui::GetWindowSize().x - 6, 0 }))
+		{
+			Sakura::Unload();
 		}
 
 		ImGui::Spacing();
