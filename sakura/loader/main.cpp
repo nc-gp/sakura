@@ -1,170 +1,210 @@
-﻿#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <Windows.h>
-#include <TlHelp32.h>
-#include "injector.h"
-#include "libs/xor/xorstr.h"
+#include "../../imgui/imgui.h"
+#include "../../imgui/backends/imgui_impl_win32.h"
+#include "../../imgui/backends/imgui_impl_dx11.h"
+#include <d3d11.h>
+#include <tchar.h>
 
-#pragma comment(lib, "Advapi32.lib")
+#include "menu.h"
+#include "resource.h"
 
-unsigned int GetProcessPID(const char* process_name)
+// Data
+static ID3D11Device* g_pd3dDevice = nullptr;
+static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
+static IDXGISwapChain* g_pSwapChain = nullptr;
+static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
+
+// Forward declarations of helper functions
+bool CreateDeviceD3D(HWND hWnd);
+void CleanupDeviceD3D();
+void CreateRenderTarget();
+void CleanupRenderTarget();
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+// Main code
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
-	HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	unsigned int count = 0;
-	unsigned int pid = 0;
+    Sakura::Init();
 
-	if (snap == INVALID_HANDLE_VALUE)
-	{
-		return 0;
-	}
+    // Create application window
+    WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"Sakura injector", nullptr };
+    ::RegisterClassExW(&wc);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Sakura injector", WS_OVERLAPPEDWINDOW, 100, 100, 200, 200, nullptr, nullptr, wc.hInstance, nullptr);
 
-	if (!WaitForSingleObject(snap, 0) == WAIT_TIMEOUT)
-	{
-		return 0;
-	}
+    SetWindowLong(hwnd, GWL_STYLE,
+        GetWindowLong(hwnd, GWL_STYLE) & ~WS_MINIMIZEBOX);
 
-	PROCESSENTRY32 proc;
-	proc.dwSize = sizeof(PROCESSENTRY32);
-	BOOL ret = Process32Next(snap, &proc);
+    SetWindowLong(hwnd, GWL_STYLE,
+        GetWindowLong(hwnd, GWL_STYLE) & ~WS_MAXIMIZEBOX);
 
-	while (ret)
-	{
-		if (!_stricmp(proc.szExeFile, process_name))
-		{
-			count++;
-			pid = proc.th32ProcessID;
-		}
-		ret = Process32Next(snap, &proc);
-	}
+    SetWindowLong(hwnd, GWL_STYLE,
+        GetWindowLong(hwnd, GWL_STYLE) & ~WS_SIZEBOX);
 
-	if (count > 1)
-	{
-		pid = 0;
-	}
+    wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_ICON1));
 
-	CloseHandle(snap);
+    // Initialize Direct3D
+    if (!CreateDeviceD3D(hwnd))
+    {
+        CleanupDeviceD3D();
+        ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+        return 1;
+    }
 
-	return pid;
+    // Show the window
+    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
+    ::UpdateWindow(hwnd);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.IniFilename = NULL;
+    io.LogFilename = NULL;
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+    // Our state
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // Main loop
+    bool done = false;
+    while (!done)
+    {
+        // Poll and handle messages (inputs, window resize, etc.)
+        // See the WndProc() function below for our to dispatch events to the Win32 backend.
+        MSG msg;
+        while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
+        {
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+            if (msg.message == WM_QUIT)
+                done = true;
+        }
+        if (done)
+            break;
+
+        // Start the Dear ImGui frame
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+
+        Sakura::Menu::Draw();
+
+        // Rendering
+        ImGui::Render();
+        const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+        g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+        g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+        g_pSwapChain->Present(1, 0); // Present with vsync
+        //g_pSwapChain->Present(0, 0); // Present without vsync
+    }
+
+    // Cleanup
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
+    CleanupDeviceD3D();
+    ::DestroyWindow(hwnd);
+    ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+
+    return 0;
 }
 
-int main(int argc, char* argv[])
+// Helper functions
+
+bool CreateDeviceD3D(HWND hWnd)
 {
-	HANDLE hFile = NULL;
-	HANDLE hModule = NULL;
-	HANDLE hProcess = NULL;
-	HANDLE hToken = NULL;
-	LPVOID lpBuffer = NULL;
-	LPVOID lpRemotePathBuffer = NULL;
-	CHAR szCurrentDirectory[MAX_PATH];
-	DWORD dwLength = 0;
-	DWORD dwBytesRead = 0;
-	DWORD dwProcessId = 0;
-	TOKEN_PRIVILEGES priv = { 0 };
+    // Setup swap chain
+    DXGI_SWAP_CHAIN_DESC sd;
+    ZeroMemory(&sd, sizeof(sd));
+    sd.BufferCount = 2;
+    sd.BufferDesc.Width = 0;
+    sd.BufferDesc.Height = 0;
+    sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    sd.BufferDesc.RefreshRate.Numerator = 60;
+    sd.BufferDesc.RefreshRate.Denominator = 1;
+    sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+    sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    sd.OutputWindow = hWnd;
+    sd.SampleDesc.Count = 1;
+    sd.SampleDesc.Quality = 0;
+    sd.Windowed = TRUE;
+    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	do
-	{
-		dwProcessId = GetProcessPID(/*hl.exe*/XorStr<0xB0, 7, 0xAABAF731>("\xD8\xDD\x9C\xD6\xCC\xD0" + 0xAABAF731).s);
+    UINT createDeviceFlags = 0;
+    //createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+    D3D_FEATURE_LEVEL featureLevel;
+    const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
+    HRESULT res = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
+    if (res == DXGI_ERROR_UNSUPPORTED) // Try high-performance WARP software driver if hardware is not available.
+        res = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
+    if (res != S_OK)
+        return false;
 
-		if (!dwProcessId)
-		{
-			printf(/*[-] Failed to find hl.exe*/XorStr<0x07, 26, 0x9CAC36C9>("\x5C\x25\x54\x2A\x4D\x6D\x64\x62\x6A\x74\x31\x66\x7C\x34\x73\x7F\x79\x7C\x39\x72\x77\x32\x78\x66\x7A" + 0x9CAC36C9).s);
-			break;
-		}
+    CreateRenderTarget();
+    return true;
+}
 
-		hFile = CreateFileA(/*sakura.dll*/XorStr<0x19, 11, 0x6CA174C5>("\x6A\x7B\x70\x69\x6F\x7F\x31\x44\x4D\x4E" + 0x6CA174C5).s, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile == INVALID_HANDLE_VALUE)
-		{
-			printf(/*[-] Failed to open the DLL file*/XorStr<0x44, 32, 0xD80C2A90>("\x1F\x68\x1B\x67\x0E\x28\x23\x27\x29\x29\x6E\x3B\x3F\x71\x3D\x23\x31\x3B\x76\x23\x30\x3C\x7A\x1F\x10\x11\x7E\x39\x09\x0D\x07" + 0xD80C2A90).s);
-			break;
-		}
-		
-		dwLength = GetFileSize(hFile, NULL);
-		if (dwLength == INVALID_FILE_SIZE || dwLength == 0)
-		{
-			printf(/*[-] Failed to get the DLL file size*/XorStr<0x08, 36, 0xFF0354D3>("\x53\x24\x57\x2B\x4A\x6C\x67\x63\x75\x75\x32\x67\x7B\x35\x71\x72\x6C\x39\x6E\x73\x79\x3D\x5A\x53\x6C\x01\x44\x4A\x48\x40\x06\x54\x41\x53\x4F" + 0xFF0354D3).s);
-			break;
-		}
+void CleanupDeviceD3D()
+{
+    CleanupRenderTarget();
+    if (g_pSwapChain) { g_pSwapChain->Release(); g_pSwapChain = nullptr; }
+    if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = nullptr; }
+    if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = nullptr; }
+}
 
-		lpBuffer = HeapAlloc(GetProcessHeap(), 0, dwLength);
-		if (!lpBuffer)
-		{
-			printf(/*[-] Failed to get the DLL file size*/XorStr<0xC9, 36, 0xB9F1F8E6>("\x92\xE7\x96\xEC\x8B\xAF\xA6\xBC\xB4\xB6\xF3\xA0\xBA\xF6\xB0\xBD\xAD\xFA\xAF\xB4\xB8\xFE\x9B\xAC\xAD\xC2\x85\x8D\x89\x83\xC7\x9B\x80\x90\x8E" + 0xB9F1F8E6).s);
-			break;
-		}
+void CreateRenderTarget()
+{
+    ID3D11Texture2D* pBackBuffer;
+    g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+    g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_mainRenderTargetView);
+    pBackBuffer->Release();
+}
 
-		if (ReadFile(hFile, lpBuffer, dwLength, &dwBytesRead, NULL) == FALSE)
-		{
-			printf(/*[-] Failed to allocate a buffer!*/XorStr<0x69, 33, 0x7A811B6C>("\x32\x47\x36\x4C\x2B\x0F\x06\x1C\x14\x16\x53\x00\x1A\x56\x16\x14\x15\x15\x18\x1D\x09\x1B\x5F\xE1\xA1\xE0\xF6\xE2\xE3\xE3\xF5\xA9" + 0x7A811B6C).s);
-			break;
-		}
+void CleanupRenderTarget()
+{
+    if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
+}
 
-		if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
-		{
-			priv.PrivilegeCount = 1;
-			priv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-			if (LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &priv.Privileges[0].Luid))
-				AdjustTokenPrivileges(hToken, FALSE, &priv, 0, NULL, NULL);
+// Win32 message handler
+// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+        return true;
 
-			CloseHandle(hToken);
-		}
-
-		hProcess = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ, FALSE, dwProcessId);
-		if (!hProcess)
-		{
-			printf(/*[-] Failed to open the target process*/XorStr<0x59, 38, 0x0849FDFA>("\x02\x77\x06\x7C\x1B\x3F\x36\x0C\x04\x06\x43\x10\x0A\x46\x08\x18\x0C\x04\x4B\x18\x05\x0B\x4F\x04\x10\x00\x14\x11\x01\x56\x07\x0A\x16\x19\x1E\x0F\x0E" + 0x0849FDFA).s);
-			break;
-		}
-
-		lpRemotePathBuffer = VirtualAllocEx(hProcess, NULL, MAX_PATH, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-		if (!lpRemotePathBuffer)
-		{
-			printf(/*[-] Failed to allocate dll directory*/XorStr<0x83, 37, 0x08F0F201>("\xD8\xA9\xD8\xA6\xC1\xE9\xE0\xE6\xEE\xE8\xAD\xFA\xE0\xB0\xF0\xFE\xFF\xFB\xF6\xF7\xE3\xFD\xB9\xFE\xF7\xF0\xBD\xFA\xF6\xD2\xC4\xC1\xD7\xCB\xD7\xDF" + 0x08F0F201).s);
-			break;
-		}
-
-		RtlZeroMemory(szCurrentDirectory, MAX_PATH);
-		
-		if (!GetCurrentDirectory(MAX_PATH, szCurrentDirectory))
-		{
-			printf(/*[-] Failed to locate the process path*/XorStr<0xE7, 38, 0xF46CDEBC>("\xBC\xC5\xB4\xCA\xAD\x8D\x84\x82\x8A\x94\xD1\x86\x9C\xD4\x99\x99\x94\x99\x8D\x9F\xDB\x88\x95\x9B\xDF\x70\x73\x6D\x60\x61\x76\x75\x27\x78\x68\x7E\x63" + 0xF46CDEBC).s);
-			break;
-		}
-
-		strcat_s(szCurrentDirectory, MAX_PATH - 1, "\\");
-
-		if (!WriteProcessMemory(hProcess, lpRemotePathBuffer, szCurrentDirectory, MAX_PATH - 1, NULL))
-		{
-			printf(/*[-] Failed to write the current directory path*/XorStr<0x5F, 47, 0x9C65CFEE>("\x04\x4D\x3C\x42\x25\x05\x0C\x0A\x02\x0C\x49\x1E\x04\x4C\x1A\x1C\x06\x04\x14\x52\x07\x1C\x10\x56\x14\x0D\x0B\x08\x1E\x12\x09\x5E\x1B\xE9\xF3\xE7\xE0\xF0\xEA\xF4\xFE\xA8\xF9\xEB\xFF\xE4" + 0x9C65CFEE).s);
-			break;
-		}
-
-		hModule = LoadRemoteLibraryR(hProcess, lpBuffer, dwLength, lpRemotePathBuffer);
-		if (!hModule)
-		{
-			printf(/*[-] Failed to inject the DLL*/XorStr<0x06, 29, 0x1518CAA7>("\x5D\x2A\x55\x29\x4C\x6A\x65\x61\x6B\x6B\x30\x65\x7D\x33\x7D\x7B\x7C\x72\x7B\x6D\x3A\x6F\x74\x78\x3E\x5B\x6C\x6D" + 0x1518CAA7).s);
-			break;
-		}
-
-		printf(/*[+] Sakura Injected!*/XorStr<0x54, 21, 0xC2F58836>("\x0F\x7E\x0B\x77\x0B\x38\x31\x2E\x2E\x3C\x7E\x16\x0E\x0B\x07\x00\x10\x00\x02\x46" + 0xC2F58836).s);
-		printf("\n");
-		printf(/*[+] You can close this window now!*/XorStr<0x93, 35, 0x0C87EB7B>("\xC8\xBF\xC8\xB6\xCE\xF7\xEC\xBA\xF8\xFD\xF3\xBE\xFC\xCC\xCE\xD1\xC6\x84\xD1\xCE\xCE\xDB\x89\xDD\xC2\xC2\xC9\xC1\xD8\x90\xDF\xDD\xC4\x95" + 0x0C87EB7B).s);
-		printf("\n\n");
-		printf(/*[?] Procces id: %d (hl.exe)*/XorStr<0xAE, 28, 0x1D95D206>("\xF5\x90\xED\x91\xE2\xC1\xDB\xD6\xD5\xD2\xCB\x99\xD3\xDF\x86\x9D\x9B\xDB\xE0\xE9\xAA\xAF\xEA\xA0\xBE\xA2\xE1" + 0x1D95D206).s, dwProcessId);
-
-		WaitForSingleObject(hModule, -1);
-
-	} while (0);
-
-	if (lpBuffer)
-		HeapFree(GetProcessHeap(), 0, lpBuffer);
-
-	if (hProcess)
-		CloseHandle(hProcess);
-
-	std::cin.ignore();
-	std::cin.get();
-
-	return 0;
+    switch (msg)
+    {
+    case WM_SIZE:
+        if (g_pd3dDevice != nullptr && wParam != SIZE_MINIMIZED)
+        {
+            CleanupRenderTarget();
+            g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, 0);
+            CreateRenderTarget();
+        }
+        return 0;
+    case WM_SYSCOMMAND:
+        if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+            return 0;
+        break;
+    case WM_DESTROY:
+        ::PostQuitMessage(0);
+        return 0;
+    }
+    return ::DefWindowProcW(hWnd, msg, wParam, lParam);
 }

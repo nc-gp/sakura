@@ -1,234 +1,543 @@
-//===============================================================================================//
-// Copyright (c) 2012, Stephen Fewer of Harmony Security (www.harmonysecurity.com)
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without modification, are permitted 
-// provided that the following conditions are met:
-// 
-//     * Redistributions of source code must retain the above copyright notice, this list of 
-// conditions and the following disclaimer.
-// 
-//     * Redistributions in binary form must reproduce the above copyright notice, this list of 
-// conditions and the following disclaimer in the documentation and/or other materials provided 
-// with the distribution.
-// 
-//     * Neither the name of Harmony Security nor the names of its contributors may be used to
-// endorse or promote products derived from this software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
-// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-// FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-// POSSIBILITY OF SUCH DAMAGE.
-//===============================================================================================//
-#include "injector.h"
-#include <stdio.h>
-//===============================================================================================//
-DWORD Rva2Offset(DWORD dwRva, UINT_PTR uiBaseAddress)
+#include "Injector.h"
+
+Injector::OS_VER OsVer;
+bool IsGotOsVer = false;
+
+Injector::OS_API OsApi = { NULL };
+bool IsGotOsApi = false;
+
+DWORD LoadLibraryAddress = NULL;
+#pragma pack( 1 )
+struct INJECT_CODE
 {
-	WORD wIndex = 0;
-	PIMAGE_SECTION_HEADER pSectionHeader = NULL;
-	PIMAGE_NT_HEADERS pNtHeaders = NULL;
+    BYTE  PushOpc;
+    DWORD PushAdr;
+    BYTE  CallOpc;
+    DWORD CallAdr;
+    BYTE  DoneOpc;
+    WORD  DoneAdr;
+    char  ModulePath[MAX_PATH];
+};
+#pragma pack()
 
-	pNtHeaders = (PIMAGE_NT_HEADERS)(uiBaseAddress + ((PIMAGE_DOS_HEADER)uiBaseAddress)->e_lfanew);
+HANDLE WINAPI OpenThread9x(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwThreadId);
 
-	pSectionHeader = (PIMAGE_SECTION_HEADER)((UINT_PTR)(&pNtHeaders->OptionalHeader) + pNtHeaders->FileHeader.SizeOfOptionalHeader);
+LPVOID WINAPI VirtualAllocEx9x(HANDLE hProcess, LPVOID lpAddress, DWORD dwSize, DWORD flAllocationType, DWORD flProtect);
 
-	if (dwRva < pSectionHeader[0].PointerToRawData)
-		return dwRva;
+BOOL WINAPI VirtualFreeEx9x(HANDLE hProcess, LPVOID lpAddress, DWORD dwSize, DWORD dwFreeType);
 
-	for (wIndex = 0; wIndex < pNtHeaders->FileHeader.NumberOfSections; wIndex++)
-	{
-		if (dwRva >= pSectionHeader[wIndex].VirtualAddress && dwRva < (pSectionHeader[wIndex].VirtualAddress + pSectionHeader[wIndex].SizeOfRawData))
-			return (dwRva - pSectionHeader[wIndex].VirtualAddress + pSectionHeader[wIndex].PointerToRawData);
-	}
+DWORD SearchMemory(DWORD start, DWORD length, BYTE* pattern, CHAR* mask);
 
-	return 0;
-}
-//===============================================================================================//
-DWORD GetReflectiveLoaderOffset(VOID* lpReflectiveDllBuffer)
+bool IsSameName(const char* targetString, const char* sourceString);
+
+bool Injector::GetOsVer(OS_VER* osVer)
 {
-	UINT_PTR uiBaseAddress = 0;
-	UINT_PTR uiExportDir = 0;
-	UINT_PTR uiNameArray = 0;
-	UINT_PTR uiAddressArray = 0;
-	UINT_PTR uiNameOrdinals = 0;
-	DWORD dwCounter = 0;
-#ifdef WIN_X64
-	DWORD dwCompiledArch = 2;
-#else
-	// This will catch Win32 and WinRT.
-	DWORD dwCompiledArch = 1;
-#endif
+    OSVERSIONINFO OSVI;
+    OSVI.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    if (!GetVersionEx(&OSVI))
+        return false;
 
-	uiBaseAddress = (UINT_PTR)lpReflectiveDllBuffer;
+    osVer->IsWin98 = (OSVI.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && OSVI.dwMajorVersion == 4 && OSVI.dwMinorVersion <= 10) ? true : false;
+    osVer->IsWinMe = (OSVI.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && OSVI.dwMajorVersion == 4 && OSVI.dwMinorVersion >= 90) ? true : false;
+    osVer->IsWinXp = (OSVI.dwPlatformId == VER_PLATFORM_WIN32_NT) ? true : false;
 
-	// get the File Offset of the modules NT Header
-	uiExportDir = uiBaseAddress + ((PIMAGE_DOS_HEADER)uiBaseAddress)->e_lfanew;
-
-	// currenlty we can only process a PE file which is the same type as the one this fuction has  
-	// been compiled as, due to various offset in the PE structures being defined at compile time.
-	if (((PIMAGE_NT_HEADERS)uiExportDir)->OptionalHeader.Magic == 0x010B) // PE32
-	{
-		if (dwCompiledArch != 1)
-			return 0;
-	}
-	else if (((PIMAGE_NT_HEADERS)uiExportDir)->OptionalHeader.Magic == 0x020B) // PE64
-	{
-		if (dwCompiledArch != 2)
-			return 0;
-	}
-	else
-	{
-		return 0;
-	}
-
-	// uiNameArray = the address of the modules export directory entry
-	uiNameArray = (UINT_PTR) & ((PIMAGE_NT_HEADERS)uiExportDir)->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
-
-	// get the File Offset of the export directory
-	uiExportDir = uiBaseAddress + Rva2Offset(((PIMAGE_DATA_DIRECTORY)uiNameArray)->VirtualAddress, uiBaseAddress);
-
-	// get the File Offset for the array of name pointers
-	uiNameArray = uiBaseAddress + Rva2Offset(((PIMAGE_EXPORT_DIRECTORY)uiExportDir)->AddressOfNames, uiBaseAddress);
-
-	// get the File Offset for the array of addresses
-	uiAddressArray = uiBaseAddress + Rva2Offset(((PIMAGE_EXPORT_DIRECTORY)uiExportDir)->AddressOfFunctions, uiBaseAddress);
-
-	// get the File Offset for the array of name ordinals
-	uiNameOrdinals = uiBaseAddress + Rva2Offset(((PIMAGE_EXPORT_DIRECTORY)uiExportDir)->AddressOfNameOrdinals, uiBaseAddress);
-
-	// get a counter for the number of exported functions...
-	dwCounter = ((PIMAGE_EXPORT_DIRECTORY)uiExportDir)->NumberOfNames;
-
-	// loop through all the exported functions to find the ReflectiveLoader
-	while (dwCounter--)
-	{
-		char* cpExportedFunctionName = (char*)(uiBaseAddress + Rva2Offset(DEREF_32(uiNameArray), uiBaseAddress));
-
-		if (strstr(cpExportedFunctionName, "ReflectiveLoader") != NULL)
-		{
-			// get the File Offset for the array of addresses
-			uiAddressArray = uiBaseAddress + Rva2Offset(((PIMAGE_EXPORT_DIRECTORY)uiExportDir)->AddressOfFunctions, uiBaseAddress);
-
-			// use the functions name ordinal as an index into the array of name pointers
-			uiAddressArray += (DEREF_16(uiNameOrdinals) * sizeof(DWORD));
-
-			// return the File Offset to the ReflectiveLoader() functions code...
-			return Rva2Offset(DEREF_32(uiAddressArray), uiBaseAddress);
-		}
-		// get the next exported function name
-		uiNameArray += sizeof(DWORD);
-
-		// get the next exported function name ordinal
-		uiNameOrdinals += sizeof(WORD);
-	}
-
-	return 0;
+    return true;
 }
-//===============================================================================================//
-// Loads a DLL image from memory via its exported ReflectiveLoader function
-HMODULE WINAPI LoadLibraryR(LPVOID lpBuffer, DWORD dwLength)
+
+bool Injector::GetOsApi(OS_API* osApi)
 {
-	HMODULE hResult = NULL;
-	DWORD dwReflectiveLoaderOffset = 0;
-	DWORD dwOldProtect1 = 0;
-	DWORD dwOldProtect2 = 0;
-	REFLECTIVELOADER pReflectiveLoader = NULL;
-	DLLMAIN pDllMain = NULL;
+    OS_VER osVer;
+    if (GetOsVer(&osVer) == false)
+        return false;
 
-	if (lpBuffer == NULL || dwLength == 0)
-		return NULL;
+    HINSTANCE kernel32 = GetModuleHandle("kernel32.dll");
+    if (kernel32 == NULL)
+    {
+        kernel32 = LoadLibrary("kernel32.dll");
+        if (kernel32 == NULL)
+            return false;
+    }
 
-	__try
-	{
-		// check if the library has a ReflectiveLoader...
-		dwReflectiveLoaderOffset = GetReflectiveLoaderOffset(lpBuffer);
-		if (dwReflectiveLoaderOffset != 0)
-		{
-			pReflectiveLoader = (REFLECTIVELOADER)((UINT_PTR)lpBuffer + dwReflectiveLoaderOffset);
+    *(PDWORD)(&osApi->CreateToolhelp32Snapshot) = (DWORD)GetProcAddress(kernel32, "CreateToolhelp32Snapshot");
+    *(PDWORD)(&osApi->Process32First) = (DWORD)GetProcAddress(kernel32, "Process32First");
+    *(PDWORD)(&osApi->Process32Next) = (DWORD)GetProcAddress(kernel32, "Process32Next");
+    *(PDWORD)(&osApi->Module32First) = (DWORD)GetProcAddress(kernel32, "Module32First");
+    *(PDWORD)(&osApi->Module32Next) = (DWORD)GetProcAddress(kernel32, "Module32Next");
+    *(PDWORD)(&osApi->Thread32First) = (DWORD)GetProcAddress(kernel32, "Thread32First");
+    *(PDWORD)(&osApi->Thread32Next) = (DWORD)GetProcAddress(kernel32, "Thread32Next");
+    *(PDWORD)(&osApi->OpenProcess) = (DWORD)GetProcAddress(kernel32, "OpenProcess");
+    *(PDWORD)(&osApi->OpenThread) = (DWORD)GetProcAddress(kernel32, "OpenThread");
+    *(PDWORD)(&osApi->VirtualAllocEx) = (DWORD)GetProcAddress(kernel32, "VirtualAllocEx");
+    *(PDWORD)(&osApi->VirtualFreeEx) = (DWORD)GetProcAddress(kernel32, "VirtualFreeEx");
 
-			// we must VirtualProtect the buffer to RWX so we can execute the ReflectiveLoader...
-			// this assumes lpBuffer is the base address of the region of pages and dwLength the size of the region
-			if (VirtualProtect(lpBuffer, dwLength, PAGE_EXECUTE_READWRITE, &dwOldProtect1))
-			{
-				// call the librarys ReflectiveLoader...
-				pDllMain = (DLLMAIN)pReflectiveLoader();
-				if (pDllMain != NULL)
-				{
-					// call the loaded librarys DllMain to get its HMODULE
-					if (!pDllMain(NULL, DLL_QUERY_HMODULE, &hResult))
-						hResult = NULL;
-				}
-				// revert to the previous protection flags...
-				VirtualProtect(lpBuffer, dwLength, dwOldProtect1, &dwOldProtect2);
-			}
-		}
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER)
-	{
-		hResult = NULL;
-	}
+    if (osVer.IsWin98)
+    {
+        *(PDWORD)(&osApi->OpenThread) = (DWORD)OpenThread9x;
+        *(PDWORD)(&osApi->VirtualAllocEx) = (DWORD)VirtualAllocEx9x;
+        *(PDWORD)(&osApi->VirtualFreeEx) = (DWORD)VirtualFreeEx9x;
+    }
+    else if (osVer.IsWinMe)
+    {
+        *(PDWORD)(&osApi->VirtualAllocEx) = (DWORD)VirtualAllocEx9x;
+        *(PDWORD)(&osApi->VirtualFreeEx) = (DWORD)VirtualFreeEx9x;
+    }
 
-	return hResult;
+    return (osApi->CreateToolhelp32Snapshot
+        && osApi->Process32First
+        && osApi->Process32Next
+        && osApi->Module32First
+        && osApi->Module32Next
+        && osApi->Thread32First
+        && osApi->Thread32Next
+        && osApi->OpenProcess
+        && osApi->OpenThread
+        && osApi->VirtualAllocEx
+        && osApi->VirtualFreeEx
+        );
 }
-//===============================================================================================//
-// Loads a PE image from memory into the address space of a host process via the image's exported ReflectiveLoader function
-// Note: You must compile whatever you are injecting with REFLECTIVEDLLINJECTION_VIA_LOADREMOTELIBRARYR 
-//       defined in order to use the correct RDI prototypes.
-// Note: The hProcess handle must have these access rights: PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | 
-//       PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ
-// Note: If you are passing in an lpParameter value, if it is a pointer, remember it is for a different address space.
-// Note: This function currently cant inject accross architectures, but only to architectures which are the 
-//       same as the arch this function is compiled as, e.g. x86->x86 and x64->x64 but not x64->x86 or x86->x64.
-HANDLE WINAPI LoadRemoteLibraryR(HANDLE hProcess, LPVOID lpBuffer, DWORD dwLength, LPVOID lpParameter)
+
+bool Injector::GetProcessInfo(const char* exeName, PROCESS_INFORMATION* processInfo)
 {
-	BOOL bSuccess = FALSE;
-	LPVOID lpRemoteLibraryBuffer = NULL;
-	LPTHREAD_START_ROUTINE lpReflectiveLoader = NULL;
-	HANDLE hThread = NULL;
-	DWORD dwReflectiveLoaderOffset = 0;
-	DWORD dwThreadId = 0;
+    if (IsGotOsApi == false)
+        if ((IsGotOsApi = GetOsApi(&OsApi)) == false)
+            return false;
 
-	__try
-	{
-		do
-		{
-			if (!hProcess || !lpBuffer || !dwLength)
-				break;
+    HANDLE snapshotProcess = OsApi.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snapshotProcess == INVALID_HANDLE_VALUE)
+        return false;
 
-			// check if the library has a ReflectiveLoader...
-			dwReflectiveLoaderOffset = GetReflectiveLoaderOffset(lpBuffer);
-			if (!dwReflectiveLoaderOffset)
-				break;
+    PROCESSENTRY32 PE32;
+    PE32.dwSize = sizeof(PROCESSENTRY32);
 
-			// alloc memory (RWX) in the host process for the image...
-			lpRemoteLibraryBuffer = VirtualAllocEx(hProcess, NULL, dwLength, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-			if (!lpRemoteLibraryBuffer)
-				break;
+    bool isExist = false;
+    if (OsApi.Process32First(snapshotProcess, &PE32))
+    {
+        do
+        {
+            if (IsSameName(PE32.szExeFile, exeName))
+            {
+                CloseHandle(snapshotProcess);
+                isExist = true;
 
-			// write the image into the host process...
-			if (!WriteProcessMemory(hProcess, lpRemoteLibraryBuffer, lpBuffer, dwLength, NULL))
-				break;
+                break;
+            }
+        } while (isExist == false && OsApi.Process32Next(snapshotProcess, &PE32));
+    }
 
-			// add the offset to ReflectiveLoader() to the remote library address...
-			lpReflectiveLoader = (LPTHREAD_START_ROUTINE)((ULONG_PTR)lpRemoteLibraryBuffer + dwReflectiveLoaderOffset);
+    CloseHandle(snapshotProcess);
 
-			// create a remote thread in the host process to call the ReflectiveLoader!
-			hThread = CreateRemoteThread(hProcess, NULL, 1024 * 1024, lpReflectiveLoader, lpParameter, (DWORD)NULL, &dwThreadId);
+    if (isExist == false)
+        return false;
 
-		} while (0);
+    HANDLE snapshotThread = OsApi.CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+    if (snapshotThread == INVALID_HANDLE_VALUE)
+        return false;
 
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER)
-	{
-		hThread = NULL;
-	}
+    THREADENTRY32 TE32;
+    TE32.dwSize = sizeof(THREADENTRY32);
 
-	return hThread;
+    isExist = false;
+    if (OsApi.Thread32First(snapshotThread, &TE32))
+    {
+        do
+        {
+            if (TE32.th32OwnerProcessID == PE32.th32ProcessID)
+            {
+                CloseHandle(snapshotThread);
+                isExist = true;
+
+                break;
+            }
+        } while (isExist == false && OsApi.Thread32Next(snapshotThread, &TE32));
+    }
+
+    CloseHandle(snapshotThread);
+
+    if (isExist == false)
+        return false;
+
+    processInfo->dwProcessId = PE32.th32ProcessID;
+    processInfo->hProcess = OsApi.OpenProcess(PROCESS_ALL_ACCESS, FALSE, PE32.th32ProcessID);
+    if (processInfo->hProcess == NULL)
+        return false;
+
+    processInfo->dwThreadId = TE32.th32ThreadID;
+    processInfo->hThread = OsApi.OpenThread(THREAD_ALL_ACCESS, FALSE, TE32.th32ThreadID);
+    if (processInfo->hThread == NULL)
+    {
+        CloseHandle(processInfo->hProcess);
+
+        return false;
+    }
+
+    return true;
 }
-//===============================================================================================//
+
+bool Injector::GetModuleInfo(const char* exeName, const char* moduleName, MODULEENTRY32* moduleEntry32)
+{
+    PROCESS_INFORMATION processInfo;
+
+    if (IsGotOsApi == false)
+        if ((IsGotOsApi = GetOsApi(&OsApi)) == false)
+            return false;
+
+    if (GetProcessInfo(exeName, &processInfo) == false)
+        return false;
+
+    HANDLE snapshotModule = OsApi.CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, processInfo.dwProcessId);
+    if (snapshotModule == INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(processInfo.hThread);
+        CloseHandle(processInfo.hProcess);
+
+        return false;
+    }
+
+    MODULEENTRY32 ME32;
+    ME32.dwSize = sizeof(MODULEENTRY32);
+    if (OsApi.Module32First(snapshotModule, &ME32))
+    {
+        do
+        {
+            if (IsSameName(ME32.szExePath, moduleName))
+            {
+                if (moduleEntry32 != NULL)
+                    *moduleEntry32 = ME32;
+
+                CloseHandle(processInfo.hThread);
+                CloseHandle(processInfo.hProcess);
+                CloseHandle(snapshotModule);
+
+                return true;
+            }
+        } while (OsApi.Module32Next(snapshotModule, &ME32));
+    }
+
+    CloseHandle(processInfo.hThread);
+    CloseHandle(processInfo.hProcess);
+    CloseHandle(snapshotModule);
+
+    return false;
+}
+
+bool Injector::InjectModule(const char* exeName, const char* modulePath)
+{
+    PROCESS_INFORMATION processInfo;
+    DWORD beginPosition, endPosition;
+    INJECT_CODE injectCode;
+
+    if (IsGotOsVer == false)
+        if ((IsGotOsVer = GetOsVer(&OsVer)) == false)
+            return false;
+
+    if (IsGotOsApi == false)
+        if ((IsGotOsApi = GetOsApi(&OsApi)) == false)
+            return false;
+
+    if (GetModuleInfo(exeName, modulePath, NULL) == true)
+        return true;
+
+    if (GetProcessInfo(exeName, &processInfo) == false)
+        return false;
+
+    if (LoadLibraryAddress == NULL)
+    {
+        HINSTANCE kernel32 = GetModuleHandle("kernel32.dll");
+        if (kernel32 == NULL)
+        {
+            kernel32 = LoadLibrary("kernel32.dll");
+            if (kernel32 == NULL)
+                return false;
+        }
+
+        if ((LoadLibraryAddress = (DWORD)GetProcAddress(kernel32, "LoadLibraryA")) == NULL)
+        {
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+    }
+
+    beginPosition = (DWORD)OsApi.VirtualAllocEx(processInfo.hProcess, NULL, sizeof(INJECT_CODE), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    if (beginPosition == NULL)
+    {
+        CloseHandle(processInfo.hThread);
+        CloseHandle(processInfo.hProcess);
+
+        return false;
+    }
+
+    endPosition = beginPosition + offsetof(INJECT_CODE, DoneOpc);
+
+    injectCode.PushOpc = 0x68;
+    injectCode.PushAdr = beginPosition + offsetof(INJECT_CODE, ModulePath);
+    injectCode.CallOpc = 0xE8;
+    injectCode.CallAdr = LoadLibraryAddress - endPosition;
+    if (OsVer.IsWin98 || OsVer.IsWinMe)
+    {
+        injectCode.DoneOpc = 0xEB;
+        injectCode.DoneAdr = 0xFE;
+    }
+    else
+    {
+        injectCode.DoneOpc = 0xC2;
+        injectCode.DoneAdr = 0x0004;
+    }
+    strcpy_s(injectCode.ModulePath, MAX_PATH, modulePath);
+
+    if (!WriteProcessMemory(processInfo.hProcess, (VOID*)beginPosition, &injectCode, sizeof(INJECT_CODE), NULL))
+    {
+        OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+        CloseHandle(processInfo.hThread);
+        CloseHandle(processInfo.hProcess);
+
+        return false;
+    }
+
+    if (OsVer.IsWin98 || OsVer.IsWinMe)
+    {
+        if (GetModuleInfo(exeName, "kernel32.dll", NULL) == false)
+        {
+            OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+        Sleep(50);
+
+        INT countSuspend;
+        CONTEXT orgContext, runContext;
+
+        if (SuspendThread(processInfo.hThread) == 0xFFFFFFFF)
+            return false;
+
+        countSuspend = 1;
+
+        orgContext.ContextFlags = CONTEXT_FULL;
+        if (!GetThreadContext(processInfo.hThread, &orgContext))
+        {
+            ResumeThread(processInfo.hThread);
+            OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+
+        runContext = orgContext;
+        runContext.Eip = beginPosition;
+        if (!SetThreadContext(processInfo.hThread, &runContext))
+        {
+            ResumeThread(processInfo.hThread);
+            OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+
+        while (runContext.Eip != endPosition)
+        {
+            while (true)
+            {
+                DWORD returnValue = ResumeThread(processInfo.hThread);
+
+                if (returnValue <= 1)
+                {
+                    if (returnValue == 1)
+                        countSuspend--;
+
+                    break;
+                }
+                else if (returnValue < 0xFFFFFFFF)
+                {
+                    countSuspend--;
+                }
+                else if (returnValue == 0xFFFFFFFF)
+                {
+                    OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+                    CloseHandle(processInfo.hThread);
+                    CloseHandle(processInfo.hProcess);
+
+                    return false;
+                }
+            }
+
+            Sleep(50);
+
+            if (SuspendThread(processInfo.hThread) == 0xFFFFFFFF)
+            {
+                OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+                CloseHandle(processInfo.hThread);
+                CloseHandle(processInfo.hProcess);
+
+                return false;
+            }
+            countSuspend++;
+
+            if (!GetThreadContext(processInfo.hThread, &runContext))
+            {
+                if (countSuspend > 0)
+                    while (countSuspend-- > 0 && ResumeThread(processInfo.hThread) != 0xFFFFFFFF);
+                else if (countSuspend < 0)
+                    while (countSuspend++ < 0 && SuspendThread(processInfo.hThread) != 0xFFFFFFFF);
+
+                OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+                CloseHandle(processInfo.hThread);
+                CloseHandle(processInfo.hProcess);
+
+                return false;
+            }
+        }
+
+        if (!SetThreadContext(processInfo.hThread, &orgContext))
+        {
+            if (countSuspend > 0)
+                while (countSuspend-- > 0 && ResumeThread(processInfo.hThread) != 0xFFFFFFFF);
+            else if (countSuspend < 0)
+                while (countSuspend++ < 0 && SuspendThread(processInfo.hThread) != 0xFFFFFFFF);
+
+            OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+
+        if (countSuspend > 0)
+            while (countSuspend-- > 0 && ResumeThread(processInfo.hThread) != 0xFFFFFFFF);
+        else if (countSuspend < 0)
+            while (countSuspend++ < 0 && SuspendThread(processInfo.hThread) != 0xFFFFFFFF);
+    }
+    else
+    {
+        HANDLE remoteThread = CreateRemoteThread(processInfo.hProcess, NULL, 0,
+            (LPTHREAD_START_ROUTINE)beginPosition, NULL, 0, NULL);
+        if (remoteThread == NULL)
+        {
+            OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+
+        WaitForSingleObject(remoteThread, INFINITE);
+
+        DWORD moduleBase;
+        if (!GetExitCodeThread(remoteThread, &moduleBase) || !moduleBase)
+        {
+            OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+
+            return false;
+        }
+    }
+
+    OsApi.VirtualFreeEx(processInfo.hProcess, (VOID*)beginPosition, sizeof(INJECT_CODE), MEM_DECOMMIT);
+    CloseHandle(processInfo.hThread);
+    CloseHandle(processInfo.hProcess);
+
+    return true;
+}
+
+HANDLE WINAPI OpenThread9x(DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwThreadId)
+{
+    DWORD  processID, obsfucator, * pThreadDataBase;
+    HANDLE hThread;
+    HANDLE(WINAPI * pInternalOpenProcess)(DWORD, BOOL, DWORD);
+
+    processID = GetCurrentProcessId();
+    __asm mov eax, fs: [0x30] ;
+    __asm xor eax, processID;
+    __asm mov obsfucator, eax;
+
+    pThreadDataBase = (DWORD*)(dwThreadId ^ obsfucator);
+    if (IsBadReadPtr(pThreadDataBase, sizeof(DWORD)) || ((*pThreadDataBase & 0x7) != 0x7))
+        return NULL;
+
+    *(PDWORD)(&pInternalOpenProcess) = SearchMemory((DWORD)OpenProcess, 0xFF, (BYTE*)"\xB9\x00\x00\x00\x00", "xxxxx");
+    if (pInternalOpenProcess == NULL)
+        return NULL;
+
+    __asm mov   eax, pThreadDataBase;
+    __asm push  dwThreadId;
+    __asm push  bInheritHandle;
+    __asm push  dwDesiredAccess;
+    __asm call  pInternalOpenProcess;
+    __asm mov   hThread, eax;
+
+    return hThread;
+}
+
+LPVOID WINAPI VirtualAllocEx9x(HANDLE hProcess, LPVOID lpAddress, DWORD dwSize, DWORD flAllocationType, DWORD flProtect)
+{
+    LPVOID(WINAPI * pVirtualAlloc)(LPVOID, SIZE_T, DWORD, DWORD);
+
+    HINSTANCE kernel32 = GetModuleHandle("kernel32.dll");
+    if (kernel32 == NULL)
+        kernel32 = LoadLibrary("kernel32.dll");
+
+    *(PDWORD)(&pVirtualAlloc) = (DWORD)GetProcAddress(kernel32, "VirtualAlloc");
+
+    return pVirtualAlloc(lpAddress, dwSize, flAllocationType | 0x8000000, flProtect);
+}
+
+BOOL WINAPI VirtualFreeEx9x(HANDLE hProcess, LPVOID lpAddress, DWORD dwSize, DWORD dwFreeType)
+{
+    BOOL(WINAPI * pVirtualFree)(LPVOID, SIZE_T, DWORD);
+
+    HINSTANCE kernel32 = GetModuleHandle("kernel32.dll");
+    if (kernel32 == NULL)
+        kernel32 = LoadLibrary("kernel32.dll");
+
+    *(PDWORD)(&pVirtualFree) = (DWORD)GetProcAddress(kernel32, "VirtualFree");
+
+    return pVirtualFree(lpAddress, dwSize, dwFreeType);
+}
+
+DWORD SearchMemory(DWORD start, DWORD length, BYTE* pattern, CHAR* mask)
+{
+    BYTE* currentAddress;
+    BYTE* currentPattern;
+    CHAR* currentMask;
+
+    for (DWORD i = 0; i < length; i++)
+    {
+        currentAddress = (BYTE*)(start + i);
+        currentPattern = pattern;
+        currentMask = mask;
+        for (; *currentMask; currentAddress++, currentPattern++, currentMask++)
+        {
+            if (*currentMask == 'x' && *currentAddress != *currentPattern)
+                break;
+        }
+        if (*currentMask == NULL) return (start + i);
+    }
+
+    return NULL;
+}
+
+bool IsSameName(const char* targetString, const char* sourceString)
+{
+    const char* index, * i, * j;
+
+    for (index = i = targetString; *index; index++)
+        if (*index == '\\')
+            i = index + 1;
+
+    for (index = j = sourceString; *index; index++)
+        if (*index == '\\')
+            j = index + 1;
+
+    for (; *i && *j; i++, j++)
+    {
+        if (tolower(*i) != tolower(*j))
+            return false;
+    }
+
+    return (*j == 0);
+}
