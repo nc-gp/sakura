@@ -37,23 +37,28 @@
 #include <list>
 #include <filesystem>
 
-extern char hackdir[MAX_PATH];
-extern char hldir[MAX_PATH];
+namespace Sakura
+{
+	extern char CheatDir[MAX_PATH];
+	extern char HLDir[MAX_PATH];
+	extern HINSTANCE Module;
 
-#include "../libs/vm/VMProtectSDK.h"
+	void Unload();
+};
+
 #include "../libs/bass/dll.h"
 #include "../libs/bass/bass.h"
 
 #include "other/smth/interface.h"
 
-#include "../libs/imgui/imgui.h"
-#include "../libs/imgui/imgui_impl_win32.h"
-#include "../libs/imgui/imgui_impl_opengl2.h"
-#include "../libs/imgui/imgui_impl_opengl3.h"
-#include "../libs/imgui/imgui_internal.h"
-#include "../libs/imgui/soil.h"
-#include "../libs/imgui/gl.h"
-#include "../libs/imgui/glu.h"
+#include "../../imgui/imgui.h"
+#include "../../imgui/backends/imgui_impl_win32.h"
+#include "../../imgui/backends/imgui_impl_opengl2.h"
+#include "../../imgui/backends/imgui_impl_opengl3.h"
+#include "../../imgui/imgui_internal.h"
+#include "../libs/image/soil.h"
+#include "../libs/opengl/gl.h"
+#include "../libs/opengl/glu.h"
 
 #include "features/visuals/menu/menu_widgets.h"
 
@@ -84,7 +89,7 @@ extern char hldir[MAX_PATH];
 #include "../../halflife/engine/net.h" // netchan
 #include "../../halflife/parsemsg.h"
 
-#include "../libs/detours/detours.h"
+#include "../../detours/src/detours.h"
 #include "other/smth/defs.h"
 #include "helpers/stringfinder.h"
 #include "helpers/trace.h"
@@ -92,13 +97,14 @@ extern char hldir[MAX_PATH];
 #include "helpers/log.h"
 #include "helpers/anim.h"
 #include "other/smth/keydefs.h"
-#include "other/smth/gl3winit.h"
 #include "../libs/xor/xorstr.h"
 
 #include "../libs/lua/lua.hpp" // include lua lib
 #include "../libs/LuaBridge/Vector.h" // passing vector
 #include "../libs/LuaBridge/LuaBridge.h" // bridge
 #include "features/lua/luabind.h" // custom
+
+#include "other/smth/gl3winit.h"
 
 #include "opengl.h"
 #include "usermsg.h"

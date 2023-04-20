@@ -1,16 +1,8 @@
 #include "../../../client.h"
 
-ImRGBA localPlayerColor;
-ImRGBA localFakePlayerColor;
-ImRGBA playerColor;
-ImRGBA playerFakeColor;
-ImRGBA worldColor;
-ImRGBA viewModelColor;
-
 static float impulseRadius = 0.f;
-ImRGBA dynamicLightColor;
 
-void Sakura::Light::Entity(cl_entity_s* ent, alight_s*& plight, ImRGBA color)
+void Sakura::Light::Entity(alight_s*& plight, const ImRGBA color)
 {
 	plight->ambientlight = 128;
 	plight->shadelight = 192;
@@ -30,23 +22,55 @@ void Sakura::Light::Studio(alight_s* plight)
 
 	cl_entity_s* ent = g_Studio.GetCurrentEntity();
 
-	bool isPlayer		= ent && ent->player && Sakura::Player::IsAlive(ent->index) && ent != &g_Player[ent->index].playerHistory && ent != &g_Player[ent->index].playerDeathMark[0] && ent != &g_Player[ent->index].playerDeathMark[1] && (g_Player[ent->index].iTeam != g_Local.iTeam || cvar.visual_visual_team);
-	bool isPlayerFake	= ent && ent->player && Sakura::Player::IsAlive(ent->index) && ent == &g_Player[ent->index].playerHistory;
-	bool isLocalPlayer	= ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1 && ent != &g_Player[ent->index].playerHistory && ent != &g_Player[ent->index].playerDeathMark[0] && ent != &g_Player[ent->index].playerDeathMark[1];
-	bool isLocalFake	= ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1 && ent == &g_Player[ent->index].playerHistory;
-	bool ViewModel		= ent && ent == g_Local.ViewModel && strstr(ent->model->name, /*v_*/XorStr<0x42, 3, 0xAED4A0FB>("\x34\x1C" + 0xAED4A0FB).s);
-	bool World			= ent && ent->model && strstr(ent->model->name, /*/w_*/XorStr<0xC8, 4, 0xF6F554A1>("\xE7\xBE\x95" + 0xF6F554A1).s) && ent != g_Local.ViewModel;
+	bool isPlayer = false;
+	bool isPlayerFake = false;
+	bool isLocalFake = false;
+	bool isLocalPlayer = false;
+	bool isViewModel = false;
+	bool isWorld = false;
+
+	if (ent)
+	{
+		if (ent->player)
+		{
+			const int playerIndex = ent->index;
+
+			if (Sakura::Player::IsAlive(playerIndex))
+			{
+				isPlayer = ent != &g_Player[playerIndex].playerHistory &&
+					ent != &g_Player[playerIndex].playerDeathMark[0] &&
+					ent != &g_Player[playerIndex].playerDeathMark[1] &&
+					(g_Player[playerIndex].iTeam != g_Local.iTeam || cvar.visual_visual_team);
+
+				isPlayerFake = ent == &g_Player[playerIndex].playerHistory;
+			}
+
+			if (Sakura::Player::Local::IsAlive())
+			{
+				isLocalFake = playerIndex == pmove->player_index + 1 &&
+					ent == &g_Player[playerIndex].playerHistory;
+
+				isLocalPlayer = playerIndex == pmove->player_index + 1 &&
+					ent != &g_Player[playerIndex].playerHistory &&
+					ent != &g_Player[playerIndex].playerDeathMark[0] &&
+					ent != &g_Player[playerIndex].playerDeathMark[1];
+			}
+		}
+
+		isViewModel = Sakura::Player::Local::IsAlive() && ent == g_Local.ViewModel;
+		isWorld = ent->model && strstr(ent->model->name, /*/w_*/XorStr<0xC1, 4, 0x46E892EF>("\xEE\xB5\x9C" + 0x46E892EF).s) && ent != g_Local.ViewModel;
+	}
 
 	if (isLocalPlayer && cvar.visual_lambert_local)
 	{
-		localPlayerColor = Colors::GetCustomizedColor(cvar.visual_lambert_color_local, cvar.rainbow_lambert_local);
-		Sakura::Light::Entity(ent, plight, localPlayerColor);
+		const ImRGBA localPlayerColor = Colors::GetCustomizedColor(cvar.visual_lambert_color_local, cvar.rainbow_lambert_local);
+		Sakura::Light::Entity(plight, localPlayerColor);
 	}
 
 	if (isLocalFake && cvar.visual_fakelag_history_local_light)
 	{
-		localFakePlayerColor = Sakura::Colors::GetCustomizedColor(cvar.visual_fakelag_history_local_light_color, cvar.rainbow_local_history);
-		Sakura::Light::Entity(ent, plight, localFakePlayerColor);
+		const ImRGBA localFakePlayerColor = Sakura::Colors::GetCustomizedColor(cvar.visual_fakelag_history_local_light_color, cvar.rainbow_local_history);
+		Sakura::Light::Entity(plight, localFakePlayerColor);
 	}
 
 	if (isPlayer && cvar.visual_lambert)
@@ -54,35 +78,35 @@ void Sakura::Light::Studio(alight_s* plight)
 		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
 			return;
 
-		playerColor = Sakura::Colors::GetCustomizedTeamColor(ent->index, cvar.visual_lambert_color_tt, cvar.visual_lambert_color_ct,
+		const ImRGBA playerColor = Sakura::Colors::GetCustomizedTeamColor(ent->index, cvar.visual_lambert_color_tt, cvar.visual_lambert_color_ct,
 			cvar.rainbow_player_light_tt, cvar.rainbow_player_light_ct);
 
-		Sakura::Light::Entity(ent, plight, playerColor);
+		Sakura::Light::Entity(plight, playerColor);
 	}
 
 	if (isPlayerFake && cvar.misc_backtrack_light)
 	{
-		playerFakeColor = Sakura::Colors::GetCustomizedColor(cvar.misc_backtrack_light_color, cvar.rainbow_backtrack_light);
-		Sakura::Light::Entity(ent, plight, playerFakeColor);
+		const ImRGBA playerFakeColor = Sakura::Colors::GetCustomizedColor(cvar.misc_backtrack_light_color, cvar.rainbow_backtrack_light);
+		Sakura::Light::Entity(plight, playerFakeColor);
 	}
 
-	if (World && cvar.visual_lambert_world)
+	if (isWorld && cvar.visual_lambert_world)
 	{
-		worldColor = Sakura::Colors::GetCustomizedColor(cvar.visual_lambert_world_color, cvar.rainbow_world_light);
-		Sakura::Light::Entity(ent, plight, worldColor);
+		const ImRGBA worldColor = Sakura::Colors::GetCustomizedColor(cvar.visual_lambert_world_color, cvar.rainbow_world_light);
+		Sakura::Light::Entity(plight, worldColor);
 	}
 
 
-	if (ViewModel && cvar.visual_lambert_viewmodel)
+	if (isViewModel && cvar.visual_lambert_viewmodel)
 	{
-		viewModelColor = Sakura::Colors::GetCustomizedColor(cvar.visual_lambert_viewmodel_color, cvar.rainbow_viewmodel_light);
-		Sakura::Light::Entity(ent, plight, viewModelColor);
+		const ImRGBA viewModelColor = Sakura::Colors::GetCustomizedColor(cvar.visual_lambert_viewmodel_color, cvar.rainbow_viewmodel_light);
+		Sakura::Light::Entity(plight, viewModelColor);
 	}
 
 	g_Studio.StudioEntityLight(plight);
 }
 
-void Sakura::DynamicLight::ImpulseLight()
+void Sakura::DynamicLight::Impulse()
 {
 	static bool plus_or_minus;
 
@@ -95,7 +119,7 @@ void Sakura::DynamicLight::ImpulseLight()
 	impulseRadius = Backtrack::clamp(impulseRadius, 0.f, 1.f);
 }
 
-void Sakura::DynamicLight::Light(cl_entity_s* ent, ImRGBA color)
+void Sakura::DynamicLight::Light(const cl_entity_s* ent, const ImRGBA color)
 {
 	dlight_t* dl = g_Engine.pEfxAPI->CL_AllocElight(ent->index);
 
@@ -116,34 +140,37 @@ void Sakura::DynamicLight::Draw()
 	if (!cvar.visual_player_dynamiclight)
 		return;
 
-	Sakura::DynamicLight::ImpulseLight();
+	Impulse();
 
 	for (int i = 1; i <= g_Engine.GetMaxClients(); i++)
 	{
 		cl_entity_s* ent = g_Engine.GetEntityByIndex(i);
 
-		if (!ent)
-			continue;
 
-		if (ent == &g_Player[ent->index].playerHistory || ent == &g_Player[ent->index].playerDeathMark[0] || ent == &g_Player[ent->index].playerDeathMark[1])
+		if (!ent)
 			continue;
 
 		if (!ent->player)
 			continue;
 
-		if (!Sakura::Player::IsAlive(ent->index))
+		const int playerIndex = ent->index;
+
+		if (ent == &g_Player[playerIndex].playerHistory || ent == &g_Player[playerIndex].playerDeathMark[0] || ent == &g_Player[playerIndex].playerDeathMark[1])
+			continue;
+
+		if (!Sakura::Player::IsAlive(playerIndex))
 			continue;
 
 		if (ent == g_Local.ViewModel)
 			continue;
 
-		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF)
+		if (cvar.visual_idhook_only && IdHook::FirstKillPlayer[playerIndex] == IDHOOK_PLAYER_OFF)
 			continue;
 
-		if (g_Player[ent->index].iTeam == g_Local.iTeam && !cvar.visual_visual_team)
+		if (g_Player[playerIndex].iTeam == g_Local.iTeam && !cvar.visual_visual_team)
 			continue;
 
-		dynamicLightColor = Sakura::Colors::GetCustomizedTeamColor(ent->index, cvar.visual_player_dynamiclight_color_tt, cvar.visual_player_dynamiclight_color_ct);
+		const ImRGBA dynamicLightColor = Sakura::Colors::GetCustomizedTeamColor(playerIndex, cvar.visual_player_dynamiclight_color_tt, cvar.visual_player_dynamiclight_color_ct);
 
 		Sakura::DynamicLight::Light(ent, dynamicLightColor);
 	}

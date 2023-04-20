@@ -14,10 +14,8 @@ namespace Sakura
 		extern DWORD tkTimer;
 		extern DWORD mkTimer;
 
-		void KillSound(const int victim, const int killer, const int headshot);
+		void KillSound(const int headshot);
 	};
 };
-
-//void KillSound(int victim, int killer, int headshot);
 
 #endif

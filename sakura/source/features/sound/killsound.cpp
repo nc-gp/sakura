@@ -9,21 +9,9 @@ DWORD Sakura::Sound::dkTimer = 0;
 DWORD Sakura::Sound::tkTimer = 0;
 DWORD Sakura::Sound::mkTimer = 0;
 
-void Sakura::Sound::KillSound(const int victim, const int killer, const int headshot)
+void Sakura::Sound::KillSound(const int headshot)
 {
 	if (!cvar.radio_kill_sound)
-		return;
-
-	if (victim == pmove->player_index + 1)
-		return;
-
-	if (killer != pmove->player_index + 1)
-		return;
-
-	if (victim <= 0)
-		return;
-
-	if (victim > g_Engine.GetMaxClients())
 		return;
 
 	if (GetTickCount() - mkTimer < 1000)

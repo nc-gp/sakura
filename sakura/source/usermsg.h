@@ -28,8 +28,9 @@ namespace Sakura
 			extern pfnUserMsgHook pDamage;
 
 			PUserMsg ByName(char* messageName);
-			pfnUserMsgHook Hook(char* messageName, pfnUserMsgHook pfn);
-			void Init();
+			pfnUserMsgHook HookMsg(char* messageName, pfnUserMsgHook pfn);
+			void UnHook();
+			void Hook();
 		};
 	};
 };

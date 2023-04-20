@@ -22,9 +22,9 @@ namespace Sakura
 		extern ImRGBA viewmodelColor;
 		extern ImRGBA worldColor;
 
-		GLenum GetWireframeMode(float wireframeCvar);
-		void TextureEntity(cl_entity_s* ent, float chamsType, bool isChamsWall, ImRGBA chamsColor, ImRGBA chamsWallColor, float& openglChams, ImRGBA& openglChamsColor, bool isWireframe = false, float wireframeMode = 0);
-		void GlowEntity(cl_entity_s* ent, float isChams, float glowThickness, ImRGBA glowColor);
+		GLenum GetWireframeMode(const float wireframeCvar);
+		void TextureEntity(cl_entity_s* ent, const float chamsType, const bool isChamsWall, const ImRGBA chamsColor, const ImRGBA chamsWallColor, float& openglChams, ImRGBA& openglChamsColor, const bool isWireframe = false, const float wireframeMode = 0, const float wireFramePointSize = 0, const float wireFrameLineWidth = 0);
+		void GlowEntity(cl_entity_s* ent, const float isChams, const float glowThickness, const ImRGBA glowColor);
 		void Studio();
 	};
 };

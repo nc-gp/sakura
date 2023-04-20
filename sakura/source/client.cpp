@@ -265,10 +265,10 @@ void HUD_PlayerMoveInit(playermove_s* ppmove)
 
 void HUD_ProcessPlayerState(entity_state_s* dst, const entity_state_s* src)
 {
-	for (unsigned int i = 0; i < 3; i++)
+	for (size_t i = 0; i < 3; ++i)
 		src->mins[i] = i == 2 ? -36 : -16;
 
-	for (unsigned int i = 0; i < 3; i++)
+	for (size_t i = 0; i < 3; ++i)
 		src->maxs[i] = i == 2 ? 36 : 16;
 
 	g_Client.HUD_ProcessPlayerState(dst, src);
@@ -375,52 +375,56 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	if (!Sakura::ScreenShot::IsVisuals())
 		return g_Client.HUD_AddEntity(type, ent, modelname);
 
-	bool isPlayer = ent && ent->player && Sakura::Player::IsAlive(ent->index);
-	bool isLocalPlayer = ent && ent->player && Sakura::Player::Local::IsAlive() && ent->index == pmove->player_index + 1;
+	bool isPlayer = false;
+	bool isLocalPlayer = false;
 
-	if (isLocalPlayer)
+	if (ent && ent->player)
 	{
-		if (cvar.visual_chase_cam)
-		{
-			if(cvar.visual_fakelag_history_local)
-				FakeLagHistory(ent, DEFAULT_FAKE_LAG_HISTORY);
+		const int playerIndex = ent->index;
 
-			if (cvar.rage_antiaim_active && cvar.aa_roll_active)
-			{
-				AntiAim::Entity(ent);
-				g_Engine.CL_CreateVisibleEntity(ENTITY_TYPE_PLAYER, ent);
-				return 0;
-			}
+		if (cvar.visual_deathmark_enable && g_Player[playerIndex].deathMark)
+			DeathMark::Create(ent);
+
+		isPlayer = Sakura::Player::IsAlive(playerIndex) && playerIndex != pmove->player_index + 1;
+		isLocalPlayer = Sakura::Player::Local::IsAlive() && playerIndex == pmove->player_index + 1;
+	}
+
+	if (isLocalPlayer && cvar.visual_chase_cam)
+	{
+		if (cvar.visual_fakelag_history_local)
+			FakeLagHistory(ent, DEFAULT_FAKE_LAG_HISTORY);
+
+		if (cvar.rage_antiaim_active && cvar.aa_roll_active)
+		{
+			AntiAim::Entity(ent);
+			g_Engine.CL_CreateVisibleEntity(ENTITY_TYPE_PLAYER, ent);
+			return 0;
 		}
 	}
 
 	if (isPlayer && !(cvar.visual_idhook_only && IdHook::FirstKillPlayer[ent->index] == IDHOOK_PLAYER_OFF))
 	{
-		if (ent->index != pmove->player_index + 1)
+		const int playerIndex = ent->index;
+
+		if (cvar.visual_dont_render_players && g_Player[playerIndex].iTeam == g_Local.iTeam)
+			return 0;
+
+		if ((!cvar.visual_visual_team && g_Player[playerIndex].iTeam == g_Local.iTeam))
+			return g_Client.HUD_AddEntity(type, ent, modelname);
+
+		if (cvar.misc_fakelatency)
 		{
-			if (cvar.visual_dont_render_players && g_Player[ent->index].iTeam == g_Local.iTeam)
-				return 0;
-
-			if ((!cvar.visual_visual_team && g_Player[ent->index].iTeam == g_Local.iTeam))
-				return g_Client.HUD_AddEntity(type, ent, modelname);
-
-			if (cvar.misc_fakelatency)
+			Vector entTempOrigin;
+			if (Backtrack::BacktrackPlayer(ent, g_Local.sLerpMSec, entTempOrigin))
 			{
-				Vector entTempOrigin;
-				if (Backtrack::BacktrackPlayer(ent, g_Local.sLerpMSec, entTempOrigin))
-				{
-					memcpy(&g_Player[ent->index].playerHistory, ent, sizeof(*ent));
-					g_Player[ent->index].playerHistory.origin = entTempOrigin;
-					g_Engine.CL_CreateVisibleEntity(ENTITY_TYPE_NORMAL, &g_Player[ent->index].playerHistory);
-				}
+				memcpy(&g_Player[ent->index].playerHistory, ent, sizeof(*ent));
+				g_Player[ent->index].playerHistory.origin = entTempOrigin;
+				g_Engine.CL_CreateVisibleEntity(ENTITY_TYPE_NORMAL, &g_Player[playerIndex].playerHistory);
 			}
-
-			BulletTrace::Enemy(ent);
 		}
-	}
 
-	if (ent && ent->player && cvar.visual_deathmark_enable && g_Player[ent->index].deathMark)
-		DeathMark::Create(ent);
+		BulletTrace::Enemy(ent);
+	}
 
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{

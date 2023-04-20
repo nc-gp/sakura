@@ -125,12 +125,11 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 	int headshot = READ_BYTE();
 
 	if (killer != victim && killer == pmove->player_index + 1 && victim > 0 && victim <= g_Engine.GetMaxClients())
+	{
 		dwReactionTime = GetTickCount();
-	
-	Sakura::Sound::KillSound(victim, killer, headshot);
-
-	if (victim != pmove->player_index + 1 && killer == pmove->player_index + 1 && victim > 0 && victim <= g_Engine.GetMaxClients())
 		g_Player[victim].deathMark = true;
+		Sakura::Sound::KillSound(headshot);
+	}
 
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
@@ -165,27 +164,22 @@ int TeamInfo(const char *pszName, int iSize, void *pbuf)
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_BYTE();
 	char *szTeam = READ_STRING();
+
 	if (id > 0 && id <= g_Engine.GetMaxClients())
 	{
+		int team = 0;
+
 		if (!lstrcmpA(szTeam, "TERRORIST") || !lstrcmpA(szTeam, "terrorist"))
-		{
-			g_Player[id].iTeam = TEAM_TT;
-			if (id == pmove->player_index + 1)
-				g_Local.iTeam = TEAM_TT;
-		}
+			team = TEAM_TT;
 		else if (!lstrcmpA(szTeam, "CT") || !lstrcmpA(szTeam, "ct"))
-		{
-			g_Player[id].iTeam = TEAM_CT;
-			if (id == pmove->player_index + 1)
-				g_Local.iTeam = TEAM_CT;
-		}
-		else
-		{
-			g_Player[id].iTeam = 0;
-			if (id == pmove->player_index + 1)
-				g_Local.iTeam = 0;
-		}
+			team = TEAM_CT;
+
+		g_Player[id].iTeam = team;
+
+		if (id == pmove->player_index + 1)
+			g_Local.iTeam = team;
 	}
+
 	return Sakura::Message::User::pTeamInfo(pszName, iSize, pbuf);
 }
 
@@ -242,7 +236,7 @@ PUserMsg Sakura::Message::User::ByName(char* messageName)
 	return Ptr;
 }
 
-pfnUserMsgHook Sakura::Message::User::Hook(char* messageName, pfnUserMsgHook pfn)
+pfnUserMsgHook Sakura::Message::User::HookMsg(char* messageName, pfnUserMsgHook pfn)
 {
 	PUserMsg Ptr = NULL;
 	pfnUserMsgHook Original = NULL;
@@ -259,14 +253,26 @@ pfnUserMsgHook Sakura::Message::User::Hook(char* messageName, pfnUserMsgHook pfn
 	c_Offset.Error(/*Couldn't find '%s' message.*/XorStr<0xAA, 28, 0x7A45AE40>("\xE9\xC4\xD9\xC1\xCA\xC1\x97\xC5\x92\xD5\xDD\xDB\xD2\x97\x9F\x9C\xC9\x9C\x9C\xD0\xDB\xCC\xB3\xA0\xA5\xA6\xEA" + 0x7A45AE40).s, messageName);
 }
 
-void Sakura::Message::User::Init()
+void Sakura::Message::User::Hook()
 {
-	pResetHUD = Hook(/*ResetHUD*/XorStr<0x20, 9, 0xE522A0CA>("\x72\x44\x51\x46\x50\x6D\x73\x63" + 0xE522A0CA).s, ResetHUD);
-	pTeamInfo = Hook(/*TeamInfo*/XorStr<0xAA, 9, 0xDA84AFF9>("\xFE\xCE\xCD\xC0\xE7\xC1\xD6\xDE" + 0xDA84AFF9).s, TeamInfo);
-	pDeathMsg = Hook(/*DeathMsg*/XorStr<0xA4, 9, 0x2FD82F9B>("\xE0\xC0\xC7\xD3\xC0\xE4\xD9\xCC" + 0x2FD82F9B).s, DeathMsg);
-	pScoreAttrib = Hook(/*ScoreAttrib*/XorStr<0xA4, 12, 0x72E29F43>("\xF7\xC6\xC9\xD5\xCD\xE8\xDE\xDF\xDE\xC4\xCC" + 0x72E29F43).s, ScoreAttrib);
-	pServerName = Hook(/*ServerName*/XorStr<0x63, 11, 0xFC1D837D>("\x30\x01\x17\x10\x02\x1A\x27\x0B\x06\x09" + 0xFC1D837D).s, ServerName);
-	pSetFOV = Hook(/*SetFOV*/XorStr<0xC9, 7, 0x9382CC98>("\x9A\xAF\xBF\x8A\x82\x98" + 0x9382CC98).s, SetFOV);
-	pMOTD = Hook(/*MOTD*/XorStr<0xC3, 5, 0x4AA646A2>("\x8E\x8B\x91\x82" + 0x4AA646A2).s, MOTD);
-	pDamage = Hook(/*Damage*/XorStr<0x29, 7, 0x66684510>("\x6D\x4B\x46\x4D\x4A\x4B" + 0x66684510).s, Damage);
+	pResetHUD = HookMsg(/*ResetHUD*/XorStr<0x20, 9, 0xE522A0CA>("\x72\x44\x51\x46\x50\x6D\x73\x63" + 0xE522A0CA).s, ResetHUD);
+	pTeamInfo = HookMsg(/*TeamInfo*/XorStr<0xAA, 9, 0xDA84AFF9>("\xFE\xCE\xCD\xC0\xE7\xC1\xD6\xDE" + 0xDA84AFF9).s, TeamInfo);
+	pDeathMsg = HookMsg(/*DeathMsg*/XorStr<0xA4, 9, 0x2FD82F9B>("\xE0\xC0\xC7\xD3\xC0\xE4\xD9\xCC" + 0x2FD82F9B).s, DeathMsg);
+	pScoreAttrib = HookMsg(/*ScoreAttrib*/XorStr<0xA4, 12, 0x72E29F43>("\xF7\xC6\xC9\xD5\xCD\xE8\xDE\xDF\xDE\xC4\xCC" + 0x72E29F43).s, ScoreAttrib);
+	pServerName = HookMsg(/*ServerName*/XorStr<0x63, 11, 0xFC1D837D>("\x30\x01\x17\x10\x02\x1A\x27\x0B\x06\x09" + 0xFC1D837D).s, ServerName);
+	pSetFOV = HookMsg(/*SetFOV*/XorStr<0xC9, 7, 0x9382CC98>("\x9A\xAF\xBF\x8A\x82\x98" + 0x9382CC98).s, SetFOV);
+	pMOTD = HookMsg(/*MOTD*/XorStr<0xC3, 5, 0x4AA646A2>("\x8E\x8B\x91\x82" + 0x4AA646A2).s, MOTD);
+	pDamage = HookMsg(/*Damage*/XorStr<0x29, 7, 0x66684510>("\x6D\x4B\x46\x4D\x4A\x4B" + 0x66684510).s, Damage);
+}
+
+void Sakura::Message::User::UnHook()
+{
+	pResetHUD = HookMsg(/*ResetHUD*/XorStr<0x20, 9, 0xE522A0CA>("\x72\x44\x51\x46\x50\x6D\x73\x63" + 0xE522A0CA).s, pResetHUD);
+	pTeamInfo = HookMsg(/*TeamInfo*/XorStr<0xAA, 9, 0xDA84AFF9>("\xFE\xCE\xCD\xC0\xE7\xC1\xD6\xDE" + 0xDA84AFF9).s, pTeamInfo);
+	pDeathMsg = HookMsg(/*DeathMsg*/XorStr<0xA4, 9, 0x2FD82F9B>("\xE0\xC0\xC7\xD3\xC0\xE4\xD9\xCC" + 0x2FD82F9B).s, pDeathMsg);
+	pScoreAttrib = HookMsg(/*ScoreAttrib*/XorStr<0xA4, 12, 0x72E29F43>("\xF7\xC6\xC9\xD5\xCD\xE8\xDE\xDF\xDE\xC4\xCC" + 0x72E29F43).s, pScoreAttrib);
+	pServerName = HookMsg(/*ServerName*/XorStr<0x63, 11, 0xFC1D837D>("\x30\x01\x17\x10\x02\x1A\x27\x0B\x06\x09" + 0xFC1D837D).s, pServerName);
+	pSetFOV = HookMsg(/*SetFOV*/XorStr<0xC9, 7, 0x9382CC98>("\x9A\xAF\xBF\x8A\x82\x98" + 0x9382CC98).s, pSetFOV);
+	pMOTD = HookMsg(/*MOTD*/XorStr<0xC3, 5, 0x4AA646A2>("\x8E\x8B\x91\x82" + 0x4AA646A2).s, pMOTD);
+	pDamage = HookMsg(/*Damage*/XorStr<0x29, 7, 0x66684510>("\x6D\x4B\x46\x4D\x4A\x4B" + 0x66684510).s, pDamage);
 }
