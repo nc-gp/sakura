@@ -11,7 +11,7 @@ int StudioCheckBBox(void)
 
 void StudioSetRemapColors(int top, int bottom)
 {
-	GetHitboxes();
+	Sakura::Hitboxes::Get();
 	g_Studio.StudioSetRemapColors(top, bottom);
 }
 
