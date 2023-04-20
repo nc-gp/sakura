@@ -83,15 +83,6 @@
     <Filter Include="libs\xor">
       <UniqueIdentifier>{e2109d56-1b95-48ff-9c4d-eab4c5ab5821}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libs\vm">
-      <UniqueIdentifier>{72452583-dd2a-41a5-a1db-6489ab8ff8f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libs\detours">
-      <UniqueIdentifier>{cae723b5-87e4-4886-97d3-2404eff271bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libs\reflective">
-      <UniqueIdentifier>{73900207-3981-4890-81db-cb796aa150c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\vectors">
       <UniqueIdentifier>{0516198c-5d36-4ad4-a6af-b5c94c8b8c16}</UniqueIdentifier>
     </Filter>
@@ -109,6 +100,15 @@
     </Filter>
     <Filter Include="source\features\legit">
       <UniqueIdentifier>{95344abf-7ce8-4b5f-87eb-6022672c04e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\detours">
+      <UniqueIdentifier>{9e173997-9bbb-4795-b849-c7f094238d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\opengl">
+      <UniqueIdentifier>{6d3951c8-ef14-4ae8-a17e-3463b73d79bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\image">
+      <UniqueIdentifier>{a814a90d-b3d1-4004-ad26-9d5332e3b38a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -325,12 +325,6 @@
     <ClCompile Include="source\other\smth\interface.cpp">
       <Filter>libs\other</Filter>
     </ClCompile>
-    <ClCompile Include="source\other\smth\gl3winit.cpp">
-      <Filter>libs\other</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\reflective\ReflectiveLoader.c">
-      <Filter>libs\reflective</Filter>
-    </ClCompile>
     <ClCompile Include="libs\lua\lundump.c">
       <Filter>libs\lua</Filter>
     </ClCompile>
@@ -427,41 +421,8 @@
     <ClCompile Include="libs\lua\ltm.c">
       <Filter>libs\lua</Filter>
     </ClCompile>
-    <ClCompile Include="libs\imgui\imgui.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_demo.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_draw.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_impl_dx9.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_impl_opengl2.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_impl_opengl3.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_impl_win32.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_widgets.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\stb_image_aug.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\gl3w.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="source\features\visuals\local\removals\hands.cpp">
       <Filter>source\features\visuals\local\removals</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\imgui_tables.cpp">
-      <Filter>libs\imgui</Filter>
     </ClCompile>
     <ClCompile Include="source\features\legit\laim.cpp">
       <Filter>source\features\legit</Filter>
@@ -490,17 +451,80 @@
     <ClCompile Include="..\halflife\parsemsg.cpp">
       <Filter>source\helpers</Filter>
     </ClCompile>
-    <ClCompile Include="libs\imgui\image_DXT.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\image_helper.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="libs\imgui\soil.cpp">
-      <Filter>libs\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="source\helpers\textures.cpp">
       <Filter>source\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\disasm.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\disolarm.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\disolarm64.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\disolia64.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\disolx64.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\disolx86.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\image.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\modules.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\creatwth.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\detours\src\detours.cpp">
+      <Filter>libs\detours</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\opengl\gl3w.cpp">
+      <Filter>libs\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\image\soil.cpp">
+      <Filter>libs\image</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\image\stb_image_aug.cpp">
+      <Filter>libs\image</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\image\image_DXT.cpp">
+      <Filter>libs\image</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\image\image_helper.cpp">
+      <Filter>libs\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\imgui.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\imgui_demo.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\imgui_draw.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\imgui_tables.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\imgui_widgets.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\backends\imgui_impl_opengl2.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>libs\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\other\smth\gl3winit.cpp">
+      <Filter>libs\other</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -771,18 +795,6 @@
     <ClInclude Include="libs\xor\xorstr.h">
       <Filter>libs\xor</Filter>
     </ClInclude>
-    <ClInclude Include="libs\vm\VMProtectSDK.h">
-      <Filter>libs\vm</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\detours\detours.h">
-      <Filter>libs\detours</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\reflective\ReflectiveDLLInjection.h">
-      <Filter>libs\reflective</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\reflective\ReflectiveLoader.h">
-      <Filter>libs\reflective</Filter>
-    </ClInclude>
     <ClInclude Include="source\player.h">
       <Filter>source</Filter>
     </ClInclude>
@@ -799,9 +811,6 @@
       <Filter>libs\other</Filter>
     </ClInclude>
     <ClInclude Include="source\other\smth\defs.h">
-      <Filter>libs\other</Filter>
-    </ClInclude>
-    <ClInclude Include="source\other\smth\gl3winit.h">
       <Filter>libs\other</Filter>
     </ClInclude>
     <ClInclude Include="libs\lua\ltm.h">
@@ -888,74 +897,8 @@
     <ClInclude Include="libs\lua\ltable.h">
       <Filter>libs\lua</Filter>
     </ClInclude>
-    <ClInclude Include="libs\imgui\imconfig.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui_impl_dx9.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui_impl_opengl2.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui_impl_opengl3.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui_impl_win32.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui_internal.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imstb_rectpack.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imstb_textedit.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imstb_truetype.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\khrplatform.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\stb_image_aug.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\stb_rect_pack.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\stb_textedit.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\stb_truetype.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\stbi_DDS_aug.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\stbi_DDS_aug_c.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\gl.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\gl3w.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\glcorearb.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\glu.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="source\features\visuals\local\removals\hands.h">
       <Filter>source\features\visuals\local\removals</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\imgui_impl_opengl3_loader.h">
-      <Filter>libs\imgui</Filter>
     </ClInclude>
     <ClInclude Include="source\fonts\icons.h">
       <Filter>source\fonts</Filter>
@@ -993,17 +936,89 @@
     <ClInclude Include="..\halflife\parsemsg.h">
       <Filter>source\helpers</Filter>
     </ClInclude>
-    <ClInclude Include="libs\imgui\soil.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\image_DXT.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\imgui\image_helper.h">
-      <Filter>libs\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="source\helpers\textures.h">
       <Filter>source\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\src\detver.h">
+      <Filter>libs\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\detours\src\detours.h">
+      <Filter>libs\detours</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\opengl\gl3w.h">
+      <Filter>libs\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\opengl\glcorearb.h">
+      <Filter>libs\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\opengl\glu.h">
+      <Filter>libs\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\opengl\gl.h">
+      <Filter>libs\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\imstb_textedit.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\imstb_truetype.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\khrplatform.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\soil.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\stb_image_aug.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\stbi_DDS_aug.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\stbi_DDS_aug_c.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\image_DXT.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\image_helper.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\image\imstb_rectpack.h">
+      <Filter>libs\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\imgui.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\imgui_internal.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\imstb_rectpack.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\imstb_textedit.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\imstb_truetype.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\imconfig.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\backends\imgui_impl_win32.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\backends\imgui_impl_opengl2.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\other\smth\gl3winit.h">
+      <Filter>libs\other</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
