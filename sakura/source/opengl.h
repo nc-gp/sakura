@@ -8,13 +8,20 @@ typedef void (APIENTRY* glColor4f_t)(GLfloat red, GLfloat green, GLfloat blue, G
 typedef void(__stdcall* glReadPixels_t)(GLint, GLint, GLsizei, GLsizei, GLenum, GLenum, GLvoid*);
 typedef void (APIENTRY* glVertex3fv_t)(GLfloat* v);
 
+namespace Sakura
+{
+	namespace OpenGL
+	{
+		void Hook();
+		void UnHook();
+	};
+};
+
 extern glBegin_t pglBegin;
 extern wglSwapBuffers_t pwglSwapBuffers;
 extern glClear_t pglClear;
 extern glColor4f_t pglColor4f;
 extern glReadPixels_t pglReadPixels;
 extern glVertex3fv_t pglVertex3fv;
-
-void HookOpenGL();
 
 #endif
