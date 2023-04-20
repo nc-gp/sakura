@@ -15,8 +15,8 @@ void Sakura::Config::GetAll()
 {
 	List.push_back(/*default.ini*/XorStr<0x43, 12, 0x717EB79D>("\x27\x21\x23\x27\x32\x24\x3D\x64\x22\x22\x24" + 0x717EB79D).s);
 
-	const std::string hackDir = hackdir;
-	const std::string configDir = hackDir + /*\\configs\\*/XorStr<0x3C, 10, 0x0E5CC77F>("\x60\x5E\x51\x51\x26\x28\x25\x30\x18" + 0x0E5CC77F).s;
+	const std::string cd = Sakura::CheatDir;
+	const std::string configDir = cd + /*\\configs\\*/XorStr<0x3C, 10, 0x0E5CC77F>("\x60\x5E\x51\x51\x26\x28\x25\x30\x18" + 0x0E5CC77F).s;
 
 	try
 	{
@@ -49,11 +49,11 @@ void Sakura::Config::GetAll()
 
 void Sakura::Config::GetDefault()
 {
-	const std::string hackDir = hackdir;
+	const std::string cd = Sakura::CheatDir;
 
 	try
 	{
-		for (const auto& p : std::filesystem::recursive_directory_iterator(hackDir + /*\\assets\\*/XorStr<0x9E, 9, 0x246BF17A>("\xC2\xFE\xD3\xD2\xC7\xD7\xD7\xF9" + 0x246BF17A).s))
+		for (const auto& p : std::filesystem::recursive_directory_iterator(cd + /*\\assets\\*/XorStr<0x9E, 9, 0x246BF17A>("\xC2\xFE\xD3\xD2\xC7\xD7\xD7\xF9" + 0x246BF17A).s))
 		{
 			if (std::filesystem::is_regular_file(p) && p.path().filename() == /*config.sakura*/XorStr<0x59, 14, 0x23CABD26>("\x3A\x35\x35\x3A\x34\x39\x71\x13\x00\x09\x16\x16\x04" + 0x23CABD26).s)
 			{
@@ -96,8 +96,8 @@ void Sakura::Config::GetDefault()
 
 void Sakura::Config::SaveDefault()
 {
-	const std::string hackDir = hackdir;
-	const std::string configPath = hackDir + /*\\assets\\config.sakura*/XorStr<0x73, 22, 0x2093A6FF>("\x2F\x15\x06\x05\x12\x0C\x0A\x26\x18\x13\x13\x18\x16\xE7\xAF\xF1\xE2\xEF\xF0\xF4\xE6" + 0x2093A6FF).s;
+	const std::string cd = Sakura::CheatDir;
+	const std::string configPath = cd + /*\\assets\\config.sakura*/XorStr<0x73, 22, 0x2093A6FF>("\x2F\x15\x06\x05\x12\x0C\x0A\x26\x18\x13\x13\x18\x16\xE7\xAF\xF1\xE2\xEF\xF0\xF4\xE6" + 0x2093A6FF).s;
 
 	try
 	{
@@ -164,12 +164,12 @@ void Sakura::Cvar::New(const char* cvarName, float &cvar, float defaultValue)
 
 void Sakura::File::Init()
 {
-	const std::string hackDir = hackdir;
+	const std::string cd = Sakura::CheatDir;
 
-	std::filesystem::create_directories(hackDir + /*\\assets\\*/XorStr<0xCE, 9, 0x47946738>("\x92\xAE\xA3\xA2\xB7\xA7\xA7\x89" + 0x47946738).s);
-	std::filesystem::create_directories(hackDir + /*\\assets\\routes\\*/XorStr<0xCA, 16, 0xC777363C>("\x96\xAA\xBF\xBE\xAB\xBB\xA3\x8D\xA0\xBC\xA1\xA1\xB3\xA4\x84" + 0xC777363C).s);
-	std::filesystem::create_directories(hackDir + /*\\configs\\*/XorStr<0x1C, 10, 0x1EFC7AD5>("\x40\x7E\x71\x71\x46\x48\x45\x50\x78" + 0x1EFC7AD5).s);
-	std::filesystem::create_directories(hackDir + /*\\scripts\\*/XorStr<0x03, 10, 0xB372F82C>("\x5F\x77\x66\x74\x6E\x78\x7D\x79\x57" + 0xB372F82C).s);
+	std::filesystem::create_directories(cd + /*\\assets\\*/XorStr<0xCE, 9, 0x47946738>("\x92\xAE\xA3\xA2\xB7\xA7\xA7\x89" + 0x47946738).s);
+	std::filesystem::create_directories(cd + /*\\assets\\routes\\*/XorStr<0xCA, 16, 0xC777363C>("\x96\xAA\xBF\xBE\xAB\xBB\xA3\x8D\xA0\xBC\xA1\xA1\xB3\xA4\x84" + 0xC777363C).s);
+	std::filesystem::create_directories(cd + /*\\configs\\*/XorStr<0x1C, 10, 0x1EFC7AD5>("\x40\x7E\x71\x71\x46\x48\x45\x50\x78" + 0x1EFC7AD5).s);
+	std::filesystem::create_directories(cd + /*\\scripts\\*/XorStr<0x03, 10, 0xB372F82C>("\x5F\x77\x66\x74\x6E\x78\x7D\x79\x57" + 0xB372F82C).s);
 }
 
 bool Sakura::File::Exists(const char* filename)
@@ -182,7 +182,7 @@ bool Sakura::File::Exists(const char* filename)
 inline std::string Sakura::File::GetSakuraDir(const char* basename)
 {
 	if (strstr(basename, "..")) { return ":*?\\/<>\""; }
-	std::string ret = hackdir;
+	std::string ret = Sakura::CheatDir;
 	std::string aaa = ret + /*\\configs\\*/XorStr<0x6C, 10, 0x6FB8FB9C>("\x30\x0E\x01\x01\x16\x18\x15\x00\x28" + 0x6FB8FB9C).s;
 	return (aaa + basename);
 }
@@ -696,6 +696,17 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*visual_hud_color[0]*/XorStr<0xBF, 20, 0x9835B862>("\xC9\xA9\xB2\xB7\xA2\xA8\x9A\xAE\xB2\xAC\x96\xA9\xA4\xA0\xA2\xBC\x94\xE0\x8C" + 0x9835B862).s, cvar.visual_hud_color[0]);
 	Sakura::Cvar::New(/*visual_hud_color[1]*/XorStr<0x1D, 20, 0x9F75B92F>("\x6B\x77\x6C\x55\x40\x4E\x7C\x4C\x50\x42\x78\x4B\x46\x46\x44\x5E\x76\x1F\x72" + 0x9F75B92F).s, cvar.visual_hud_color[1], 1.0);
 	Sakura::Cvar::New(/*visual_hud_color[2]*/XorStr<0x1B, 20, 0x2C01D32F>("\x6D\x75\x6E\x6B\x7E\x4C\x7E\x4A\x56\x40\x7A\x45\x48\x44\x46\x58\x70\x1E\x70" + 0x2C01D32F).s, cvar.visual_hud_color[2]);
+
+	Sakura::Cvar::New(/*visual_fakelag_history_local_wireframe_line_width*/XorStr<0xB0, 50, 0xDBF5F2E5>("\xC6\xD8\xC1\xC6\xD5\xD9\xE9\xD1\xD9\xD2\xDF\xD7\xDD\xDA\xE1\xD7\xA9\xB2\xB6\xAC\xB6\xBC\x99\xAB\xA7\xAA\xAB\xA7\x93\xBA\xA7\xBD\xB5\xB7\xA0\xB2\xB9\xB0\x89\xBB\xB1\xB7\xBF\x84\xAB\xB4\xBA\xAB\x88" + 0xDBF5F2E5).s, cvar.visual_fakelag_history_local_wireframe_line_width, 1.0);
+	Sakura::Cvar::New(/*visual_fakelag_history_local_wireframe_point_size*/XorStr<0x4A, 50, 0xF054CF19>("\x3C\x22\x3F\x38\x2F\x23\x0F\x37\x33\x38\x31\x39\x37\x30\x07\x31\x33\x28\x28\x32\x2C\x26\x3F\x0D\x0D\x00\x05\x09\x39\x10\x01\x1B\x0F\x0D\x1E\x0C\x03\x0A\x2F\x01\x1D\x1A\x1A\x01\x29\x04\x11\x03\x1F" + 0xF054CF19).s, cvar.visual_fakelag_history_local_wireframe_point_size, 1.0);
+	Sakura::Cvar::New(/*chams_view_model_wireframe_line_width*/XorStr<0x95, 38, 0x785193BC>("\xF6\xFE\xF6\xF5\xEA\xC5\xED\xF5\xF8\xE9\xC0\xCD\xCE\xC6\xC6\xC8\xFA\xD1\xCE\xDA\xCC\xCC\xD9\xCD\xC0\xCB\xF0\xDC\xD8\xDC\xD6\xEB\xC2\xDF\xD3\xCC\xD1" + 0x785193BC).s, cvar.chams_view_model_wireframe_line_width, 1.0);
+	Sakura::Cvar::New(/*chams_view_model_wireframe_point_size*/XorStr<0xC5, 38, 0xFB509F9A>("\xA6\xAE\xA6\xA5\xBA\x95\xBD\xA5\xA8\xB9\x90\xBD\xBE\xB6\xB6\xB8\x8A\xA1\xBE\xAA\xBC\xBC\xA9\xBD\xB0\xBB\x80\x90\x8E\x8B\x8D\x90\xBA\x95\x8E\x92\x8C" + 0xFB509F9A).s, cvar.chams_view_model_wireframe_point_size, 1.0);
+	Sakura::Cvar::New(/*chams_player_wireframe_line_width*/XorStr<0x9D, 34, 0xDD093D61>("\xFE\xF6\xFE\xCD\xD2\xFD\xD3\xC8\xC4\xDF\xC2\xDA\xF6\xDD\xC2\xDE\xC8\xC8\xDD\xD1\xDC\xD7\xEC\xD8\xDC\xD8\xD2\xE7\xCE\xD3\xDF\xC8\xD5" + 0xDD093D61).s, cvar.chams_player_wireframe_line_width, 1.0);
+	Sakura::Cvar::New(/*chams_player_wireframe_point_size*/XorStr<0x7D, 34, 0xC8B9AF27>("\x1E\x16\x1E\xED\xF2\xDD\xF3\xE8\xE4\xFF\xE2\xFA\xD6\xFD\xE2\xFE\xE8\xE8\xFD\xF1\xFC\xF7\xCC\xE4\xFA\xFF\xF9\xEC\xC6\xE9\xF2\xE6\xF8" + 0xC8B9AF27).s, cvar.chams_player_wireframe_point_size, 1.0);
+	Sakura::Cvar::New(/*chams_world_wireframe_line_width*/XorStr<0xE7, 33, 0xD43057D1>("\x84\x80\x88\x87\x98\xB3\x9A\x81\x9D\x9C\x95\xAD\x84\x9D\x87\x93\x91\x8A\x98\x97\x9E\xA3\x91\x97\x91\x65\x5E\x75\x6A\x60\x71\x6E" + 0xD43057D1).s, cvar.chams_world_wireframe_line_width, 1.0);
+	Sakura::Cvar::New(/*chams_world_wireframe_point_size*/XorStr<0x9B, 33, 0x7E59B000>("\xF8\xF4\xFC\xF3\xEC\xFF\xD6\xCD\xD1\xC8\xC1\xF9\xD0\xC1\xDB\xCF\xCD\xDE\xCC\xC3\xCA\xEF\xC1\xDD\xDA\xDA\xC1\xE9\xC4\xD1\xC3\xDF" + 0x7E59B000).s, cvar.chams_world_wireframe_point_size, 1.0);
+	Sakura::Cvar::New(/*chams_local_wireframe_line_width*/XorStr<0xDC, 33, 0x7FF44493>("\xBF\xB5\xBF\xB2\x93\xBE\x8E\x8C\x87\x84\x8A\xB8\x9F\x80\x98\x8E\x8A\x9F\x8F\x82\x95\xAE\x9E\x9A\x9A\x90\xA9\x80\x91\x9D\x8E\x93" + 0x7FF44493).s, cvar.chams_local_wireframe_line_width, 1.0);
+	Sakura::Cvar::New(/*chams_local_wireframe_point_size*/XorStr<0x07, 33, 0x0C3962FF>("\x64\x60\x68\x67\x78\x53\x61\x61\x6C\x71\x7D\x4D\x64\x7D\x67\x73\x71\x6A\x78\x77\x7E\x43\x6D\x71\x76\x4E\x55\x7D\x50\x4D\x5F\x43" + 0x0C3962FF).s, cvar.chams_local_wireframe_point_size, 1.0);
 
 	Sakura::Cvar::New(/*skeleton_player_bone*/XorStr<0xFF, 21, 0xFF097867>("\x8C\x6B\x64\x6E\x66\x70\x6A\x68\x58\x78\x65\x6B\x72\x69\x7F\x51\x6D\x7F\x7F\x77" + 0xFF097867).s, cvar.skeleton_player_bone);
 	Sakura::Cvar::New(/*skeleton_player_bone_color_tt[0]*/XorStr<0xA5, 33, 0x86B3B1A6>("\xD6\xCD\xC2\xC4\xCC\xDE\xC4\xC2\xF2\xDE\xC3\xD1\xC8\xD7\xC1\xEB\xD7\xD9\xD9\xDD\xE6\xD9\xD4\xD0\xD2\xCC\xE0\xB4\xB5\x99\xF3\x99" + 0x86B3B1A6).s, cvar.skeleton_player_bone_color_tt[0], 1.0);

@@ -150,6 +150,8 @@ public:
 	float misc_fakelatency_amount;
 	float misc_backtrack_chams;
 	float misc_backtrack_wireframe;
+	float misc_backtrack_wireframe_line_width;
+	float misc_backtrack_wireframe_point_size;
 	float misc_backtrack_wireframe_mode;
 	float misc_backtrack_chams_color[4];
 	float misc_backtrack_light;
@@ -362,6 +364,8 @@ public:
 	float visual_fakelag_history_local_light;
 	float visual_fakelag_history_local_chams;
 	float visual_fakelag_history_local_wireframe;
+	float visual_fakelag_history_local_wireframe_line_width;
+	float visual_fakelag_history_local_wireframe_point_size;
 	float visual_fakelag_history_local_wireframe_mode;
 	float visual_fakelag_history_local_light_color[4];
 	float visual_fakelag_history_local_chams_color[4];
@@ -409,9 +413,13 @@ public:
 
 	float chams_view_model;
 	float chams_view_model_wireframe;
+	float chams_view_model_wireframe_line_width;
+	float chams_view_model_wireframe_point_size;
 	float chams_view_model_wireframe_mode;
 	float chams_player;
 	float chams_player_wireframe;
+	float chams_player_wireframe_line_width;
+	float chams_player_wireframe_point_size;
 	float chams_player_wireframe_mode;
 	float chams_player_color_tt[4];
 	float chams_player_color_ct[4];
@@ -420,12 +428,16 @@ public:
 	float chams_player_wall_color_ct[4];
 	float chams_world;
 	float chams_world_wireframe;
+	float chams_world_wireframe_line_width;
+	float chams_world_wireframe_point_size;
 	float chams_world_wireframe_mode;
 	float chams_world_color[4];
 	float chams_world_wall;
 	float chams_world_wall_color[4];
 	float chams_local;
 	float chams_local_wireframe;
+	float chams_local_wireframe_line_width;
+	float chams_local_wireframe_point_size;
 	float chams_local_wireframe_mode;
 	float chams_local_color[4];
 	float visual_local_glow;
