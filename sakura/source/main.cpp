@@ -1,11 +1,65 @@
 ﻿#include "client.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <Shlwapi.h>
 
-char hackdir[MAX_PATH];
-char hldir[MAX_PATH];
+char Sakura::CheatDir[MAX_PATH];
+char Sakura::HLDir[MAX_PATH];
+HINSTANCE Sakura::Module;
 
-DWORD WINAPI Hook()
+void Sakura::Unload()
+{
+	bShowMenu = false;
+	Sakura::Log::File(/*Sakura module has been unloaded.*/XorStr<0xDE, 33, 0xAC724934>("\x8D\xBE\x8B\x94\x90\x82\xC4\x88\x89\x83\x9D\x85\x8F\xCB\x84\x8C\x9D\xCF\x92\x94\x97\x9D\xD4\x80\x98\x9B\x97\x98\x9E\x9E\x98\xD3" + 0xAC724934).s);
+
+	if (g_pStudio)
+		*g_pStudio = g_Studio;
+
+	if (g_pClient)
+		*g_pClient = g_Client;
+
+	if (g_pEngine)
+		*g_pEngine = g_Engine;
+
+	if (g_pStudioModelRenderer)
+	{
+		c_Offset.EnablePageWrite((DWORD)g_pStudioModelRenderer, sizeof(StudioModelRenderer_t));
+		*g_pStudioModelRenderer = g_StudioModelRenderer;
+		c_Offset.RestorePageProtection((DWORD)g_pStudioModelRenderer, sizeof(StudioModelRenderer_t));
+	}
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+
+	DetourDetach(&(PVOID&)g_pSCR_UpdateScreen, SCR_UpdateScreen);
+	DetourDetach(&(PVOID&)PreS_DynamicSound_s, Sakura::Esp::DynamicSound);
+	DetourDetach(&(PVOID&)CL_Move_s, CL_Move);
+	DetourDetach(&(PVOID&)Netchan_TransmitBits_s, Netchan_TransmitBits);
+	DetourDetach(&(PVOID&)Snapshot_s, Sakura::ScreenShot::Snapshot);
+	DetourDetach(&(PVOID&)Screenshot_s, Sakura::ScreenShot::Screenshot);
+
+	DetourTransactionCommit();
+
+	Sakura::Message::User::UnHook();
+
+	Sakura::Sound::Free();
+	Sakura::Lua::Close();
+
+	Sakura::OpenGL::UnHook();
+
+	if (!bOldOpenGL)
+		ImGui_ImplOpenGL3_Shutdown();
+	else
+		ImGui_ImplOpenGL2_Shutdown();
+
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
+	if (hGameWndProc)
+		SetWindowLong(hGameWnd, GWL_WNDPROC, (LRESULT)(hGameWndProc));
+
+	FreeLibraryAndExitThread(Sakura::Module, 0);
+}
+
+DWORD WINAPI Load()
 {
 	srand(time(NULL));
 
@@ -22,20 +76,28 @@ DWORD WINAPI Hook()
 
 	g_pStudioModelRenderer = (StudioModelRenderer_t*)c_Offset.FindStudioModelRenderer((DWORD)g_pInterface->StudioDrawModel);
 
-	g_pSCR_UpdateScreen = (SCR_UpdateScreen_t)DetourFunction((LPBYTE)c_Offset.FindUpdateScreen(), (LPBYTE)&SCR_UpdateScreen);
+	g_pSCR_UpdateScreen = (decltype(g_pSCR_UpdateScreen))c_Offset.FindUpdateScreen();
+	PreS_DynamicSound_s = (decltype(PreS_DynamicSound_s))c_Offset.PreS_DynamicSound();
+	CL_Move_s = (decltype(CL_Move_s))c_Offset.CL_Move();
+	Netchan_TransmitBits_s = (decltype(Netchan_TransmitBits_s))c_Offset.FindNetchanTransmit();
+	Snapshot_s = (decltype(Snapshot_s))c_Offset.FindSnapshot();
+	Screenshot_s = (decltype(Screenshot_s))c_Offset.FindScreenshot();
 
-	PreS_DynamicSound_s = (PreS_DynamicSound_t)DetourFunction((LPBYTE)c_Offset.PreS_DynamicSound(), (LPBYTE)&Sakura::Esp::DynamicSound);
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
 
-	CL_Move_s = (CL_Move_t)DetourFunction((LPBYTE)c_Offset.CL_Move(), (LPBYTE)&CL_Move);
+	DetourAttach(&(PVOID&)g_pSCR_UpdateScreen, SCR_UpdateScreen);
+	DetourAttach(&(PVOID&)PreS_DynamicSound_s, Sakura::Esp::DynamicSound);
+	DetourAttach(&(PVOID&)CL_Move_s, CL_Move);
+	DetourAttach(&(PVOID&)Netchan_TransmitBits_s, Netchan_TransmitBits);
+	DetourAttach(&(PVOID&)Snapshot_s, Sakura::ScreenShot::Snapshot);
+	DetourAttach(&(PVOID&)Screenshot_s, Sakura::ScreenShot::Screenshot);
+
+	DetourTransactionCommit();
 
 	c_Offset.GlobalTime();
 
 	c_Offset.dwSpeedPointer = (DWORD)c_Offset.FindSpeed();
-
-	Netchan_TransmitBits_s = (Netchan_TransmitBits_t)DetourFunction((LPBYTE)c_Offset.FindNetchanTransmit(), (LPBYTE)&Netchan_TransmitBits);
-
-	Snapshot_s = (Snapshot_t)DetourFunction((LPBYTE)c_Offset.FindSnapshot(), (LPBYTE)&Sakura::ScreenShot::Snapshot);
-	Screenshot_s = (Screenshot_t)DetourFunction((LPBYTE)c_Offset.FindScreenshot(), (LPBYTE)&Sakura::ScreenShot::Screenshot);
 
 	c_Offset.PatchInterpolation();
 
@@ -80,11 +142,13 @@ DWORD WINAPI Hook()
 
 	HookStudiModelRendererFunctions();
 
-	Sakura::Message::User::Init();
+	Sakura::Message::User::Hook();
 
 	Sakura::Hands::InitTextures();
 
-	HookOpenGL();
+	Sakura::Hitboxes::InitPlayerModels();
+
+	Sakura::OpenGL::Hook();
 
 	Sakura::Lua::Reload();
 
@@ -99,27 +163,22 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD dwReason, LPVOID lpReserved)
 {
 	if (dwReason == DLL_PROCESS_ATTACH)
 	{
-		if (lpReserved) {
-			strncpy_s(hackdir, (LPCSTR)lpReserved, MAX_PATH - 1);
-		}
-		else if (hinstDLL && GetLastError() != ERROR_ALREADY_EXISTS) {
+		if (GetLastError() != ERROR_ALREADY_EXISTS)
+		{
 			DisableThreadLibraryCalls(hinstDLL);
-			strncpy_s(hackdir, (LPCSTR)hinstDLL, MAX_PATH - 1);
+
+			Sakura::Module = hinstDLL;
+
+			GetModuleFileName(hinstDLL, Sakura::CheatDir, 255);
+			PathRemoveFileSpec(Sakura::CheatDir);
+			strcat_s(Sakura::CheatDir, "\\");
+
+			GetModuleFileName(GetModuleHandle(NULL), Sakura::HLDir, 255);
+			PathRemoveFileSpec(Sakura::HLDir);
+			strcat_s(Sakura::HLDir, "\\");
+
+			CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Load, NULL, NULL, NULL);
 		}
-
-		char* pos = strrchr(hackdir, '\\');
-		if (pos) {
-			pos[1] = '\0';
-		}
-
-		GetModuleFileName(GetModuleHandle(NULL), hldir, MAX_PATH);
-
-		pos = strrchr(hldir, '\\');
-		if (pos) {
-			pos[1] = '\0';
-		}
-
-		CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)Hook, NULL, NULL, NULL);
 	}
 
 	return TRUE;
