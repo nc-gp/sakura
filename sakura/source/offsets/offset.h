@@ -49,11 +49,10 @@ public:
 	DWORD PreS_DynamicSound(void);
 	DWORD Steam_GSInitiateGameConnection(void);
 	DWORD FindInterface(DWORD GetStudioModelInterfaceAddress);
-	//DWORD FindInitPoint();
 	DWORD FindClientState();
 	DWORD FindClientStatic();
 	DWORD FindNetchanTransmit();
-	DWORD FindFireBullets();
+	//DWORD FindFireBullets();
 	PUserMsg FindUserMsgBase();
 	DWORD FindScreenshot();
 	DWORD FindSnapshot();

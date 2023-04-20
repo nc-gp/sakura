@@ -430,7 +430,7 @@ DWORD AutoOffset::FindNetchanTransmit()
 //	return Address;
 //}
 
-DWORD AutoOffset::FindSpeed(void)
+DWORD AutoOffset::FindSpeed()
 {
 	DWORD Address = FindPattern(/*Texture load: %6.1fms*/XorStr<0xED, 22, 0x78D0D001>("\xB9\x8B\x97\x84\x84\x80\x96\xD4\x99\x99\x96\x9C\xC3\xDA\xDE\xCA\xD3\xCF\x99\x6D\x72" + 0x78D0D001).s, HwBase, HwEnd, 0);
 	PVOID SpeedPtr = (PVOID)*(DWORD*)(FindReference(HwBase, HwEnd, Address) - 7);
@@ -443,7 +443,7 @@ DWORD AutoOffset::FindSpeed(void)
 	return (DWORD)SpeedPtr;
 }
 
-PVOID AutoOffset::FindPlayerMove(void)
+PVOID AutoOffset::FindPlayerMove()
 {
 	DWORD Address = FindPattern(/*ScreenFade*/XorStr<0xE4, 11, 0x7295F5B4>("\xB7\x86\x94\x82\x8D\x87\xAC\x8A\x88\x88" + 0x7295F5B4).s, HwBase, HwEnd, 0);
 	PVOID Ptr = (PVOID)*(PDWORD)(FindReference(HwBase, HwEnd, Address) + 0x18);
@@ -463,7 +463,7 @@ DWORD AutoOffset::FindStudioModelRenderer(DWORD StudioDrawModel)
 	Error(/*Couldn't find Studio model renderer.*/XorStr<0xC6, 37, 0x93C5020F>("\x85\xA8\xBD\xA5\xAE\xA5\xEB\xB9\xEE\xA9\xB9\xBF\xB6\xF3\x87\xA1\xA3\xB3\xB1\xB6\xFA\xB6\xB3\xB9\xBB\xB3\xC0\x93\x87\x8D\x80\x80\x94\x82\x9A\xC7" + 0x93C5020F).s);
 }
 
-void AutoOffset::PatchInterpolation(void)
+void AutoOffset::PatchInterpolation()
 {
 	static bool patched = false;
 
@@ -490,7 +490,7 @@ void AutoOffset::PatchInterpolation(void)
 	patched = true;
 }
 
-DWORD AutoOffset::PreS_DynamicSound(void)
+DWORD AutoOffset::PreS_DynamicSound()
 {
 	DWORD Address = Absolute(FindPush(HwBase, HwEnd, "CL_Parse_Sound: ent = %i, cl.max_edicts %i") - 0x10);
 
@@ -507,7 +507,7 @@ DWORD AutoOffset::PreS_DynamicSound(void)
 	return Address;
 }
 
-DWORD AutoOffset::Steam_GSInitiateGameConnection(void)
+DWORD AutoOffset::Steam_GSInitiateGameConnection()
 {
 	DWORD Address = FindPattern(/*%c%c%c%cconnect %i %i "%s" "%s"\n*/XorStr<0x12, 33, 0x29FC6FDE>("\x37\x70\x31\x76\x33\x74\x3D\x7A\x79\x74\x72\x73\x7B\x7C\x54\x01\x07\x4A\x04\x00\x4F\x07\x0A\x0C\x59\x09\x0C\x0F\x0B\x5C\x12\x3B" + 0x29FC6FDE).s, HwBase, HwEnd, 0);
 
