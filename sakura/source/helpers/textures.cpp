@@ -9,7 +9,7 @@ void Sakura::Texture::Load(char* image, int index)
 {
 	char filename[256];
 	int width, height;
-	sprintf(filename, /*%s%s*/XorStr<0x38,5,0x2CF53EB1>("\x1D\x4A\x1F\x48" + 0x2CF53EB1).s, hackdir, image);
+	sprintf(filename, /*%s%s*/XorStr<0x38,5,0x2CF53EB1>("\x1D\x4A\x1F\x48" + 0x2CF53EB1).s, Sakura::CheatDir, image);
 
 	GLint last_texture;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);

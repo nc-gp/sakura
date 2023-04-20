@@ -21,7 +21,7 @@ void Sakura::Log::File(const char* text, ...)
 
 	strcat(logbuf, buf);
 	strcat(logbuf, /*\n*/XorStr<0xA5, 2, 0x1A89FE85>("\xAF" + 0x1A89FE85).s);
-	strcpy(cDirectory, hackdir);
+	strcpy(cDirectory, Sakura::CheatDir);
 	strcat(cDirectory, /*sakura.log*/XorStr<0x4A, 11, 0x037B1BD1>("\x39\x2A\x27\x38\x3C\x2E\x7E\x3D\x3D\x34" + 0x037B1BD1).s);
 
 	if ((file = fopen(cDirectory, /*a+*/XorStr<0xFA, 3, 0x95BB53FF>("\x9B\xD0" + 0x95BB53FF).s)) != NULL)

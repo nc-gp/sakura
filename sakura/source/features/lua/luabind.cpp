@@ -25,7 +25,7 @@ void Sakura::Lua::Game::SendPacket(bool status)
 DWORD Sakura::Lua::Game::InitSound(const char* filename)
 {
 	char temp[256];
-	sprintf(temp, /*%s%s*/XorStr<0xB5, 5, 0xB4F18398>("\x90\xC5\x92\xCB" + 0xB4F18398).s, hackdir, filename);
+	sprintf(temp, /*%s%s*/XorStr<0xB5, 5, 0xB4F18398>("\x90\xC5\x92\xCB" + 0xB4F18398).s, Sakura::CheatDir, filename);
 
 	HSAMPLE sample = BASS_SampleLoad(false, temp, 0, 0, 60000, 0);
 
@@ -984,7 +984,7 @@ bool Sakura::Lua::Init(lua_State* L)
 	return true;
 }
 
-void Sakura::Lua::Reload()
+void Sakura::Lua::Close()
 {
 	if (scripts.size() > 0)
 	{
@@ -999,12 +999,17 @@ void Sakura::Lua::Reload()
 
 		scripts.clear();
 	}
+}
 
-	const std::string hackDir = hackdir;
+void Sakura::Lua::Reload()
+{
+	Close();
+
+	const std::string cd = Sakura::CheatDir;
 	const std::string scriptExtension = /*.lua*/XorStr<0x27, 5, 0x52E70E20>("\x09\x44\x5C\x4B" + 0x52E70E20).s;
 	std::string scriptsLoaded;
 
-	for (const auto& p : std::filesystem::recursive_directory_iterator(hackDir + /*\\scripts\\*/XorStr<0xA3, 10, 0x25B9F64A>("\xFF\xD7\xC6\xD4\xCE\xD8\xDD\xD9\xF7" + 0x25B9F64A).s))
+	for (const auto& p : std::filesystem::recursive_directory_iterator(cd + /*\\scripts\\*/XorStr<0xA3, 10, 0x25B9F64A>("\xFF\xD7\xC6\xD4\xCE\xD8\xDD\xD9\xF7" + 0x25B9F64A).s))
 	{
 		if (p.path().extension() != scriptExtension)
 			continue;

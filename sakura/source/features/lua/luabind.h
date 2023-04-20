@@ -67,6 +67,7 @@ namespace Sakura
 		extern int currentScriptIndex;
 
 		bool Init(lua_State* L);
+		void Close();
 		void Reload();
 
 		namespace Hooks
