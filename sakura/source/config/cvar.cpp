@@ -361,6 +361,7 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*misc_fire_sounds_pitch*/XorStr<0xD2, 23, 0xBB8E9A27>("\xBF\xBA\xA7\xB6\x89\xB1\xB1\xAB\xBF\x84\xAF\xB2\xAB\xB1\x84\x92\xBD\x93\x8D\x91\x85\x8F" + 0xBB8E9A27).s, cvar.misc_fire_sounds_pitch, 100.0);
 	Sakura::Cvar::New(/*misc_block_motd*/XorStr<0x0A, 16, 0xE684DA41>("\x67\x62\x7F\x6E\x51\x6D\x7C\x7E\x71\x78\x4B\x78\x79\x63\x7C" + 0xE684DA41).s, cvar.misc_block_motd);
 	Sakura::Cvar::New(/*misc_skipframes*/XorStr<0x3B, 16, 0x46C9D230>("\x56\x55\x4E\x5D\x60\x33\x2A\x2B\x33\x22\x37\x27\x2A\x2D\x3A" + 0x46C9D230).s, cvar.misc_skipframes);
+	Sakura::Cvar::New(/*misc_skipframes_count*/XorStr<0x95, 22, 0x36216F8D>("\xF8\xFF\xE4\xFB\xC6\xE9\xF0\xF5\xED\xF8\xED\xC1\xCC\xC7\xD0\xFB\xC6\xC9\xD2\xC6\xDD" + 0x36216F8D).s, cvar.misc_skipframes_count);
 	Sakura::Cvar::New(/*misc_fakelatency*/XorStr<0x49, 17, 0x1EC55549>("\x24\x23\x38\x2F\x12\x28\x2E\x3B\x34\x3E\x32\x20\x30\x38\x34\x21" + 0x1EC55549).s, cvar.misc_fakelatency);
 	Sakura::Cvar::New(/*misc_fakelatency_amount*/XorStr<0xFC, 24, 0x35A131FE>("\x91\x94\x8D\x9C\x5F\x67\x63\x68\x61\x69\x67\x73\x6D\x67\x69\x72\x53\x6C\x63\x60\x65\x7F\x66" + 0x35A131FE).s, cvar.misc_fakelatency_amount, 50.0);
 	Sakura::Cvar::New(/*misc_backtrack_chams*/XorStr<0x27, 21, 0x5C80CA2B>("\x4A\x41\x5A\x49\x74\x4E\x4C\x4D\x44\x44\x43\x53\x50\x5F\x6A\x55\x5F\x59\x54\x49" + 0x5C80CA2B).s, cvar.misc_backtrack_chams);
@@ -403,8 +404,8 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*kz_fast_run*/XorStr<0xB9, 12, 0x194EA787>("\xD2\xC0\xE4\xDA\xDC\xCD\xCB\x9F\xB3\xB7\xAD" + 0x194EA787).s, cvar.kz_fast_run);
 	Sakura::Cvar::New(/*kz_ground_strafe*/XorStr<0xBF, 17, 0xC13EAAA7>("\xD4\xBA\x9E\xA5\xB1\xAB\xB0\xA8\xA3\x97\xBA\xBE\xB9\xAD\xAB\xAB" + 0xC13EAAA7).s, cvar.kz_ground_strafe);
 	Sakura::Cvar::New(/*kz_bhop*/XorStr<0xF9, 8, 0x54FBBD0A>("\x92\x80\xA4\x9E\x95\x91\x8F" + 0x54FBBD0A).s, cvar.kz_bhop);
-	Sakura::Cvar::New(/*kz_bhop_double*/XorStr<0x08, 15, 0xBF5E1C64>("\x63\x73\x55\x69\x64\x62\x7E\x50\x74\x7E\x67\x71\x78\x70" + 0xBF5E1C64).s, cvar.kz_bhop_double);
-	Sakura::Cvar::New(/*kz_bhop_triple*/XorStr<0x79, 15, 0x627ACB55>("\x12\x00\x24\x1E\x15\x11\x0F\xDF\xF5\xF0\xEA\xF4\xE9\xE3" + 0x627ACB55).s, cvar.kz_bhop_triple);
+	Sakura::Cvar::New(/*kz_bhop_frames_on_ground*/XorStr<0x53, 25, 0x79D11D03>("\x38\x2E\x0A\x34\x3F\x37\x29\x05\x3D\x2E\x3C\x33\x3A\x13\x3E\x0D\x0D\x3B\x02\x14\x08\x1D\x07\x0E" + 0x79D11D03).s, cvar.kz_bhop_frames_on_ground);
+	Sakura::Cvar::New(/*kz_bhop_ideal_percentage*/XorStr<0x19, 25, 0x8608C279>("\x72\x60\x44\x7E\x75\x71\x6F\x7F\x48\x46\x46\x45\x49\x79\x57\x4D\x5B\x49\x4E\x42\x59\x4F\x48\x55" + 0x8608C279).s, cvar.kz_bhop_ideal_percentage, 50.0);
 	Sakura::Cvar::New(/*kz_jump_bug*/XorStr<0xC4, 12, 0x70774349>("\xAF\xBF\x99\xAD\xBD\xA4\xBA\x94\xAE\xB8\xA9" + 0x70774349).s, cvar.kz_jump_bug);
 	Sakura::Cvar::New(/*kz_jump_bug_auto*/XorStr<0x23, 17, 0xB4561747>("\x48\x5E\x7A\x4C\x52\x45\x59\x75\x49\x59\x4A\x71\x4E\x45\x45\x5D" + 0xB4561747).s, cvar.kz_jump_bug_auto);
 	Sakura::Cvar::New(/*kz_show_kz*/XorStr<0x46, 11, 0x0C534F05>("\x2D\x3D\x17\x3A\x22\x24\x3B\x12\x25\x35" + 0x0C534F05).s, cvar.kz_show_kz);
@@ -417,7 +418,6 @@ void CVARlist::init()
 	Sakura::Cvar::New(/*kz_strafe_toggle_key*/XorStr<0xE6, 21, 0xA25AC96F>("\x8D\x9D\xB7\x9A\x9E\x99\x8D\x8B\x8B\xB0\x84\x9E\x95\x94\x98\x90\xA9\x9C\x9D\x80" + 0xA25AC96F).s, cvar.kz_strafe_toggle_key, -1.0);
 	Sakura::Cvar::New(/*kz_sgs*/XorStr<0x6A, 7, 0xB791CCEC>("\x01\x11\x33\x1E\x09\x1C" + 0xB791CCEC).s, cvar.kz_sgs);
 	Sakura::Cvar::New(/*kz_sgs_ground_origin*/XorStr<0xB2, 21, 0xBF6BE51A>("\xD9\xC9\xEB\xC6\xD1\xC4\xE7\xDE\xC8\xD4\xC9\xD3\xDA\xE0\xAF\xB3\xAB\xA4\xAD\xAB" + 0xBF6BE51A).s, cvar.kz_sgs_ground_origin, 1.0);
-	Sakura::Cvar::New(/*kz_bgs*/XorStr<0xBB, 7, 0xEE2B1C83>("\xD0\xC6\xE2\xDC\xD8\xB3" + 0xEE2B1C83).s, cvar.kz_bgs);
 	
 	Sakura::Cvar::New(/*route_activate*/XorStr<0x4D, 15, 0x10C7503A>("\x3F\x21\x3A\x24\x34\x0D\x32\x37\x21\x3F\x21\x39\x2D\x3F" + 0x10C7503A).s, cvar.route_activate);
 	Sakura::Cvar::New(/*route_mode*/XorStr<0xC9, 11, 0x36257626>("\xBB\xA5\xBE\xB8\xA8\x91\xA2\xBF\xB5\xB7" + 0x36257626).s, cvar.route_mode, 1.0);

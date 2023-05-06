@@ -145,6 +145,7 @@ public:
 	float misc_fire_sounds_pitch;
 	float misc_block_motd;
 	float misc_skipframes;
+	float misc_skipframes_count;
 
 	float misc_fakelatency;
 	float misc_fakelatency_amount;
@@ -177,8 +178,8 @@ public:
 	float kz_fast_run;
 	float kz_ground_strafe;
 	float kz_bhop;
-	float kz_bhop_double;
-	float kz_bhop_triple;
+	float kz_bhop_frames_on_ground;
+	float kz_bhop_ideal_percentage;
 	float kz_jump_bug;
 	float kz_jump_bug_auto;
 	float kz_show_kz;
@@ -191,7 +192,6 @@ public:
 	float kz_strafe_toggle_key;
 	float kz_sgs;
 	float kz_sgs_ground_origin;
-	float kz_bgs;
 
 	float route_mode;
 	float route_auto;
