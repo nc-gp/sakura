@@ -116,7 +116,7 @@ void Sakura::DynamicLight::Impulse()
 	const float speed = cvar.visual_player_dynamiclight_fading_speed;
 
 	impulseRadius += plus_or_minus ? speed * g_Local.m_flFrameTime : -speed * g_Local.m_flFrameTime;
-	impulseRadius = Backtrack::clamp(impulseRadius, 0.f, 1.f);
+	impulseRadius = Sakura::Math::Clamp(impulseRadius, 0.f, 1.f);
 }
 
 void Sakura::DynamicLight::Light(const cl_entity_s* ent, const ImRGBA color)

@@ -100,8 +100,8 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 	{
 		if (keystrafetoggle && down)
 		{
-			Strafe = !Strafe;
-			Toast::Create({ 3, /*Strafe %s*/XorStr<0xBB,10,0xB6AE3E40>("\xE8\xC8\xCF\xDF\xD9\xA5\xE1\xE7\xB0" + 0xB6AE3E40).s, Strafe ? /*activated*/XorStr<0xE0,10,0x0EEE144D>("\x81\x82\x96\x8A\x92\x84\x92\x82\x8C" + 0x0EEE144D).s : /*deactivated*/XorStr<0x81,12,0x76BE5F91>("\xE5\xE7\xE2\xE7\xF1\xEF\xF1\xE9\xFD\xEF\xEF" + 0x76BE5F91).s });
+			Sakura::HNS::Strafe::Active = !Sakura::HNS::Strafe::Active;
+			Toast::Create({ 3, /*Strafe %s*/XorStr<0xBB,10,0xB6AE3E40>("\xE8\xC8\xCF\xDF\xD9\xA5\xE1\xE7\xB0" + 0xB6AE3E40).s, Sakura::HNS::Strafe::Active ? /*activated*/XorStr<0xE0,10,0x0EEE144D>("\x81\x82\x96\x8A\x92\x84\x92\x82\x8C" + 0x0EEE144D).s : /*deactivated*/XorStr<0x81,12,0x76BE5F91>("\xE5\xE7\xE2\xE7\xF1\xEF\xF1\xE9\xFD\xEF\xEF" + 0x76BE5F91).s });
 		}
 
 		if (thirdpersonkey && down)
@@ -125,19 +125,19 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 		}
 
 		if (keystrafe)
-			Strafe = down;
+			Sakura::HNS::Strafe::Active = down;
 
 		if (keyfast)
-			Fastrun = down;
+			Sakura::HNS::Fastrun::Active = down;
 
 		if (keygstrafe)
-			Gstrafe = down;
+			Sakura::HNS::Groundstrafe::Active = down;
 
 		if (keybhop)
-			Bhop = down;
+			Sakura::HNS::BunnyHop::Active = down;
 
 		if (keyjump)
-			Jumpbug = down;
+			Sakura::HNS::Jumpbug::Active = down;
 
 		if (keyrage)
 			Sakura::Aimbot::Rage::RageKeyStatus = down;
@@ -163,33 +163,42 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 	g_Client.CL_CreateMove(frametime, cmd, active);
 
 	AdjustSpeed(cvar.misc_wav_speed);
-	UpdateWeaponData();
 	Sakura::Player::Local::Update(frametime, cmd);
-	Sakura::Aimbot::Logic(cmd);
-	ContinueFire(cmd);
-	ItemPostFrame(cmd);
-	Kz(frametime, cmd);
-	NoRecoil(cmd);
-	NoSpread(cmd);
-	Route(cmd);
-	AntiAim::Local(cmd);
-	FakeLag(frametime, cmd);
-	Sakura::AntiAfk::Run(cmd);
-
-	BulletTrace::Local(cmd);
-
-	Sakura::Name::Stealer();
-	Sakura::ChatSpammer::Logic();
 
 	g_Sequences.Update();
 
-	if (Sakura::Player::Local::InGame() && Sakura::Player::Local::IsAlive())
+	if (Sakura::Player::Local::IsAlive())
 	{
-		Backtrack::FakeLatency();
+		UpdateWeaponData();
+		Sakura::Aimbot::Logic(cmd);
+		ContinueFire(cmd);
+		ItemPostFrame(cmd);
+		NoRecoil(cmd);
+		NoSpread(cmd);
+		Route(cmd);
+		AntiAim::Local(cmd);
+		FakeLag(frametime, cmd);
+		Sakura::Name::Stealer();
 
-		if (cvar.visual_weapon_noanim)
-			g_Engine.pfnWeaponAnim(0, 0);
+		Sakura::HNS::BunnyHop::Logic(cmd);
+		Sakura::HNS::Jumpbug::Logic(frametime, cmd);
+		Sakura::HNS::Groundstrafe::Logic(cmd);
+		Sakura::HNS::Fastrun::Logic(cmd);
+		Sakura::HNS::Strafe::Logic(cmd);
+
+		if (Sakura::Player::Local::InGame())
+		{
+			Sakura::Fakelatency::Logic();
+
+			if (cvar.visual_weapon_noanim)
+				g_Engine.pfnWeaponAnim(0, 0);
+		}
 	}
+
+	Kz(frametime, cmd);
+	Sakura::AntiAfk::Run(cmd);
+	BulletTrace::Local(cmd);
+	Sakura::ChatSpammer::Logic();
 
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
@@ -415,7 +424,7 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 		if (cvar.misc_fakelatency)
 		{
 			Vector entTempOrigin;
-			if (Backtrack::BacktrackPlayer(ent, g_Local.sLerpMSec, entTempOrigin))
+			if (Sakura::Backtrack::Player(ent, g_Local.sLerpMSec, entTempOrigin))
 			{
 				memcpy(&g_Player[ent->index].playerHistory, ent, sizeof(*ent));
 				g_Player[ent->index].playerHistory.origin = entTempOrigin;

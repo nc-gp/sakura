@@ -19,6 +19,6 @@ void V_CalcRefdefRecoil(struct ref_params_s *pparams)
 
 void NoRecoil(struct usercmd_s *cmd)
 {
-	if (cvar.rage_active && cvar.rage_no_recoil && IsCurWeaponGun() && Sakura::Player::Local::IsAlive() && cmd->buttons & IN_ATTACK && CanAttack())
+	if (cvar.rage_active && cvar.rage_no_recoil && IsCurWeaponGun() && cmd->buttons & IN_ATTACK && CanAttack())
 		cmd->viewangles -= g_Local.vNoRecoilAngle;
 }

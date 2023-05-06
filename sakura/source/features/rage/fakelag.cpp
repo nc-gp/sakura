@@ -2,7 +2,7 @@
 
 void FakeLag(float frametime, struct usercmd_s* cmd)
 {
-	if (cvar.fakelag_active && Sakura::Player::Local::IsAlive())
+	if (cvar.fakelag_active)
 	{
 		int m_InAttack = (cmd->buttons & IN_ATTACK);
 
@@ -26,7 +26,7 @@ void FakeLag(float frametime, struct usercmd_s* cmd)
 		}
 		else if (cvar.fakelag_move == 2)//In air
 		{
-			if (HeightOrigin() <= 0)
+			if (g_Local.flHeightorigin <= 0)
 				fakelag = false;
 		}
 

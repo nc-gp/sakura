@@ -43,9 +43,6 @@ void AntiAim::Local(usercmd_s* cmd)
 	if (!cvar.rage_antiaim_active)
 		return;
 
-	if (!Sakura::Player::Local::IsAlive())
-		return;
-
 	int localUse = (cmd->buttons & IN_USE);
 	int localIsAttacking = (cmd->buttons & IN_ATTACK);
 	int localIsKnifeAttacking = (cmd->buttons & IN_ATTACK2) && IsCurWeaponKnife();

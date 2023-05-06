@@ -775,7 +775,7 @@ void RouteDirection(usercmd_s* cmd)
 {
 	static int iTurnMove = false;
 	static int iJumpMove = false;
-	if (cvar.misc_wav_speed > 1 && Sakura::Player::Local::IsAlive() && !IsFreezePeriod())
+	if (cvar.misc_wav_speed > 1 && !IsFreezePeriod())
 	{
 		if (InMove(cmd) && MySpeed() < 30)
 		{

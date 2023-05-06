@@ -112,7 +112,7 @@ namespace Sakura
 #include "features/sound/soundesp.h"
 #include "helpers/weapons.h"
 #include "player.h"
-#include "config/cvar.h"
+#include "config/cvar.hpp"
 #include "helpers/color.h"
 #include "features/hns/strafe.h"
 #include "features/hns/fastrun.h"

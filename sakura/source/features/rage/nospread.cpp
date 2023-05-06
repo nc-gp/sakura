@@ -448,7 +448,7 @@ void MakeAngle(float *angles, struct usercmd_s *cmd)
 
 void NoSpread(usercmd_s *cmd)
 {
-	if (Sakura::Player::Local::IsAlive() && IsCurWeaponGun() && cmd->buttons & IN_ATTACK && CanAttack())
+	if (IsCurWeaponGun() && cmd->buttons & IN_ATTACK && CanAttack())
 	{
 		Vector vAngles;
 		GetSpreadOffset(g_Local.weapon.random_seed, 1, cmd->viewangles, vAngles);

@@ -271,7 +271,7 @@ void Sakura::Aimbot::Logic(usercmd_s* cmd)
 	Sakura::Knifebot::iTargetKnife = 0;
 	Sakura::Aimbot::Rage::iTargetRage = 0;
 
-	if (Sakura::Player::Local::IsAlive() && GetTickCount() - HudRedraw <= 100)
+	if (GetTickCount() - HudRedraw <= 100)
 	{
 		if (cvar.rage_active)
 		{
@@ -303,7 +303,7 @@ void Sakura::Aimbot::Draws()
 
 void ContinueFire(usercmd_s* cmd) // auto pistol
 {
-	if (cvar.rage_active && cmd->buttons & IN_ATTACK && IsCurWeaponPistol() && !g_Local.weapon.m_iInReload && Sakura::Player::Local::IsAlive())
+	if (cvar.rage_active && cmd->buttons & IN_ATTACK && IsCurWeaponPistol() && !g_Local.weapon.m_iInReload)
 	{
 		static bool bFire = false;
 
