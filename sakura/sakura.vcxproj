@@ -960,7 +960,7 @@
     <ClInclude Include="libs\opengl\glu.h" />
     <ClInclude Include="libs\xor\xorstr.h" />
     <ClInclude Include="source\client.h" />
-    <ClInclude Include="source\config\cvar.h" />
+    <ClInclude Include="source\config\cvar.hpp" />
     <ClInclude Include="source\features\aimbot.h" />
     <ClInclude Include="source\features\hns\bhop.h" />
     <ClInclude Include="source\features\hns\fastrun.h" />

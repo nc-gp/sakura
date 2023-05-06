@@ -528,7 +528,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\config\cvar.h">
+    <ClInclude Include="source\config\cvar.hpp">
       <Filter>source\config</Filter>
     </ClInclude>
     <ClInclude Include="source\features\hns\bhop.h">
