@@ -4,49 +4,47 @@ CSequences g_Sequences;
 
 SequenceList::iterator CSequences::begin()
 {
-    return m_sequences.begin();
+	return m_sequences.begin();
 }
 
 SequenceList::iterator CSequences::end()
 {
-    return m_sequences.end();
+	return m_sequences.end();
 }
 
 void CSequences::Update()
 {
-    if (client_static->netchan.incoming_sequence > m_iLastIncomingSequence)
-    {
-        m_sequences.push_front(CIncomingSequence{ client_static->netchan.incoming_sequence, pmove->time });
-        m_iLastIncomingSequence = client_static->netchan.incoming_sequence;
+	if (client_static->netchan.incoming_sequence > m_iLastIncomingSequence)
+	{
+		m_sequences.push_front(CIncomingSequence{ client_static->netchan.incoming_sequence, pmove->time });
+		m_iLastIncomingSequence = client_static->netchan.incoming_sequence;
+	}
 
-       // g_Engine.Con_Printf("add: num=%d   time=%.2f\n", client_static->netchan.incoming_sequence, client_static->netchan.last_received);
-    }
-
-    if (m_sequences.size() > 2048)
-        m_sequences.pop_back();
+	if (m_sequences.size() > 2048)
+		m_sequences.pop_back();
 }
 
 void CSequences::Clear()
 {
-    if (!m_sequences.empty())
-        m_sequences.clear();
+	if (!m_sequences.empty())
+		m_sequences.clear();
 
-    m_iLastIncomingSequence = 0;
+	m_iLastIncomingSequence = 0;
 }
 
-float Backtrack::clamp(float val, float minVal, float maxVal)
+float Sakura::Math::Clamp(float value, float minimumValue, float maximumValue)
 {
-    if (maxVal < minVal)
-        return maxVal;
-    else if (val < minVal)
-        return minVal;
-    else if (val > maxVal)
-        return maxVal;
+    if (maximumValue < minimumValue)
+        return maximumValue;
+    else if (value < minimumValue)
+        return minimumValue;
+    else if (value > maximumValue)
+        return maximumValue;
     else
-        return val;
+        return value;
 }
 
-bool Backtrack::FindSpanningContexts(cl_entity_t* ent, float targettime, position_history_t** newer, position_history_t** older)
+bool Sakura::Backtrack::FindSpanningContexts(cl_entity_t* ent, float targettime, position_history_t** newer, position_history_t** older)
 {
     assert(newer);
     assert(older);
@@ -81,7 +79,7 @@ bool Backtrack::FindSpanningContexts(cl_entity_t* ent, float targettime, positio
     return extrapolate;
 }
 
-bool Backtrack::BacktrackPlayer(cl_entity_s* pGameEntity, int lerp_msec, Vector& origin)
+bool Sakura::Backtrack::Player(cl_entity_s* pGameEntity, int lerp_msec, Vector& origin)
 {
 	static cvar_t* sv_unlag = g_Engine.pfnGetCvarPointer("sv_unlag");
 	static cvar_t* cl_lw = g_Engine.pfnGetCvarPointer("cl_lw");
@@ -160,7 +158,7 @@ bool Backtrack::BacktrackPlayer(cl_entity_s* pGameEntity, int lerp_msec, Vector&
 	if (newer->animtime != older->animtime)
 	{
 		frac = float(targettime - older->animtime) / (newer->animtime - older->animtime);
-		frac = clamp(frac, 0.f, 1.f);
+		frac = Sakura::Math::Clamp(frac, 0.f, 1.f);
 	}
 
 	Vector delta = newer->origin - older->origin;
@@ -173,7 +171,7 @@ bool Backtrack::BacktrackPlayer(cl_entity_s* pGameEntity, int lerp_msec, Vector&
 	return true;
 }
 
-void Backtrack::FakeLatency()
+void Sakura::Fakelatency::Logic()
 {
     if (!cvar.misc_fakelatency)
         return;
@@ -185,8 +183,6 @@ void Backtrack::FakeLatency()
         if (time_difference >= cvar.misc_fakelatency_amount)
         {
             client_static->netchan.incoming_sequence = sequence.seq;
-
-            //g_Engine.Con_Printf(">>>>teleport to sequence %d\n", client_static->netchan.incoming_sequence);
             break;
         }
     }
@@ -195,12 +191,7 @@ void Backtrack::FakeLatency()
 void __cdecl Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 {
     if (!client_static)
-    {
-        // thanks to bloodsharp
         client_static = (client_static_s*)(((uint32_t)(chan)) - ((uint32_t)offsetof(client_static_s, netchan)));
-        //LogToFile("client_static at 0x%p", client_static);
-        //LogToFile("client_state at 0x%p", client_state);
-    }
 
     Netchan_TransmitBits_s(chan, length, data);
 }

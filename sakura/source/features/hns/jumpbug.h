@@ -1,6 +1,15 @@
 #pragma once
 
-extern bool Jumpbug;
-
-float GroundAngle();
-void JumpBug(float frametime, struct usercmd_s* cmd);
+namespace Sakura
+{
+	namespace HNS
+	{
+		namespace Jumpbug
+		{
+			extern int State;
+			extern bool Active;
+			
+			void Logic(float frametime, usercmd_s* cmd);
+		};
+	};
+};

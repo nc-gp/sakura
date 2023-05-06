@@ -1,10 +1,25 @@
 #include "../../client.h"
 
-bool Fastrun = false;
+bool Sakura::HNS::Fastrun::Active = false;
 
-void FastRun(struct usercmd_s* cmd)
+void Sakura::HNS::Fastrun::Logic(usercmd_s* cmd)
 {
-	if (Fastrun && pmove->velocity.Length2D() && pmove->flFallVelocity == 0 && !Gstrafe && pmove->flags & FL_ONGROUND)
+	if (!cvar.kz_fast_run)
+		return;
+
+	if (!Active)
+		return;
+
+	if (!pmove->velocity.Length2D())
+		return;
+
+	if (pmove->flFallVelocity != 0)
+		return;
+
+	if (Sakura::HNS::Groundstrafe::Active)
+		return;
+
+	if (pmove->flags & FL_ONGROUND)
 	{
 		static bool Run = false;
 		if ((cmd->buttons & IN_FORWARD && cmd->buttons & IN_MOVELEFT) || (cmd->buttons & IN_BACK && cmd->buttons & IN_MOVERIGHT))

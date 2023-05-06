@@ -1,44 +1,34 @@
 #include "../../client.h"
 
-bool Bhop = false;
+int Sakura::HNS::BunnyHop::FramesOnGround = 0;
+bool Sakura::HNS::BunnyHop::Active = false;
 
-void BHop(struct usercmd_s* cmd)
+// TODO: Add scroll emulation.
+void Sakura::HNS::BunnyHop::Logic(usercmd_s* cmd)
 {
-	static int bhopcount;
-	static bool jumped = false;
-	int maxbhop;
+	if (!cvar.kz_bhop)
+		return;
 
-	if (cvar.kz_bhop_triple)
-		maxbhop = 3;
-	else if (cvar.kz_bhop_double)
-		maxbhop = 2;
-	else
-		maxbhop = 1;
+	if (!Active)
+		return;
 
-	if (Bhop)
+	cmd->buttons &= ~IN_JUMP;
+
+	if (pmove->flags & FL_ONGROUND)
 	{
-		cmd->buttons &= ~IN_JUMP;
+		int randPercentage = rand() % 100;
 
-		if (pmove->flags & FL_ONGROUND)
+		if (randPercentage <= cvar.kz_bhop_ideal_percentage)
 		{
-			bhopcount = 1;
 			cmd->buttons |= IN_JUMP;
+			return;
 		}
 
-		if (maxbhop > 1)
-		{
-			if (pmove->flFallVelocity < 0)
-				jumped = true;
+		FramesOnGround++;
 
-			if (pmove->flFallVelocity > 0)
-			{
-				if (jumped && bhopcount < maxbhop)
-				{
-					bhopcount++;
-					cmd->buttons |= IN_JUMP;
-					jumped = false;
-				}
-			}
-		}
+		if (FramesOnGround >= cvar.kz_bhop_frames_on_ground)
+			cmd->buttons |= IN_JUMP;
 	}
+	else
+		FramesOnGround = 0;
 }

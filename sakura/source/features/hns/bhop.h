@@ -1,5 +1,15 @@
 #pragma once
 
-extern bool Bhop;
+namespace Sakura
+{
+	namespace HNS
+	{
+		namespace BunnyHop
+		{
+			extern int FramesOnGround;
+			extern bool Active;
 
-void BHop(struct usercmd_s* cmd);
+			void Logic(usercmd_s* cmd);
+		};
+	};
+};

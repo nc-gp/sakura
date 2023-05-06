@@ -1,5 +1,14 @@
 #pragma once
 
-extern bool Fastrun;
+namespace Sakura
+{
+	namespace HNS
+	{
+		namespace Fastrun
+		{
+			extern bool Active;
 
-void FastRun(struct usercmd_s* cmd);
+			void Logic(usercmd_s* cmd);
+		}
+	};
+};

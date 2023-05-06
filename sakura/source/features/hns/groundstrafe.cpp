@@ -1,35 +1,31 @@
 #include "../../client.h"
 
-bool Gstrafe = false;
+int Sakura::HNS::Groundstrafe::State = 0;
+bool Sakura::HNS::Groundstrafe::Active = false;
 
-void GroundStrafe(struct usercmd_s* cmd)
+void Sakura::HNS::Groundstrafe::Logic(usercmd_s* cmd)
 {
-	if (Gstrafe && !Jumpbug)
+	if (!cvar.kz_ground_strafe)
+		return;
+
+	if (!Active)
+		return;
+
+	if (cvar.kz_sgs && g_Local.flHeightorigin < cvar.kz_sgs_ground_origin)
+		cmd->buttons |= IN_DUCK;
+
+	switch (State)
 	{
-		static int gs_state = 0;
-		static int bhop_state = 0;
-
-		if (cvar.kz_sgs && g_Local.flHeightorigin < cvar.kz_sgs_ground_origin)
+	case 0:
+		if (pmove->flags & FL_ONGROUND)
 		{
 			cmd->buttons |= IN_DUCK;
+			State = 1;
 		}
-		
-		if (gs_state == 0 && pmove->flags & FL_ONGROUND)
-		{
-			cmd->buttons |= IN_DUCK;
-			gs_state = 1;
-			bhop_state = 1;
-		}
-		else if (gs_state == 1)
-		{
-			if (cvar.kz_bgs && bhop_state == 1)
-			{
-				cmd->buttons |= IN_JUMP;
-				bhop_state = 0;
-			}
-
-			cmd->buttons &= ~IN_DUCK;
-			gs_state = 0;
-		}
+		break;
+	case 1:
+		cmd->buttons &= ~IN_DUCK;
+		State = 0;
+		break;
 	}
 }
