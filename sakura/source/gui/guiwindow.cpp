@@ -30,7 +30,6 @@ void DrawFullScreenWindow()
 	ImGui::Begin(/*FullScreen*/XorStr<0x11, 11, 0xA379A5DD>("\x57\x67\x7F\x78\x46\x75\x65\x7D\x7C\x74" + 0xA379A5DD).s, reinterpret_cast<bool*>(true), ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
 	{
 		DrawRouteLine();
-		DrawLongJump();
 		Sakura::Esp::World::DrawSkeleton();
 		Sakura::Esp::World::Draw();
 		Sakura::Esp::DrawSoundNoIndex();
