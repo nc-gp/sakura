@@ -1,5 +1,7 @@
 #include "../../client.h"
 
+constexpr int SKIP_FRAME = 1;
+
 SCR_UpdateScreen_t g_pSCR_UpdateScreen;
 
 int SCR_UpdateScreen()
@@ -9,20 +11,35 @@ int SCR_UpdateScreen()
 	if(!cvar.misc_skipframes)
 		return oSCR_UpdateScreen();
 
-	static int m_iCount = 0;
+	static int skippedFrames = 0;
 
-	// We skip frames as much as possible to increase the indicator
-	// The higher the value, the fewer frames
-	const int m_iSkipFrames = 1;
+	if (cvar.misc_skipframes_count <= 0)
+		cvar.misc_skipframes_count = 1;
 
-	if (m_iCount <= m_iSkipFrames)
-		m_iCount++;
+	const int framesToSkip = cvar.misc_skipframes_count;
 
-	if (m_iCount > m_iSkipFrames)
+	if (skippedFrames <= framesToSkip)
 	{
-		m_iCount = 0;
+		skippedFrames++;
 		return 1;
 	}
+
+	if (skippedFrames > framesToSkip)
+		skippedFrames = 0;
+
+	/*if (++skippedFrames % framesToSkip != 0)
+		return SKIP_FRAME;*/
+
+	/*if (skippedFrames <= framesToSkip)
+		skippedFrames++;
+
+	if (skippedFrames > framesToSkip)
+	{
+		skippedFrames = 0;
+		return SKIP_FRAME;
+	}*/
+
+	//skippedFrames = 0;
 
 	return oSCR_UpdateScreen();
 }
