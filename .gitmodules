@@ -10,3 +10,6 @@
 [submodule "luabridge"]
 	path = luabridge
 	url = https://github.com/vinniefalco/LuaBridge
+[submodule "lua"]
+	path = lua
+	url = https://github.com/lua/lua

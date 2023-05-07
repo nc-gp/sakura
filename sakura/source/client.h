@@ -99,7 +99,12 @@ namespace Sakura
 #include "other/smth/keydefs.h"
 #include "../libs/xor/xorstr.h"
 
-#include "../libs/lua/lua.hpp" // include lua lib
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
+
 #include "LuaBridge/Vector.h"
 #include "LuaBridge/LuaBridge.h"
 #include "features/lua/luabind.h" // custom
