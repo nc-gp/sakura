@@ -77,9 +77,6 @@
     <Filter Include="libs\luabridge">
       <UniqueIdentifier>{9a8ce299-1be4-4f66-b278-81786a736149}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libs\luabridge\detail">
-      <UniqueIdentifier>{d1e838f0-0354-49af-addb-3175fca11827}</UniqueIdentifier>
-    </Filter>
     <Filter Include="libs\xor">
       <UniqueIdentifier>{e2109d56-1b95-48ff-9c4d-eab4c5ab5821}</UniqueIdentifier>
     </Filter>
@@ -109,6 +106,9 @@
     </Filter>
     <Filter Include="libs\image">
       <UniqueIdentifier>{a814a90d-b3d1-4004-ad26-9d5332e3b38a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\luabridge\detail">
+      <UniqueIdentifier>{2cd961a5-19f0-4223-90ba-9361e5797288}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -723,75 +723,6 @@
     <ClInclude Include="source\helpers\stringfinder.h">
       <Filter>source\helpers</Filter>
     </ClInclude>
-    <ClInclude Include="libs\luabridge\Map.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\RefCountedObject.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\RefCountedPtr.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\UnorderedMap.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\Vector.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\List.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\LuaBridge.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\dump.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\FuncTraits.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Iterator.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\LuaException.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\LuaHelpers.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\LuaRef.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Namespace.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Security.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Stack.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\TypeList.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\TypeTraits.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Userdata.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\CFunctions.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\ClassInfo.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Config.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
-    <ClInclude Include="libs\luabridge\detail\Constructor.h">
-      <Filter>libs\luabridge</Filter>
-    </ClInclude>
     <ClInclude Include="libs\xor\xorstr.h">
       <Filter>libs\xor</Filter>
     </ClInclude>
@@ -1019,6 +950,84 @@
     </ClInclude>
     <ClInclude Include="source\other\smth\gl3winit.h">
       <Filter>libs\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\LuaBridge.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Map.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Optional.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Pair.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\RefCountedObject.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\RefCountedPtr.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\UnorderedMap.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Vector.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Array.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\List.h">
+      <Filter>libs\luabridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\dump.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\FuncTraits.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Iterator.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\LuaException.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\LuaHelpers.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\LuaRef.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Namespace.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Security.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Stack.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\TypeList.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\TypeTraits.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Userdata.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\CFunctions.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\ClassInfo.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Config.h">
+      <Filter>libs\luabridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Constructor.h">
+      <Filter>libs\luabridge\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -84,7 +84,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)libs;$(SolutionDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libs;$(SolutionDir)imgui;$(SolutionDir)luabridge\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>28159;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -144,7 +144,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>client.h</PrecompiledHeaderFile>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <AdditionalIncludeDirectories>$(ProjectDir)libs;$(SolutionDir)imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libs;$(SolutionDir)imgui;$(SolutionDir)luabridge\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -891,6 +891,32 @@
     <ClInclude Include="..\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\imgui\imstb_textedit.h" />
     <ClInclude Include="..\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Array.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\CFunctions.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\ClassInfo.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Config.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Constructor.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\dump.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\FuncTraits.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Iterator.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\LuaException.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\LuaHelpers.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\LuaRef.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Namespace.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Security.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Stack.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\TypeList.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\TypeTraits.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\detail\Userdata.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\List.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Map.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Optional.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Pair.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\RefCountedObject.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\RefCountedPtr.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\UnorderedMap.h" />
+    <ClInclude Include="..\luabridge\Source\LuaBridge\Vector.h" />
     <ClInclude Include="libs\bass\bass.h" />
     <ClInclude Include="libs\bass\dll.h" />
     <ClInclude Include="libs\image\image_DXT.h" />
@@ -903,29 +929,6 @@
     <ClInclude Include="libs\image\stbi_DDS_aug.h" />
     <ClInclude Include="libs\image\stbi_DDS_aug_c.h" />
     <ClInclude Include="libs\image\stb_image_aug.h" />
-    <ClInclude Include="libs\luabridge\detail\CFunctions.h" />
-    <ClInclude Include="libs\luabridge\detail\ClassInfo.h" />
-    <ClInclude Include="libs\luabridge\detail\Config.h" />
-    <ClInclude Include="libs\luabridge\detail\Constructor.h" />
-    <ClInclude Include="libs\luabridge\detail\dump.h" />
-    <ClInclude Include="libs\luabridge\detail\FuncTraits.h" />
-    <ClInclude Include="libs\luabridge\detail\Iterator.h" />
-    <ClInclude Include="libs\luabridge\detail\LuaException.h" />
-    <ClInclude Include="libs\luabridge\detail\LuaHelpers.h" />
-    <ClInclude Include="libs\luabridge\detail\LuaRef.h" />
-    <ClInclude Include="libs\luabridge\detail\Namespace.h" />
-    <ClInclude Include="libs\luabridge\detail\Security.h" />
-    <ClInclude Include="libs\luabridge\detail\Stack.h" />
-    <ClInclude Include="libs\luabridge\detail\TypeList.h" />
-    <ClInclude Include="libs\luabridge\detail\TypeTraits.h" />
-    <ClInclude Include="libs\luabridge\detail\Userdata.h" />
-    <ClInclude Include="libs\luabridge\List.h" />
-    <ClInclude Include="libs\luabridge\LuaBridge.h" />
-    <ClInclude Include="libs\luabridge\Map.h" />
-    <ClInclude Include="libs\luabridge\RefCountedObject.h" />
-    <ClInclude Include="libs\luabridge\RefCountedPtr.h" />
-    <ClInclude Include="libs\luabridge\UnorderedMap.h" />
-    <ClInclude Include="libs\luabridge\Vector.h" />
     <ClInclude Include="libs\lua\lapi.h" />
     <ClInclude Include="libs\lua\lauxlib.h" />
     <ClInclude Include="libs\lua\lcode.h" />

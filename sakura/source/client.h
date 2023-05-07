@@ -100,8 +100,8 @@ namespace Sakura
 #include "../libs/xor/xorstr.h"
 
 #include "../libs/lua/lua.hpp" // include lua lib
-#include "../libs/LuaBridge/Vector.h" // passing vector
-#include "../libs/LuaBridge/LuaBridge.h" // bridge
+#include "LuaBridge/Vector.h"
+#include "LuaBridge/LuaBridge.h"
 #include "features/lua/luabind.h" // custom
 
 #include "other/smth/gl3winit.h"
