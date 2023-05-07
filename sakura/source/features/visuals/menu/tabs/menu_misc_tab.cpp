@@ -613,19 +613,19 @@ void Sakura::Menu::Tabs::Misc::Information()
 	ImGui::Text(/*It was designed by bitpaper#3408 - and we would like to extend special thanks to:*/XorStr<0xB6, 82, 0x015B598A>("\xFF\xC3\x98\xCE\xDB\xC8\x9C\xD9\xDB\xCC\xA9\xA6\xAC\xA6\xA0\xE5\xA4\xBE\xE8\xAB\xA3\xBF\xBC\xAC\xBE\xAA\xA2\xF2\xE1\xE7\xE4\xED\xF6\xFA\xF8\xB8\xB4\xBF\xFC\xAA\xBB\xFF\x97\x8E\x97\x8F\x80\xC5\x8A\x8E\x83\x8C\xCA\x9F\x83\xCD\x8B\x97\x84\x94\x9C\x97\xD4\x86\x86\x92\x9B\x90\x9B\x97\xDC\x89\x96\x9E\x6E\x6A\x71\x23\x70\x6A\x3C" + 0x015B598A).s);
 	ImGui::Text(/* - */XorStr<0xFF, 4, 0xDD194FC6>("\xDF\x2D\x21" + 0xDD194FC6).s);
 	ImGui::SameLine();
-	ImGui::TextColored(ImColor(1.f, 1.f, 0.5f, 1.f), /*B#*/XorStr<0x14, 3, 0x40C89877>("\x56\x36" + 0x40C89877).s);
+	ImGui::TextColored(ImColor(1.f, 1.f, 0.5f, 1.f), /*BloodSharp*/XorStr<0x5D, 11, 0xD3031189>("\x1F\x32\x30\x0F\x05\x31\x0B\x05\x17\x16" + 0xD3031189).s);
 	ImGui::SameLine();
 	ImGui::Text(/* for his coding expertise*/XorStr<0x38, 26, 0x1DA1D491>("\x18\x5F\x55\x49\x1C\x55\x57\x4C\x60\x22\x2D\x27\x2D\x2B\x21\x67\x2D\x31\x3A\x2E\x3E\x39\x27\x3C\x35" + 0x1DA1D491).s);
 
 	ImGui::Text(/* - */XorStr<0x82, 4, 0x58E4118C>("\xA2\xAE\xA4" + 0x58E4118C).s);
 	ImGui::SameLine();
-	ImGui::TextColored(ImColor(0.5f, 0.5f, 1.f, 1.f), /*Flow of Life*/XorStr<0xAB, 13, 0xEA35E0AF>("\xED\xC0\xC2\xD9\x8F\xDF\xD7\x92\xFF\xDD\xD3\xD3" + 0xEA35E0AF).s);
+	ImGui::TextColored(ImColor(0.5f, 0.5f, 1.f, 1.f), /*Flow of Life#7852*/XorStr<0xF6,18,0x8E935C6D>("\xB0\x9B\x97\x8E\xDA\x94\x9A\xDD\xB2\x96\x66\x64\x21\x34\x3C\x30\x34" + 0x8E935C6D).s);
 	ImGui::SameLine();
 	ImGui::Text(/* for his motivation and inspiration*/XorStr<0x48, 36, 0x13D35875>("\x68\x2F\x25\x39\x6C\x25\x27\x3C\x70\x3C\x3D\x27\x3D\x23\x37\x23\x31\x36\x34\x7B\x3D\x33\x3A\x7F\x09\x0F\x11\x13\x0D\x17\x07\x13\x01\x06\x04" + 0x13D35875).s);
 
 	ImGui::Text(/* - */XorStr<0xA6, 4, 0xFE8875D5>("\x86\x8A\x88" + 0xFE8875D5).s);
 	ImGui::SameLine();
-	ImGui::TextColored(ImColor(0.1725f, 0.8f, 0.2901f, 1.f), /*lui1337*/XorStr<0x6C, 8, 0x350D7A75>("\x00\x18\x07\x5E\x43\x42\x45" + 0x350D7A75).s);
+	ImGui::TextColored(ImColor(0.1725f, 0.8f, 0.2901f, 1.f), /*lui1337_#7241*/XorStr<0x65, 14, 0x99747F80>("\x09\x13\x0E\x59\x5A\x59\x5C\x33\x4E\x59\x5D\x44\x40" + 0x99747F80).s);
 	ImGui::SameLine();
 	ImGui::Text(/* for his valuable testing and feedback*/XorStr<0xF7, 39, 0x7A594312>("\xD7\x9E\x96\x88\xDB\x94\x94\x8D\xDF\x76\x60\x6E\x76\x65\x67\x6A\x62\x28\x7D\x6F\x78\x78\x64\x60\x68\x30\x70\x7C\x77\x34\x73\x73\x72\x7C\x7B\x7B\x78\x77" + 0x7A594312).s);
 }
