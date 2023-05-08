@@ -131,6 +131,14 @@ int DeathMsg(const char *pszName, int iSize, void *pbuf)
 		Sakura::Sound::KillSound(headshot);
 	}
 
+	if (victim == pmove->player_index + 1)
+	{
+		Sakura::HNS::BunnyHop::Active = false;
+		Sakura::HNS::Groundstrafe::Active = false;
+		Sakura::HNS::Fastrun::Active = false;
+		Sakura::HNS::Strafe::Active = false;
+	}
+
 	for (size_t i = 0; i < Sakura::Lua::scripts.size(); ++i)
 	{
 		auto& script = Sakura::Lua::scripts[i];
