@@ -65,7 +65,6 @@ We welcome contributions to Sakura from anyone, whether you're an experienced de
 
 * Make Pull Requests: If you have made changes to the code that you would like to share, consider making a pull request. We welcome all contributions and will review your changes as soon as possible.
 * Report Issues: If you encounter any issues or bugs while using Sakura, please report them on our [GitHub repository](https://github.com/rbl-dot/sakura/issues). We rely on user feedback to improve the quality and performance of the software.
-* Donate: If you appreciate Sakura and want to support our development efforts, consider making a donation. Your contributions will help us cover server costs, pay developers, and improve the software.
 
 ## License
 
