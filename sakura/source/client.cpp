@@ -476,20 +476,16 @@ static void HUD_TempEntUpdate(double frametime, double client_time, double cl_gr
 
 void pfnSPRSet(HSPRITE hPic, int r, int g, int b)
 {
-	int rn = r;
-	int gn = g;
-	int bn = b;
-
-	if (cvar.visual_hud && Sakura::ScreenShot::IsVisuals())
+	if (cvar.visual_hud && Sakura::ScreenShot::IsVisuals() && (int)hPic != 13 && (int)hPic != 12) // radar sprite - thanks to oxik
 	{
 		ImRGBA color = Sakura::Colors::GetCustomizedColor(cvar.visual_hud_color, cvar.rainbow_hud);
 
-		rn = (int)(color.r * 255);
-		gn = (int)(color.g * 255);
-		bn = (int)(color.b * 255);
+		r = (int)(color.r * 255);
+		g = (int)(color.g * 255);
+		b = (int)(color.b * 255);
 	}
 
-	g_Engine.pfnSPR_Set(hPic, rn, gn, bn);
+	g_Engine.pfnSPR_Set(hPic, r, g, b);
 }
 
 void HookClientFunctions()
