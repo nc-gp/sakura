@@ -36,20 +36,24 @@
 
 To run this cheat, you'll need [Git](https://git-scm.com) or downloaded source code and installed [Visual Studio](https://visualstudio.microsoft.com/) on your computer and basic knowledge how to compile it.
 
+It's compilable in Visual Studio 2022 and 2019.
+
 ```bash
 $ git clone --recurse-submodules https://github.com/rbl-dot/sakura.git
 ```
 
 ## Known bugs
 
-* Fov for Perfect Silent doesn't work: We are aware that the Fov setting for Perfect Silent is not functioning correctly.
-* CreateBeamPoint is not working from Lua script: We have received reports that the CreateBeamPoint function is not working as expected.
+* Fov for Perfect Silent doesn't work.
+* CreateBeamPoint is not working from Lua script.
+* First snapshot is double taken while using anti screenshot function.
 
 ## To-do
 
-* Improve Lua functions: We are constantly working to improve the Lua scripting capabilities of Sakura. In addition to fixing bugs, we are working on adding new functions and improving existing ones to make it easier for users to create custom scripts.
-* Add Save/Load functions for Lua: We are planning to add Save and Load functions for Lua scripts, which will allow users to save their scripts and settings and load them later.
-* Improve UI customization: We are working on adding more options for customizing the user interface of Sakura, including the ability to change font styles and sizes, and the ability to add custom backgrounds and themes.
+* Improve Lua functions.
+* Add Save/Load functions for Lua.
+* Improve UI customization.
+* Fix bugs.
 
 ## Credits
 
@@ -63,8 +67,8 @@ $ git clone --recurse-submodules https://github.com/rbl-dot/sakura.git
 
 We welcome contributions to Sakura from anyone, whether you're an experienced developer or just getting started. Here are some ways you can help:
 
-* Make Pull Requests: If you have made changes to the code that you would like to share, consider making a pull request. We welcome all contributions and will review your changes as soon as possible.
-* Report Issues: If you encounter any issues or bugs while using Sakura, please report them on our [GitHub repository](https://github.com/rbl-dot/sakura/issues). We rely on user feedback to improve the quality and performance of the software.
+* Make Pull Requests: If you have made changes to the code that you would like to share, consider making a pull request.
+* Report Issues: If you encounter any issues or bugs while using Sakura, please report them on our [GitHub repository](https://github.com/rbl-dot/sakura/issues).
 
 ## License
 
