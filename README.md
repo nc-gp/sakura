@@ -34,7 +34,7 @@
 
 ## How To Use
 
-To run this cheat, you'll need [Git](https://git-scm.com) or downloaded source code and installed [Visual Studio](https://visualstudio.microsoft.com/) on your computer and basic knowledge how to compile it.
+To run this cheat, you'll need [Git](https://git-scm.com) or downloaded source code and installed [Visual Studio](https://visualstudio.microsoft.com/) on your computer and basic knowledge how to compile it. Also for the loader you'll need DirectX SDK from [here](https://www.microsoft.com/en-us/download/details.aspx?id=6812).
 
 It's compilable in Visual Studio 2022 and 2019.
 
