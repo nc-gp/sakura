@@ -16,9 +16,9 @@ class ToastInfo
 {
 private:
 	int seconds;
-	char text[256];
+	char text[512];
 	uint64_t creationTime;
-
+ 
 public:
 	auto get_title() -> std::string { return this->text; }
 
@@ -67,14 +67,9 @@ public:
 		return 1.f * 1.0f;
 	}
 
-	ToastInfo(int displaySeconds, const char* fmt, ...)
+	ToastInfo(int displaySeconds, const char* text)
 	{
-		va_list	va_alist;
-
-		va_start(va_alist, fmt);
-		vsprintf(this->text, fmt, va_alist);
-		va_end(va_alist);
-
+		sprintf_s(this->text, text);
 		this->seconds = displaySeconds * 1000;
 		this->creationTime = GetTickCount();
 	}
@@ -84,7 +79,8 @@ extern std::vector<ToastInfo> toasts;
 
 namespace Toast
 {
-	void Create(const ToastInfo& toast);
+	void Create(int displaySeconds, const char* text, ...);
+	//void Create(const ToastInfo& toast);
 	void Remove(int toastIndex);
 	void Render();
 }

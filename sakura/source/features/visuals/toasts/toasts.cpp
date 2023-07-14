@@ -2,10 +2,25 @@
 
 std::vector<ToastInfo> toasts;
 
-void Toast::Create(const ToastInfo& toast)
+void Toast::Create(int displaySeconds, const char* text, ...)
 {
-	toasts.push_back(toast);
+	va_list	va_alist;
+	char textbf[512];
+
+	va_start(va_alist, text);
+	vsprintf(textbf, text, va_alist);
+	va_end(va_alist);
+
+	toasts.push_back({
+		displaySeconds,
+		textbf
+	});
 }
+
+//void Toast::Create(const ToastInfo& toast)
+//{
+//	toasts.push_back(toast);
+//}
 
 void Toast::Remove(int toastIndex)
 {
