@@ -1257,7 +1257,7 @@ void DrawWeaponName()
 	{
 		model_s* mdl = g_Studio.GetModelByIndex(ent->curstate.weaponmodel);
 
-        if (mdl && mdl != pervious) Toast::Create({4, /*Weapon: %s*/XorStr<0x98,11,0x88F8EF14>("\xCF\xFC\xFB\xEB\xF3\xF3\xA4\xBF\x85\xD2" + 0x88F8EF14).s, Sakura::Strings::getfilename(mdl->name).c_str() + 2 });
+        if (mdl && mdl != pervious) Toast::Create(4, "Weapon: %s", Sakura::Strings::getfilename(mdl->name).c_str() + 2);
         pervious = mdl;
 	}
 }

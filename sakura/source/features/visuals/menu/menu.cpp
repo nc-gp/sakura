@@ -975,6 +975,8 @@ void DrawMenuWindow()
 	}
 
 	const char* text = getRandomText();
+	const ImVec2 textCalculated = ImGui::CalcTextSize(text);
+	const ImVec2 versionCalculated = ImGui::CalcTextSize("v1.103 @ 2023");
 
 	auto flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
 	
@@ -991,8 +993,8 @@ void DrawMenuWindow()
 		draw->AddRectFilled({ pos.x, pos.y + 50 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_items[0] * 255), (int)(cvar.visual_menu_color_items[1] * 255), (int)(cvar.visual_menu_color_items[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_All);
 		draw->AddRectFilled({ pos.x, pos.y + 470 }, { pos.x + 720, pos.y + 490 }, ImColor((int)(cvar.visual_menu_color_footer[0] * 255), (int)(cvar.visual_menu_color_footer[1] * 255), (int)(cvar.visual_menu_color_footer[2] * 255), Sakura::Menu::currentAlphaFade), 6.f, ImDrawCornerFlags_Bot);
 
-		draw->AddText({ pos.x + 10, pos.y + 470 + 10 - ImGui::CalcTextSize(text).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), text);
-		draw->AddText({ pos.x + 710 - ImGui::CalcTextSize(/*v1.102 @ 2023*/XorStr<0x18,14,0x2F4870A9>("\x6E\x28\x34\x2A\x2C\x2F\x3E\x5F\x00\x13\x12\x11\x17" + 0x2F4870A9).s).x, pos.y + 470 + 10 - ImGui::CalcTextSize(/*v1.102 @ 2023*/XorStr<0x18,14,0x2F4870A9>("\x6E\x28\x34\x2A\x2C\x2F\x3E\x5F\x00\x13\x12\x11\x17" + 0x2F4870A9).s).y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), /*v1.102 @ 2023*/XorStr<0x18, 14, 0x2F4870A9>("\x6E\x28\x34\x2A\x2C\x2F\x3E\x5F\x00\x13\x12\x11\x17" + 0x2F4870A9).s);
+		draw->AddText({ pos.x + 10, pos.y + 470 + 10 - textCalculated.y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), text);
+		draw->AddText({ pos.x + 710 - versionCalculated.x, pos.y + 470 + 10 - versionCalculated.y / 2 }, ImColor((int)(cvar.visual_menu_color_footer_text[0] * 255), (int)(cvar.visual_menu_color_footer_text[1] * 255), (int)(cvar.visual_menu_color_footer_text[2] * 255), Sakura::Menu::currentAlphaFade), "v1.103 @ 2023");
 
 		ImGui::PushFont(Sakura::Menu::Fonts::icons);
 		ImGui::SetCursorPos({ 20,25 - ImGui::CalcTextSize(/*P*/XorStr<0x6A, 2, 0x100FA605>("\x3A" + 0x100FA605).s).y / 2 });

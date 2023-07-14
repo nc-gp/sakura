@@ -88,7 +88,7 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 			{
 				if (script.GetState())
 				{
-					Sakura::Lua::Error(/*Error has occured in the lua "On Key Bind" script: %s*/XorStr<0x98, 54, 0x6238048E>("\xDD\xEB\xE8\xF4\xEE\xBD\xF6\xFE\xD3\x81\xCD\xC0\xC7\xD0\xD4\xC2\xCC\x89\xC3\xC5\x8C\xD9\xC6\xCA\x90\xDD\xC7\xD2\x94\x97\xF9\xD9\x98\xF2\xDF\xC2\x9C\xFF\xD7\xD1\xA4\xE3\xE2\xB0\xA7\xB7\xAF\xB7\xBC\xF3\xEA\xEE\xBF" + 0x6238048E).s, error.what());
+					Sakura::Lua::Error("Error has occured in the lua \"On Key Bind\" script: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -101,13 +101,13 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 		if (keystrafetoggle && down)
 		{
 			Sakura::HNS::Strafe::Active = !Sakura::HNS::Strafe::Active;
-			Toast::Create({ 3, /*Strafe %s*/XorStr<0xBB,10,0xB6AE3E40>("\xE8\xC8\xCF\xDF\xD9\xA5\xE1\xE7\xB0" + 0xB6AE3E40).s, Sakura::HNS::Strafe::Active ? /*activated*/XorStr<0xE0,10,0x0EEE144D>("\x81\x82\x96\x8A\x92\x84\x92\x82\x8C" + 0x0EEE144D).s : /*deactivated*/XorStr<0x81,12,0x76BE5F91>("\xE5\xE7\xE2\xE7\xF1\xEF\xF1\xE9\xFD\xEF\xEF" + 0x76BE5F91).s });
+			Toast::Create(3, "Strafe %s", Sakura::HNS::Strafe::Active ? "activated" : "deactivated");
 		}
 
 		if (thirdpersonkey && down)
 		{
 			cvar.visual_chase_cam = !cvar.visual_chase_cam;
-			Toast::Create({ 3, /*Third person %s*/XorStr<0x05,16,0xCA8AF3BD>("\x51\x6E\x6E\x7A\x6D\x2A\x7B\x69\x7F\x7D\x60\x7E\x31\x37\x60" + 0xCA8AF3BD).s, cvar.visual_chase_cam ? /*activated*/XorStr<0x75,10,0x3159CF1E>("\x14\x15\x03\x11\x0F\x1B\x0F\x19\x19" + 0x3159CF1E).s : /*deactivated*/XorStr<0x05,12,0xA5CA1816>("\x61\x63\x66\x6B\x7D\x63\x7D\x6D\x79\x6B\x6B" + 0xA5CA1816).s });
+			Toast::Create(3, "Third person %s", cvar.visual_chase_cam ? "activated" : "deactivated");
 		}
 
 		if (keyrush)
@@ -148,7 +148,7 @@ int HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
 		if (keylegittrigger && down)
 		{
 			Sakura::Triggerbot::TriggerKeyStatus = !Sakura::Triggerbot::TriggerKeyStatus;
-			Toast::Create({ 3, /*Trigger %s*/XorStr<0xC6,11,0x6905F391>("\x92\xB5\xA1\xAE\xAD\xAE\xBE\xED\xEB\xBC" + 0x6905F391).s, Sakura::Triggerbot::TriggerKeyStatus ? /*activated*/XorStr<0xBF,10,0x1DD2FDC1>("\xDE\xA3\xB5\xAB\xB5\xA5\xB1\xA3\xA3" + 0x1DD2FDC1).s : /*deactivated*/XorStr<0x8B,12,0xC5A086FF>("\xEF\xE9\xEC\xED\xFB\xF9\xE7\xF3\xE7\xF1\xF1" + 0xC5A086FF).s });
+			Toast::Create(3, "Trigger %s", Sakura::Triggerbot::TriggerKeyStatus ? "activated" : "deactivated");
 		}
 		
 		if ((keystrafe || keyfast || keygstrafe || keybhop || keyjump || keyrage || keylegittrigger || keylegit || keyrush) && down)
@@ -218,7 +218,7 @@ void CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 			{
 				if (script.GetState())
 				{
-					Sakura::Lua::Error(/*Error has occured in the lua "On Create Move" script: %s*/XorStr<0x0C, 57, 0x2A87B702>("\x49\x7F\x7C\x60\x62\x31\x7A\x72\x67\x35\x79\x74\x7B\x6C\x68\x7E\x78\x3D\x77\x71\x00\x55\x4A\x46\x04\x49\x53\x46\x08\x0B\x65\x45\x0C\x6E\x5C\x4A\x51\x45\x57\x13\x79\x5A\x40\x52\x1A\x19\x49\x58\x4E\x54\x4E\x4B\x7A\x61\x67\x30" + 0x2A87B702).s, error.what());
+					Sakura::Lua::Error("Error has occured in the lua \"On Create Move\" script: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}
@@ -451,7 +451,7 @@ int HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 			}
 			catch (luabridge::LuaException const& error)
 			{
-				Sakura::Lua::Error(/*Error has occured in the lua "On Add Entity" script: %s*/XorStr<0xE3, 56, 0x09B37070>("\xA6\x96\x97\x89\x95\xC8\x81\x8B\x98\xCC\x82\x8D\x8C\x85\x83\x97\x97\xD4\x9C\x98\xD7\x8C\x91\x9F\xDB\x90\x88\x9F\xDF\x22\x4E\x6C\x23\x45\x61\x62\x27\x4D\x67\x7E\x62\x78\x74\x2C\x2F\x63\x72\x60\x7A\x64\x61\x2C\x37\x3D\x6A" + 0x09B37070).s, error.what());
+				Sakura::Lua::Error("Error has occured in the lua \"On Add Entity\" script: %s", error.what());
 				script.RemoveAllCallbacks();
 			}
 		}
