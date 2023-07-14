@@ -12,7 +12,7 @@ void Sakura::Log::File(const char* text, ...)
 
 	time(&current_time);
 	current_tm = localtime(&current_time);
-	sprintf(logbuf, /*[%02d-%02d-%02d %02d:%02d:%02d] */XorStr<0x0E, 33, 0xD2F0AB75>("\x55\x2A\x20\x23\x76\x3E\x31\x25\x24\x73\x35\x3C\x2A\x29\x78\x3D\x3B\x2F\x12\x45\x18\x06\x14\x17\x42\x1D\x0D\x19\x18\x4F\x71\x0D" + 0xD2F0AB75).s,
+	sprintf(logbuf, "[%02d-%02d-%02d %02d:%02d:%02d] ",
 		current_tm->tm_mday, current_tm->tm_mon + 1, current_tm->tm_year + 1900,
 		current_tm->tm_hour, current_tm->tm_min, current_tm->tm_sec);
 	va_start(va_alist, text);
@@ -20,11 +20,11 @@ void Sakura::Log::File(const char* text, ...)
 	va_end(va_alist);
 
 	strcat(logbuf, buf);
-	strcat(logbuf, /*\n*/XorStr<0xA5, 2, 0x1A89FE85>("\xAF" + 0x1A89FE85).s);
+	strcat(logbuf, "\n");
 	strcpy(cDirectory, Sakura::CheatDir);
-	strcat(cDirectory, /*sakura.log*/XorStr<0x4A, 11, 0x037B1BD1>("\x39\x2A\x27\x38\x3C\x2E\x7E\x3D\x3D\x34" + 0x037B1BD1).s);
+	strcat(cDirectory, "sakura.log");
 
-	if ((file = fopen(cDirectory, /*a+*/XorStr<0xFA, 3, 0x95BB53FF>("\x9B\xD0" + 0x95BB53FF).s)) != NULL)
+	if ((file = fopen(cDirectory, "a+")) != NULL)
 	{
 		fputs(logbuf, file);
 		fclose(file);
@@ -40,7 +40,7 @@ void Sakura::Log::Console(const char* text, ...)
 	vsprintf(buf, text, va_alist);
 	va_end(va_alist);
 
-	sprintf(buf, /*%s%s*/XorStr<0x46, 5, 0x91528E04>("\x63\x34\x6D\x3A" + 0x91528E04).s, buf, /*\n*/XorStr<0x65, 2, 0x795F054D>("\x6F" + 0x795F054D).s);
+	sprintf(buf, "%s%s", buf, "\n");
 
 	g_Engine.Con_DPrintf(buf);
 }
@@ -56,7 +56,7 @@ void Sakura::Lua::Error(const char* errorMsg, ...)
 
 	Sakura::Log::File(buf);
 
-	float isInDeveloperMode = g_Engine.pfnGetCvarFloat(/*developer*/XorStr<0x2E, 10, 0x343A5E5D>("\x4A\x4A\x46\x54\x5E\x5C\x44\x50\x44" + 0x343A5E5D).s);
+	float isInDeveloperMode = g_Engine.pfnGetCvarFloat("developer");
 
 	if (isInDeveloperMode)
 		Sakura::Log::Console(buf);

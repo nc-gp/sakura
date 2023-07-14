@@ -58,7 +58,7 @@ void Sakura::Light::Studio(alight_s* plight)
 		}
 
 		isViewModel = Sakura::Player::Local::IsAlive() && ent == g_Local.ViewModel;
-		isWorld = ent->model && strstr(ent->model->name, /*/w_*/XorStr<0xC1, 4, 0x46E892EF>("\xEE\xB5\x9C" + 0x46E892EF).s) && ent != g_Local.ViewModel;
+		isWorld = ent->model && strstr(ent->model->name, "w_") && ent != g_Local.ViewModel;
 	}
 
 	if (isLocalPlayer && cvar.visual_lambert_local)

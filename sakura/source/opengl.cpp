@@ -111,7 +111,7 @@ void APIENTRY Hooked_glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat
 void Sakura::OpenGL::Hook()
 {
 	if (g_Studio.IsHardware() != 1)
-		c_Offset.Error(/*Please run game in OpenGL renderer mode*/XorStr<0xC7, 40, 0xBEF8CBD8>("\x97\xA4\xAC\xAB\xB8\xA9\xED\xBC\xBA\xBE\xF1\xB5\xB2\xB9\xB0\xF6\xBE\xB6\xF9\x95\xAB\xB9\xB3\x99\x93\xC0\x93\x87\x8D\x80\x80\x94\x82\x9A\xC9\x87\x84\x88\x88" + 0xBEF8CBD8).s);
+		c_Offset.Error("Please run game in OpenGL renderer mode");
 
 	const char* szOpenGLModuleName = "opengl32.dll";
 

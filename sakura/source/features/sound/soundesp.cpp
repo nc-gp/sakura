@@ -20,7 +20,7 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 	if (!fOrigin)
 		return;
 
-	if (cvar.misc_fire_sounds && strstr(szSoundFile, /*weapons*/XorStr<0x38, 8, 0x1B96AECA>("\x4F\x5C\x5B\x4B\x53\x53\x4D" + 0x1B96AECA).s))
+	if (cvar.misc_fire_sounds && strstr(szSoundFile, "weapons"))
 	{
 		realDynamicSoundVolume = cvar.misc_fire_sounds_volume / 100.f;
 		iPitch = cvar.misc_fire_sounds_pitch;
@@ -95,7 +95,7 @@ void Sakura::Esp::DynamicSound(int entid, DWORD entchannel, char* szSoundFile, f
 			{
 				if (script.GetState())
 				{
-					Sakura::Lua::Error(/*Error has occured in the lua "Dynamic Sound" script: %s*/XorStr<0x4F, 56, 0x58589174>("\x0A\x22\x23\x3D\x21\x74\x3D\x37\x24\x78\x36\x39\x38\x29\x2F\x3B\x3B\x40\x08\x0C\x43\x10\x0D\x03\x47\x04\x1C\x0B\x4B\x4E\x29\x17\x01\x11\x1C\x1B\x10\x54\x26\x19\x02\x16\x1D\x58\x5B\x0F\x1E\x0C\x16\xF0\xF5\xB8\xA3\xA1\xF6" + 0x58589174).s, error.what());
+					Sakura::Lua::Error("Error has occured in the lua \"Dynamic Sound\" script: %s", error.what());
 					script.RemoveAllCallbacks();
 				}
 			}

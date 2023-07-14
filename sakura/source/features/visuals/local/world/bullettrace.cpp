@@ -20,7 +20,7 @@ void BulletTrace::Local(struct usercmd_s* cmd)
 
 		g_Engine.pfnAngleVectors(vAngle, vForward, NULL, NULL);
 
-		int beamindex = g_Engine.pEventAPI->EV_FindModelIndex(/*sprites/laserbeam.spr*/XorStr<0xFF, 22, 0x410747FC>("\x8C\x70\x73\x6B\x77\x61\x76\x29\x6B\x69\x7A\x6F\x79\x6E\x68\x6F\x62\x3E\x62\x62\x61" + 0x410747FC).s);
+		int beamindex = g_Engine.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
 		pmtrace_t tr;
 
 		g_Engine.pEventAPI->EV_SetTraceHull(2);
@@ -41,7 +41,7 @@ void BulletTrace::Enemy(struct cl_entity_s* ent)
 {
 	if (cvar.visual_bullet_trace || cvar.visual_line_of_sight)
 	{
-		int beamindex = g_Engine.pEventAPI->EV_FindModelIndex(/*sprites/laserbeam.spr*/XorStr<0x22, 22, 0xDE6CA00D>("\x51\x53\x56\x4C\x52\x42\x5B\x06\x46\x4A\x5F\x48\x5C\x4D\x55\x50\x5F\x1D\x47\x45\x44" + 0xDE6CA00D).s);
+		int beamindex = g_Engine.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
 
 		Vector vecStart, vecEnd, vecEnd2, vecForward;
 

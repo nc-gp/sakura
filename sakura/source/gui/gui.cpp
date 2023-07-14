@@ -215,7 +215,7 @@ void HookImGui(HDC hdc)
 				{
 					if (script.GetState())
 					{
-						Sakura::Lua::Error(/*Error has occured in the lua "On Window Render" script: %s*/XorStr<0x45, 59, 0xDD634E4A>("\x00\x34\x35\x27\x3B\x6A\x23\x2D\x3E\x6E\x20\x33\x32\x27\x21\x31\x31\x76\x3E\x36\x79\x2E\x33\x39\x7D\x32\x2A\x01\x41\x40\x2C\x0A\x45\x31\x0E\x06\x0D\x05\x1C\x4C\x3F\x0B\x01\x14\x14\x00\x51\x54\x06\x15\x05\x11\x09\x0E\x41\x5C\x58\x0D" + 0xDD634E4A).s, error.what());
+						Sakura::Lua::Error("Error has occured in the lua \"On Window Render\" script: %s", error.what());
 						script.RemoveAllCallbacks();
 					}
 				}

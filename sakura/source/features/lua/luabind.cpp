@@ -25,12 +25,12 @@ void Sakura::Lua::Game::SendPacket(bool status)
 DWORD Sakura::Lua::Game::InitSound(const char* filename)
 {
 	char temp[256];
-	sprintf(temp, /*%s%s*/XorStr<0xB5, 5, 0xB4F18398>("\x90\xC5\x92\xCB" + 0xB4F18398).s, Sakura::CheatDir, filename);
+	sprintf(temp, "%s%s", Sakura::CheatDir, filename);
 
 	HSAMPLE sample = BASS_SampleLoad(false, temp, 0, 0, 60000, 0);
 
 	if (!sample)
-		Sakura::Log::File(/*Failed to load sound '%s' from lua. Error code: %i.*/XorStr<0x6E, 52, 0x0E56D4AB>("\x28\x0E\x19\x1D\x17\x17\x54\x01\x19\x57\x14\x16\x1B\x1F\x5C\x0E\x11\x0A\xEE\xE5\xA2\xA4\xA1\xF6\xA1\xA7\xEE\xFB\xE5\xE6\xAC\xE1\xFB\xEE\xBE\xB1\xD7\xE1\xE6\xFA\xE4\xB7\xFB\xF6\xFE\xFE\xA6\xBD\xBB\xF6\x8E" + 0x0E56D4AB).s, filename, BASS_ErrorGetCode());
+		Sakura::Log::File("Failed to load sound '%s' from lua. Error code: %i.", filename, BASS_ErrorGetCode());
 
 	Sounds.push_back(sample);
 
@@ -69,7 +69,7 @@ bool Sakura::Lua::Game::CreateVisibleEntity(const int entityType, const int enti
 
 void Sakura::Lua::Game::CreateBeamPoint(Vector start, Vector end, const ImColor color, const float life, const float width, const float amplitude, const float speed, const int startFrame, const float framerate)
 {
-	int beamindex = g_Engine.pEventAPI->EV_FindModelIndex(/*sprites/laserbeam.spr*/XorStr<0x53, 22, 0x8CF18AF6>("\x20\x24\x27\x3F\x23\x3D\x2A\x75\x37\x3D\x2E\x3B\x2D\x02\x04\x03\x0E\x4A\x16\x16\x15" + 0x8CF18AF6).s);
+	int beamindex = g_Engine.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
 
 	g_Engine.pEfxAPI->R_BeamPoints(start, end, beamindex, life, width, amplitude, color.Value.w, speed, startFrame, framerate, color.Value.x, color.Value.y, color.Value.z);
 }
@@ -349,7 +349,7 @@ bool Sakura::Lua::Player::IsAlive(const int index)
 
 void Sakura::Lua::Notify::Create(const char* szTitle, const int secondsDisplay = 3)
 {
-	Toast::Create({ secondsDisplay, szTitle });
+	Toast::Create(secondsDisplay, szTitle);
 }
 
 void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, luabridge::LuaRef lfFunction)
@@ -362,7 +362,7 @@ void Sakura::Lua::ImGui::Window(const char* szTitle, ImGuiWindowFlags flags, lua
 		}
 		catch (luabridge::LuaException const& error)
 		{
-			Sakura::Lua::Error(/*Error has occured in the lua "Window Create" script: %s*/XorStr<0x7B, 56, 0xCD3EFD1A>("\x3E\x0E\x0F\x11\x0D\xA0\xE9\xE3\xF0\xA4\xEA\xE5\xE4\xFD\xFB\xEF\xEF\xAC\xE4\xE0\xAF\xE4\xF9\xF7\xB3\xF8\xE0\xF7\xB7\xBA\xCE\xF3\xF5\xF8\xF2\xE9\xBF\xE3\xD3\xC7\xC2\xD0\xC0\x84\x87\xDB\xCA\xD8\xC2\xDC\xD9\x94\x8F\x95\xC2" + 0xCD3EFD1A).s, error.what());
+			Sakura::Lua::Error("Error has occured in the lua \"Window Create\" script: %s", error.what());
 		}
 	}
 	::ImGui::End();

@@ -84,9 +84,9 @@ void Sakura::Hitboxes::GetWorldHitboxes(cl_entity_s* ent)
 	if (!pBoneMatrix)
 		return;
 
-	if (!strstr(ent->model->name, /*w_grenade1.mdl*/XorStr<0x76, 15, 0xED43ACDC>("\x01\x28\x1F\x0B\x1F\x15\x1D\x19\x1B\x4E\xAE\xEC\xE6\xEF" + 0xED43ACDC).s) &&
-		!strstr(ent->model->name, /*molotov_fire_floor.mdl*/XorStr<0x58, 23, 0xCC374F6C>("\x35\x36\x36\x34\x28\x32\x28\x00\x06\x08\x10\x06\x3B\x03\x0A\x08\x07\x1B\x44\x06\x08\x01" + 0xCC374F6C).s) &&
-		strstr(ent->model->name, /*/w_*/XorStr<0xD9, 4, 0xF7AC51D8>("\xF6\xAD\x84" + 0xF7AC51D8).s) &&
+	if (!strstr(ent->model->name, "w_grenade1.mdl") &&
+		!strstr(ent->model->name, "molotov_fire_floor.mdl") &&
+		strstr(ent->model->name, "w_") &&
 		ent != g_Local.ViewModel)
 	{
 		if (cvar.skeleton_world_bone)
@@ -230,9 +230,9 @@ void Sakura::Hitboxes::GetPlayerHitboxes(const cl_entity_s* ent)
 
 	if (playerIndex > 0 && playerIndex <= g_Engine.GetMaxClients())
 	{
-		static cvar_t* cl_minmodels = g_Engine.pfnGetCvarPointer(/*cl_minmodels*/XorStr<0x0C, 13, 0xE895E01C>("\x6F\x61\x51\x62\x79\x7F\x7F\x7C\x70\x70\x7A\x64" + 0xE895E01C).s);
-		static cvar_t* cl_min_t = g_Engine.pfnGetCvarPointer(/*cl_min_t*/XorStr<0x7B, 9, 0x330EE1EE>("\x18\x10\x22\x13\x16\xEE\xDE\xF6" + 0x330EE1EE).s);
-		static cvar_t* cl_min_ct = g_Engine.pfnGetCvarPointer(/*cl_min_ct*/XorStr<0xF5, 10, 0xD831EA2D>("\x96\x9A\xA8\x95\x90\x94\xA4\x9F\x89" + 0xD831EA2D).s);
+		static cvar_t* cl_minmodels = g_Engine.pfnGetCvarPointer("cl_minmodels");
+		static cvar_t* cl_min_t = g_Engine.pfnGetCvarPointer("cl_min_t");
+		static cvar_t* cl_min_ct = g_Engine.pfnGetCvarPointer("cl_min_ct");
 
 		model_s* m_pRenderModel;
 
@@ -286,7 +286,7 @@ void Sakura::Hitboxes::GetPlayerHitboxes(const cl_entity_s* ent)
 			strcpy(modelname, pbones[i].name);
 			_strlwr(modelname);
 			
-			if (strstr(modelname, /*head*/XorStr<0xAE, 5, 0x96267E63>("\xC6\xCA\xD1\xD5" + 0x96267E63).s))
+			if (strstr(modelname, "head"))
 			{
 				HitboxBone[playerIndex] = i;
 				break;
@@ -534,7 +534,7 @@ void Sakura::Esp::Player::DrawSkeleton()
 		if (WorldToScreen(HitboxNum.HitboxPos, CalcAnglesMin))
 		{
 			char str[256];
-			sprintf(str, /*%d*/XorStr<0x1B, 3, 0xF5DDB501>("\x3E\x78" + 0xF5DDB501).s, HitboxNum.Hitbox);
+			sprintf(str, "%d", HitboxNum.Hitbox);
 			ImGui::GetCurrentWindow()->DrawList->AddText({ IM_ROUND(CalcAnglesMin[0]), IM_ROUND(CalcAnglesMin[1]) }, Sakura::Colors::White(), str);
 		}
 	}

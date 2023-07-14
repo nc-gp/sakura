@@ -44,10 +44,10 @@ bool ParseOverview(char* overview_txt)
 		pfile = g_Engine.COM_ParseFile(pfile, token);
 		if (!pfile)
 			break;
-		if (!_stricmp(token, /*global*/XorStr<0x1F, 7, 0x42A3312E>("\x78\x4C\x4E\x40\x42\x48" + 0x42A3312E).s))
+		if (!_stricmp(token, "global"))
 		{
 			pfile = g_Engine.COM_ParseFile(pfile, token);
-			if (strcmp(token, /*{*/XorStr<0x9B, 2, 0xE15DD81B>("\xE0" + 0xE15DD81B).s))
+			if (strcmp(token, "{"))
 			{
 				MapLoaded = false;
 				return false;
@@ -55,14 +55,14 @@ bool ParseOverview(char* overview_txt)
 			pfile = g_Engine.COM_ParseFile(pfile, token);
 			if (!pfile)
 				break;
-			while (strcmp(token, /*}*/XorStr<0x97, 2, 0xEB6E3416>("\xEA" + 0xEB6E3416).s))
+			while (strcmp(token, "}"))
 			{
-				if (!_stricmp(token, /*zoom*/XorStr<0x5F, 5, 0x8A503250>("\x25\x0F\x0E\x0F" + 0x8A503250).s))
+				if (!_stricmp(token, "zoom"))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.zoom = (float)atof(token);
 				}
-				else if (!_stricmp(token, /*origin*/XorStr<0xC4, 7, 0x9A470B1C>("\xAB\xB7\xAF\xA0\xA1\xA7" + 0x9A470B1C).s))
+				else if (!_stricmp(token, "origin"))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.origin[0] = (float)atof(token);
@@ -71,7 +71,7 @@ bool ParseOverview(char* overview_txt)
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.origin[2] = (float)atof(token);
 				}
-				else if (!_stricmp(token, /*rotated*/XorStr<0xED, 8, 0xB7F39BC9>("\x9F\x81\x9B\x91\x85\x97\x97" + 0xB7F39BC9).s))
+				else if (!_stricmp(token, "rotated"))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					m_OverviewData.rotated = atoi(token);
@@ -79,23 +79,23 @@ bool ParseOverview(char* overview_txt)
 				pfile = g_Engine.COM_ParseFile(pfile, token);
 			}
 		}
-		else if (!_stricmp(token, /*layer*/XorStr<0x36, 6, 0xB998DD35>("\x5A\x56\x41\x5C\x48" + 0xB998DD35).s))
+		else if (!_stricmp(token, "layer"))
 		{
 			pfile = g_Engine.COM_ParseFile(pfile, token);
-			if (strcmp(token, /*{*/XorStr<0xD7, 2, 0x077E3948>("\xAC" + 0x077E3948).s))
+			if (strcmp(token, "{"))
 			{
 				MapLoaded = false;
 				return false;
 			}
 			pfile = g_Engine.COM_ParseFile(pfile, token);
-			while (strcmp(token, /*}*/XorStr<0x90, 2, 0xF2ABD442>("\xED" + 0xF2ABD442).s))
+			while (strcmp(token, "}"))
 			{
-				if (!_stricmp(token, /*image*/XorStr<0xA2, 6, 0x43204E60>("\xCB\xCE\xC5\xC2\xC3" + 0x43204E60).s))
+				if (!_stricmp(token, "image"))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					strcpy(m_OverviewData.layersImages[m_OverviewData.layers], token);
 				}
-				else if (!_stricmp(token, /*height*/XorStr<0x53, 7, 0x539EB664>("\x3B\x31\x3C\x31\x3F\x2C" + 0x539EB664).s))
+				else if (!_stricmp(token, "height"))
 				{
 					pfile = g_Engine.COM_ParseFile(pfile, token);
 					float height = (float)atof(token);
@@ -118,9 +118,9 @@ void LoadOverview(char* levelname)
 		return;
 
 	if (levelname[0] == 0)
-		strcpy(levelname, /*cs_miltia*/XorStr<0xA5, 10, 0xAB4CA845>("\xC6\xD5\xF8\xC5\xC0\xC6\xDF\xC5\xCC" + 0xAB4CA845).s);
+		strcpy(levelname, "cs_miltia");
 
-	sprintf(overview_txt, /*overviews/%s.txt*/XorStr<0x3E, 17, 0x4F2C5C0C>("\x51\x49\x25\x33\x34\x2A\x21\x32\x35\x68\x6D\x3A\x64\x3F\x34\x39" + 0x4F2C5C0C).s, levelname);
+	sprintf(overview_txt, "overviews/%s.txt", levelname);
 
 	if (!ParseOverview(overview_txt))
 	{
@@ -430,7 +430,7 @@ void DrawOverview()
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.f, 0.f, 0.f, 0.f));
 		ImGui::SetNextWindowPos(ImVec2(radarPosX, radarPosY), ImGuiCond_Once);
 		ImGui::SetNextWindowSize(ImVec2(radarSizeX, radarSizeY), ImGuiCond_Once);
-		ImGui::Begin(/*radaroverview*/XorStr<0xBE, 14, 0xFBE090F2>("\xCC\xDE\xA4\xA0\xB0\xAC\xB2\xA0\xB4\xB1\xA1\xAC\xBD" + 0xFBE090F2).s, NULL, ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin("radaroverview", NULL, ImGuiWindowFlags_NoTitleBar);
 		{
 			iX = ImGui::GetCursorScreenPos().x;
 			iY = ImGui::GetCursorScreenPos().y;
