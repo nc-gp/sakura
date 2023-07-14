@@ -1,6 +1,7 @@
 ﻿#include "client.h"
 #include <Shlwapi.h>
 
+bool Sakura::Unloading = false;
 char Sakura::CheatDir[MAX_PATH];
 char Sakura::HLDir[MAX_PATH];
 HINSTANCE Sakura::Module;
@@ -8,7 +9,7 @@ HINSTANCE Sakura::Module;
 void Sakura::Unload()
 {
 	bShowMenu = false;
-	Sakura::Log::File(/*Sakura module has been unloaded.*/XorStr<0xDE, 33, 0xAC724934>("\x8D\xBE\x8B\x94\x90\x82\xC4\x88\x89\x83\x9D\x85\x8F\xCB\x84\x8C\x9D\xCF\x92\x94\x97\x9D\xD4\x80\x98\x9B\x97\x98\x9E\x9E\x98\xD3" + 0xAC724934).s);
+	Sakura::Log::File("Sakura has been unloaded");
 
 	if (g_pStudio)
 		*g_pStudio = g_Studio;
@@ -19,11 +20,20 @@ void Sakura::Unload()
 	if (g_pEngine)
 		*g_pEngine = g_Engine;
 
+	if (g_pInterface)
+		*g_pInterface = g_Interface;
+
 	if (g_pStudioModelRenderer)
 	{
 		c_Offset.EnablePageWrite((DWORD)g_pStudioModelRenderer, sizeof(StudioModelRenderer_t));
 		*g_pStudioModelRenderer = g_StudioModelRenderer;
 		c_Offset.RestorePageProtection((DWORD)g_pStudioModelRenderer, sizeof(StudioModelRenderer_t));
+	}
+
+	if (c_Offset.HLType != RENDERTYPE_UNDEFINED)
+	{
+		g_pfnSteam_GSInitiateGameConnection = (decltype(g_pfnSteam_GSInitiateGameConnection))GetDestination(c_Offset.Steam_GSInitiateGameConnection());
+		SetDestination(c_Offset.Steam_GSInitiateGameConnection(), (uintptr_t)g_pfnSteam_GSInitiateGameConnection);
 	}
 
 	DetourTransactionBegin();
@@ -155,6 +165,18 @@ DWORD WINAPI Load()
 	Sakura::Sound::Init();
 
 	client_state = ((client_state_t*)*(unsigned int*)((unsigned int)(g_Engine.GetEntityByIndex) + 0x19));
+
+	while (true)
+	{
+		if (Sakura::Unloading)
+		{
+			Sakura::Unloading = false;
+			Sakura::Unload();
+			break;
+		}
+
+		Sleep(100);
+	}
 
 	return NULL;
 }

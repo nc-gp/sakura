@@ -39,6 +39,7 @@
 
 namespace Sakura
 {
+	extern bool Unloading;
 	extern char CheatDir[MAX_PATH];
 	extern char HLDir[MAX_PATH];
 	extern HINSTANCE Module;

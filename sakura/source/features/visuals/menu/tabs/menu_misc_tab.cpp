@@ -5,7 +5,7 @@ int playerSelected;
 
 void Sakura::Menu::Tabs::Misc::Kreedz()
 {
-	ImGui::BeginChild(/*##kz1*/XorStr<0x40, 6, 0xFB670BEE>("\x63\x62\x29\x39\x75" + 0xFB670BEE).s, ImVec2(250, -1));
+	ImGui::BeginChild("##kreedz1", ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Bunnyhop*/XorStr<0x5A, 9, 0x2FC0AE68>("\x18\x2E\x32\x33\x27\x37\x0F\x11" + 0x2FC0AE68).s, &cvar.kz_bhop);
 		Sakura::Menu::Widgets::Checkbox(/*Fast Run*/XorStr<0x77, 9, 0xB0DCDD26>("\x31\x19\x0A\x0E\x5B\x2E\x08\x10" + 0xB0DCDD26).s, &cvar.kz_fast_run);
@@ -20,7 +20,7 @@ void Sakura::Menu::Tabs::Misc::Kreedz()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##kz2*/XorStr<0xBC, 6, 0x65AE8FE9>("\x9F\x9E\xD5\xC5\xF2" + 0x65AE8FE9).s, ImVec2(250, -1));
+	ImGui::BeginChild("##kreedz2", ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Bhop frames on ground*/XorStr<0x18, 22, 0x376034EF>("\x5A\x71\x75\x6B\x3C\x7B\x6C\x7E\x4D\x44\x51\x03\x4B\x4B\x06\x40\x5A\x46\x5F\x45\x48" + 0x376034EF).s, &cvar.kz_bhop_frames_on_ground, 0, 5, "%.0f");
@@ -35,7 +35,7 @@ void Sakura::Menu::Tabs::Misc::Kreedz()
 
 void Sakura::Menu::Tabs::Misc::Keybindings()
 {
-	ImGui::BeginChild(/*##keys1*/XorStr<0x38, 8, 0x86A00DD7>("\x1B\x1A\x51\x5E\x45\x4E\x0F" + 0x86A00DD7).s, ImVec2(250, -1));
+	ImGui::BeginChild("##keybindings1", ImVec2(250, -1));
 	{
 		HudMenuBind(cvar.gui_key);
 		HudKeyBind(cvar.kz_bhop_key, /*Bhop Key*/XorStr<0x19, 9, 0xB172A456>("\x5B\x72\x74\x6C\x3D\x55\x7A\x59" + 0xB172A456).s, { ImGui::GetWindowSize().x - 6, 0 });
@@ -48,7 +48,7 @@ void Sakura::Menu::Tabs::Misc::Keybindings()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##keys2*/XorStr<0x50, 8, 0xF0A71932>("\x73\x72\x39\x36\x2D\x26\x64" + 0xF0A71932).s, ImVec2(250, -1));
+	ImGui::BeginChild("##keybindings2", ImVec2(250, -1));
 	{
 		HudKeyBind(cvar.misc_thirdperson_key, /*Thirdperson Key*/XorStr<0xA5, 16, 0xA4A06107>("\xF1\xCE\xCE\xDA\xCD\xDA\xCE\xDE\xDE\xC1\xC1\x90\xFA\xD7\xCA" + 0xA4A06107).s, { ImGui::GetWindowSize().x - 6, 0 });
 		HudKeyBind(cvar.legit_key, /*Legit Fire Key*/XorStr<0xE6, 15, 0xBD74EBCF>("\xAA\x82\x8F\x80\x9E\xCB\xAA\x84\x9C\x8A\xD0\xBA\x97\x8A" + 0xBD74EBCF).s, { ImGui::GetWindowSize().x - 6, 0 });
@@ -60,7 +60,7 @@ void Sakura::Menu::Tabs::Misc::Keybindings()
 
 void Sakura::Menu::Tabs::Misc::Backtrack()
 {
-	ImGui::BeginChild(/*##mbt1*/XorStr<0x2F, 7, 0xC6453850>("\x0C\x13\x5C\x50\x47\x05" + 0xC6453850).s, ImVec2(250, -1));
+	ImGui::BeginChild("##backtrack1", ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x14, 7, 0x9D2621C8>("\x51\x7B\x77\x75\x74\x7C" + 0x9D2621C8).s, &cvar.misc_fakelatency);
 		Sakura::Menu::Widgets::Checkbox(/*Light*/XorStr<0xED, 6, 0x83A61004>("\xA1\x87\x88\x98\x85" + 0x83A61004).s, &cvar.misc_backtrack_light);
@@ -68,7 +68,7 @@ void Sakura::Menu::Tabs::Misc::Backtrack()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##mbt2*/XorStr<0x7C, 7, 0xD1DC7E5A>("\x5F\x5E\x13\x1D\xF4\xB3" + 0xD1DC7E5A).s, ImVec2(250, -1));
+	ImGui::BeginChild("##backtrack2", ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Latency*/XorStr<0xF3, 8, 0xF7594FCB>("\xBF\x95\x81\x93\x99\x9B\x80" + 0xF7594FCB).s, &cvar.misc_fakelatency_amount, 0, 500, "+%.0fms");
@@ -95,7 +95,7 @@ void Sakura::Menu::Tabs::Misc::Backtrack()
 
 void Sakura::Menu::Tabs::Misc::Route()
 {
-	ImGui::BeginChild(/*##route1*/XorStr<0xCD, 9, 0xC7B5803F>("\xEE\xED\xBD\xBF\xA4\xA6\xB6\xE5" + 0xC7B5803F).s, ImVec2(250, -1));
+	ImGui::BeginChild("##route1", ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x58, 7, 0x68381F8B>("\x1D\x37\x3B\x39\x30\x38" + 0x68381F8B).s, &cvar.route_activate);
 		Sakura::Menu::Widgets::Checkbox(/*Draw Route*/XorStr<0x98, 11, 0x017EBBBC>("\xDC\xEB\xFB\xEC\xBC\xCF\xF1\xEA\xD4\xC4" + 0x017EBBBC).s, &cvar.route_draw);
@@ -103,7 +103,7 @@ void Sakura::Menu::Tabs::Misc::Route()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##route2*/XorStr<0x06, 9, 0xB83230C0>("\x25\x24\x7A\x66\x7F\x7F\x69\x3F" + 0xB83230C0).s, ImVec2(250, -1));
+	ImGui::BeginChild("##route2", ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Direction Steps*/XorStr<0x26, 16, 0x87C477C7>("\x62\x4E\x5A\x4C\x49\x5F\x45\x42\x40\x0F\x63\x45\x57\x43\x47" + 0x87C477C7).s, &cvar.route_direction_step, 1.f, 10.f, "%.0f");
@@ -126,37 +126,37 @@ void Sakura::Menu::Tabs::Misc::Route()
 		if (Sakura::Menu::Widgets::Button(/*Start*/XorStr<0x0A, 6, 0x23F9E94C>("\x59\x7F\x6D\x7F\x7A" + 0x23F9E94C).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			autoroute.RecordAnyRouteStart();
-			Toast::Create({ 6, /*Recording started!*/XorStr<0x14,19,0x98EDD3D3>("\x46\x70\x75\x78\x6A\x7D\x73\x75\x7B\x3D\x6D\x6B\x41\x53\x56\x46\x40\x04" + 0x98EDD3D3).s });
+			Toast::Create(6, /*Recording started!*/XorStr<0x14,19,0x98EDD3D3>("\x46\x70\x75\x78\x6A\x7D\x73\x75\x7B\x3D\x6D\x6B\x41\x53\x56\x46\x40\x04" + 0x98EDD3D3).s);
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Stop*/XorStr<0xB7, 5, 0x9D58765C>("\xE4\xCC\xD6\xCA" + 0x9D58765C).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			autoroute.RecordRouteStop();
-			Toast::Create({ 6, /*Recording stopped!*/XorStr<0x53,19,0xC152F01C>("\x01\x31\x36\x39\x25\x3C\x30\x34\x3C\x7C\x2E\x2A\x30\x10\x11\x07\x07\x45" + 0xC152F01C).s });
+			Toast::Create(6, /*Recording stopped!*/XorStr<0x53,19,0xC152F01C>("\x01\x31\x36\x39\x25\x3C\x30\x34\x3C\x7C\x2E\x2A\x30\x10\x11\x07\x07\x45" + 0xC152F01C).s);
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Add Point*/XorStr<0xC6, 10, 0x557F41F9>("\x87\xA3\xAC\xE9\x9A\xA4\xA5\xA3\xBA" + 0x557F41F9).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			autoroute.AddPoint();
-			Toast::Create({ 3, /*Point added*/XorStr<0x06,12,0xB7D6C6FB>("\x56\x68\x61\x67\x7E\x2B\x6D\x69\x6A\x6A\x74" + 0xB7D6C6FB).s });
+			Toast::Create(3, /*Point added*/XorStr<0x06,12,0xB7D6C6FB>("\x56\x68\x61\x67\x7E\x2B\x6D\x69\x6A\x6A\x74" + 0xB7D6C6FB).s);
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Clear*/XorStr<0x00, 6, 0x9F0AC6F5>("\x43\x6D\x67\x62\x76" + 0x9F0AC6F5).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			autoroute.ClearAllRoute();
-			Toast::Create({ 3, /*Cleared route*/XorStr<0xA8,14,0xD3EA6D95>("\xEB\xC5\xCF\xCA\xDE\xC8\xCA\x8F\xC2\xDE\xC7\xC7\xD1" + 0xD3EA6D95).s });
+			Toast::Create(3, /*Cleared route*/XorStr<0xA8,14,0xD3EA6D95>("\xEB\xC5\xCF\xCA\xDE\xC8\xCA\x8F\xC2\xDE\xC7\xC7\xD1" + 0xD3EA6D95).s);
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Save*/XorStr<0x85, 5, 0x38101CED>("\xD6\xE7\xF1\xED" + 0x38101CED).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			autoroute.SaveRoute();
-			Toast::Create({ 3, /*Saved*/XorStr<0x66,6,0x82667591>("\x35\x06\x1E\x0C\x0E" + 0x82667591).s });
+			Toast::Create(3, /*Saved*/XorStr<0x66,6,0x82667591>("\x35\x06\x1E\x0C\x0E" + 0x82667591).s);
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Load*/XorStr<0x17, 5, 0xF8C50F5B>("\x5B\x77\x78\x7E" + 0xF8C50F5B).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			autoroute.LoadRoute("");
-			Toast::Create({ 3, /*Loaded*/XorStr<0xA2,7,0x67F28644>("\xEE\xCC\xC5\xC1\xC3\xC3" + 0x67F28644).s });
+			Toast::Create(3, /*Loaded*/XorStr<0xA2,7,0x67F28644>("\xEE\xCC\xC5\xC1\xC3\xC3" + 0x67F28644).s);
 		}
 	}
 	ImGui::EndChild();
@@ -219,13 +219,13 @@ void Sakura::Menu::Tabs::Misc::SidChanger()
 
 void Sakura::Menu::Tabs::Misc::AntiAFK()
 {
-	ImGui::BeginChild(/*##maa1*/XorStr<0x45, 7, 0xEBB25610>("\x66\x65\x2A\x29\x28\x7B" + 0xEBB25610).s, ImVec2(250, -1));
+	ImGui::BeginChild("##antiafk1", ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Enable anti afk*/XorStr<0xBA, 16, 0xEAB0697C>("\xFF\xD5\xDD\xDF\xD2\xDA\xE0\xA0\xAC\xB7\xAD\xE5\xA7\xA1\xA3" + 0xEAB0697C).s, &cvar.afk_anti);
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##maa2*/XorStr<0xE7, 7, 0x8C1EA631>("\xC4\xCB\x84\x8B\x8A\xDE" + 0x8C1EA631).s, ImVec2(250, -1));
+	ImGui::BeginChild("##antiafk2", ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Time*/XorStr<0x67, 5, 0xFD0EB92C>("\x33\x01\x04\x0F" + 0xFD0EB92C).s, &cvar.afk_time, 3, 90, /*%.0fs*/XorStr<0xAE, 6, 0x0747556F>("\x8B\x81\x80\xD7\xC1" + 0x0747556F).s);
@@ -237,7 +237,7 @@ void Sakura::Menu::Tabs::Misc::AntiAFK()
 
 void Sakura::Menu::Tabs::Misc::PlayerList()
 {
-	ImGui::BeginChild(/*##route1*/XorStr<0xA7, 9, 0x80F14DBD>("\x84\x8B\xDB\xC5\xDE\xD8\xC8\x9F" + 0x80F14DBD).s, ImVec2(250, -1));
+	ImGui::BeginChild("##playerlist1", ImVec2(250, -1));
 	{
 		ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)Sakura::Menu::GetMenuColor(0.39f));
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)Sakura::Menu::GetMenuColor(0.80f));
@@ -364,7 +364,7 @@ void Sakura::Menu::Tabs::Misc::PlayerList()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##route2*/XorStr<0xC3, 9, 0x9BAA3EC2>("\xE0\xE7\xB7\xA9\xB2\xBC\xAC\xF8" + 0x9BAA3EC2).s, ImVec2(250, -1));
+	ImGui::BeginChild("##playerlist2", ImVec2(250, -1));
 	{
 		switch (static_cast<int>(cvar.aim_id_mode))
 		{
@@ -402,7 +402,7 @@ void Sakura::Menu::Tabs::Misc::Notify()
 {
 	ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
-	ImGui::BeginChild(/*##maa1*/XorStr<0xF7, 7, 0x45925D59>("\xD4\xDB\x94\x9B\x9A\xCD" + 0x45925D59).s, ImVec2(250, -1));
+	ImGui::BeginChild("##notify1", ImVec2(250, -1));
 	{
 		Sakura::Menu::Widgets::Checkbox(/*Enable*/XorStr<0x16, 7, 0x2FA43D44>("\x53\x79\x79\x7B\x76\x7E" + 0x2FA43D44).s, &cvar.notifications_enable);
 		Sakura::Menu::Widgets::Checkbox(/*No background*/XorStr<0xF3, 14, 0xD8625AF8>("\xBD\x9B\xD5\x94\x96\x9B\x92\x9D\x89\x93\x88\x90\x9B" + 0xD8625AF8).s, &cvar.notifications_text_only);
@@ -414,7 +414,7 @@ void Sakura::Menu::Tabs::Misc::Notify()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
-	ImGui::BeginChild(/*##maa2*/XorStr<0x33, 7, 0xCAF02059>("\x10\x17\x58\x57\x56\x0A" + 0xCAF02059).s, ImVec2(250, -1));
+	ImGui::BeginChild("##notify2", ImVec2(250, -1));
 	{
 		ImGui::PushItemWidth(itemWidth);
 		Sakura::Menu::Widgets::SliderFloat(/*Fade time*/XorStr<0x15, 10, 0xB6BC7FC0>("\x53\x77\x73\x7D\x39\x6E\x72\x71\x78" + 0xB6BC7FC0).s, &cvar.notifications_fade, 50.f, 500.f, "%.0fms");
@@ -548,7 +548,7 @@ void Sakura::Menu::Tabs::Misc::Config()
 			std::string temp = newconfig + e;
 			Sakura::Config::List.push_back(temp);
 
-			Toast::Create({ 3, /*Created config %s*/XorStr<0xD0,18,0x49BAC5C2>("\x93\xA3\xB7\xB2\xA0\xB0\xB2\xF7\xBB\xB6\xB4\xBD\xB5\xBA\xFE\xFA\x93" + 0x49BAC5C2).s, temp.c_str() });
+			Toast::Create(3, /*Created config %s*/XorStr<0xD0,18,0x49BAC5C2>("\x93\xA3\xB7\xB2\xA0\xB0\xB2\xF7\xBB\xB6\xB4\xBD\xB5\xBA\xFE\xFA\x93" + 0x49BAC5C2).s, temp.c_str());
 		}
 
 		ImGui::Spacing();
@@ -565,32 +565,32 @@ void Sakura::Menu::Tabs::Misc::Config()
 		if (Sakura::Menu::Widgets::Button(/*Save Config*/XorStr<0x8F, 12, 0x7F254F47>("\xDC\xF1\xE7\xF7\xB3\xD7\xFA\xF8\xF1\xF1\xFE" + 0x7F254F47).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			SaveCvar();
-			Toast::Create({ 3, /*Saved config %s*/XorStr<0x85,16,0x55B424ED>("\xD6\xE7\xF1\xED\xED\xAA\xE8\xE3\xE3\xE8\xE6\xF7\xB1\xB7\xE0" + 0x55B424ED).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str() });
+			Toast::Create(3, /*Saved config %s*/XorStr<0x85,16,0x55B424ED>("\xD6\xE7\xF1\xED\xED\xAA\xE8\xE3\xE3\xE8\xE6\xF7\xB1\xB7\xE0" + 0x55B424ED).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str());
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Reload Config*/XorStr<0xA1, 14, 0xAF8631AF>("\xF3\xC7\xCF\xCB\xC4\xC2\x87\xEB\xC6\xC4\xCD\xC5\xCA" + 0xAF8631AF).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			LoadCvar();
-			Toast::Create({ 3, /*Reloaded config %s*/XorStr<0xC8,19,0x69BECD03>("\x9A\xAC\xA6\xA4\xAD\xA9\xAB\xAB\xF0\xB2\xBD\xBD\xB2\xBC\xB1\xF7\xFD\xAA" + 0x69BECD03).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str() });
+			Toast::Create(3, /*Reloaded config %s*/XorStr<0xC8,19,0x69BECD03>("\x9A\xAC\xA6\xA4\xAD\xA9\xAB\xAB\xF0\xB2\xBD\xBD\xB2\xBC\xB1\xF7\xFD\xAA" + 0x69BECD03).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str());
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Make Config Default*/XorStr<0xFA, 20, 0x11A0245F>("\xB7\x9A\x97\x98\xDE\xBC\x6F\x6F\x64\x6A\x63\x25\x42\x62\x6E\x68\x7F\x67\x78" + 0x11A0245F).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			Sakura::Config::DefaultConfig = Sakura::Config::SelectedConfig;
 			Sakura::Config::SaveDefault();
-			Toast::Create({ 3, /*Config %s is now default!*/XorStr<0xC6,26,0x1E02EDE2>("\x85\xA8\xA6\xAF\xA3\xAC\xEC\xE8\xBD\xEF\xB9\xA2\xF2\xBD\xBB\xA2\xF6\xB3\xBD\xBF\xBB\xAE\xB0\xA9\xFF" + 0x1E02EDE2).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str() });
+			Toast::Create(3, /*Config %s is now default!*/XorStr<0xC6,26,0x1E02EDE2>("\x85\xA8\xA6\xAF\xA3\xAC\xEC\xE8\xBD\xEF\xB9\xA2\xF2\xBD\xBB\xA2\xF6\xB3\xBD\xBF\xBB\xAE\xB0\xA9\xFF" + 0x1E02EDE2).s, Sakura::Config::List[Sakura::Config::SelectedConfig].c_str());
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Reload Lua*/XorStr<0x12, 11, 0x8D4E7E59>("\x40\x76\x78\x7A\x77\x73\x38\x55\x6F\x7A" + 0x8D4E7E59).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
 			Sakura::Lua::Reload();
 			Sakura::Sound::ReInit();
-			Toast::Create({ 3, /*Reloaded LUA*/XorStr<0xA8,13,0x688BFE62>("\xFA\xCC\xC6\xC4\xCD\xC9\xCB\xCB\x90\xFD\xE7\xF2" + 0x688BFE62).s });
+			Toast::Create(3, /*Reloaded LUA*/XorStr<0xA8,13,0x688BFE62>("\xFA\xCC\xC6\xC4\xCD\xC9\xCB\xCB\x90\xFD\xE7\xF2" + 0x688BFE62).s);
 		}
 
 		if (Sakura::Menu::Widgets::Button(/*Unload*/XorStr<0xAA, 7, 0x40BBB444>("\xFF\xC5\xC0\xC2\xCF\xCB" + 0x40BBB444).s, { ImGui::GetWindowSize().x - 6, 0 }))
 		{
-			Sakura::Unload();
+			Sakura::Unloading = true;
 		}
 
 		ImGui::Spacing();
